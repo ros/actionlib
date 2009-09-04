@@ -1,0 +1,34 @@
+fltk:
+  ubuntu: libfltk1.1-dev
+  debian: libfltk1.1-dev
+  fedora: fltk-devel
+  arch: fltk
+  macports: fltk
+  gentoo: "\"=x11-libs/fltk-1*\""
+netpbm:
+  ubuntu: libnetpbm10-dev
+  debian: libnetpbm10-dev
+  arch: netpbm
+  macports: netpbm
+  fedora: netpbm
+  gentoo: netpbm
+sdl:
+  ubuntu: libsdl1.2-dev
+  debian: libsdl1.2-dev
+  fedora: SDL-devel
+  arch: sdl 
+  macports: libsdl 
+sdl-image:
+  ubuntu: libsdl-image1.2-dev
+  debian: libsdl-image1.2-dev
+  fedora: SDL_image-devel
+  arch: sdl_image
+  macports: libsdl_image
+  gentoo: sdl-image
+atlas:
+  ubuntu: libatlas-base-dev libatlas-cpp-0.6-dev
+  debian: libatlas-base-dev libatlas-cpp-0.6-dev
+  arch: |
+  macports: atlas
+  gentoo: atlas
+

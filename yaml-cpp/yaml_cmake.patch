@@ -1,0 +1,13 @@
+Index: CMakeLists.txt
+===================================================================
+--- CMakeLists.txt	(revision 175)
++++ CMakeLists.txt	(working copy)
+@@ -29,6 +29,8 @@
+ 	${sources}
+ )
+ 
++SET_TARGET_PROPERTIES( yaml-cpp PROPERTIES COMPILE_FLAGS -fPIC)
++
+ install(TARGETS yaml-cpp ${_INSTALL_DESTINATIONS})
+ install(
+ 	FILES ${public_headers}

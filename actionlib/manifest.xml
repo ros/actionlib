@@ -1,0 +1,21 @@
+<package>
+  <description brief="actionlib">
+
+The actionlib package is meant to assist ROS users in writing nodes that accomplish specific tasks. Examples of this include: moving the base to a target location, taking a laser scan with parameters that are passed in and returning the resulting point cloud, detecting the handle of a door, etc.
+
+  </description>
+  <author>Eitan Marder-Eppstein, Vijay Pradeep</author>
+  <license>BSD</license>
+  <review status="api cleared" notes=""/>
+  <url>http://ros.org/wiki/actionlib</url>
+
+  <depend package="roscpp" />
+  <depend package="actionlib_msgs" />
+
+  <export>
+    <cpp cflags="-I${prefix}/msg/cpp -I${prefix}/include" />
+  </export>
+
+</package>
+
+

@@ -1,0 +1,5 @@
+<launch>	
+	<rosparam command="load" file="$(find filters)/test/test_chain.yaml"/>
+	<test test-name="chain_test" pkg="filters" type="chain_test"/>
+	<rosparam command="dump" file="$(find filters)/test/output.yaml"/>
+</launch>

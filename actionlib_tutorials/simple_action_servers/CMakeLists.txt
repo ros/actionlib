@@ -1,0 +1,4 @@
+rospack_add_executable(fibonacci_server fibonacci_server.cpp)
+rospack_add_executable(configurable_fibonacci_server configurable_fibonacci_server.cpp)
+
+rospack_add_executable(averaging_server averaging_server.cpp)

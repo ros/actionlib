@@ -1,0 +1,5 @@
+<launch>	
+	<rosparam command="load" file="$(find filters)/test/test_median.yaml"/>
+	<test test-name="median_test" pkg="filters" type="median_test"/>
+
+</launch>

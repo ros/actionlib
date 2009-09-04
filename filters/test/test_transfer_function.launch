@@ -1,0 +1,5 @@
+<launch>	
+	<rosparam command="load" file="$(find filters)/test/test_transfer_function.yaml"/>
+	<test test-name="transfer_function_test" pkg="filters" type="transfer_function_test"/>
+
+</launch>

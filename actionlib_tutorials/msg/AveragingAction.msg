@@ -1,0 +1,4 @@
+
+AveragingActionGoal action_goal
+AveragingActionResult action_result
+AveragingActionFeedback action_feedback

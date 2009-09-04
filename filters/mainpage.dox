@@ -1,0 +1,14 @@
+/**
+@mainpage
+@htmlinclude manifest.html
+
+Classes of Interest for using filters:
+ * filters::FilterChain
+ * filters::MultiChannelFilterChain
+
+Classes of Interest for writing a filter:
+ * filters::FilterBase
+ * filters::MultiChannelFilterBase
+
+
+**/
