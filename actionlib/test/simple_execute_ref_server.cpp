@@ -34,61 +34,60 @@
 
 //! \author Vijay Pradeep
 
-#include <gtest/gtest.h>
+#include <actionlib/server/simple_action_server.h>
 #include <actionlib/TestAction.h>
-#include <actionlib/client/simple_action_client.h>
+#include <ros/ros.h>
+
+namespace actionlib
+{
+
+class SimpleExecuteRefServer
+{
+public:
+  typedef ServerGoalHandle<TestAction> GoalHandle;
+
+  SimpleExecuteRefServer();
+
+private:
+  ros::NodeHandle nh_;
+  SimpleActionServer<TestAction> as_;
+
+  void executeCallback(const TestGoalConstPtr& goal);
+};
+
+}
 
 using namespace actionlib;
 
-TEST(SimpleClient, easy_tests)
+SimpleExecuteRefServer::SimpleExecuteRefServer() : as_(nh_, "reference_action", boost::bind(&SimpleExecuteRefServer::executeCallback, this, _1))
 {
-  ros::NodeHandle n;
-  SimpleActionClient<TestAction> client(n, "reference_action");
 
-  bool started = client.waitForActionServerToStart(ros::Duration(10.0));
-
-  ros::Duration sleep_dur(1.0);
-  sleep_dur.sleep();
-
-  ASSERT_TRUE(started);
-
-
-  TestGoal goal;
-  bool finished;
-
-  goal.goal = 1;
-  client.sendGoal(goal);
-  finished = client.waitForGoalToFinish(ros::Duration(10.0));
-  ASSERT_TRUE(finished);
-  EXPECT_TRUE( client.getTerminalState() == TerminalState::SUCCEEDED)
-      << "Expected [SUCCEEDED], but terminal state is [" << client.getTerminalState().toString() << "]";
-
-  goal.goal = 2;
-  client.sendGoal(goal);
-  finished = client.waitForGoalToFinish(ros::Duration(10.0));
-  ASSERT_TRUE(finished);
-  EXPECT_TRUE( client.getTerminalState() == TerminalState::ABORTED)
-      << "Expected [ABORTED], but terminal state is [" << client.getTerminalState().toString() << "]";
 }
 
-void spinThread()
+void SimpleExecuteRefServer::executeCallback(const TestGoalConstPtr& goal)
 {
-  ros::NodeHandle nh;
+  switch (goal->goal)
+  {
+    case 1:
+      as_.setSucceeded();
+      break;
+    case 2:
+      as_.setAborted();
+      break;
+    default:
+      break;
+  }
+}
+
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "ref_server");
+
+  SimpleExecuteRefServer server;
+
   ros::spin();
+
+  return 0;
 }
 
-int main(int argc, char **argv){
-  testing::InitGoogleTest(&argc, argv);
 
-  ros::init(argc, argv, "simple_client_test");
-
-  boost::thread spin_thread(&spinThread);
-
-  int result = RUN_ALL_TESTS();
-
-  ros::shutdown();
-
-  spin_thread.join();
-
-  return result;
-}

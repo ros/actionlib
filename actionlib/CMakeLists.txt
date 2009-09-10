@@ -22,11 +22,13 @@ rosbuild_genmsg()
 
 include_directories(${PROJECT_SOURCE_DIR}/msg/cpp/)
 rosbuild_add_executable(ref_server test/ref_server.cpp)
+rosbuild_add_executable(simple_execute_ref_server test/simple_execute_ref_server.cpp)
 
 
 rosbuild_add_executable(simple_client_test test/simple_client_test.cpp)
 rosbuild_add_gtest_build_flags(simple_client_test)
 
-rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/simple_client_test.launch)
+rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/ref_server_test.launch)
+rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/simple_execute_ref_server_test.launch)
 
 add_subdirectory(test EXCLUDE_FROM_ALL)
