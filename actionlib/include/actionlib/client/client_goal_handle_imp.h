@@ -57,9 +57,13 @@ ClientGoalHandle<ActionSpec>::ClientGoalHandle(GoalManagerT* gm, typename Manage
 template<class ActionSpec>
 void ClientGoalHandle<ActionSpec>::reset()
 {
-  list_handle_.reset();
-  active_ = false;
-  gm_ = NULL;
+  if (active_)
+  {
+    boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
+    list_handle_.reset();
+    active_ = false;
+    gm_ = NULL;
+  }
 }
 
 template<class ActionSpec>
