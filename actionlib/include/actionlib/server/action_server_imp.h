@@ -40,7 +40,14 @@ namespace actionlib {
   template <class ActionSpec>
   ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
       bool auto_start)
-    : ActionServer<ActionSpec>::ActionServer(n, name, boost::function<void (GoalHandle)>(), boost::function<void (GoalHandle)>(), auto_start) {}
+    : node_(n, name), goal_callback_(boost::function<void (GoalHandle)>()),
+      cancel_callback_(boost::function<void (GoalHandle)>()), started_(auto_start){
+    //if we're to autostart... then we'll initialize things
+    if(started_){ 
+      initialize();
+      publishStatus();
+    }
+  }
 
   template <class ActionSpec>
   ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
@@ -49,34 +56,34 @@ namespace actionlib {
       bool auto_start)
     : node_(n, name), goal_callback_(goal_cb), cancel_callback_(cancel_cb), started_(auto_start) {
 
-      //if we're to autostart... then we'll initialize things
-      if(started_){ 
-        initialize();
-        publishStatus();
-      }
+    //if we're to autostart... then we'll initialize things
+    if(started_){ 
+      initialize();
+      publishStatus();
+    }
   }
 
   template <class ActionSpec>
   void ActionServer<ActionSpec>::initialize(){
-      status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", 1);
-      result_pub_ = node_.advertise<ActionResult>("result", 1);
-      feedback_pub_ = node_.advertise<ActionFeedback>("feedback", 1);
+    status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", 1);
+    result_pub_ = node_.advertise<ActionResult>("result", 1);
+    feedback_pub_ = node_.advertise<ActionFeedback>("feedback", 1);
 
-      goal_sub_ = node_.subscribe<ActionGoal>("goal", 1,
-          boost::bind(&ActionServer::goalCallback, this, _1));
+    goal_sub_ = node_.subscribe<ActionGoal>("goal", 1,
+        boost::bind(&ActionServer::goalCallback, this, _1));
 
-      cancel_sub_ = node_.subscribe<actionlib_msgs::GoalID>("cancel", 1,
-          boost::bind(&ActionServer::cancelCallback, this, _1));
+    cancel_sub_ = node_.subscribe<actionlib_msgs::GoalID>("cancel", 1,
+        boost::bind(&ActionServer::cancelCallback, this, _1));
 
-      //read the frequency with which to publish status from the parameter server
-      double status_frequency, status_list_timeout;
-      node_.param("status_frequency", status_frequency, 5.0);
-      node_.param("status_list_timeout", status_list_timeout, 5.0);
+    //read the frequency with which to publish status from the parameter server
+    double status_frequency, status_list_timeout;
+    node_.param("status_frequency", status_frequency, 5.0);
+    node_.param("status_list_timeout", status_list_timeout, 5.0);
 
-      status_list_timeout_ = ros::Duration(status_list_timeout);
+    status_list_timeout_ = ros::Duration(status_list_timeout);
 
-      status_timer_ = node_.createTimer(ros::Duration(1.0 / status_frequency),
-          boost::bind(&ActionServer::publishStatus, this, _1));
+    status_timer_ = node_.createTimer(ros::Duration(1.0 / status_frequency),
+        boost::bind(&ActionServer::publishStatus, this, _1));
   }
 
   template <class ActionSpec>

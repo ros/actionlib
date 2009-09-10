@@ -83,7 +83,7 @@ namespace actionlib {
        * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up
        */
       ActionServer(ros::NodeHandle n, std::string name,
-          boost::function<void (GoalHandle)> goal_cb = boost::function<void (GoalHandle)>(),
+          boost::function<void (GoalHandle)> goal_cb,
           boost::function<void (GoalHandle)> cancel_cb = boost::function<void (GoalHandle)>(),
           bool auto_start = true);
 
