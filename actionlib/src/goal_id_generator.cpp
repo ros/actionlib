@@ -43,7 +43,7 @@ static unsigned int s_goalcount_ = 0;
 
 GoalIDGenerator::GoalIDGenerator()
 {
-  setName(ros::this_node::getNamespace() + ros::this_node::getName());
+  setName(ros::this_node::getName());
 }
 
 GoalIDGenerator::GoalIDGenerator(const std::string& name)
