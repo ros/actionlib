@@ -32,49 +32,46 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTION_LIB_GOAL_ID_GENERATOR_H_
-#define ACTION_LIB_GOAL_ID_GENERATOR_H_
+#include <ros/ros.h>
+#include <actionlib/goal_id_generator.h>
+#include <boost/thread/mutex.hpp>
 
-#include <sstream>
-#include <string>
-#include "ros/time.h"
-#include "actionlib_msgs/GoalID.h"
+using namespace actionlib;
 
-namespace actionlib
+static boost::mutex s_goalcount_mutex_;
+static unsigned int s_goalcount_ = 0;
+
+GoalIDGenerator::GoalIDGenerator()
 {
-
-class GoalIDGenerator
-{
-public:
-
-  /**
-   * Create a generator that prepends the fully qualified node name to the Goal ID
-   */
-  GoalIDGenerator();
-
-  /**
-   * \param name Unique name to prepend to the goal id. This will
-   *             generally be a fully qualified node name.
-   */
-  GoalIDGenerator(const std::string& name);
-
-  /**
-   * \param name Set the name to prepend to the goal id. This will
-   *             generally be a fully qualified node name.
-   */
-  void setName(const std::string& name);
-
-  /**
-   * \brief Generates a unique ID
-   * \return A unique GoalID for this action
-   */
-  actionlib_msgs::GoalID generateID();
-
-private:
-  std::string name_ ;
-
-};
-
+  setName(ros::this_node::getNamespace() + ros::this_node::getName());
 }
 
-#endif
+GoalIDGenerator::GoalIDGenerator(const std::string& name)
+{
+  setName(name);
+}
+
+void GoalIDGenerator::setName(const std::string& name)
+{
+  name_ = name;
+}
+
+actionlib_msgs::GoalID GoalIDGenerator::generateID()
+{
+  actionlib_msgs::GoalID id;
+  ros::Time cur_time = ros::Time::now();
+  std::stringstream ss;
+
+  ss << name_ << "-";
+
+  {
+    boost::mutex::scoped_lock lock(s_goalcount_mutex_);
+    s_goalcount_++;
+    ss << s_goalcount_ << "-";
+  }
+
+  ss << cur_time.sec << "." << cur_time.nsec;
+  id.id = ss.str();
+  id.stamp = cur_time;
+  return id;
+}

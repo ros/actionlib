@@ -18,12 +18,15 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-rosbuild_add_library(${PROJECT_NAME} src/connection_monitor.cpp)
+rosbuild_add_library(${PROJECT_NAME} src/connection_monitor.cpp
+                                     src/goal_id_generator.cpp)
 
 include_directories(${PROJECT_SOURCE_DIR}/msg/cpp/)
 rosbuild_add_executable(ref_server test/ref_server.cpp)
+target_link_libraries(ref_server ${PROJECT_NAME})
 
 rosbuild_add_executable(simple_execute_ref_server test/simple_execute_ref_server.cpp)
+target_link_libraries(simple_execute_ref_server ${PROJECT_NAME})
 
 rosbuild_add_executable(simple_client_test test/simple_client_test.cpp)
 rosbuild_add_gtest_build_flags(simple_client_test)
