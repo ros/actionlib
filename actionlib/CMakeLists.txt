@@ -10,6 +10,7 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #set(ROS_BUILD_TYPE RelWithDebInfo)
 
 rosbuild_init()
+# rosbuild_genmsg()
 
 #set the default path for built executables to the "bin" directory
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
@@ -17,16 +18,16 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
-rosbuild_genmsg()
-
+rosbuild_add_library(${PROJECT_NAME} src/connection_monitor.cpp)
 
 include_directories(${PROJECT_SOURCE_DIR}/msg/cpp/)
 rosbuild_add_executable(ref_server test/ref_server.cpp)
-rosbuild_add_executable(simple_execute_ref_server test/simple_execute_ref_server.cpp)
 
+rosbuild_add_executable(simple_execute_ref_server test/simple_execute_ref_server.cpp)
 
 rosbuild_add_executable(simple_client_test test/simple_client_test.cpp)
 rosbuild_add_gtest_build_flags(simple_client_test)
+target_link_libraries(simple_client_test ${PROJECT_NAME})
 
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/ref_server_test.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/simple_execute_ref_server_test.launch)

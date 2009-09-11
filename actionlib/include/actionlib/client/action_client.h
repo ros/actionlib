@@ -39,7 +39,8 @@
 
 #include "ros/ros.h"
 #include "ros/callback_queue_interface.h"
-#include "actionlib/client/client_helpers.h"
+#include <actionlib/client/client_helpers.h>
+#include <actionlib/client/connection_monitor.h>
 
 namespace actionlib
 {
@@ -144,52 +145,20 @@ public:
    */
   bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0) )
   {
-    if (timeout < ros::Duration(0,0))
-      ROS_WARN("Timeouts can't be negative. Timeout is [%.2fs]", timeout.toSec());
-
-    ros::Time timeout_time = ros::Time::now() + timeout;
-
-    boost::mutex::scoped_lock lock(server_connection_mutex_);
-
-    if (server_connected_)
-      return true;
-
-    // Hardcode how often we check for node.ok()
-    ros::Duration loop_period = ros::Duration().fromSec(.1);
-
-    while (n_.ok() && !server_connected_)
-    {
-      // Determine how long we should wait
-      ros::Duration time_left = timeout_time - ros::Time::now();
-
-      // Check if we're past the timeout time
-      if (timeout != ros::Duration(0,0) && time_left <= ros::Duration(0,0) )
-        break;
-
-      // Truncate the time left
-      if (time_left > loop_period)
-        time_left = loop_period;
-
-      server_connection_condition_.timed_wait(lock, boost::posix_time::milliseconds(time_left.toSec() * 1000.0f));
-    }
-
-    return server_connected_;
+    return connection_monitor.waitForActionServerToStart(timeout, n_);
   }
 
 private:
   ros::NodeHandle n_;
+
+  GoalManager<ActionSpec> manager_;
+  ConnectionMonitor connection_monitor;   // Have to destroy subscribers and publishers before the connection_monitor, since we call callbacks in the connection_monitor
 
   ros::Subscriber feedback_sub_;
   ros::Publisher  goal_pub_;
   ros::Publisher  cancel_pub_;
   ros::Subscriber status_sub_;
   ros::Subscriber result_sub_;
-
-  GoalManager<ActionSpec> manager_;
-
-  boost::mutex server_connection_mutex_;
-  boost::condition server_connection_condition_;
-  bool server_connected_;
 
   void sendGoalFunc(const ActionGoalConstPtr& action_goal)
   {
@@ -204,9 +173,16 @@ private:
   void initClient(ros::CallbackQueueInterface* queue)
   {
     // Start publishers and subscribers
-    server_connected_ = false;
-    goal_pub_ = queue_advertise<ActionGoal>("goal", 1, boost::bind(&ActionClient::serverConnectionCb, this, _1), queue);
-    cancel_pub_ = n_.advertise<actionlib_msgs::GoalID>("cancel", 1, true);
+
+    goal_pub_ = queue_advertise<ActionGoal>("goal", 1,
+                                            boost::bind(&ConnectionMonitor::goalConnectCallback,    &connection_monitor, _1),
+                                            boost::bind(&ConnectionMonitor::goalDisconnectCallback, &connection_monitor, _1),
+                                            queue);
+    cancel_pub_ = queue_advertise<actionlib_msgs::GoalID>("cancel", 1,
+                                            boost::bind(&ConnectionMonitor::cancelConnectCallback,    &connection_monitor, _1),
+                                            boost::bind(&ConnectionMonitor::cancelDisconnectCallback, &connection_monitor, _1),
+                                            queue);
+
     manager_.registerSendGoalFunc(boost::bind(&ActionClientT::sendGoalFunc, this, _1));
     manager_.registerCancelFunc(boost::bind(&ActionClientT::sendCancelFunc, this, _1));
 
@@ -218,10 +194,11 @@ private:
   template <class M>
   ros::Publisher queue_advertise(const std::string& topic, uint32_t queue_size,
                                  const ros::SubscriberStatusCallback& connect_cb,
+                                 const ros::SubscriberStatusCallback& disconnect_cb,
                                  ros::CallbackQueueInterface* queue)
   {
     ros::AdvertiseOptions ops;
-    ops.init<M>(topic, queue_size, connect_cb, NULL);
+    ops.init<M>(topic, queue_size, connect_cb, disconnect_cb);
     ops.tracked_object = ros::VoidPtr();
     ops.latch = false;
     ops.callback_queue = queue;
@@ -240,6 +217,7 @@ private:
 
   void statusCb(const actionlib_msgs::GoalStatusArrayConstPtr& status_array)
   {
+    connection_monitor.processStatus(status_array);
     manager_.updateStatuses(status_array);
   }
 
@@ -251,13 +229,6 @@ private:
   void resultCb(const ActionResultConstPtr& action_result)
   {
     manager_.updateResults(action_result);
-  }
-
-  void serverConnectionCb(const ros::SingleSubscriberPublisher& pub)
-  {
-    boost::mutex::scoped_lock lock(server_connection_mutex_);
-    server_connected_ = true;
-    server_connection_condition_.notify_all();
   }
 };
 

@@ -32,58 +32,54 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-//! \author Vijay Pradeep
+#ifndef ACTIONLIB_ACTION_CONNECTION_MONITOR_H_
+#define ACTIONLIB_ACTION_CONNECTION_MONITOR_H_
 
-#include <gtest/gtest.h>
-#include <actionlib/TestAction.h>
-#include <actionlib/client/simple_action_client.h>
+#include <boost/thread/condition.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
-using namespace actionlib;
+#include <ros/ros.h>
+#include <actionlib_msgs/GoalStatusArray.h>
+#include <set>
+#include <map>
 
-TEST(SimpleClient, easy_tests)
+namespace actionlib
 {
-  ros::NodeHandle n;
-  SimpleActionClient<TestAction> client(n, "reference_action");
 
-  bool started = client.waitForActionServerToStart(ros::Duration(10.0));
-  ASSERT_TRUE(started);
-
-  TestGoal goal;
-  bool finished;
-
-  goal.goal = 1;
-  client.sendGoal(goal);
-  finished = client.waitForGoalToFinish(ros::Duration(10.0));
-  ASSERT_TRUE(finished);
-  EXPECT_TRUE( client.getTerminalState() == TerminalState::SUCCEEDED)
-      << "Expected [SUCCEEDED], but terminal state is [" << client.getTerminalState().toString() << "]";
-
-  goal.goal = 2;
-  client.sendGoal(goal);
-  finished = client.waitForGoalToFinish(ros::Duration(10.0));
-  ASSERT_TRUE(finished);
-  EXPECT_TRUE( client.getTerminalState() == TerminalState::ABORTED)
-      << "Expected [ABORTED], but terminal state is [" << client.getTerminalState().toString() << "]";
-}
-
-void spinThread()
+class ConnectionMonitor
 {
-  ros::NodeHandle nh;
-  ros::spin();
+public:
+  ConnectionMonitor();
+
+  void goalConnectCallback(const ros::SingleSubscriberPublisher& pub);
+
+  void goalDisconnectCallback(const ros::SingleSubscriberPublisher& pub);
+
+  void cancelConnectCallback(const ros::SingleSubscriberPublisher& pub);
+
+  void cancelDisconnectCallback(const ros::SingleSubscriberPublisher& pub);
+
+  void processStatus(const actionlib_msgs::GoalStatusArrayConstPtr& status);
+
+  bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0), const ros::NodeHandle& nh = ros::NodeHandle() );
+  bool isServerConnected();
+private:
+
+  // status stuff
+  std::string status_caller_id_;
+  bool status_received_;
+  ros::Time latest_status_time_;
+
+  boost::condition check_connection_condition_;
+
+  boost::recursive_mutex data_mutex_;
+  std::set<std::string> goalSubscribers_;
+  std::set<std::string> cancelSubscribers_;
+
+  std::string goalSubscribersString();
+  std::string cancelSubscribersString();
+};
+
 }
 
-int main(int argc, char **argv){
-  testing::InitGoogleTest(&argc, argv);
-
-  ros::init(argc, argv, "simple_client_test");
-
-  boost::thread spin_thread(&spinThread);
-
-  int result = RUN_ALL_TESTS();
-
-  ros::shutdown();
-
-  spin_thread.join();
-
-  return result;
-}
+#endif

@@ -13,9 +13,9 @@ The actionlib package is meant to assist ROS users in writing nodes that accompl
   <depend package="actionlib_msgs" />
 
   <export>
-    <cpp cflags="-I${prefix}/msg/cpp -I${prefix}/include" />
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lactionlib"/>
   </export>
-
+    
 </package>
 
 
