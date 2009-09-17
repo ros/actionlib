@@ -10,7 +10,6 @@ as well as an interface which dynamically loads filters based on runtime paramet
 <license>BSD</license>
 <review status="API conditionally cleared" notes=""/>
 <url>http://pr.willowgarage.com</url>
-<depend package="tinyxml"/>
 <depend package="rosconsole" />
 <depend package="roscpp" />
 <depend package="pluginlib" />
