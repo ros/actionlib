@@ -1,6 +1,15 @@
 <package>
   <description brief="A YAML Parsing library for C++">
     yaml-cpp is a YAML parser and emitter in C++ written around the YAML 1.2 spec. It's based on (but not a wrapper to) the C library libyaml.
+
+    This is version 0.2.2 of yaml-cpp with a patch for 64 compabability. 
+
+Version Update Policy:
+We plan to track the latest release assuming backwards compatability. 
+
+Patch Update Policy:
+The patch has been submitted upstream to the yaml-cpp, it can be removed once accepted upstream.  See http://code.google.com/p/yaml-cpp/issues/detail?id=44
+
   </description>
   <author>Jesse Beder</author>
   <license>MIT</license>

@@ -1,9 +1,9 @@
 all: installed
 
 SVN_CMDLINE = svn
-SVN_REVISION = -r175
+SVN_REVISION = -r263
 SVN_DIR = yaml-cpp-svn
-SVN_URL = http://yaml-cpp.googlecode.com/svn/trunk
+SVN_URL = http://yaml-cpp.googlecode.com/svn/tags/release-0.2.2
 SVN_PATCH = yaml_cmake.patch
 INSTALL_DIR = yaml-cpp
 CMAKE = cmake
