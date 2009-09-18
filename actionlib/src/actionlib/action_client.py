@@ -52,13 +52,14 @@ client.cancel_all_goals()
 '''
 
 import roslib; roslib.load_manifest('actionlib')
-roslib.load_manifest('rospy')
 import threading
 import weakref
 import time
 import rospy
 from roslib.msg import Header
-from actionlib.msg import *
+from actionlib_msgs.msg import *
+
+g_goal_id = 1
 
 class ActionException(Exception): pass
 
@@ -102,7 +103,7 @@ class GoalHandle:
     def __init__(self, comm_state_machine = None):
         self.comm_state_machine = comm_state_machine
 
-        print "GH created.  id = %.3f" % self.comm_state_machine.action_goal.goal_id.id.to_seconds()
+        #print "GH created.  id = %.3f" % self.comm_state_machine.action_goal.goal_id.stamp.to_seconds()
 
     def reset(self):
         self.comm_state_machine = None
@@ -280,10 +281,13 @@ class CommStateMachine:
 
     ##
     # @param gh GoalHandle
-    # @param status_array GoalStatusArray
+    # @param status_array actionlib_msgs/GoalStatusArray
     def update_status(self, status_array):
         self.mutex.acquire()
         try:
+            if self.state == CommState.DONE:
+                return
+
             status = _find_status_by_goal_id(status_array, self.action_goal.goal_id.id)
 
             # You mean you haven't heard of me?
@@ -318,8 +322,9 @@ class CommStateMachine:
             self.mutex.release()
 
     def transition_to(self, state):
-        rospy.logdebug("Transitioning to %s (from %s)",
-                       CommState.to_string(state), CommState.to_string(self.state))
+        rospy.logdebug("Transitioning to %s (from %s, goal: %s)",
+                       CommState.to_string(state), CommState.to_string(self.state),
+                       self.action_goal.goal_id.id)
         self.state = state
         if self.transition_cb:
             self.transition_cb(GoalHandle(self))
@@ -382,11 +387,10 @@ class GoalManager:
             raise ActionException("Type is not an action spec: %s" % str(ActionSpec))
 
     def _generate_id(self):
-        # HACK for bug fixed in ROS r5533 (ROS Bug #1546)
-        #now = rospy.Time.now()
-        now = rospy.Time.from_seconds(rospy.Time.now().to_seconds())
-
-        return GoalID(id = now, stamp = now)
+        global g_goal_id
+        id, g_goal_id = g_goal_id, g_goal_id + 1
+        now = rospy.Time.now()
+        return GoalID(id = "%s-%i" % (rospy.get_caller_id(), id), stamp = now)
 
     def register_send_goal_fn(self, fn):
         self.send_goal_fn = fn
@@ -429,7 +433,7 @@ class GoalManager:
         
     ## Updates the statuses of all goals from the information in status_array.
     ## 
-    ## @param status_array (\c actionlib.GoalStatusArray)
+    ## @param status_array (\c actionlib_msgs/GoalStatusArray)
     def update_statuses(self, status_array):
         live_statuses = []
         

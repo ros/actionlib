@@ -10,6 +10,7 @@ The actionlib package is meant to assist ROS users in writing nodes that accompl
   <url>http://ros.org/wiki/actionlib</url>
 
   <depend package="roscpp" />
+  <depend package="rospy" />
   <depend package="actionlib_msgs" />
 
   <export>
