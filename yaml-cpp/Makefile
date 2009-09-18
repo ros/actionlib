@@ -1,35 +1,25 @@
-all: installed
+all: yaml-cpp
 
-SVN_CMDLINE = svn
-SVN_REVISION = -r263
-SVN_DIR = yaml-cpp-svn
-SVN_URL = http://yaml-cpp.googlecode.com/svn/tags/release-0.2.2
-SVN_PATCH = 
-INSTALL_DIR = yaml-cpp
-CMAKE = cmake
-CMAKE_ARGS = 	-DCMAKE_INSTALL_PREFIX=$(CURDIR)/$(INSTALL_DIR)/ \
-		-DOROCOS_TARGET=gnulinux \
-		-DBOOST_DIR=$(BOOST_INCLUDE)
+TARBALL = build/yaml-cpp-0.2.2.tar.gz
+TARBALL_URL = http://yaml-cpp.googlecode.com/files/yaml-cpp-0.2.2.tar.gz
+SOURCE_DIR = build/yaml-cpp-0.2.2
 
-include $(shell rospack find mk)/svn_checkout.mk
+UNPACK_CMD = mkdir -p yaml-cpp-0.2.2 && tar -C yaml-cpp-0.2.2 -xzf 
 
-installed: $(SVN_DIR) patched 
-#	$(SVN_DIR) Makefile
-#	@if [ ! -d yaml-cpp-svn ]; then $(SVN_CMDLINE) co -r $(SVN_REVISION) http://yaml-cpp.googlecode.com/svn/trunk  yaml-cpp-svn; fi;
-#	@if [ ! -n "`svn info yaml-cpp | grep 'Revision: $(SVN_REVISION)'`" ]; then cd yaml-cpp-svn && $(SVN_CMDLINE) up -r $(SVN_REVISION); fi;
-	mkdir -p $(SVN_DIR)/build
-	cd $(SVN_DIR)/build && $(CMAKE) $(CMAKE_ARGS) ..
-	cd $(SVN_DIR)/build && make && make install
-	touch installed
-	
-wiped: Makefile
-	make wipe
-	touch wipe
+
+include $(shell rospack find mk)/download_unpack_build.mk
+
+
+
+yaml-cpp: $(SOURCE_DIR)/unpacked
+	cd build && cmake -DCMAKE_INSTALL_PREFIX=../yaml-cpp yaml-cpp-0.2.2
+	cd build && make && make install
 
 clean:
-	rm -rf $(INSTALL_DIR)
-	rm -rf $(SVN_DIR)
-	rm -rf installed
+	rm -rf yaml-cpp $(SOURCE_DIR)
 
-wipe:   clean
-	rm -rf $(SVN_DIR)/build
+wipe: clean
+	rm -rf build
+
+
+
