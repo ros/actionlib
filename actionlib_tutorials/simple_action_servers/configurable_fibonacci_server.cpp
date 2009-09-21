@@ -137,7 +137,7 @@ int main(int argc, char** argv)
     }
     catch(std::string str) 
     {
-      ROS_ERROR(str.c_str());
+      ROS_ERROR("%s",str.c_str());
     }
     return 0;
 }
