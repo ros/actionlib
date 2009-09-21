@@ -99,30 +99,30 @@ def _find_status_by_goal_id(status_array, id):
             return s
     return None
 
-class GoalHandle:
-    def __init__(self, comm_state_machine = None):
+## @brief Client side handle to monitor goal progress.
+##
+## A ClientGoalHandle is a reference counted object that is used to
+## manipulate and monitor the progress of an already dispatched
+## goal. Once all the goal handles go out of scope (or are reset), an
+## ActionClient stops maintaining state for that goal.
+class ClientGoalHandle:
+    ## @brief Internal use only
+    ##
+    ## ClientGoalHandle objects should be created by the action
+    ## client.  You should never need to construct one yourself.
+    def __init__(self, comm_state_machine):
         self.comm_state_machine = comm_state_machine
 
         #print "GH created.  id = %.3f" % self.comm_state_machine.action_goal.goal_id.stamp.to_seconds()
 
-    def reset(self):
-        self.comm_state_machine = None
-
-    def is_expired(self):
-        if not self.comm_state_machine:
-            return True
-        return False
-
+    ## @brief True iff the two ClientGoalHandle's are tracking the same goal
     def __eq__(self, o):
-        if self.is_expired() and o.is_expired():
-            return True
-        if self.is_expired() or o.is_expired():
-            return False
         return self.comm_state_machine == o.comm_state_machine
 
+    ## @brief Sends a cancel message for this specific goal to the ActionServer.
+    ##
+    ## Also transitions the client state to WAITING_FOR_CANCEL_ACK
     def cancel(self):
-        if self.is_expired():
-            rospy.logerr("Calling cancel() on an inactive GoalHandle")
         self.comm_state_machine.mutex.acquire()
         try:
             cancel_msg = GoalID(stamp = rospy.Time(0),
@@ -132,27 +132,48 @@ class GoalHandle:
         finally:
             self.comm_state_machine.mutex.release()
 
+    ## @brief Get the state of this goal's communication state machine from interaction with the server
+    ## 
+    ## Possible States are: WAITING_FOR_GOAL_ACK, PENDING, ACTIVE, WAITING_FOR_RESULT,
+    ##                      WAITING_FOR_CANCEL_ACK, RECALLING, PREEMPTING, DONE
+    ##
+    ## @return The current goal's communication state with the server
     def get_comm_state(self):
         if not self.comm_state_machine:
-            rospy.logerr("Trying to get_comm_state on an inactive GoalHandle.")
+            rospy.logerr("Trying to get_comm_state on an inactive ClientGoalHandle.")
             return CommState.LOST
         return self.comm_state_machine.state
 
+    ## @brief Returns the current status of the goal.
+    ##
+    ## Possible states are listed in the enumeration in the
+    ## actionlib_msgs/GoalStatus message.
+    ##
+    ## @return The current status of the goal.
     def get_goal_status(self):
         if not self.comm_state_machine:
-            rospy.logerr("Trying to get_goal_status on an inactive GoalHandle.")
+            rospy.logerr("Trying to get_goal_status on an inactive ClientGoalHandle.")
             return GoalStatus.PENDING
         return self.comm_state_machine.latest_goal_status.status
 
+    ## @brief Gets the result produced by the action server for this goal.
+    ##
+    ## @return None if no result was receieved.  Otherwise the goal's result as a *Result message.
     def get_result(self):
         if not self.comm_state_machine:
-            rospy.logerr("Trying to get_result on an inactive GoalHandle.")
+            rospy.logerr("Trying to get_result on an inactive ClientGoalHandle.")
             return None
         return self.comm_state_machine.latest_result.result
 
+    ## @brief Gets the terminal state information for this goal.
+    ##
+    ## Possible States Are: RECALLED, REJECTED, PREEMPTED, ABORTED, SUCCEEDED, LOST
+    ## This call only makes sense if CommState==DONE. This will send ROS_WARNs if we're not in DONE
+    ##
+    ## @return The terminal state
     def get_terminal_state(self):
         if not self.comm_state_machine:
-            rospy.logerr("Trying to get_terminal_state on an inactive GoalHandle.")
+            rospy.logerr("Trying to get_terminal_state on an inactive ClientGoalHandle.")
             return GoalStatus.LOST
 
         self.comm_state_machine.mutex.acquire()
@@ -280,8 +301,8 @@ class CommStateMachine:
         self.state = state
 
     ##
-    # @param gh GoalHandle
-    # @param status_array actionlib_msgs/GoalStatusArray
+    ## @param gh ClientGoalHandle
+    ## @param status_array actionlib_msgs/GoalStatusArray
     def update_status(self, status_array):
         self.mutex.acquire()
         try:
@@ -327,7 +348,7 @@ class CommStateMachine:
                        self.action_goal.goal_id.id)
         self.state = state
         if self.transition_cb:
-            self.transition_cb(GoalHandle(self))
+            self.transition_cb(ClientGoalHandle(self))
             
     def _mark_as_lost(self):
         self.latest_goal_status.status = GoalStatus.LOST
@@ -399,7 +420,7 @@ class GoalManager:
 
     ## Sends off a goal and starts tracking its status.
     ##
-    ## @return GoalHandle for the sent goal.
+    ## @return ClientGoalHandle for the sent goal.
     def init_goal(self, goal, transition_cb = None, feedback_cb = None):
         action_goal = self.ActionGoal(header = Header(),
                                       goal_id = self._generate_id(),
@@ -416,7 +437,7 @@ class GoalManager:
 
         self.send_goal_fn(action_goal)
 
-        return GoalHandle(csm)
+        return ClientGoalHandle(csm)
 
 
     # Pulls out the statuses that are still live (creating strong
@@ -457,6 +478,13 @@ class GoalManager:
             status.update_feedback(action_feedback)
 
 class ActionClient:
+    ## @brief Constructs an ActionClient and opens connections to an ActionServer.
+    ##
+    ## @param ns The namespace in which to access the action.  For
+    ## example, the "goal" topic should occur under ns/goal
+    ##
+    ## @param ActionSpec The *Action message type.  The ActionClient
+    ## will grab the other message types from this type.
     def __init__(self, ns, ActionSpec):
         self.ns = ns
 
@@ -481,12 +509,26 @@ class ActionClient:
         rospy.Subscriber(ns + '/result', self.ActionResult, self._result_cb)
         rospy.Subscriber(ns + '/feedback', self.ActionFeedback, self._feedback_cb)
 
-
+    ## @brief Sends a goal to the action server
     ##
-    ## @return GoalHandle for the sent goal.
+    ## @param goal An instance of the *Goal message.
+    ##
+    ## @param transition_cb Callback that gets called on every client
+    ## state transition for the sent goal.  It should take in a
+    ## ClientGoalHandle as an argument.
+    ## 
+    ## @param feedback_cb Callback that gets called every time
+    ## feedback is received for the sent goal.  It should take in an
+    ## instance of the *Feedback message as a parameter.
+    ## 
+    ## @return ClientGoalHandle for the sent goal.
     def send_goal(self, goal, transition_cb = None, feedback_cb = None):
         return self.manager.init_goal(goal, transition_cb, feedback_cb)
 
+    ## @brief Cancels all goals currently running on the action server.
+    ##
+    ## Preempts all goals running on the action server at the point
+    ## that the cancel message is serviced by the action server.
     def cancel_all_goals(self):
         cancel_msg = GoalID(stamp = rospy.Time.from_seconds(0.0),
                             id = rospy.Time.from_seconds(0.0))
