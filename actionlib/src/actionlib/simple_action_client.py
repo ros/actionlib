@@ -224,7 +224,7 @@ class SimpleActionClient:
 
     def _handle_feedback(self, gh, feedback):
         if gh != self.gh:
-            rospy.logerr("Got a feedback callback on a goal handle that we're not tracking.")
+            rospy.logerr("Got a feedback callback on a goal handle that we're not tracking. %s vs %s" % (self.gh.comm_state_machine.action_goal.goal_id.id, gh.comm_state_machine.action_goal.goal_id.id))
             return
         if self.feedback_cb:
             self.feedback_cb(feedback)

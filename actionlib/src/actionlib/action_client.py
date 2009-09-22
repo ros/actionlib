@@ -119,6 +119,11 @@ class ClientGoalHandle:
     def __eq__(self, o):
         return self.comm_state_machine == o.comm_state_machine
 
+    ## @brief True iff the two ClientGoalHandle's are tracking different goals
+    def __ne__(self, o):
+        return not (self.comm_state_machine == o.comm_state_machine)
+        
+
     ## @brief Sends a cancel message for this specific goal to the ActionServer.
     ##
     ## Also transitions the client state to WAITING_FOR_CANCEL_ACK
@@ -295,6 +300,9 @@ class CommStateMachine:
         self.latest_goal_status = GoalStatus(status = GoalStatus.PENDING)
         self.latest_result = None
 
+    def __eq__(self, o):
+        return self.action_goal.goal_id.id == o.action_goal.goal_id.id
+
     def set_state(self, state):
         rospy.logdebug("Transitioning CommState from %s to %s",
                        CommState.to_string(self.state), CommState.to_string(state))
@@ -385,7 +393,7 @@ class CommStateMachine:
             return
 
         if self.feedback_cb:
-            self.feedback_cb(action_feedback.feedback)
+            self.feedback_cb(ClientGoalHandle(self), action_feedback.feedback)
 
 
 class GoalManager:
@@ -411,7 +419,8 @@ class GoalManager:
         global g_goal_id
         id, g_goal_id = g_goal_id, g_goal_id + 1
         now = rospy.Time.now()
-        return GoalID(id = "%s-%i" % (rospy.get_caller_id(), id), stamp = now)
+        return GoalID(id = "%s-%i-%.3f" % \
+                          (rospy.get_caller_id(), id, now.to_seconds()), stamp = now)
 
     def register_send_goal_fn(self, fn):
         self.send_goal_fn = fn
@@ -544,7 +553,7 @@ class ActionClient:
     def wait_for_action_server_to_start(self, timeout = rospy.Duration(0.0)):
         started = False
         timeout_time = rospy.get_rostime() + timeout
-        while rospy.get_rostime() < timeout_time and not rospy.is_shutdown():
+        while not rospy.is_shutdown():
             if self.last_status_msg:
                 server_id = self.last_status_msg._connection_header['callerid']
 
@@ -553,6 +562,9 @@ class ActionClient:
                     started = True
                     break
 
+            if timeout != rospy.Duration(0.0) and rospy.get_time() >= timeout_time:
+                break
+            
             time.sleep(0.01)
                 
         return started
