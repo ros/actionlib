@@ -1,65 +1,48 @@
 MultiChannelMedianFilterDouble5:
-  filter_chain:
-    -
-      name: median_test
-      type: MultiChannelMedianFilterDouble
-      params: {number_of_observations: 5}
-
+  - name: median_test
+    type: MultiChannelMedianFilterDouble
+    params: {number_of_observations: 5}
 MultiChannelMedianFilterFloat5:
-  filter_chain:
-  - 
-    name: median_test
+  - name: median_test
     type: MultiChannelMedianFilterFloat
     params: {number_of_observations: 5}
 
 MultiChannelMeanFilterDouble5:
-  filter_chain:
-    -
-      name: mean_test
-      type: MultiChannelMeanFilterDouble
-      params: {number_of_observations: 5}
+  - name: mean_test
+    type: MultiChannelMeanFilterDouble
+    params: {number_of_observations: 5}
 
 TwoFilters:
-  filter_chain:
-    -
-      name: median_test_unique
-      type: MultiChannelMedianFilterDouble
-      params: {number_of_observations: 5}
-    - 
-      name: median_test2
-      type: MultiChannelMedianFilterDouble
-      params: {number_of_observations: 5}
+  - name: median_test_unique
+    type: MultiChannelMedianFilterDouble
+    params: {number_of_observations: 5}
+  - name: median_test2
+    type: MultiChannelMedianFilterDouble
+    params: {number_of_observations: 5}
 
 TransferFunction:
-  filter_chain:
-    -
-      name: transfer_function
-      type: MultiChannelTransferFunctionFilterDouble
-      params:
-        a: [1.0, -1.760041880343169, 1.182893262037831]
-        b: [0.018098933007514, 0.054296799022543, 0.054296799022543, 0.018098933007514]
+  - name: transfer_function
+    type: MultiChannelTransferFunctionFilterDouble
+    params:
+      a: [1.0, -1.760041880343169, 1.182893262037831]
+      b: [0.018098933007514, 0.054296799022543, 0.054296799022543, 0.018098933007514]
     
 MeanFilterFloat5:
-  filter_chain:
-    - 
-      name: mean_test
-      type: MeanFilterFloat
-      params: {number_of_observations: 5}
+  - name: mean_test
+    type: MeanFilterFloat
+    params: {number_of_observations: 5}
 
 OneIncrements:
-  filter_chain:
   - name: increment1
     type: IncrementFilterInt
 
 TwoIncrements:
-  filter_chain:
   - name: increment1
     type: IncrementFilterInt
   - name: increment2
     type: IncrementFilterInt
 
 ThreeIncrements:
-  filter_chain:
   - name: increment1
     type: IncrementFilterInt
   - name: increment2
@@ -68,7 +51,6 @@ ThreeIncrements:
     type: IncrementFilterInt
 
 TenIncrements:
-  filter_chain:
   - name: increment1
     type: IncrementFilterInt
   - name: increment2
@@ -91,19 +73,16 @@ TenIncrements:
     type: IncrementFilterInt
 
 OneMultiChannelIncrements:
-  filter_chain:
   - name: increment1
     type: IncrementFilterInt
 
 TwoMultiChannelIncrements:
-  filter_chain:
   - name: increment1
     type: IncrementFilterInt
   - name: increment2
     type: IncrementFilterInt
 
 ThreeMultiChannelIncrements:
-  filter_chain:
   - name: increment1
     type: IncrementFilterInt
   - name: increment2
@@ -112,7 +91,6 @@ ThreeMultiChannelIncrements:
     type: IncrementFilterInt
 
 TenMultiChannelIncrements:
-  filter_chain:
   - name: increment1
     type: MultiChannelIncrementFilterInt
   - name: increment2

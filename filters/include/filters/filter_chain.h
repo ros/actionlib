@@ -73,9 +73,12 @@ public:
    */
   bool configure(std::string param_name, ros::NodeHandle node = ros::NodeHandle())
   {
-
     XmlRpc::XmlRpcValue config;
-    if(!node.getParam(param_name + "/filter_chain", config))
+    if(node.getParam(param_name + "/filter_chain", config))
+    {
+      ROS_WARN("Filters should not use filter_chain named list anymore.  Change the source of %s.  For more info see https://code.ros.org/trac/ros-pkg/ticket/2618",param_name.c_str() );
+    }
+    else if(!node.getParam(param_name, config))
     {
       ROS_DEBUG("Could not load the configuration for %s, are you sure it was pushed to the parameter server? Assuming that you meant to leave it empty.", param_name.c_str());
       configured_ = true;
@@ -256,9 +259,12 @@ public:
    */
   bool configure(unsigned int size, std::string param_name, ros::NodeHandle node = ros::NodeHandle())
   {
-
     XmlRpc::XmlRpcValue config;
-    if(!node.getParam(param_name + "/filter_chain", config))
+    if(node.getParam(param_name + "/filter_chain", config))
+    {
+      ROS_WARN("Filters should not use filter_chain named list anymore.  Change the source of %s.  For more info see https://code.ros.org/trac/ros-pkg/ticket/2618",param_name.c_str() );
+    }
+    else if(!node.getParam(param_name, config))
     {
       ROS_ERROR("Could not load the configuration for %s, are you sure it was pushed to the parameter server? Assuming that you meant to leave it blank.", param_name.c_str());
       /********************** Do the allocation *********************/
