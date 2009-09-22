@@ -541,7 +541,7 @@ class ActionClient:
     ## Often, it can take a second for the action server & client to negotiate
     ## a connection, thus, risking the first few goals to be dropped. This call lets
     ## the user wait until the network connection to the server is negotiated
-    def wait_for_action_server_to_start(self, timeout = ros.Duration(0.0)):
+    def wait_for_action_server_to_start(self, timeout = rospy.Duration(0.0)):
         started = False
         timeout_time = rospy.get_rostime() + timeout
         while rospy.get_rostime() < timeout_time and not rospy.is_shutdown():

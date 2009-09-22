@@ -103,6 +103,7 @@ class SimpleActionClient:
 
         timeout_time = rospy.get_rostime() + timeout
         loop_period = rospy.Duration(0.1)
+        self.done_condition.acquire()
         while not rospy.is_shutdown():
             time_left = timeout_time - rospy.get_rostime()
             if timeout > rospy.Duration(0.0) and time_left <= rospy.Duration(0.0):
@@ -115,6 +116,7 @@ class SimpleActionClient:
                 time_left = loop_period
 
             self.done_condition.wait(time_left.to_seconds())
+        self.done_condition.release()
 
         return self.simple_state == SimpleGoalState.DONE
 
@@ -127,7 +129,7 @@ class SimpleActionClient:
 
         comm_state = self.gh.get_comm_state()
         if comm_state in [CommState.WAITING_FOR_GOAL_ACK, CommState.PENDING, CommState.RECALLING]:
-            return SimpleGoalState.PENDING:
+            return SimpleGoalState.PENDING
         elif comm_state in [CommState.ACTIVE, CommState.PREEMPTING]:
             return SimpleGoalState.ACTIVE
         elif comm_state in [CommState.DONE]:
@@ -189,8 +191,8 @@ class SimpleActionClient:
     def _handle_transition(self, gh):
         comm_state = self.gh.get_comm_state()
 
-        error_msg = "Received comm state %s when in simple state %s" %
-        (CommState.to_string(comm_state), SimpleGoalState.to_string(self.simple_state)))
+        error_msg = "Received comm state %s when in simple state %s" % \
+            (CommState.to_string(comm_state), SimpleGoalState.to_string(self.simple_state))
 
         if comm_state == CommState.ACTIVE:
             if self.simple_state == SimpleGoalState.PENDING:
@@ -211,10 +213,12 @@ class SimpleActionClient:
                 rospy.logerr(error_msg)
         elif comm_state == CommState.DONE:
             if self.simple_state in [SimpleGoalState.PENDING, SimpleGoalState.ACTIVE]:
-                self.set_simple_state(SimpleGoalState.DONE)
-                if done_cb:
+                self._set_simple_state(SimpleGoalState.DONE)
+                if self.done_cb:
                     self.done_cb(self.gh.get_terminal_state(), self.gh.get_result())
-                self.done_condition.notify_all()
+                self.done_condition.acquire()
+                self.done_condition.notifyAll()
+                self.done_condition.release()
             elif self.simple_state == SimpleGoalState.DONE:
                 rospy.logerr("SimpleActionClient received DONE twice")
 

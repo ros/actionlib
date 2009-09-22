@@ -110,7 +110,7 @@ public:
    * \brief Sends a goal to the ActionServer, and also registers callbacks
    *
    * If a previous goal is already active when this is called. We simply forget
-   * about that goal and start tracking the new goal. Not cancel requests are made.
+   * about that goal and start tracking the new goal. No cancel requests are made.
    * \param done_cb     Callback that gets called on transitions to Done
    * \param active_cb   Callback that gets called on transitions to Active
    * \param feedback_cb Callback that gets called whenever feedback for this goal is received
@@ -295,7 +295,10 @@ template<class ActionSpec>
 SimpleGoalState SimpleActionClient<ActionSpec>::getGoalState()
 {
   if (gh_.isExpired())
+  {
     ROS_ERROR("Trying to getGoalState() when no goal is running. You are incorrectly using SimpleActionClient");
+    return SimpleGoalState(SimpleGoalState::DONE);
+  }
 
   CommState comm_state_ = gh_.getCommState();
 
@@ -478,7 +481,10 @@ template<class ActionSpec>
 bool SimpleActionClient<ActionSpec>::waitForGoalToFinish(const ros::Duration& timeout )
 {
   if (gh_.isExpired())
+  {
     ROS_ERROR("Trying to waitForGoalToFinish() when no goal is running. You are incorrectly using SimpleActionClient");
+    return false;
+  }
 
   if (timeout < ros::Duration(0,0))
     ROS_WARN("Timeouts can't be negative. Timeout is [%.2fs]", timeout.toSec());
@@ -496,7 +502,7 @@ bool SimpleActionClient<ActionSpec>::waitForGoalToFinish(const ros::Duration& ti
     ros::Duration time_left = timeout_time - ros::Time::now();
 
     // Check if we're past the timeout time
-    if (timeout != ros::Duration(0,0) && time_left <= ros::Duration(0,0) )
+    if (timeout > ros::Duration(0,0) && time_left <= ros::Duration(0,0) )
       break;
 
     if (cur_simple_state_ == SimpleGoalState::DONE)
