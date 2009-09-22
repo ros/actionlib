@@ -170,7 +170,7 @@ class ClientGoalHandle:
     ## Possible States Are: RECALLED, REJECTED, PREEMPTED, ABORTED, SUCCEEDED, LOST
     ## This call only makes sense if CommState==DONE. This will send ROS_WARNs if we're not in DONE
     ##
-    ## @return The terminal state
+    ## @return The terminal state as an integer from the GoalStatus message.
     def get_terminal_state(self):
         if not self.comm_state_machine:
             rospy.logerr("Trying to get_terminal_state on an inactive ClientGoalHandle.")
@@ -487,6 +487,7 @@ class ActionClient:
     ## will grab the other message types from this type.
     def __init__(self, ns, ActionSpec):
         self.ns = ns
+        self.last_status_msg = None
 
         try:
             a = ActionSpec()
@@ -518,8 +519,9 @@ class ActionClient:
     ## ClientGoalHandle as an argument.
     ## 
     ## @param feedback_cb Callback that gets called every time
-    ## feedback is received for the sent goal.  It should take in an
-    ## instance of the *Feedback message as a parameter.
+    ## feedback is received for the sent goal.  It takes two
+    ## parameters: a ClientGoalHandle and an instance of the *Feedback
+    ## message.
     ## 
     ## @return ClientGoalHandle for the sent goal.
     def send_goal(self, goal, transition_cb = None, feedback_cb = None):
@@ -534,7 +536,29 @@ class ActionClient:
                             id = rospy.Time.from_seconds(0.0))
         self.pub_cancel.publish(cancel_msg)
 
+    ## @brief Waits for the ActionServer to connect to this client
+    ##
+    ## Often, it can take a second for the action server & client to negotiate
+    ## a connection, thus, risking the first few goals to be dropped. This call lets
+    ## the user wait until the network connection to the server is negotiated
+    def wait_for_action_server_to_start(self, timeout = ros.Duration(0.0)):
+        started = False
+        timeout_time = rospy.get_rostime() + timeout
+        while rospy.get_rostime() < timeout_time and not rospy.is_shutdown():
+            if self.last_status_msg:
+                server_id = self.last_status_msg._connection_header['callerid']
+
+                if self.pub_goal.impl.has_connection(server_id) and \
+                        self.pub_cancel.impl.has_connection(server_id):
+                    started = True
+                    break
+
+            time.sleep(0.01)
+                
+        return started
+
     def _status_cb(self, msg):
+        self.last_status_msg = msg
         self.manager.update_statuses(msg)
 
     def _result_cb(self, msg):

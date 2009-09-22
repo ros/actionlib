@@ -26,3 +26,4 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 from action_client import *
+from simple_action_client import *
