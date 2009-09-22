@@ -11,6 +11,7 @@ The actionlib package is meant to assist ROS users in writing nodes that accompl
 
   <depend package="roscpp" />
   <depend package="rospy" />
+  <depend package="rostest" />
   <depend package="actionlib_msgs" />
 
   <export>

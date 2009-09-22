@@ -34,5 +34,6 @@ target_link_libraries(simple_client_test ${PROJECT_NAME})
 
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/ref_server_test.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/simple_execute_ref_server_test.launch)
+rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_simple_client.launch)
 
 add_subdirectory(test EXCLUDE_FROM_ALL)
