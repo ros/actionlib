@@ -64,6 +64,16 @@ namespace actionlib {
 
       /**
        * @brief  Constructor for a SimpleActionServer
+       * @param name A name for the action server
+       * @param execute_cb Optional callback that gets called in a separate thread whenever
+       *                   a new goal is received, allowing users to have blocking callbacks.
+       *                   Adding an execute callback also deactivates the goalCallback.
+       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up
+       */
+      SimpleActionServer(std::string name, ExecuteCallback execute_cb = NULL, bool auto_start = true);
+
+      /**
+       * @brief  Constructor for a SimpleActionServer
        * @param n A NodeHandle to create a namespace under
        * @param name A name for the action server
        * @param execute_cb Optional callback that gets called in a separate thread whenever
