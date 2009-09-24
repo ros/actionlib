@@ -9,8 +9,9 @@ These are the most relevant parts of the C++ client side API:
 - \link actionlib::ClientGoalHandle ClientGoalHandle \endlink - Return by ActionClient on each dispacthed goal
 
 And the Python client side API:
-- actionlib::action_client::ActionClient
-- actionlib::action_client::ClientGoalHandle
+- \link actionlib::action_client::ActionClient ActionClient (Python) \endlink
+- \link actionlib::simple_action_client::SimpleActionClient SimpleActionClient (Python) \endlink
+- \link actionlib::action_client::ClientGoalHandle ClientGoalHandle (Python) \endlink
 
 The action client also defines several Enums to pass information to the user
 - actionlib::CommState - Enum defining the communication states of a goal
