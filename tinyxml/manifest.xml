@@ -8,7 +8,7 @@
   <license>ZLib</license>
   <review status="3rdparty" notes=""/>
   <export>
-    <cpp cflags="-I${prefix}/include" lflags="-Wl,-rpath,${prefix} -L${prefix} -ltinyxml"/>
+    <cpp cflags="-I${prefix}/include -DTIXML_USE_STL" lflags="-Wl,-rpath,${prefix} -L${prefix} -ltinyxml"/>
         <doxymaker external="http://www.grinninglizard.com/tinyxml"/>
   </export>
 </package>
