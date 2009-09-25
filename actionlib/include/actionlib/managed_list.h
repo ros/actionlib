@@ -150,6 +150,9 @@ public:
       }
 
       friend class ManagedList;
+      // Need this friend declaration so that iterator::createHandle() can
+      // call the private Handle::Handle() declared below.
+      friend class iterator;
     private:
       Handle( const boost::shared_ptr<void>& handle_tracker, iterator it) :
         it_(it), handle_tracker_(handle_tracker), valid_(true)
