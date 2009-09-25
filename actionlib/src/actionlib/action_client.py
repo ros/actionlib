@@ -562,7 +562,7 @@ class ActionClient:
                     started = True
                     break
 
-            if timeout != rospy.Duration(0.0) and rospy.get_time() >= timeout_time:
+            if timeout != rospy.Duration(0.0) and rospy.get_rostime() >= timeout_time:
                 break
             
             time.sleep(0.01)
