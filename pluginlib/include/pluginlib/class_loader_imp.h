@@ -147,7 +147,7 @@ namespace pluginlib {
   }
 
   template <class T>
-  bool ClassLoader<T>::loadLibraryForClass(const std::string & lookup_name)
+  void ClassLoader<T>::loadLibraryForClass(const std::string & lookup_name)
   {
     std::string library_path;
     ClassMapIterator it = classes_available_.find(lookup_name);
@@ -163,9 +163,9 @@ namespace pluginlib {
       {
         declared_types = declared_types + std::string(" ") + types[i];
       }
-      ROS_ERROR("According to the loaded plugin descriptions the class %s with base class type %s does not exist.  Declared types are %s", 
-                lookup_name.c_str(), base_class_.c_str(), declared_types.c_str() );
-      return false;
+      std::string error_string = "According to the loaded plugin descriptions the class " + lookup_name 
+        + " with base class type " + base_class_ + " does not exist. Declared types are " + declared_types;
+      throw LibraryLoadException(error_string);
     }
     library_path.append(Poco::SharedLibrary::suffix());
     try
@@ -177,15 +177,14 @@ namespace pluginlib {
     }
     catch (Poco::LibraryLoadException &ex)
     {
-      ROS_ERROR("Failed to load library %s Error string: %s", library_path.c_str(), ex.displayText().c_str());
-      return false;
+      std::string error_string = "Failed to load library " + library_path + " Error string: " + ex.displayText();
+      throw LibraryLoadException(error_string);
     }
     catch (Poco::NotFoundException &ex)
     {
-      ROS_ERROR("Failed to find library %s Error string: %s", library_path.c_str(), ex.displayText().c_str());
-      return false;
+      std::string error_string = "Failed to find library " + library_path + " Error string: " + ex.displayText();
+      throw LibraryLoadException(error_string);
     }
-    return true;
   }
 
   template <class T>
@@ -268,19 +267,15 @@ namespace pluginlib {
   template <class T>
   T* ClassLoader<T>::createClassInstance(const std::string& lookup_name, bool auto_load)
   {
-    if ( auto_load && !isClassLoaded(lookup_name))
-      if(!loadLibraryForClass(lookup_name))
-      {
-        ROS_ERROR("Failed to auto load library");
-        throw std::runtime_error("Failed to auto load library for class " + lookup_name + ".");
-      }
+    if(auto_load && !isClassLoaded(lookup_name))
+      loadLibraryForClass(lookup_name);
 
     try{
       return poco_class_loader_.create(getClassType(lookup_name));
     }
     catch(const Poco::RuntimeException& ex){
-      ROS_ERROR("Poco exception: %s (class: %s)", ex.displayText().c_str(), lookup_name.c_str());
-      throw std::runtime_error(ex.what());
+      std::string error_string = "The class " + lookup_name + " could not be loaded. Error: " + ex.displayText();
+      throw CreateClassException(error_string);
     }
   }
 

@@ -47,6 +47,35 @@ namespace fs = boost::filesystem;
 
 namespace pluginlib
 {
+  /**
+   * @class PluginlibException
+   * @brief A base class for all pluginlib exceptions that inherits from std::runtime_exception
+   */
+  class PluginlibException: public std::runtime_error
+  {
+    public:
+      PluginlibException(const std::string error_desc) : std::runtime_error(error_desc) {}
+  };
+
+  /**
+   * @class LibraryLoadException
+   * @brief An exception class thrown when pluginlib is unable to load the library associated with a given plugin
+   */
+  class LibraryLoadException: public PluginlibException
+  {
+    public:
+      LibraryLoadException(const std::string error_desc) : PluginlibException(error_desc) {}
+  };
+
+  /**
+   * @class CreateClassException
+   * @brief An exception class thrown when pluginlib is unable to create the class associated with a given plugin
+   */
+  class CreateClassException: public PluginlibException
+  {
+    public:
+      CreateClassException(const std::string error_desc) : PluginlibException(error_desc) {}
+  };
 
   /**
    * @class ClassLoader
@@ -112,7 +141,8 @@ namespace pluginlib
          * @brief  Creates an instance of a desired class, optionally loading the associated library automatically if necessary
          * @param  lookup_name The name of the class to load
          * @param  auto_load Specifies whether or not to automatically load the library containing the class, set to true by default
-         * @exception std::runtime_error Thrown when the library cannot be loaded or the class cannot be instantiated 
+         * @exception pluginlib::LoadLibraryException Thrown when the library associated with the class cannot be loaded
+         * @exception pluginlib::CreateClassException Thrown when the class cannot be instantiated
          * @return An instance of the class
          */
         T* createClassInstance(const std::string& lookup_name, bool auto_load = true);
@@ -127,9 +157,9 @@ namespace pluginlib
         /**
          * @brief  Attempts to load a class with a given name
          * @param lookup_name The lookup name of the class to load
-         * @return True if the class and its associated library were successfully loaded, false otherwise
+         * @exception pluginlib::LibraryLoadException Thrown if the library for the class cannot be loaded
          */
-        bool loadLibraryForClass(const std::string & lookup_name);
+        void loadLibraryForClass(const std::string & lookup_name);
 
       private:
         /**
