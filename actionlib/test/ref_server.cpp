@@ -37,6 +37,7 @@
 #include <actionlib/server/action_server.h>
 #include <actionlib/TestAction.h>
 #include <ros/ros.h>
+#include <cstdio>
 
 namespace actionlib
 {
