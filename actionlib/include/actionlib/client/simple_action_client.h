@@ -43,7 +43,16 @@
 #include "ros/callback_queue.h"
 #include "actionlib/client/action_client.h"
 #include "actionlib/client/simple_goal_state.h"
+#include "actionlib/client/simple_client_goal_state.h"
 #include "actionlib/client/terminal_state.h"
+
+
+#if defined(__GNUC__)
+#define DEPRECATED __attribute__((deprecated))
+#else
+#define DEPRECATED
+#endif
+
 
 namespace actionlib
 {
@@ -128,9 +137,16 @@ public:
   bool waitForGoalToFinish(const ros::Duration& timeout = ros::Duration(0,0) );
 
   /**
-   * \brief Get the current state of the goal: [PENDING], [ACTIVE], or [DONE]
+   * \brief [DEPRECATED] Get the current state of the goal requested by this SimpleActionClient
+   *
+   * [PENDING], [ACTIVE], or [DONE]
+   *
+   * This is DEPRECATED. Use getState() instead.
+   * \return The terminal state. Prints a ROS_ERROR and returns DONE if there
+   *          is no goal was requested by this SimpleActionClient
+   *
    */
-  SimpleGoalState getGoalState();
+  DEPRECATED SimpleGoalState getGoalState();
 
   /**
    * \brief Get the Result of the current goal
@@ -141,13 +157,24 @@ public:
 
 
   /**
-   * \brief Get the terminal state information for this goal
+   * \brief [Deprecated] Get the terminal state information for this goal
    *
-   * Possible States Are: RECALLED, REJECTED, PREEMPTED, ABORTED, SUCCEEDED, LOST
-   * This call only makes sense if SimpleGoalState==DONE. This will sends ROS_WARNs if we're not in DONE
-   * \return The terminal state
+   * Possible States Are: RECALLED, REJECTED, PREEMPTED, ABORTED, SUCCEEDED, LOST.
+   * This call only makes sense if SimpleGoalState==DONE. This will sends ROS_WARNs if we're not in DONE.
+   * This is DEPRECATED. Use getState() instead.
+   * \return The terminal state. Prints a ROS_ERROR and returns LOST if the
+   *         currentl goal requested by this SimpleActionClient is not in
+   *         a terminal state
    */
-  TerminalState getTerminalState();
+  DEPRECATED TerminalState getTerminalState();
+
+  /**
+   * \brief Get the state information for this goal
+   *
+   * Possible States Are: PENDING, ACTIVE, RECALLED, REJECTED, PREEMPTED, ABORTED, SUCCEEDED, LOST.
+   * \return The goal's state. Returns LOST if this SimpleActionClient isn't tracking a goal.
+   */
+  SimpleClientGoalState getState();
 
   /**
    * \brief Cancel all goals currently running on the action server
@@ -290,6 +317,71 @@ void SimpleActionClient<ActionSpec>::sendGoal(const Goal& goal,
   gh_ = ac_->sendGoal(goal, boost::bind(&SimpleActionClientT::handleTransition, this, _1),
                             boost::bind(&SimpleActionClientT::handleFeedback, this, _1, _2));
 }
+
+template<class ActionSpec>
+SimpleClientGoalState SimpleActionClient<ActionSpec>::getState()
+{
+  if (gh_.isExpired())
+  {
+    ROS_ERROR("Trying to getState() when no goal is running. You are incorrectly using SimpleActionClient");
+    return SimpleClientGoalState(SimpleClientGoalState::LOST);
+  }
+
+  CommState comm_state_ = gh_.getCommState();
+
+  switch( comm_state_.state_)
+  {
+    case CommState::WAITING_FOR_GOAL_ACK:
+    case CommState::PENDING:
+    case CommState::RECALLING:
+      return SimpleClientGoalState(SimpleClientGoalState::PENDING);
+    case CommState::ACTIVE:
+    case CommState::PREEMPTING:
+      return SimpleClientGoalState(SimpleClientGoalState::ACTIVE);
+    case CommState::DONE:
+    {
+      switch(gh_.getTerminalState().state_)
+      {
+        case TerminalState::RECALLED:
+          return SimpleClientGoalState(SimpleClientGoalState::RECALLED);
+        case TerminalState::REJECTED:
+          return SimpleClientGoalState(SimpleClientGoalState::REJECTED);
+        case TerminalState::PREEMPTED:
+          return SimpleClientGoalState(SimpleClientGoalState::PREEMPTED);
+        case TerminalState::ABORTED:
+          return SimpleClientGoalState(SimpleClientGoalState::ABORTED);
+        case TerminalState::SUCCEEDED:
+          return SimpleClientGoalState(SimpleClientGoalState::SUCCEEDED);
+        case TerminalState::LOST:
+          return SimpleClientGoalState(SimpleClientGoalState::LOST);
+        default:
+          ROS_ERROR("Unknown terminal state [%u]. This is a bug in SimpleActionClient", gh_.getTerminalState().state_);
+          return SimpleClientGoalState(SimpleClientGoalState::LOST);
+      }
+    }
+    case CommState::WAITING_FOR_RESULT:
+    case CommState::WAITING_FOR_CANCEL_ACK:
+    {
+      switch (cur_simple_state_.state_)
+      {
+        case SimpleGoalState::PENDING:
+          return SimpleClientGoalState(SimpleClientGoalState::PENDING);
+        case SimpleGoalState::ACTIVE:
+          return SimpleClientGoalState(SimpleClientGoalState::ACTIVE);
+        case SimpleGoalState::DONE:
+          ROS_ERROR("In WAITING_FOR_RESULT or WAITING_FOR_CANCEL_ACK, yet we are in SimpleGoalState DONE. This is a bug in SimpleActionClient");
+          return SimpleClientGoalState(SimpleClientGoalState::LOST);
+        default:
+          ROS_ERROR("Got a SimpleGoalState of [%u]. This is a bug in SimpleActionClient", cur_simple_state_.state_);
+      }
+    }
+    default:
+      break;
+  }
+  ROS_ERROR("Error trying to interpret CommState - %u", comm_state_.state_);
+  return SimpleClientGoalState(SimpleClientGoalState::LOST);
+}
+
 
 template<class ActionSpec>
 SimpleGoalState SimpleActionClient<ActionSpec>::getGoalState()
@@ -520,5 +612,7 @@ bool SimpleActionClient<ActionSpec>::waitForGoalToFinish(const ros::Duration& ti
 
 
 }
+
+#undef DEPRECATED
 
 #endif // ACTIONLIB_SINGLE_GOAL_ACTION_CLIENT_H_

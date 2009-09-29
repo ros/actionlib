@@ -55,15 +55,15 @@ TEST(SimpleClient, easy_tests)
   client.sendGoal(goal);
   finished = client.waitForGoalToFinish(ros::Duration(10.0));
   ASSERT_TRUE(finished);
-  EXPECT_TRUE( client.getTerminalState() == TerminalState::SUCCEEDED)
-      << "Expected [SUCCEEDED], but terminal state is [" << client.getTerminalState().toString() << "]";
+  EXPECT_TRUE( client.getState() == SimpleClientGoalState::SUCCEEDED)
+      << "Expected [SUCCEEDED], but goal state is [" << client.getState().toString() << "]";
 
   goal.goal = 2;
   client.sendGoal(goal);
   finished = client.waitForGoalToFinish(ros::Duration(10.0));
   ASSERT_TRUE(finished);
-  EXPECT_TRUE( client.getTerminalState() == TerminalState::ABORTED)
-      << "Expected [ABORTED], but terminal state is [" << client.getTerminalState().toString() << "]";
+  EXPECT_TRUE( client.getState() == SimpleClientGoalState::ABORTED)
+      << "Expected [ABORTED], but goal state is [" << client.getState().toString() << "]";
 }
 
 void spinThread()

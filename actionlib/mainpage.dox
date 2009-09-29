@@ -3,15 +3,8 @@
 \htmlinclude manifest.html
 
 \section ActionClientAPI ActionClient Code API
-These are the most relevant parts of the C++ client side API:
-- \link actionlib::ActionClient ActionClient \endlink - The main class for using actions on the client side 
-- \link actionlib::SimpleActionClient SimpleActionClient \endlink - A simple wrapper around the ActionClient
-- \link actionlib::ClientGoalHandle ClientGoalHandle \endlink - Return by ActionClient on each dispacthed goal
-
-And the Python client side API:
-- \link actionlib::action_client::ActionClient ActionClient (Python) \endlink
+- \link actionlib::SimpleActionClient SimpleActionClient (C++) \endlink
 - \link actionlib::simple_action_client::SimpleActionClient SimpleActionClient (Python) \endlink
-- \link actionlib::action_client::ClientGoalHandle ClientGoalHandle (Python) \endlink
 
 The action client also defines several Enums to pass information to the user
 - actionlib::CommState - Enum defining the communication states of a goal
@@ -20,11 +13,7 @@ the communication state of the goal. Thus, a more coarse version of \link action
 - actionlib::TerminalState - Enum defining the terminal states of a goal
 
 \section ActionServerAPI ActionServer Code API
-
-These are the most relevant parts of the server side API
-- actionlib::ActionServer
 - actionlib::SimpleActionServer
-- actionlib::ServerGoalHandle
 
 \section protocol Communication Protocol
 The values for the status of a goal are as follows:
