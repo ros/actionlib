@@ -66,6 +66,48 @@ TEST(SimpleClient, easy_tests)
       << "Expected [ABORTED], but goal state is [" << client.getState().toString() << "]";
 }
 
+
+void easyDoneCallback(bool* called, const SimpleClientGoalState& state, const TestResultConstPtr& result)
+{
+  *called = true;
+  EXPECT_TRUE(state == SimpleClientGoalState::SUCCEEDED)
+    << "Expected [SUCCEEDED], but goal state is [" << state.toString() << "]";
+}
+
+void easyOldDoneCallback(bool* called, const TerminalState& terminal_state, const TestResultConstPtr& result)
+{
+  *called = true;
+  EXPECT_TRUE(terminal_state == TerminalState::SUCCEEDED)
+    << "Expected [SUCCEEDED], but terminal state is [" << terminal_state.toString() << "]";
+}
+
+TEST(SimpleClient, easy_callback)
+{
+  ros::NodeHandle n;
+  SimpleActionClient<TestAction> client(n, "reference_action");
+
+  bool started = client.waitForActionServerToStart(ros::Duration(10.0));
+  ASSERT_TRUE(started);
+
+  TestGoal goal;
+  bool finished;
+
+  bool called = false;
+  goal.goal = 1;
+  SimpleActionClient<TestAction>::OldSimpleDoneCallback funcOld = boost::bind(&easyOldDoneCallback, &called, _1, _2);
+  client.sendGoal(goal, funcOld);
+  finished = client.waitForGoalToFinish(ros::Duration(10.0));
+  ASSERT_TRUE(finished);
+  EXPECT_TRUE(called)  << "easyOldDoneCallback() was never called" ;
+
+  called = false;
+  SimpleActionClient<TestAction>::SimpleDoneCallback func = boost::bind(&easyDoneCallback, &called, _1, _2);
+  client.sendGoal(goal, func);
+  finished = client.waitForGoalToFinish(ros::Duration(10.0));
+  ASSERT_TRUE(finished);
+  EXPECT_TRUE(called) << "easyDoneCallback() was never called" ;
+}
+
 void spinThread()
 {
   ros::NodeHandle nh;

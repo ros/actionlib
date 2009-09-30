@@ -73,7 +73,8 @@ private:
   typedef SimpleActionClient<ActionSpec> SimpleActionClientT;
 
 public:
-  typedef boost::function<void (const TerminalState& terminal_state, const ResultConstPtr& result) > SimpleDoneCallback;
+  typedef boost::function<void (const TerminalState& terminal_state, const ResultConstPtr& result) > OldSimpleDoneCallback;
+  typedef boost::function<void (const SimpleClientGoalState& state,  const ResultConstPtr& result) > SimpleDoneCallback;
   typedef boost::function<void () > SimpleActiveCallback;
   typedef boost::function<void (const FeedbackConstPtr& feedback) > SimpleFeedbackCallback;
 
@@ -114,6 +115,21 @@ public:
    * \return True if the server connected in the allocated time. False on timeout
    */
   bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0) ) { return ac_->waitForActionServerToStart(timeout); }
+
+  /**
+   * \brief Sends a goal to the ActionServer, and also registers callbacks
+   *
+   * If a previous goal is already active when this is called. We simply forget
+   * about that goal and start tracking the new goal. No cancel requests are made.
+   * This method is DEPRECATED.
+   * \param done_cb     Callback that gets called on transitions to Done
+   * \param active_cb   Callback that gets called on transitions to Active
+   * \param feedback_cb Callback that gets called whenever feedback for this goal is received
+   */
+  DEPRECATED void sendGoal(const Goal& goal,
+                           OldSimpleDoneCallback  done_cb,
+                           SimpleActiveCallback   active_cb   = SimpleActiveCallback(),
+                           SimpleFeedbackCallback feedback_cb = SimpleFeedbackCallback());
 
   /**
    * \brief Sends a goal to the ActionServer, and also registers callbacks
@@ -216,6 +232,7 @@ private:
   boost::mutex done_mutex_;
 
   // User Callbacks
+  OldSimpleDoneCallback old_done_cb_;   // Deprecated
   SimpleDoneCallback done_cb_;
   SimpleActiveCallback active_cb_;
   SimpleFeedbackCallback feedback_cb_;
@@ -299,6 +316,28 @@ void SimpleActionClient<ActionSpec>::setSimpleState(const SimpleGoalState& next_
 
 template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::sendGoal(const Goal& goal,
+                                              OldSimpleDoneCallback  old_done_cb,
+                                              SimpleActiveCallback   active_cb,
+                                              SimpleFeedbackCallback feedback_cb)
+{
+  // Reset the old GoalHandle, so that our callbacks won't get called anymore
+  gh_.reset();
+
+  // Store all the callbacks
+  old_done_cb_ = old_done_cb;
+  done_cb_     = SimpleDoneCallback();
+  active_cb_   = active_cb;
+  feedback_cb_ = feedback_cb;
+
+  cur_simple_state_ = SimpleGoalState::PENDING;
+
+  // Send the goal to the ActionServer
+  gh_ = ac_->sendGoal(goal, boost::bind(&SimpleActionClientT::handleTransition, this, _1),
+                            boost::bind(&SimpleActionClientT::handleFeedback, this, _1, _2));
+}
+
+template<class ActionSpec>
+void SimpleActionClient<ActionSpec>::sendGoal(const Goal& goal,
                                               SimpleDoneCallback     done_cb,
                                               SimpleActiveCallback   active_cb,
                                               SimpleFeedbackCallback feedback_cb)
@@ -307,6 +346,7 @@ void SimpleActionClient<ActionSpec>::sendGoal(const Goal& goal,
   gh_.reset();
 
   // Store all the callbacks
+  old_done_cb_ = OldSimpleDoneCallback(); // Done register an old version of the done callback
   done_cb_     = done_cb;
   active_cb_   = active_cb;
   feedback_cb_ = feedback_cb;
@@ -550,8 +590,11 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
           setSimpleState(SimpleGoalState::DONE);
           done_mutex_.unlock();
 
+          if (old_done_cb_)
+            old_done_cb_(gh.getTerminalState(), gh.getResult());
+
           if (done_cb_)
-            done_cb_(gh.getTerminalState(), gh.getResult());
+            done_cb_(getState(), gh.getResult());
 
           done_condition_.notify_all();
           break;

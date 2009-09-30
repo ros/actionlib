@@ -6,12 +6,6 @@
 - \link actionlib::SimpleActionClient SimpleActionClient (C++) \endlink
 - \link actionlib::simple_action_client::SimpleActionClient SimpleActionClient (Python) \endlink
 
-The action client also defines several Enums to pass information to the user
-- actionlib::CommState - Enum defining the communication states of a goal
-- actionlib::SimpleGoalState - Enum with a simpler representation of
-the communication state of the goal. Thus, a more coarse version of \link actionlib::CommState CommState \endlink
-- actionlib::TerminalState - Enum defining the terminal states of a goal
-
 \section ActionServerAPI ActionServer Code API
 - actionlib::SimpleActionServer
 
