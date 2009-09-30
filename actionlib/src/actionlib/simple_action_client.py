@@ -75,7 +75,8 @@ class SimpleActionClient:
     ##
     ## @param done_cb Callback that gets called on transitions to
     ## Done.  The callback should take two parameters: the terminal
-    ## state and the result.
+    ## state (as an integer from actionlib_msgs/GoalStatus) and the
+    ## result.
     ##
     ## @param active_cb   No-parameter callback that gets called on transitions to Active.
     ##
@@ -121,8 +122,11 @@ class SimpleActionClient:
         return self.simple_state == SimpleGoalState.DONE
 
 
-    ## @brief Gets the current state of the goal: [PENDING], [ACTIVE], or [DONE]
+    ## @brief [Deprecated] Gets the current state of the goal: [PENDING], [ACTIVE], or [DONE]
+    ##
+    ## Deprecated.  Use get_state instead
     def get_goal_state(self):
+        rospy.logwarn("SimpleActionClient.get_goal_state has been deprecated")
         if not self.gh:
             rospy.logerr("Called get_goal_state when no goal is running")
             return SimpleGoalState.DONE
@@ -150,7 +154,9 @@ class SimpleActionClient:
         return self.gh.get_result()
 
 
-    ## @brief Get the terminal state information for this goal
+    ## @brief [Deprecated] Get the terminal state information for this goal
+    ##
+    ## Deprecated.  Use get_state instead.
     ## 
     ## Possible States Are: RECALLED, REJECTED, PREEMPTED, ABORTED,
     ## SUCCEEDED, LOST.  This call only makes sense if
@@ -159,10 +165,32 @@ class SimpleActionClient:
     ##
     ## @return The terminal state
     def get_terminal_state(self):
+        rospy.logwarn("SimpleactionClient.get_terminal_state has been deprecated")
         if not self.gh:
             rospy.logerr("Called get_terminal_state when no goal is running")
             return GoalStatus.LOST
         return self.gh.get_terminal_state()
+
+    
+    ## @brief Get the state information for this goal
+    ##
+    ## Possible States Are: PENDING, ACTIVE, RECALLED, REJECTED,
+    ## PREEMPTED, ABORTED, SUCCEEDED, LOST.
+    ##
+    ## @return The goal's state. Returns LOST if this
+    ## SimpleActionClient isn't tracking a goal.
+    def get_state(self):
+        if not self.gh:
+            rospy.logerr("Called get_state when no goal is running")
+            return GoalStatus.LOST
+        status = gh.get_goal_status()
+        
+        if status == GoalStatus.RECALLING:
+            status = GoalStatus.PENDING
+        elif status == GoalStatus.PREEMPTING:
+            status = GoalStatus.ACTIVE
+
+        return status
 
 
 
@@ -215,7 +243,7 @@ class SimpleActionClient:
             if self.simple_state in [SimpleGoalState.PENDING, SimpleGoalState.ACTIVE]:
                 self._set_simple_state(SimpleGoalState.DONE)
                 if self.done_cb:
-                    self.done_cb(self.gh.get_terminal_state(), self.gh.get_result())
+                    self.done_cb(self.gh.get_goal_status(), self.gh.get_result())
                 self.done_condition.acquire()
                 self.done_condition.notifyAll()
                 self.done_condition.release()
