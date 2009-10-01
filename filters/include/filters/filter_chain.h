@@ -76,7 +76,8 @@ public:
     XmlRpc::XmlRpcValue config;
     if(node.getParam(param_name + "/filter_chain", config))
     {
-      ROS_WARN("Filters should not use filter_chain named list anymore.  Change the source of %s.  For more info see https://code.ros.org/trac/ros-pkg/ticket/2618",param_name.c_str() );
+      std::string resolved_name = node.resolveName(param_name).c_str();
+      ROS_WARN("Filter chains no longer check implicit nested 'filter_chain' parameter.  This node is configured to look directly at '%s'.  Please move your chain description from '%s/filter_chain' to '%s'", resolved_name.c_str(), resolved_name.c_str(), resolved_name.c_str());
     }
     else if(!node.getParam(param_name, config))
     {
@@ -262,7 +263,8 @@ public:
     XmlRpc::XmlRpcValue config;
     if(node.getParam(param_name + "/filter_chain", config))
     {
-      ROS_WARN("Filters should not use filter_chain named list anymore.  Change the source of %s.  For more info see https://code.ros.org/trac/ros-pkg/ticket/2618",param_name.c_str() );
+      std::string resolved_name = node.resolveName(param_name).c_str();
+      ROS_WARN("Filter chains no longer check implicit nested 'filter_chain' parameter.  This node is configured to look directly at '%s'.  Please move your chain description from '%s/filter_chain' to '%s'", resolved_name.c_str(), resolved_name.c_str(), resolved_name.c_str());
     }
     else if(!node.getParam(param_name, config))
     {
