@@ -126,7 +126,11 @@ namespace pluginlib {
 
             // register class here
             TiXmlElement* description = class_element->FirstChildElement("description");
-            std::string description_str = description ? description->GetText() : "";
+            std::string description_str;
+            if (description)
+              description_str = description->GetText() ? description->GetText() : "";
+            else
+              description_str = "No 'description' tag for this plugin in plugin description file.";
 
             classes_available_.insert(std::pair<std::string, ClassDesc>(lookup_name, ClassDesc(lookup_name, derived_class, base_class_type, package_name, description_str, full_library_path.string())));
             ROS_DEBUG("MATCHED Base type for class with name: %s type: %s base_class_type: %s Expecting base_class_type %s", 
