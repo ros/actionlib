@@ -1,5 +1,7 @@
 <package>
   <description brief="A YAML Parsing library for C++">
+    This package is deprecated.  Use yaml_cpp.  It is identical, but follows package naming conventions.
+
     yaml-cpp is a YAML parser and emitter in C++ written around the YAML 1.2 spec. It's based on (but not a wrapper to) the C library libyaml.
 
     This is version 0.2.2 of yaml-cpp.  We plan to track the latest release assuming backwards compatability. 
