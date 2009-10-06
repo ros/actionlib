@@ -60,13 +60,13 @@ void ConnectionMonitor::goalConnectCallback(const ros::SingleSubscriberPublisher
   boost::recursive_mutex::scoped_lock lock(data_mutex_);
 
   // Check if it's not in the list
-  if (goalSubscribers_.find(pub.getSubscriberName()) == goalSubscribers_.end())
+  if (goalSubscribers_.find(pub.getSubscriberCallerID()) == goalSubscribers_.end())
   {
-    CONNECTION_DEBUG("goalConnectCallback: Adding [%s] to goalSubscribers", pub.getSubscriberName().c_str());
-    goalSubscribers_.insert(pub.getSubscriberName());
+    CONNECTION_DEBUG("goalConnectCallback: Adding [%s] to goalSubscribers", pub.getSubscriberCallerID().c_str());
+    goalSubscribers_.insert(pub.getSubscriberCallerID());
   }
   else
-    CONNECTION_WARN("goalConnectCallback: Trying to add [%s] to goalSubscribers, but it is already in the goalSubscribers list", pub.getSubscriberName().c_str());
+    CONNECTION_WARN("goalConnectCallback: Trying to add [%s] to goalSubscribers, but it is already in the goalSubscribers list", pub.getSubscriberCallerID().c_str());
   CONNECTION_DEBUG("%s", goalSubscribersString().c_str());
 
   check_connection_condition_.notify_all();
@@ -77,13 +77,13 @@ void ConnectionMonitor::goalDisconnectCallback(const ros::SingleSubscriberPublis
   boost::recursive_mutex::scoped_lock lock(data_mutex_);
 
   set<string>::iterator it;
-  it = goalSubscribers_.find(pub.getSubscriberName());
+  it = goalSubscribers_.find(pub.getSubscriberCallerID());
 
   if (it == goalSubscribers_.end())
-    CONNECTION_WARN("goalDisconnectCallback: Trying to remove [%s] to goalSubscribers, but it is not in the goalSubscribers list", pub.getSubscriberName().c_str());
+    CONNECTION_WARN("goalDisconnectCallback: Trying to remove [%s] to goalSubscribers, but it is not in the goalSubscribers list", pub.getSubscriberCallerID().c_str());
   else
   {
-    CONNECTION_DEBUG("goalDisconnectCallback: Removing [%s] from goalSubscribers", pub.getSubscriberName().c_str());
+    CONNECTION_DEBUG("goalDisconnectCallback: Removing [%s] from goalSubscribers", pub.getSubscriberCallerID().c_str());
     goalSubscribers_.erase(it);
   }
   CONNECTION_DEBUG("%s", goalSubscribersString().c_str());
@@ -106,13 +106,13 @@ void ConnectionMonitor::cancelConnectCallback(const ros::SingleSubscriberPublish
   boost::recursive_mutex::scoped_lock lock(data_mutex_);
 
   // Check if it's not in the list
-  if (cancelSubscribers_.find(pub.getSubscriberName()) == cancelSubscribers_.end())
+  if (cancelSubscribers_.find(pub.getSubscriberCallerID()) == cancelSubscribers_.end())
   {
-    CONNECTION_DEBUG("cancelConnectCallback: Adding [%s] to cancelSubscribers", pub.getSubscriberName().c_str());
-    cancelSubscribers_.insert(pub.getSubscriberName());
+    CONNECTION_DEBUG("cancelConnectCallback: Adding [%s] to cancelSubscribers", pub.getSubscriberCallerID().c_str());
+    cancelSubscribers_.insert(pub.getSubscriberCallerID());
   }
   else
-    CONNECTION_WARN("cancelConnectCallback: Trying to add [%s] to cancelSubscribers, but it is already in the cancelSubscribers list", pub.getSubscriberName().c_str());
+    CONNECTION_WARN("cancelConnectCallback: Trying to add [%s] to cancelSubscribers, but it is already in the cancelSubscribers list", pub.getSubscriberCallerID().c_str());
   CONNECTION_DEBUG("%s", cancelSubscribersString().c_str());
 
   check_connection_condition_.notify_all();
@@ -123,13 +123,13 @@ void ConnectionMonitor::cancelDisconnectCallback(const ros::SingleSubscriberPubl
   boost::recursive_mutex::scoped_lock lock(data_mutex_);
 
   set<string>::iterator it;
-  it = cancelSubscribers_.find(pub.getSubscriberName());
+  it = cancelSubscribers_.find(pub.getSubscriberCallerID());
 
   if (it == cancelSubscribers_.end())
-    CONNECTION_WARN("cancelDisconnectCallback: Trying to remove [%s] to cancelSubscribers, but it is not in the cancelSubscribers list", pub.getSubscriberName().c_str());
+    CONNECTION_WARN("cancelDisconnectCallback: Trying to remove [%s] to cancelSubscribers, but it is not in the cancelSubscribers list", pub.getSubscriberCallerID().c_str());
   else
   {
-    CONNECTION_DEBUG("cancelDisconnectCallback: Removing [%s] from cancelSubscribers", pub.getSubscriberName().c_str());
+    CONNECTION_DEBUG("cancelDisconnectCallback: Removing [%s] from cancelSubscribers", pub.getSubscriberCallerID().c_str());
     cancelSubscribers_.erase(it);
   }
   CONNECTION_DEBUG("%s", cancelSubscribersString().c_str());
