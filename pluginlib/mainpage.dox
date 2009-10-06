@@ -6,6 +6,6 @@
 ROS build structure. Relevant documentation within the pluginlib package can be
 found below:
 
-- pluginlib::PluginLoader : A useful tool for managing and loading plugins declared in ROS manifests
+- pluginlib::ClassLoader : A useful tool for managing and loading plugins declared in ROS manifests
 
 */
