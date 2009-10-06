@@ -110,11 +110,29 @@ public:
   ~SimpleActionClient();
 
   /**
-   * \brief Blocks until the action server connects to this client
+   * \brief Waits for the ActionServer to connect to this client
+   *
+   * [DEPRECATED] Often, it can take a second for the action server & client to negotiate
+   * a connection, thus, risking the first few goals to be dropped. This call lets
+   * the user wait until the network connection to the server is negotiated
+   *
+   * This call is deprecated, and has been replaced by waitForServer
+   *
    * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
    * \return True if the server connected in the allocated time. False on timeout
    */
-  bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0) ) { return ac_->waitForActionServerToStart(timeout); }
+   __attribute__((deprecated)) bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0) ) { return ac_->waitForActionServerToStart(timeout); }
+
+  /**
+   * \brief Waits for the ActionServer to connect to this client
+   *
+   * Often, it can take a second for the action server & client to negotiate
+   * a connection, thus, risking the first few goals to be dropped. This call lets
+   * the user wait until the network connection to the server is negotiated
+   * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
+   * \return True if the server connected in the allocated time. False on timeout
+   */
+  bool waitForServer(const ros::Duration& timeout = ros::Duration(0,0) ) { return ac_->waitForActionServerToStart(timeout); }
 
   /**
    * \brief Sends a goal to the ActionServer, and also registers callbacks
@@ -146,11 +164,21 @@ public:
                 SimpleFeedbackCallback feedback_cb = SimpleFeedbackCallback());
 
   /**
-   * \brief Blocks until this goal transitions to done
+   * \brief Blocks until this goal finishes
+   *
+   * [DEPRECATED] Replaced by waitForResult
+   *
    * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
    * \return True if the goal finished. False if the goal didn't finish within the allocated timeout
    */
-  bool waitForGoalToFinish(const ros::Duration& timeout = ros::Duration(0,0) );
+  __attribute__((deprecated)) bool waitForGoalToFinish(const ros::Duration& timeout = ros::Duration(0,0) );
+
+  /**
+   * \brief Blocks until this goal finishes
+   * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
+   * \return True if the goal finished. False if the goal didn't finish within the allocated timeout
+   */
+  bool waitForResult(const ros::Duration& timeout = ros::Duration(0,0) );
 
   /**
    * \brief [DEPRECATED] Get the current state of the goal requested by this SimpleActionClient
@@ -614,6 +642,12 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
 
 template<class ActionSpec>
 bool SimpleActionClient<ActionSpec>::waitForGoalToFinish(const ros::Duration& timeout )
+{
+  return waitForResult(timeout);
+}
+
+template<class ActionSpec>
+bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration& timeout )
 {
   if (gh_.isExpired())
   {

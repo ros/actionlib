@@ -45,7 +45,7 @@ TEST(SimpleClient, easy_tests)
   ros::NodeHandle n;
   SimpleActionClient<TestAction> client(n, "reference_action");
 
-  bool started = client.waitForActionServerToStart(ros::Duration(10.0));
+  bool started = client.waitForServer(ros::Duration(10.0));
   ASSERT_TRUE(started);
 
   TestGoal goal;
@@ -53,14 +53,14 @@ TEST(SimpleClient, easy_tests)
 
   goal.goal = 1;
   client.sendGoal(goal);
-  finished = client.waitForGoalToFinish(ros::Duration(10.0));
+  finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);
   EXPECT_TRUE( client.getState() == SimpleClientGoalState::SUCCEEDED)
       << "Expected [SUCCEEDED], but goal state is [" << client.getState().toString() << "]";
 
   goal.goal = 2;
   client.sendGoal(goal);
-  finished = client.waitForGoalToFinish(ros::Duration(10.0));
+  finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);
   EXPECT_TRUE( client.getState() == SimpleClientGoalState::ABORTED)
       << "Expected [ABORTED], but goal state is [" << client.getState().toString() << "]";
@@ -86,7 +86,7 @@ TEST(SimpleClient, easy_callback)
   ros::NodeHandle n;
   SimpleActionClient<TestAction> client(n, "reference_action");
 
-  bool started = client.waitForActionServerToStart(ros::Duration(10.0));
+  bool started = client.waitForServer(ros::Duration(10.0));
   ASSERT_TRUE(started);
 
   TestGoal goal;
@@ -96,14 +96,14 @@ TEST(SimpleClient, easy_callback)
   goal.goal = 1;
   SimpleActionClient<TestAction>::OldSimpleDoneCallback funcOld = boost::bind(&easyOldDoneCallback, &called, _1, _2);
   client.sendGoal(goal, funcOld);
-  finished = client.waitForGoalToFinish(ros::Duration(10.0));
+  finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);
   EXPECT_TRUE(called)  << "easyOldDoneCallback() was never called" ;
 
   called = false;
   SimpleActionClient<TestAction>::SimpleDoneCallback func = boost::bind(&easyDoneCallback, &called, _1, _2);
   client.sendGoal(goal, func);
-  finished = client.waitForGoalToFinish(ros::Duration(10.0));
+  finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);
   EXPECT_TRUE(called) << "easyDoneCallback() was never called" ;
 }
