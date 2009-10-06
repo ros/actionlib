@@ -545,12 +545,16 @@ class ActionClient:
                             id = rospy.Time.from_seconds(0.0))
         self.pub_cancel.publish(cancel_msg)
 
+    ## @brief [Deprecated] Use wait_for_server
+    def wait_for_action_server_to_start(self, timeout = rospy.Duration(0.0)):
+        return self.wait_for_server(timeout)
+
     ## @brief Waits for the ActionServer to connect to this client
     ##
     ## Often, it can take a second for the action server & client to negotiate
     ## a connection, thus, risking the first few goals to be dropped. This call lets
     ## the user wait until the network connection to the server is negotiated
-    def wait_for_action_server_to_start(self, timeout = rospy.Duration(0.0)):
+    def wait_for_server(self, timeout = rospy.Duration(0.0)):
         started = False
         timeout_time = rospy.get_rostime() + timeout
         while not rospy.is_shutdown():

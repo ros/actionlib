@@ -58,14 +58,18 @@ class SimpleActionClient:
         self.done_condition = threading.Condition()
 
         
+    ## @brief [Deprecated] Use wait_for_server
+    def wait_for_action_server_to_start(self, timeout = rospy.Duration()):
+        return self.wait_for_server(timeout)
+
     ## @brief Blocks until the action server connects to this client
     ##
     ## @param timeout Max time to block before returning. A zero
     ## timeout is interpreted as an infinite timeout.
     ##
     ## @return True if the server connected in the allocated time. False on timeout
-    def wait_for_action_server_to_start(self, timeout = rospy.Duration()):
-        return self.action_client.wait_for_action_server_to_start(timeout)
+    def wait_for_server(self, timeout = rospy.Duration()):
+        return self.action_client.wait_for_server(timeout)
 
 
     ## @brief Sends a goal to the ActionServer, and also registers callbacks
@@ -93,11 +97,15 @@ class SimpleActionClient:
         self.simple_state = SimpleGoalState.PENDING
         self.gh = self.action_client.send_goal(goal, self._handle_transition, self._handle_feedback)
 
+    
+    ## @brief [Deprecated] Use wait_for_result
+    def wait_for_goal_to_finish(self, timeout = rospy.Duration()):
+        return self.wait_for_result(timeout)
 
     ## @brief Blocks until this goal transitions to done
     ## @param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
     ## @return True if the goal finished. False if the goal didn't finish within the allocated timeout
-    def wait_for_goal_to_finish(self, timeout = rospy.Duration()):
+    def wait_for_result(self, timeout = rospy.Duration()):
         if not self.gh:
             rospy.logerr("Called wait_for_goal_to_finish when no goal exists")
             return False
