@@ -7,7 +7,7 @@ Pluginlib includes parts of Poco from pocoproject.org
   </description>
   <author>Tully Foote and Eitan Marder-Eppstein</author>
   <license>BSD, Boost Software License (Poco)</license>
-  <review status="experimental" notes=""/>
+  <review status="doc reviewed" notes="http://www.ros.org/wiki/pluginlib/Reviews/2009-10-06_Doc_Review"/>
   <url>http://ros.org/wiki/pluginlib</url>
 
   <depend package="roslib"/>
