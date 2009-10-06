@@ -94,13 +94,6 @@ TEST(SimpleClient, easy_callback)
 
   bool called = false;
   goal.goal = 1;
-  SimpleActionClient<TestAction>::OldSimpleDoneCallback funcOld = boost::bind(&easyOldDoneCallback, &called, _1, _2);
-  client.sendGoal(goal, funcOld);
-  finished = client.waitForResult(ros::Duration(10.0));
-  ASSERT_TRUE(finished);
-  EXPECT_TRUE(called)  << "easyOldDoneCallback() was never called" ;
-
-  called = false;
   SimpleActionClient<TestAction>::SimpleDoneCallback func = boost::bind(&easyDoneCallback, &called, _1, _2);
   client.sendGoal(goal, func);
   finished = client.waitForResult(ros::Duration(10.0));
