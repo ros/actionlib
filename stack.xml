@@ -6,7 +6,7 @@
   </description>
   <author>Maintained by Tully Foote tfoote@willowgarage.com</author>
   <license>BSD</license>
-  <review status="unreviewed" notes=""/>
+  <review status="doc reviewed" notes="2009-10-07"/>
   <url>http://ros.org/wiki/common</url>
 
   <depend stack="ros"/> <!-- rosconsole, rospy, roslaunch, rostest, roscpp, std_msgs, rostopic--> 
