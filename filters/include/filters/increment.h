@@ -37,9 +37,6 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "filters/filter_base.h"
-#include "ros/assert.h"
-
-#include "filters/realtime_circular_buffer.h"
 
 namespace filters
 {
