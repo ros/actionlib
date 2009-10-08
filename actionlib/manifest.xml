@@ -1,8 +1,9 @@
 <package>
-  <description brief="actionlib">
-
-The actionlib package is meant to assist ROS users in writing nodes that accomplish specific tasks. Examples of this include: moving the base to a target location, taking a laser scan with parameters that are passed in and returning the resulting point cloud, detecting the handle of a door, etc.
-
+  <description brief="Provides a standardized interface for a task">
+    The actionlib package provides a standardized interface for interfacing
+    with preemptible tasks. Examples of this include moving the base to a target
+    location, performing a laser scan and returning the resulting point cloud,
+    detecting the handle of a door, etc.
   </description>
   <author>Eitan Marder-Eppstein, Vijay Pradeep</author>
   <license>BSD</license>
@@ -17,7 +18,7 @@ The actionlib package is meant to assist ROS users in writing nodes that accompl
   <export>
     <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -lactionlib"/>
   </export>
-    
+
 </package>
 
 
