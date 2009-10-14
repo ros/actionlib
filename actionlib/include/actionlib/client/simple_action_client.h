@@ -120,7 +120,7 @@ public:
    * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
    * \return True if the server connected in the allocated time. False on timeout
    */
-   __attribute__((deprecated)) bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0) ) { return ac_->waitForActionServerToStart(timeout); }
+   DEPRECATED bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0) ) { return ac_->waitForActionServerToStart(timeout); }
 
   /**
    * \brief Waits for the ActionServer to connect to this client
@@ -155,7 +155,7 @@ public:
    * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
    * \return True if the goal finished. False if the goal didn't finish within the allocated timeout
    */
-  __attribute__((deprecated)) bool waitForGoalToFinish(const ros::Duration& timeout = ros::Duration(0,0) );
+  DEPRECATED bool waitForGoalToFinish(const ros::Duration& timeout = ros::Duration(0,0) );
 
   /**
    * \brief Blocks until this goal finishes
