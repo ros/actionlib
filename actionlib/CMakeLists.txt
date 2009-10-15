@@ -32,6 +32,11 @@ rosbuild_add_executable(simple_client_test test/simple_client_test.cpp)
 rosbuild_add_gtest_build_flags(simple_client_test)
 target_link_libraries(simple_client_test ${PROJECT_NAME})
 
+rosbuild_add_executable(simple_client_wait_test test/simple_client_wait_test.cpp)
+rosbuild_add_gtest_build_flags(simple_client_wait_test)
+target_link_libraries(simple_client_wait_test ${PROJECT_NAME})
+
+
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/ref_server_test.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/simple_execute_ref_server_test.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_simple_client.launch)

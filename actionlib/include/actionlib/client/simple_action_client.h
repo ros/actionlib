@@ -148,6 +148,21 @@ public:
                 SimpleFeedbackCallback feedback_cb = SimpleFeedbackCallback());
 
   /**
+   * \brief Sends a goal to the ActionServer, and waits until the goal completes or a timeout is exceeded
+   *
+   * If the goal doesn't complete by the execute_timeout, then a preempt message is sent. This call
+   * then waits up to the preempt_timeout for the goal to then finish.
+   *
+   * \param goal             The goal to be sent to the ActionServer
+   * \param execute_timeout  Time to wait until a preempt is sent. 0 implies wait forever
+   * \param preempt_timeout  Time to wait after a preempt is sent. 0 implies wait forever
+   * \return The state of the goal when this call is completed
+   */
+  SimpleClientGoalState sendGoalAndWait(const Goal& goal,
+                                        const ros::Duration& execute_timeout = ros::Duration(0,0),
+                                        const ros::Duration& preempt_timeout = ros::Duration(0,0));
+
+  /**
    * \brief Blocks until this goal finishes
    *
    * [DEPRECATED] Replaced by waitForResult
@@ -644,6 +659,32 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration& timeout 
   return (cur_simple_state_ == SimpleGoalState::DONE);
 }
 
+template<class ActionSpec>
+SimpleClientGoalState SimpleActionClient<ActionSpec>::sendGoalAndWait(const Goal& goal,
+                                                                      const ros::Duration& execute_timeout,
+                                                                      const ros::Duration& preempt_timeout)
+{
+  sendGoal(goal);
+
+  // See if the goal finishes in time
+  if (waitForResult(execute_timeout))
+  {
+    ROS_DEBUG("Goal finished within specified execute_timeout [%.2f]", execute_timeout.toSec());
+    return getState();
+  }
+
+  ROS_DEBUG("Goal finished within specified execute_timeout [%.2f]", execute_timeout.toSec());
+
+  // It didn't finish in time, so we need to preempt it
+  cancelGoal();
+
+  // Now wait again and see if it finishes
+  if (waitForResult(preempt_timeout))
+    ROS_DEBUG("Preempt finished within specified preempt_timeout [%.2f]", preempt_timeout.toSec());
+  else
+    ROS_DEBUG("Preempt didn't finish specified preempt_timeout [%.2f]", preempt_timeout.toSec());
+  return getState();
+}
 
 }
 

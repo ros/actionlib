@@ -66,14 +66,33 @@ SimpleExecuteRefServer::SimpleExecuteRefServer() : as_(nh_, "reference_action", 
 
 void SimpleExecuteRefServer::executeCallback(const TestGoalConstPtr& goal)
 {
+  ROS_DEBUG("Got a goal of type [%u]", goal->goal);
   switch (goal->goal)
   {
     case 1:
+      ROS_DEBUG("Got goal #1");
       as_.setSucceeded();
       break;
     case 2:
+      ROS_DEBUG("Got goal #2");
       as_.setAborted();
       break;
+    case 4:
+    {
+      ROS_DEBUG("Got goal #4");
+      ros::Duration sleep_dur(.1);
+      for (unsigned int i=0; i<100; i++)
+      {
+        sleep_dur.sleep();
+        if (as_.isPreemptRequested())
+        {
+          as_.setPreempted();
+          return;
+        }
+      }
+      as_.setAborted();
+      break;
+    }
     default:
       break;
   }
