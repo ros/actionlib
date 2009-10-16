@@ -356,9 +356,6 @@ protected:
 template <typename T>
 class MultiChannelFilterBase : public FilterBase<T>
 {
-  using FilterBase<T>::configured_;
-  using FilterBase<T>::filter_type_;
-  using FilterBase<T>::filter_name_;
 public:
   MultiChannelFilterBase():number_of_channels_(0){};
   
@@ -428,6 +425,10 @@ public:
 
 
 protected:
+  using FilterBase<T>::configured_;
+  using FilterBase<T>::filter_type_;
+  using FilterBase<T>::filter_name_;
+
   /// How many parallel inputs for which the filter is to be configured
   unsigned int number_of_channels_;
   
