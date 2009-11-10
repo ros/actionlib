@@ -165,6 +165,11 @@ namespace actionlib {
        */
       void start();
 
+      /**
+       * @brief  Explicitly shutdown the action server
+       */
+      void shutdown();
+
     private:
       /**
        * @brief  Callback for when the ActionServer receives a new goal and passes it on

@@ -73,6 +73,13 @@ namespace actionlib {
   template <class ActionSpec>
   SimpleActionServer<ActionSpec>::~SimpleActionServer()
   {
+    if(execute_thread_)
+      shutdown();
+  }
+
+  template <class ActionSpec>
+  void SimpleActionServer<ActionSpec>::shutdown()
+  {
     if (execute_callback_)
     {
       {
@@ -83,6 +90,7 @@ namespace actionlib {
       assert(execute_thread_);
       execute_thread_->join();
       delete execute_thread_;
+      execute_thread_ = NULL;
     }
   }
 

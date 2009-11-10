@@ -82,8 +82,10 @@ namespace actionlib {
 
     status_list_timeout_ = ros::Duration(status_list_timeout);
 
-    status_timer_ = node_.createTimer(ros::Duration(1.0 / status_frequency),
-        boost::bind(&ActionServer::publishStatus, this, _1));
+    if(status_frequency > 0){
+      status_timer_ = node_.createTimer(ros::Duration(1.0 / status_frequency),
+          boost::bind(&ActionServer::publishStatus, this, _1));
+    }
   }
 
   template <class ActionSpec>
