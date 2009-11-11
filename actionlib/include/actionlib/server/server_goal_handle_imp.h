@@ -179,8 +179,12 @@ namespace actionlib {
 
   template <class ActionSpec>
   bool ServerGoalHandle<ActionSpec>::operator==(const ServerGoalHandle& other){
+    if(!goal_ && !other.goal_)
+      return true;
+
     if(!goal_ || !other.goal_)
       return false;
+
     actionlib_msgs::GoalID my_id = getGoalID();
     actionlib_msgs::GoalID their_id = other.getGoalID();
     return my_id.id == their_id.id;
@@ -188,11 +192,7 @@ namespace actionlib {
 
   template <class ActionSpec>
   bool ServerGoalHandle<ActionSpec>::operator!=(const ServerGoalHandle& other){
-    if(!goal_ || !other.goal_)
-      return true;
-    actionlib_msgs::GoalID my_id = getGoalID();
-    actionlib_msgs::GoalID their_id = other.getGoalID();
-    return my_id.id != their_id.id;
+    return !(*this == other);
   }
 
   template <class ActionSpec>
