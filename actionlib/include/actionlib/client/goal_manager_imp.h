@@ -58,6 +58,7 @@ ClientGoalHandle<ActionSpec> GoalManager<ActionSpec>::initGoal(const Goal& goal,
                                                                FeedbackCallback feedback_cb )
 {
   ActionGoalPtr action_goal(new ActionGoal);
+  action_goal->header.stamp = ros::Time::now();
   action_goal->goal_id = id_generator_.generateID();
   action_goal->goal = goal;
 
