@@ -103,6 +103,7 @@ namespace actionlib {
     boost::recursive_mutex::scoped_lock lock(lock_);
     //we'll create a shared_ptr to pass to ROS to limit copying
     boost::shared_ptr<ActionResult> ar(new ActionResult);
+    ar->header.stamp = ros::Time::now();
     ar->status = status;
     ar->result = result;
     result_pub_.publish(ar);
@@ -113,6 +114,7 @@ namespace actionlib {
     boost::recursive_mutex::scoped_lock lock(lock_);
     //we'll create a shared_ptr to pass to ROS to limit copying
     boost::shared_ptr<ActionFeedback> af(new ActionFeedback);
+    af->header.stamp = ros::Time::now();
     af->status = status;
     af->feedback = feedback;
     feedback_pub_.publish(af);
@@ -246,6 +248,8 @@ namespace actionlib {
     boost::recursive_mutex::scoped_lock lock(lock_);
     //build a status array
     actionlib_msgs::GoalStatusArray status_array;
+
+    status_array.header.stamp = ros::Time::now();
 
     status_array.set_status_list_size(status_list_.size());
 
