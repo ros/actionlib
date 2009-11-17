@@ -47,6 +47,12 @@ ClientGoalHandle<ActionSpec>::ClientGoalHandle()
 }
 
 template<class ActionSpec>
+ClientGoalHandle<ActionSpec>::~ClientGoalHandle()
+{
+  reset();
+}
+
+template<class ActionSpec>
 ClientGoalHandle<ActionSpec>::ClientGoalHandle(GoalManagerT* gm, typename ManagedListT::Handle handle)
 {
   gm_ = gm;

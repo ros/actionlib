@@ -126,6 +126,8 @@ public:
    */
   ClientGoalHandle();
 
+  ~ClientGoalHandle();
+
   /**
    * \brief Stops goal handle from tracking a goal
    *
