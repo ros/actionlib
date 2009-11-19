@@ -28,6 +28,7 @@
 
 # Author: Stuart Glaser
 
+from __future__ import with_statement
 import roslib; roslib.load_manifest('actionlib')
 import threading
 import time
@@ -112,20 +113,19 @@ class SimpleActionClient:
 
         timeout_time = rospy.get_rostime() + timeout
         loop_period = rospy.Duration(0.1)
-        self.done_condition.acquire()
-        while not rospy.is_shutdown():
-            time_left = timeout_time - rospy.get_rostime()
-            if timeout > rospy.Duration(0.0) and time_left <= rospy.Duration(0.0):
-                break
+        with self.done_condition:
+            while not rospy.is_shutdown():
+                time_left = timeout_time - rospy.get_rostime()
+                if timeout > rospy.Duration(0.0) and time_left <= rospy.Duration(0.0):
+                    break
 
-            if self.simple_state == SimpleGoalState.DONE:
-                break
+                if self.simple_state == SimpleGoalState.DONE:
+                    break
 
-            if time_left > loop_period:
-                time_left = loop_period
+                if time_left > loop_period:
+                    time_left = loop_period
 
-            self.done_condition.wait(time_left.to_seconds())
-        self.done_condition.release()
+                self.done_condition.wait(time_left.to_seconds())
 
         return self.simple_state == SimpleGoalState.DONE
 
@@ -252,9 +252,8 @@ class SimpleActionClient:
                 self._set_simple_state(SimpleGoalState.DONE)
                 if self.done_cb:
                     self.done_cb(self.gh.get_goal_status(), self.gh.get_result())
-                self.done_condition.acquire()
-                self.done_condition.notifyAll()
-                self.done_condition.release()
+                with self.done_condition:
+                    self.done_condition.notifyAll()
             elif self.simple_state == SimpleGoalState.DONE:
                 rospy.logerr("SimpleActionClient received DONE twice")
 

@@ -51,6 +51,7 @@ h2 = client.send_goal(g2)
 client.cancel_all_goals()
 '''
 
+from __future__ import with_statement
 import roslib; roslib.load_manifest('actionlib')
 import threading
 import weakref
@@ -128,14 +129,11 @@ class ClientGoalHandle:
     ##
     ## Also transitions the client state to WAITING_FOR_CANCEL_ACK
     def cancel(self):
-        self.comm_state_machine.mutex.acquire()
-        try:
+        with self.comm_state_machine.mutex:
             cancel_msg = GoalID(stamp = rospy.Time(0),
                                 id = self.comm_state_machine.action_goal.goal_id.id)
             self.comm_state_machine.send_cancel_fn(cancel_msg)
             self.comm_state_machine.transition_to(CommState.WAITING_FOR_CANCEL_ACK)
-        finally:
-            self.comm_state_machine.mutex.release()
 
     ## @brief Get the state of this goal's communication state machine from interaction with the server
     ## 
@@ -181,11 +179,10 @@ class ClientGoalHandle:
             rospy.logerr("Trying to get_terminal_state on an inactive ClientGoalHandle.")
             return GoalStatus.LOST
 
-        self.comm_state_machine.mutex.acquire()
-        try:
+        with self.comm_state_machine.mutex:
             if self.comm_state_machine.state != CommState.DONE:
                 rospy.logwarn("Asking for the terminal state when we're in [%s]",
-                             ComState.to_string(self.comm_state_machine.state))
+                             CommState.to_string(self.comm_state_machine.state))
 
             goal_status = self.comm_state_machine.latest_goal_status.status
             if goal_status in [GoalStatus.PREEMPTED, GoalStatus.SUCCEEDED,
@@ -195,8 +192,6 @@ class ClientGoalHandle:
 
             rospy.logerr("Asking for a terminal state, but the goal status is %d", goal_status)
             return GoalStatus.LOST
-        finally:
-            self.comm_state_machine.mutex.release()
 
 
         
@@ -312,8 +307,7 @@ class CommStateMachine:
     ## @param gh ClientGoalHandle
     ## @param status_array actionlib_msgs/GoalStatusArray
     def update_status(self, status_array):
-        self.mutex.acquire()
-        try:
+        with self.mutex:
             if self.state == CommState.DONE:
                 return
 
@@ -346,9 +340,6 @@ class CommStateMachine:
                              (CommState.to_string(self.state), GoalStatus.to_string(status.status)))
             else:
                 self.transition_to(next_state)
-                
-        finally:
-            self.mutex.release()
 
     def transition_to(self, state):
         rospy.logdebug("Transitioning to %s (from %s, goal: %s)",
@@ -367,8 +358,7 @@ class CommStateMachine:
         if self.action_goal.goal_id.id != action_result.status.goal_id.id:
             return
 
-        self.mutex.acquire()
-        try:
+        with self.mutex:
             self.latest_goal_status = action_result.status
             self.latest_result = action_result
 
@@ -383,9 +373,6 @@ class CommStateMachine:
                 rospy.logerr("Got a result when we were already in the DONE state")
             else:
                 rospy.logerr("In a funny state: %i" % self.state)
-            
-        finally:
-            self.mutex.release()
 
     def update_feedback(self, action_feedback):
         # Might not be for us
@@ -434,15 +421,13 @@ class GoalManager:
         action_goal = self.ActionGoal(header = Header(),
                                       goal_id = self._generate_id(),
                                       goal = goal)
+        action_goal.header.stamp = rospy.get_rostime()
 
         csm = CommStateMachine(action_goal, transition_cb, feedback_cb,
                                self.send_goal_fn, self.cancel_fn)
 
-        self.list_mutex.acquire()
-        try:
+        with self.list_mutex:
             self.statuses.append(weakref.ref(csm))
-        finally:
-            self.list_mutex.release()
 
         self.send_goal_fn(action_goal)
 
@@ -452,13 +437,10 @@ class GoalManager:
     # Pulls out the statuses that are still live (creating strong
     # references to them)
     def _get_live_statuses(self):
-        self.list_mutex.acquire()
-        try:
+        with self.list_mutex:
             live_statuses = [r() for r in self.statuses]
             live_statuses = filter(lambda x: x, live_statuses)
             return live_statuses
-        finally:
-            self.list_mutex.release()
 
         
     ## Updates the statuses of all goals from the information in status_array.
@@ -466,13 +448,10 @@ class GoalManager:
     ## @param status_array (\c actionlib_msgs/GoalStatusArray)
     def update_statuses(self, status_array):
         live_statuses = []
-        
-        self.list_mutex.acquire()
-        try:
+
+        with self.list_mutex:
             # Garbage collects dead status objects
             self.statuses = [r for r in self.statuses if r()]
-        finally:
-            self.list_mutex.release()
 
         for status in self._get_live_statuses():
             status.update_status(status_array)
