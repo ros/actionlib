@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 # Copyright (c) 2009, Willow Garage, Inc.
 # All rights reserved.
 # 
@@ -25,10 +26,65 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from action_client import *
-from simple_action_client import *
-from action_server import *
-from simple_action_server import *
+# Author: Alexander Sorokin. 
+# Based on C++ goal_id_generator.h/cpp
+
+from __future__ import with_statement
+
+import roslib; roslib.load_manifest('actionlib')
+import rospy
+
+import sys
 
 
+from actionlib_msgs.msg import GoalID
+import threading
 
+global s_goalcount_lock
+global s_goalcount
+s_goalcount_lock = threading.Lock();
+s_goalcount = 0
+
+
+class GoalIDGenerator:
+
+
+    def __init__(self,name=None):
+        """
+        * Create a generator that prepends the fully qualified node name to the Goal ID
+        * \param name Unique name to prepend to the goal id. This will
+        *             generally be a fully qualified node name.
+        """
+        if name is not None:
+            self.set_name(name)
+        else:
+            self.set_name(rospy.get_name());
+
+
+    def set_name(self,name):
+        """
+        * \param name Set the name to prepend to the goal id. This will
+        *             generally be a fully qualified node name.
+        """
+        self.name=name;
+
+      
+
+    def generate_ID(self):
+        """
+        * \brief Generates a unique ID
+        * \return A unique GoalID for this action
+        """
+        id = GoalID();
+        cur_time = rospy.Time.now();
+        ss = self.name +  "-";
+        global s_goalcount_lock
+        global s_goalcount
+        with s_goalcount_lock:
+            s_goalcount += 1
+            ss += str(s_goalcount) + "-";
+        ss +=  str(cur_time.secs) + "." + str(cur_time.nsecs);
+
+        id.id = ss;
+        id.stamp = cur_time;
+        return id;

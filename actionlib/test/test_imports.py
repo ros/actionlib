@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2009, Willow Garage, Inc.
 # All rights reserved.
 # 
@@ -25,10 +26,36 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from action_client import *
-from simple_action_client import *
-from action_server import *
-from simple_action_server import *
+# Author: Alexander Sorokin. 
+
+PKG='actionlib'
+import roslib; roslib.load_manifest(PKG)
+
+import sys
+import unittest
 
 
+## A simple unit test to make sure python module structure and files aren't broken
+class TestImports(unittest.TestCase):
+
+    ## import everything
+    def test_imports(self):
+
+        from actionlib import simple_action_client
+        from actionlib import action_client
+
+        from actionlib import goal_id_generator
+        from actionlib import handle_tracker_deleter
+        from actionlib import server_goal_handle
+        from actionlib import status_tracker
+
+        from actionlib import action_server
+        from actionlib import simple_action_server
+
+        self.assertEquals(1, 1, "1!=1")
+
+if __name__ == '__main__':
+    import rostest
+    print sys.path
+    rostest.rosrun(PKG, 'test_imports', TestImports)
 

@@ -25,10 +25,28 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from action_client import *
-from simple_action_client import *
-from action_server import *
-from simple_action_server import *
+# Author: Alexander Sorokin. 
+# Based on C++ goal_id_generator.h/cpp
+from __future__ import with_statement
+import roslib; roslib.load_manifest('actionlib')
 
 
+class HandleTrackerDeleter:
+    """
+    * @class HandleTrackerDeleter
+    * @brief A class to help with tracking GoalHandles and removing goals
+    * from the status list when the last GoalHandle associated with a given
+    * goal is deleted.
+    """
 
+    def __init__(self, action_server, status_tracker):
+        """
+        @brief create deleter
+        """
+        self.action_server = action_server;
+        self.status_tracker = status_tracker;
+
+    def __call__(self,ptr):
+        if self.action_server:
+            with self.action_server.lock:
+                self.status_tracker.handle_destruction_time = rospy.Time.now();
