@@ -181,6 +181,7 @@ class ActionServer:
 
         with self.lock:
             ar = self.ActionResult();
+            ar.header.stamp = rospy.Time.now();
             ar.status = status;
             ar.result = result;
             self.result_pub.publish(ar);          
@@ -196,6 +197,7 @@ class ActionServer:
           with self.lock:
 
               af=ActionFeedback();
+              af.header.stamp = rospy.Time.now();
               af.status = status;
               af.feedback = feedback;
               self.feedback_pub.publish(af);
@@ -335,6 +337,7 @@ class ActionServer:
                       status_array.status_list.append(st.status);
 
 
+              status_array.header.stamp = rospy.Time.now()
               self.status_pub.publish(status_array)
 
 

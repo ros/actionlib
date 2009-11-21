@@ -68,7 +68,7 @@ class ServerGoalHandle:
       on whether a cancel request has been received for the goal
       """
 
-      rospy.logdebug("Accepting goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_seconds());
+      rospy.logdebug("Accepting goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
       if self.goal:
           status = self.status_tracker.status.status;
 
@@ -98,7 +98,7 @@ class ServerGoalHandle:
         if not result:
             result=self.get_default_result();
 
-        rospy.logdebug("Setting status to canceled on goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_seconds());
+        rospy.logdebug("Setting status to canceled on goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
 
         if(self.goal):
             status = self.status_tracker.status.status;
@@ -125,7 +125,7 @@ class ServerGoalHandle:
         if not result:
             result=self.get_default_result();
 
-        rospy.logdebug("Setting status to rejected on goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_seconds());
+        rospy.logdebug("Setting status to rejected on goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal :
             status = self.status_tracker.status.status;
             if(status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.msg.GoalStatus.RECALLING):
@@ -148,7 +148,7 @@ class ServerGoalHandle:
         if not result:
             result=self.get_default_result();
 
-        rospy.logdebug("Setting status to aborted on goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_seconds());
+        rospy.logdebug("Setting status to aborted on goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal:
             status = self.status_tracker.status.status;
             if status == actionlib_msgs.msg.GoalStatus.PREEMPTING or status == actionlib_msgs.msg.GoalStatus.ACTIVE:
@@ -172,7 +172,7 @@ class ServerGoalHandle:
             result=self.get_default_result();
 
         rospy.logdebug("Setting status to succeeded on goal, id: %s, stamp: %.2f",
-                       self.get_goal_id().id, self.get_goal_id().stamp.to_seconds());
+                       self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal:
             status = self.status_tracker.status.status;
             if status == actionlib_msgs.msg.GoalStatus.PREEMPTING or status == actionlib_msgs.msg.GoalStatus.ACTIVE :
@@ -193,7 +193,7 @@ class ServerGoalHandle:
         @param feedback The feedback to send to the client
         """
         rospy.logdebug("Publishing feedback for goal, id: %s, stamp: %.2f", 
-                       self.get_goal_id().id, self.get_goal_id().stamp.to_seconds());
+                       self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal:
             self.action_server.publishFeedback(self.status_tracker.status, feedback);
         else:
@@ -273,7 +273,7 @@ class ServerGoalHandle:
         @return True if the cancel request should be passed on to the user, false otherwise
         """
         rospy.logdebug("Transisitoning to a cancel requested state on goal id: %s, stamp: %.2f", 
-                       self.get_goal_id().id, self.get_goal_id().stamp.to_seconds());
+                       self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal:
             status = self.status_tracker.status.status;
             if (status == actionlib_msgs.msg.GoalStatus.PENDING):

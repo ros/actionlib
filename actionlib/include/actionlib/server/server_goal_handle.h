@@ -66,6 +66,12 @@ namespace actionlib {
        */
       ServerGoalHandle();
 
+      /**
+       * @brief  Copy constructor for a ServerGoalHandle
+       * @param gh The goal handle to copy 
+       */
+      ServerGoalHandle(const ServerGoalHandle& gh);
+
       /** @brief  Accept the goal referenced by the goal handle. This will
        * transition to the ACTIVE state or the PREEMPTING state depending
        * on whether a cancel request has been received for the goal
@@ -120,6 +126,12 @@ namespace actionlib {
        * @return The goal status
        */
       actionlib_msgs::GoalStatus getGoalStatus() const;
+
+      /**
+       * @brief  Equals operator for a ServerGoalHandle
+       * @param gh The goal handle to copy 
+       */
+      ServerGoalHandle& operator=(const ServerGoalHandle& gh);
 
       /**
        * @brief  Equals operator for ServerGoalHandles

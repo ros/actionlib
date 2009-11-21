@@ -41,6 +41,10 @@ namespace actionlib {
   ServerGoalHandle<ActionSpec>::ServerGoalHandle(){}
 
   template <class ActionSpec>
+  ServerGoalHandle<ActionSpec>::ServerGoalHandle(const ServerGoalHandle& gh): 
+    status_it_(gh.status_it_), goal_(gh.goal_), as_(gh.as_), handle_tracker_(gh.handle_tracker_){}
+
+  template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::setAccepted(){
     ROS_DEBUG("Accepting goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
@@ -175,6 +179,15 @@ namespace actionlib {
       ROS_ERROR("Attempt to get goal status on an uninitialized ServerGoalHandle");
       return actionlib_msgs::GoalStatus();
     }
+  }
+
+  template <class ActionSpec>
+  ServerGoalHandle<ActionSpec>& ServerGoalHandle<ActionSpec>::operator=(const ServerGoalHandle& gh){
+    status_it_ = gh.status_it_;
+    goal_ = gh.goal_;
+    as_ = gh.as_;
+    handle_tracker_ = gh.handle_tracker_;
+    return *this;
   }
 
   template <class ActionSpec>

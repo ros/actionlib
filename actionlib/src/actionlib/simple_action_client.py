@@ -125,7 +125,7 @@ class SimpleActionClient:
                 if time_left > loop_period:
                     time_left = loop_period
 
-                self.done_condition.wait(time_left.to_seconds())
+                self.done_condition.wait(time_left.to_sec())
 
         return self.simple_state == SimpleGoalState.DONE
 

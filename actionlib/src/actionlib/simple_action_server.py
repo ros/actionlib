@@ -329,7 +329,7 @@ class SimpleActionServer:
                                 "This is a bug in your ActionServer implementation. Fix your code!\n"+
                                 "For now, the ActionServer will set this goal to aborted");
                   self.set_aborted();
-              self.execute_condition.wait(loop_duration.to_seconds());
+              self.execute_condition.wait(loop_duration.to_sec());
               self.execute_condition.release();
 
 

@@ -114,7 +114,7 @@ class ClientGoalHandle:
     def __init__(self, comm_state_machine):
         self.comm_state_machine = comm_state_machine
 
-        #print "GH created.  id = %.3f" % self.comm_state_machine.action_goal.goal_id.stamp.to_seconds()
+        #print "GH created.  id = %.3f" % self.comm_state_machine.action_goal.goal_id.stamp.to_sec()
 
     ## @brief True iff the two ClientGoalHandle's are tracking the same goal
     def __eq__(self, o):
@@ -407,7 +407,7 @@ class GoalManager:
         id, g_goal_id = g_goal_id, g_goal_id + 1
         now = rospy.Time.now()
         return GoalID(id = "%s-%i-%.3f" % \
-                          (rospy.get_caller_id(), id, now.to_seconds()), stamp = now)
+                          (rospy.get_caller_id(), id, now.to_sec()), stamp = now)
 
     def register_send_goal_fn(self, fn):
         self.send_goal_fn = fn
