@@ -106,6 +106,7 @@ namespace actionlib {
     ar->header.stamp = ros::Time::now();
     ar->status = status;
     ar->result = result;
+    ROS_DEBUG("Publishing result for goal with id: %s and stamp: %.2f", status.goal_id.id.c_str(), status.goal_id.stamp.toSec());
     result_pub_.publish(ar);
   }
 
@@ -117,6 +118,7 @@ namespace actionlib {
     af->header.stamp = ros::Time::now();
     af->status = status;
     af->feedback = feedback;
+    ROS_DEBUG("Publishing feedback for goal with id: %s and stamp: %.2f", status.goal_id.id.c_str(), status.goal_id.stamp.toSec());
     feedback_pub_.publish(af);
   }
 
