@@ -65,9 +65,9 @@ namespace actionlib {
 
   template <class ActionSpec>
   void ActionServer<ActionSpec>::initialize(){
-    status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", 1);
     result_pub_ = node_.advertise<ActionResult>("result", 1);
     feedback_pub_ = node_.advertise<ActionFeedback>("feedback", 1);
+    status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", 1);
 
     goal_sub_ = node_.subscribe<ActionGoal>("goal", 1,
         boost::bind(&ActionServer::goalCallback, this, _1));
