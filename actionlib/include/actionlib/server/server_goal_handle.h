@@ -75,33 +75,38 @@ namespace actionlib {
       /** @brief  Accept the goal referenced by the goal handle. This will
        * transition to the ACTIVE state or the PREEMPTING state depending
        * on whether a cancel request has been received for the goal
+       * @param text Optionally, any text message about the status change being made that should be passed to the client
        */
-      void setAccepted();
+      void setAccepted(const std::string& text = std::string(""));
 
       /**
        * @brief  Set the status of the goal associated with the ServerGoalHandle to RECALLED or PREEMPTED
        * depending on what the current status of the goal is
        * @param  result Optionally, the user can pass in a result to be sent to any clients of the goal
+       * @param text Optionally, any text message about the status change being made that should be passed to the client
        */
-      void setCanceled(const Result& result = Result());
+      void setCanceled(const Result& result = Result(), const std::string& text = std::string(""));
 
       /**
        * @brief  Set the status of the goal associated with the ServerGoalHandle to rejected
        * @param  result Optionally, the user can pass in a result to be sent to any clients of the goal
+       * @param text Optionally, any text message about the status change being made that should be passed to the client
        */
-      void setRejected(const Result& result = Result());
+      void setRejected(const Result& result = Result(), const std::string& text = std::string(""));
 
       /**
        * @brief  Set the status of the goal associated with the ServerGoalHandle to aborted
        * @param  result Optionally, the user can pass in a result to be sent to any clients of the goal
+       * @param text Optionally, any text message about the status change being made that should be passed to the client
        */
-      void setAborted(const Result& result = Result());
+      void setAborted(const Result& result = Result(), const std::string& text = std::string(""));
 
       /**
        * @brief  Set the status of the goal associated with the ServerGoalHandle to succeeded
        * @param  result Optionally, the user can pass in a result to be sent to any clients of the goal
+       * @param text Optionally, any text message about the status change being made that should be passed to the client
        */
-      void setSucceeded(const Result& result = Result());
+      void setSucceeded(const Result& result = Result(), const std::string& text = std::string(""));
 
       /**
        * @brief  Send feedback to any clients of the goal associated with this ServerGoalHandle

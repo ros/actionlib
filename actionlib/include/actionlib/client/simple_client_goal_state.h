@@ -56,8 +56,9 @@ public:
   };
 
   StateEnum state_;
+  std::string text_;
 
-  SimpleClientGoalState(const StateEnum& state) : state_(state) { }
+  SimpleClientGoalState(const StateEnum& state, const std::string& text = std::string("")) : state_(state), text_(text) { }
 
   inline bool operator==(const SimpleClientGoalState& rhs) const
   {
@@ -97,6 +98,11 @@ public:
       default:
         return false;
     }
+  }
+
+  std::string getText() const
+  {
+    return text_;
   }
 
   //! \brief Convert the state to a string. Useful when printing debugging information

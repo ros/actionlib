@@ -45,7 +45,7 @@ namespace actionlib {
     status_it_(gh.status_it_), goal_(gh.goal_), as_(gh.as_), handle_tracker_(gh.handle_tracker_){}
 
   template <class ActionSpec>
-  void ServerGoalHandle<ActionSpec>::setAccepted(){
+  void ServerGoalHandle<ActionSpec>::setAccepted(const std::string& text){
     ROS_DEBUG("Accepting goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       unsigned int status = (*status_it_).status_.status;
@@ -53,11 +53,13 @@ namespace actionlib {
       //if we were pending before, then we'll go active
       if(status == actionlib_msgs::GoalStatus::PENDING){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::ACTIVE;
+        (*status_it_).status_.text = text;
         as_->publishStatus();
       }
       //if we were recalling before, now we'll go to preempting
       else if(status == actionlib_msgs::GoalStatus::RECALLING){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::PREEMPTING;
+        (*status_it_).status_.text = text;
         as_->publishStatus();
       }
       else
@@ -69,16 +71,18 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  void ServerGoalHandle<ActionSpec>::setCanceled(const Result& result){
+  void ServerGoalHandle<ActionSpec>::setCanceled(const Result& result, const std::string& text){
     ROS_DEBUG("Setting status to canceled on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       unsigned int status = (*status_it_).status_.status;
       if(status == actionlib_msgs::GoalStatus::PENDING || status == actionlib_msgs::GoalStatus::RECALLING){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::RECALLED;
+        (*status_it_).status_.text = text;
         as_->publishResult((*status_it_).status_, result);
       }
       else if(status == actionlib_msgs::GoalStatus::ACTIVE || status == actionlib_msgs::GoalStatus::PREEMPTING){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::PREEMPTED;
+        (*status_it_).status_.text = text;
         as_->publishResult((*status_it_).status_, result);
       }
       else
@@ -90,12 +94,13 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  void ServerGoalHandle<ActionSpec>::setRejected(const Result& result){
+  void ServerGoalHandle<ActionSpec>::setRejected(const Result& result, const std::string& text){
     ROS_DEBUG("Setting status to rejected on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       unsigned int status = (*status_it_).status_.status;
       if(status == actionlib_msgs::GoalStatus::PENDING || status == actionlib_msgs::GoalStatus::RECALLING){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::REJECTED;
+        (*status_it_).status_.text = text;
         as_->publishResult((*status_it_).status_, result);
       }
       else
@@ -107,12 +112,13 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  void ServerGoalHandle<ActionSpec>::setAborted(const Result& result){
+  void ServerGoalHandle<ActionSpec>::setAborted(const Result& result, const std::string& text){
     ROS_DEBUG("Setting status to aborted on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       unsigned int status = (*status_it_).status_.status;
       if(status == actionlib_msgs::GoalStatus::PREEMPTING || status == actionlib_msgs::GoalStatus::ACTIVE){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::ABORTED;
+        (*status_it_).status_.text = text;
         as_->publishResult((*status_it_).status_, result);
       }
       else
@@ -124,12 +130,13 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  void ServerGoalHandle<ActionSpec>::setSucceeded(const Result& result){
+  void ServerGoalHandle<ActionSpec>::setSucceeded(const Result& result, const std::string& text){
     ROS_DEBUG("Setting status to succeeded on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       unsigned int status = (*status_it_).status_.status;
       if(status == actionlib_msgs::GoalStatus::PREEMPTING || status == actionlib_msgs::GoalStatus::ACTIVE){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::SUCCEEDED;
+        (*status_it_).status_.text = text;
         as_->publishResult((*status_it_).status_, result);
       }
       else

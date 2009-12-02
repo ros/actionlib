@@ -107,7 +107,7 @@ namespace actionlib {
     if(isActive()
         && current_goal_.getGoal()
         && current_goal_ != next_goal_){
-      current_goal_.setCanceled();
+      current_goal_.setCanceled(Result(), "This goal was canceled because another goal was recieved by the simple action server");
     }
 
     ROS_DEBUG("Accepting a new goal");
@@ -121,7 +121,7 @@ namespace actionlib {
     new_goal_preempt_request_ = false;
 
     //set the status of the current goal to be active
-    current_goal_.setAccepted();
+    current_goal_.setAccepted("This goal has been accepted by the simple action server");
 
     return current_goal_.getGoal();
   }
@@ -146,22 +146,24 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  void SimpleActionServer<ActionSpec>::setSucceeded(const Result& result){
+  void SimpleActionServer<ActionSpec>::setSucceeded(const Result& result, const std::string& text){
     boost::recursive_mutex::scoped_lock lock(lock_);
-    current_goal_.setSucceeded(result);
+    ROS_DEBUG("Setting the current goal as succeeded");
+    current_goal_.setSucceeded(result, text);
   }
 
   template <class ActionSpec>
-  void SimpleActionServer<ActionSpec>::setAborted(const Result& result){
+  void SimpleActionServer<ActionSpec>::setAborted(const Result& result, const std::string& text){
     boost::recursive_mutex::scoped_lock lock(lock_);
-    current_goal_.setAborted(result);
+    ROS_DEBUG("Setting the current goal as aborted");
+    current_goal_.setAborted(result, text);
   }
 
   template <class ActionSpec>
-  void SimpleActionServer<ActionSpec>::setPreempted(const Result& result){
+  void SimpleActionServer<ActionSpec>::setPreempted(const Result& result, const std::string& text){
     boost::recursive_mutex::scoped_lock lock(lock_);
     ROS_DEBUG("Setting the current goal as canceled");
-    current_goal_.setCanceled(result);
+    current_goal_.setCanceled(result, text);
   }
 
   template <class ActionSpec>
@@ -201,7 +203,7 @@ namespace actionlib {
 
       //if next_goal has not been accepted already... its going to get bumped, but we need to let the client know we're preempting
       if(next_goal_.getGoal() && (!current_goal_.getGoal() || next_goal_ != current_goal_)){
-        next_goal_.setCanceled();
+        next_goal_.setCanceled(Result(), "This goal was canceled because another goal was recieved by the simple action server");
       }
 
       next_goal_ = goal;
@@ -225,7 +227,7 @@ namespace actionlib {
     }
     else{
       //the goal requested has already been preempted by a different goal, so we're not going to execute it
-      goal.setCanceled();
+      goal.setCanceled(Result(), "This goal was canceled because another goal was recieved by the simple action server");
     }
   }
 
@@ -282,7 +284,7 @@ namespace actionlib {
           ROS_WARN("Your executeCallback did not set the goal to a terminal status.\n"
                    "This is a bug in your ActionServer implementation. Fix your code!\n"
                    "For now, the ActionServer will set this goal to aborted");
-          setAborted();
+          setAborted(Result(), "This goal was aborted by the simple action server. The user should have set a terminal status on this goal and did not");
         }
       }
       else

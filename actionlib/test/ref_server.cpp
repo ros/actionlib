@@ -77,14 +77,14 @@ void RefServer::goalCallback(GoalHandle gh)
   {
     case 1:
       gh.setAccepted();
-      gh.setSucceeded();
+      gh.setSucceeded(TestResult(), "The ref server has succeeded");
       break;
     case 2:
       gh.setAccepted();
-      gh.setAborted();
+      gh.setAborted(TestResult(), "The ref server has aborted");
       break;
     case 3:
-      gh.setRejected();
+      gh.setRejected(TestResult(), "The ref server has rejected");
       break;
     default:
       break;

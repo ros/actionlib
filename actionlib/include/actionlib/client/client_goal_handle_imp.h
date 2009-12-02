@@ -112,19 +112,19 @@ TerminalState ClientGoalHandle<ActionSpec>::getTerminalState()
     case actionlib_msgs::GoalStatus::ACTIVE:
     case actionlib_msgs::GoalStatus::PREEMPTING:
     case actionlib_msgs::GoalStatus::RECALLING:
-      ROS_ERROR("Asking for terminal state, but latest goal status is %u", goal_status.status); return TerminalState::LOST;
-    case actionlib_msgs::GoalStatus::PREEMPTED: return TerminalState::PREEMPTED;
-    case actionlib_msgs::GoalStatus::SUCCEEDED: return TerminalState::SUCCEEDED;
-    case actionlib_msgs::GoalStatus::ABORTED:   return TerminalState::ABORTED;
-    case actionlib_msgs::GoalStatus::REJECTED:  return TerminalState::REJECTED;
-    case actionlib_msgs::GoalStatus::RECALLED:  return TerminalState::RECALLED;
-    case actionlib_msgs::GoalStatus::LOST:      return TerminalState::LOST;
+      ROS_ERROR("Asking for terminal state, but latest goal status is %u", goal_status.status); return TerminalState(TerminalState::LOST, goal_status.text);
+    case actionlib_msgs::GoalStatus::PREEMPTED: return TerminalState(TerminalState::PREEMPTED, goal_status.text);
+    case actionlib_msgs::GoalStatus::SUCCEEDED: return TerminalState(TerminalState::SUCCEEDED, goal_status.text);
+    case actionlib_msgs::GoalStatus::ABORTED:   return TerminalState(TerminalState::ABORTED, goal_status.text);
+    case actionlib_msgs::GoalStatus::REJECTED:  return TerminalState(TerminalState::REJECTED, goal_status.text);
+    case actionlib_msgs::GoalStatus::RECALLED:  return TerminalState(TerminalState::RECALLED, goal_status.text);
+    case actionlib_msgs::GoalStatus::LOST:      return TerminalState(TerminalState::LOST, goal_status.text);
     default:
       ROS_ERROR("Unknown goal status: %u", goal_status.status); break;
   }
 
   ROS_ERROR("Bug in determining terminal state");
-  return TerminalState::LOST;
+  return TerminalState(TerminalState::LOST, goal_status.text);
 }
 
 template<class ActionSpec>

@@ -51,7 +51,7 @@ public:
     LOST
   } ;
 
-  TerminalState(const StateEnum& state) : state_(state) { }
+  TerminalState(const StateEnum& state, const std::string& text = std::string("")) : state_(state), text_(text) { }
 
   inline bool operator==(const TerminalState& rhs) const
   {
@@ -71,6 +71,11 @@ public:
   inline bool operator!=(const TerminalState& rhs) const
   {
     return !(*this == rhs);
+  }
+
+  std::string getText() const
+  {
+    return text_;
   }
 
   std::string toString() const
@@ -98,6 +103,7 @@ public:
   }
 
   StateEnum state_;
+  std::string text_;
 private:
   TerminalState();
 

@@ -386,20 +386,20 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::getState()
       switch(gh_.getTerminalState().state_)
       {
         case TerminalState::RECALLED:
-          return SimpleClientGoalState(SimpleClientGoalState::RECALLED);
+          return SimpleClientGoalState(SimpleClientGoalState::RECALLED, gh_.getTerminalState().text_);
         case TerminalState::REJECTED:
-          return SimpleClientGoalState(SimpleClientGoalState::REJECTED);
+          return SimpleClientGoalState(SimpleClientGoalState::REJECTED, gh_.getTerminalState().text_);
         case TerminalState::PREEMPTED:
-          return SimpleClientGoalState(SimpleClientGoalState::PREEMPTED);
+          return SimpleClientGoalState(SimpleClientGoalState::PREEMPTED, gh_.getTerminalState().text_);
         case TerminalState::ABORTED:
-          return SimpleClientGoalState(SimpleClientGoalState::ABORTED);
+          return SimpleClientGoalState(SimpleClientGoalState::ABORTED, gh_.getTerminalState().text_);
         case TerminalState::SUCCEEDED:
-          return SimpleClientGoalState(SimpleClientGoalState::SUCCEEDED);
+          return SimpleClientGoalState(SimpleClientGoalState::SUCCEEDED, gh_.getTerminalState().text_);
         case TerminalState::LOST:
-          return SimpleClientGoalState(SimpleClientGoalState::LOST);
+          return SimpleClientGoalState(SimpleClientGoalState::LOST, gh_.getTerminalState().text_);
         default:
           ROS_ERROR("Unknown terminal state [%u]. This is a bug in SimpleActionClient", gh_.getTerminalState().state_);
-          return SimpleClientGoalState(SimpleClientGoalState::LOST);
+          return SimpleClientGoalState(SimpleClientGoalState::LOST, gh_.getTerminalState().text_);
       }
     }
     case CommState::WAITING_FOR_RESULT:

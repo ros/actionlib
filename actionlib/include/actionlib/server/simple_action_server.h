@@ -120,14 +120,16 @@ namespace actionlib {
       /**
        * @brief  Sets the status of the active goal to succeeded
        * @param  result An optional result to send back to any clients of the goal
+       * @param  result An optional text message to send back to any clients of the goal
        */
-      void setSucceeded(const Result& result = Result());
+      void setSucceeded(const Result& result = Result(), const std::string& text = std::string(""));
 
       /**
        * @brief  Sets the status of the active goal to aborted
        * @param  result An optional result to send back to any clients of the goal
+       * @param  result An optional text message to send back to any clients of the goal
        */
-      void setAborted(const Result& result = Result());
+      void setAborted(const Result& result = Result(), const std::string& text = std::string(""));
 
 
       /**
@@ -145,8 +147,9 @@ namespace actionlib {
       /**
        * @brief  Sets the status of the active goal to preempted
        * @param  result An optional result to send back to any clients of the goal
+       * @param  result An optional text message to send back to any clients of the goal
        */
-      void setPreempted(const Result& result = Result());
+      void setPreempted(const Result& result = Result(), const std::string& text = std::string(""));
 
       /**
        * @brief  Allows users to register a callback to be invoked when a new goal is available

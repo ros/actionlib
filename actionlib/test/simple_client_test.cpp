@@ -58,12 +58,18 @@ TEST(SimpleClient, easy_tests)
   EXPECT_TRUE( client.getState() == SimpleClientGoalState::SUCCEEDED)
       << "Expected [SUCCEEDED], but goal state is [" << client.getState().toString() << "]";
 
+  //test that setting the text field for the status works
+  EXPECT_TRUE(client.getState().getText() == "The ref server has succeeded");
+
   goal.goal = 2;
   client.sendGoal(goal);
   finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);
   EXPECT_TRUE( client.getState() == SimpleClientGoalState::ABORTED)
       << "Expected [ABORTED], but goal state is [" << client.getState().toString() << "]";
+
+  //test that setting the text field for the status works
+  EXPECT_TRUE(client.getState().getText() == "The ref server has aborted");
 }
 
 
