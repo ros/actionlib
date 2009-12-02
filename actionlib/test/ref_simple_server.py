@@ -51,10 +51,10 @@ class RefSimpleServer:
         
         rospy.loginfo("Got goal %d", int(goal.goal.goal))
         if goal.goal.goal == 1:
-            self.srv.set_succeeded();
+            self.srv.set_succeeded(None, "The ref server has succeeded");
 
         elif goal.goal.goal == 2:
-            self.srv.set_aborted();
+            self.srv.set_aborted(None, "The ref server has aborted");
 
         elif goal.goal.goal == 3:
             self.srv.set_aborted();

@@ -299,7 +299,7 @@ class ActionServer:
               gh= ServerGoalHandle(st, self, handle_tracker);
               if goal.goal_id.stamp != rospy.Time() and goal.goal_id.stamp <= self.last_cancel:
                   #if it has... just create a GoalHandle for it and setCanceled
-                  gh.set_canceled();
+                  gh.set_canceled(None, "This goal handle was canceled by the action server because its timestamp is before the timestamp of the last cancel request");
               else:
                   #now, we need to create a goal handle and call the user's callback
                   self.goal_callback(gh);

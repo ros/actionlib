@@ -219,7 +219,7 @@ namespace actionlib {
     if(goal->goal_id.stamp != ros::Time() && goal->goal_id.stamp <= last_cancel_){
       //if it has... just create a GoalHandle for it and setCanceled
       GoalHandle gh(it, this, handle_tracker);
-      gh.setCanceled();
+      gh.setCanceled(Result(), "This goal handle was canceled by the action server because its timestamp is before the timestamp of the last cancel request");
     }
     else{
       //now, we need to create a goal handle and call the user's callback

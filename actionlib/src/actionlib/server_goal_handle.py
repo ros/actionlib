@@ -61,7 +61,7 @@ class ServerGoalHandle:
     def get_default_result(self):
         return self.action_server.ActionResultType();
 
-    def set_accepted(self):
+    def set_accepted(self, text=""):
       """
       Accept the goal referenced by the goal handle. This will
       transition to the ACTIVE state or the PREEMPTING state depending
@@ -75,11 +75,13 @@ class ServerGoalHandle:
           #if we were pending before, then we'll go active
           if(status == actionlib_msgs.msg.GoalStatus.PENDING):
               self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.ACTIVE;
+              self.status_tracker.status.text = text
               self.action_server.publish_status();
               
           #if we were recalling before, now we'll go to preempting
           elif(status == actionlib_msgs.msg.GoalStatus.RECALLING) :
               self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.PREEMPTING;
+              self.status_tracker.status.text = text
               self.action_server.publish_status();
               
           else:
@@ -89,7 +91,7 @@ class ServerGoalHandle:
           rospy.logerr("Attempt to set status on an uninitialized ServerGoalHandle");
 
 
-    def set_canceled(self, result=None):
+    def set_canceled(self, result=None, text=""):
         """
         Set the status of the goal associated with the ServerGoalHandle to RECALLED or PREEMPTED
         depending on what the current status of the goal is
@@ -104,9 +106,11 @@ class ServerGoalHandle:
             status = self.status_tracker.status.status;
             if(status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.mgs.GoalStatus.RECALLING):
                 self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.RECALLED;
+                self.status_tracker.status.text = text
                 self.action_server.publish_result(self.status_tracker.status, result);
             elif(status == actionlib_msgs.msg.GoalStatus.ACTIVE or status == actionlib_msgs.msg.GoalStatus.PREEMPTING):
                 self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.PREEMPTED;
+                self.status_tracker.status.text = text
                 self.action_server.publish_result(self.status_tracker.status, result);
       
             else:
@@ -117,7 +121,7 @@ class ServerGoalHandle:
             rospy.logerr("Attempt to set status on an uninitialized ServerGoalHandle");
 
 
-    def set_rejected(self, result=None):
+    def set_rejected(self, result=None, text=""):
         """
         * @brief  Set the status of the goal associated with the ServerGoalHandle to rejected
         * @param  result Optionally, the user can pass in a result to be sent to any clients of the goal
@@ -130,6 +134,7 @@ class ServerGoalHandle:
             status = self.status_tracker.status.status;
             if(status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.msg.GoalStatus.RECALLING):
                 self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.REJECTED;
+                self.status_tracker.status.text = text
                 self.action_server.publish_result(self.status_tracker.status, result);
       
             else:
@@ -140,7 +145,7 @@ class ServerGoalHandle:
             rospy.logerr("Attempt to set status on an uninitialized ServerGoalHandle");
 
 
-    def set_aborted(self, result=None):
+    def set_aborted(self, result=None, text=""):
         """
         Set the status of the goal associated with the ServerGoalHandle to aborted
         @param  result Optionally, the user can pass in a result to be sent to any clients of the goal
@@ -153,6 +158,7 @@ class ServerGoalHandle:
             status = self.status_tracker.status.status;
             if status == actionlib_msgs.msg.GoalStatus.PREEMPTING or status == actionlib_msgs.msg.GoalStatus.ACTIVE:
                 self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.ABORTED;
+                self.status_tracker.status.text = text
                 self.action_server.publish_result(self.status_tracker.status, result);
                 
             else:
@@ -163,7 +169,7 @@ class ServerGoalHandle:
             rospy.logerr("Attempt to set status on an uninitialized ServerGoalHandle");
 
 
-    def set_succeeded(self,result=None):
+    def set_succeeded(self,result=None, text=""):
         """
         Set the status of the goal associated with the ServerGoalHandle to succeeded
         @param  result Optionally, the user can pass in a result to be sent to any clients of the goal
@@ -177,6 +183,7 @@ class ServerGoalHandle:
             status = self.status_tracker.status.status;
             if status == actionlib_msgs.msg.GoalStatus.PREEMPTING or status == actionlib_msgs.msg.GoalStatus.ACTIVE :
                 self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.SUCCEEDED;
+                self.status_tracker.status.text = text
                 self.action_server.publish_result(self.status_tracker.status, result);
       
             else:

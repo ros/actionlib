@@ -52,12 +52,12 @@ class RefServer (ActionServer):
         rospy.loginfo("Got goal %d", int(goal.goal.goal))
         if goal.goal.goal == 1:
             gh.set_accepted();
-            gh.set_succeeded();
+            gh.set_succeeded(None, "The ref server has succeeded");
         elif goal.goal.goal == 2:
             gh.set_accepted();
-            gh.set_aborted();
+            gh.set_aborted(None, "The ref server has aborted");
         elif goal.goal.goal == 3:
-            gh.set_rejected();
+            gh.set_rejected(None, "The ref server has rejected");
 
 
         elif goal.goal.goal == 4:
