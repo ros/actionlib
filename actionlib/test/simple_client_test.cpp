@@ -70,6 +70,8 @@ TEST(SimpleClient, easy_tests)
 
   //test that setting the text field for the status works
   EXPECT_TRUE(client.getState().getText() == "The ref server has aborted");
+
+  client.cancelAllGoals();
 }
 
 

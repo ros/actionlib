@@ -121,7 +121,7 @@ public:
     actionlib_msgs::GoalID cancel_msg;
     // CancelAll policy encoded by stamp=0, id=0
     cancel_msg.stamp = ros::Time(0,0);
-    cancel_msg.id = ros::Time(0,0);
+    cancel_msg.id = "";
     cancel_pub_.publish(cancel_msg);
   }
 

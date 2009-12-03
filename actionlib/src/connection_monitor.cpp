@@ -234,6 +234,9 @@ bool ConnectionMonitor::waitForActionServerToStart(const ros::Duration& timeout,
     check_connection_condition_.timed_wait(lock, boost::posix_time::milliseconds(time_left.toSec() * 1000.0f));
   }
 
+  //@TODO: THIS IS A HACK UNTIL WE GET PUBLISHER CALLABACKS ON SUBSCRIPTIONS
+  ros::Duration(1.0).sleep();
+
   return isServerConnected();
 }
 
