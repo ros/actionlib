@@ -218,7 +218,7 @@ class ServerGoalHandle:
             #create the deleter for our goal subtype
             #d = EnclosureDeleter(self.goal);
             #weakref.ref(boost::shared_ptr<const Goal>(&(goal_->goal), d);
-            return self.goal
+            return self.goal.goal
         
         return None
 
