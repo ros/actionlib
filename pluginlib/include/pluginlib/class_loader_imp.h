@@ -181,12 +181,12 @@ namespace pluginlib {
     }
     catch (Poco::LibraryLoadException &ex)
     {
-      std::string error_string = "Failed to load library " + library_path + " Error string: " + ex.displayText();
+      std::string error_string = "Failed to load library " + library_path + ". Make sure that you are calling the PLUGINLIB_REGISTER_CLASS macro in the library code, and that names are consistent between this macro and your XML. Error string: " + ex.displayText();
       throw LibraryLoadException(error_string);
     }
     catch (Poco::NotFoundException &ex)
     {
-      std::string error_string = "Failed to find library " + library_path + " Error string: " + ex.displayText();
+      std::string error_string = "Failed to find library " + library_path + ". Are you sure that the library you need has been built? Error string: " + ex.displayText();
       throw LibraryLoadException(error_string);
     }
   }
