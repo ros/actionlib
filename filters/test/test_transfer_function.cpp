@@ -71,7 +71,7 @@ TEST(SingleChannelTransferFunctionDoubleFilter, SingleLowPass)
   double epsilon = 1e-4;
   
   FilterBase<double> * filter = new SingleChannelTransferFunctionFilter<double> ();
-  EXPECT_TRUE(filter->configure("LowPass" ));
+  EXPECT_TRUE(filter->configure("LowPassSingle" ));
   
 
   double in1,in2,in3,in4,in5,in6,in7;
