@@ -36,11 +36,11 @@
 using namespace filters ;
 
 
-TEST(TransferFunctionDoubleFilter, LowPass)
+TEST(MultiChannelTransferFunctionDoubleFilter, LowPass)
 {
   double epsilon = 1e-4;
   
-  MultiChannelFilterBase<double> * filter = new TransferFunctionFilter<double> ();
+  MultiChannelFilterBase<double> * filter = new MultiChannelTransferFunctionFilter<double> ();
   EXPECT_TRUE(filter->configure(1, "LowPass" ));
   
 
@@ -66,11 +66,42 @@ TEST(TransferFunctionDoubleFilter, LowPass)
   EXPECT_NEAR(out1[0], in7[0], epsilon);
 }
 
-TEST(TransferFunctionDoubleFilter, LowPassNonUnity)
+TEST(SingleChannelTransferFunctionDoubleFilter, SingleLowPass)
+{
+  double epsilon = 1e-4;
+  
+  FilterBase<double> * filter = new SingleChannelTransferFunctionFilter<double> ();
+  EXPECT_TRUE(filter->configure("LowPass" ));
+  
+
+  double in1,in2,in3,in4,in5,in6,in7;
+  double out1;
+
+  in1=10.0;
+  in2=70.0;
+  in3=10.0;
+  in4=44.0;
+  in5=10.0;
+  in6=5.0;
+  in7=6.0;
+  out1=11.8008;
+  EXPECT_TRUE(filter->update(in1, in1));
+  EXPECT_TRUE(filter->update(in2, in2));
+  EXPECT_TRUE(filter->update(in3, in3));
+  EXPECT_TRUE(filter->update(in4, in4));
+  EXPECT_TRUE(filter->update(in5, in5));
+  EXPECT_TRUE(filter->update(in6, in6));
+  EXPECT_TRUE(filter->update(in7, in7));
+
+  EXPECT_NEAR(out1, in7, epsilon);
+}
+
+
+TEST(MultiChannelTransferFunctionDoubleFilter, LowPassNonUnity)
 {
   double epsilon = 1e-4;
 
-  MultiChannelFilterBase<double> * filter = new TransferFunctionFilter<double> ();
+  MultiChannelFilterBase<double> * filter = new MultiChannelTransferFunctionFilter<double> ();
   EXPECT_TRUE(filter->configure(1, "LowPassNonUnity" ));
     
   std::vector<double> in1,in2,in3,in4,in5,in6,in7;
@@ -95,11 +126,11 @@ TEST(TransferFunctionDoubleFilter, LowPassNonUnity)
   EXPECT_NEAR(out1[0], in7[0], epsilon);
 }
 
-TEST(TransferFunctionDoubleFilter, LowPassMulti)
+TEST(MultiChannelTransferFunctionDoubleFilter, LowPassMulti)
 {
   double epsilon = 1e-4;
 
-  MultiChannelFilterBase<double> * filter = new TransferFunctionFilter<double> ();
+  MultiChannelFilterBase<double> * filter = new MultiChannelTransferFunctionFilter<double> ();
   EXPECT_TRUE(filter->configure(3, "LowPassMulti" ));
 
   std::vector<double> in1,in2,in3,in4,in5,in6,in7;
@@ -150,11 +181,11 @@ TEST(TransferFunctionDoubleFilter, LowPassMulti)
   }
 }
 
-TEST(TransferFunctionDoubleFilter, LowPassIrrational)
+TEST(MultiChannelTransferFunctionDoubleFilter, LowPassIrrational)
 {
   double epsilon = 1e-4;
  
-  MultiChannelFilterBase<double> * filter = new TransferFunctionFilter<double> ();
+  MultiChannelFilterBase<double> * filter = new MultiChannelTransferFunctionFilter<double> ();
   EXPECT_TRUE(filter->configure(3, "LowPassIrrational" ));
  
   std::vector<double> in1,in2,in3,in4,in5,in6,in7;

@@ -66,8 +66,14 @@
     </class>
   </library>
   <library path="lib/libtransfer_function">
-    <class name="MultiChannelTransferFunctionFilterDouble" type="filters::TransferFunctionFilter<double>" 
+    <class name="MultiChannelTransferFunctionFilterDouble" type="filters::MultiChannelTransferFunctionFilter<double>" 
 	    base_class_type="filters::MultiChannelFilterBase<double>">
+      <description>
+	This is a transfer filter which works on a stream of doubles.  
+      </description>
+    </class>
+    <class name="TransferFunctionFilterDouble" type="filters::SingleChannelTransferFunctionFilter<double>" 
+	    base_class_type="filters::FilterBase<double>">
       <description>
 	This is a transfer filter which works on a stream of doubles.  
       </description>
