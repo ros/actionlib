@@ -49,23 +49,23 @@ class RefServer (ActionServer):
     def goalCallback(self,gh):
         goal = gh.get_goal();
 
-        rospy.loginfo("Got goal %d", int(goal.goal.goal))
-        if goal.goal.goal == 1:
+        rospy.loginfo("Got goal %d", int(goal.goal))
+        if goal.goal == 1:
             gh.set_accepted();
             gh.set_succeeded(None, "The ref server has succeeded");
-        elif goal.goal.goal == 2:
+        elif goal.goal == 2:
             gh.set_accepted();
             gh.set_aborted(None, "The ref server has aborted");
-        elif goal.goal.goal == 3:
+        elif goal.goal == 3:
             gh.set_rejected(None, "The ref server has rejected");
 
 
-        elif goal.goal.goal == 4:
+        elif goal.goal == 4:
             
             self.saved_goals.append(gh);
             gh.set_accepted();
 
-        elif goal.goal.goal == 5:
+        elif goal.goal == 5:
 
             gh.set_accepted();
             for g in self.saved_goals:
@@ -74,7 +74,7 @@ class RefServer (ActionServer):
             gh.set_succeeded();
 
 
-        elif goal.goal.goal == 6:
+        elif goal.goal == 6:
             gh.set_accepted();
             for g in self.saved_goals:
                 g.set_aborted();
