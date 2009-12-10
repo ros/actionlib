@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 # Copyright (c) 2009, Willow Garage, Inc.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 #       notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
 #     * Neither the name of the Willow Garage, Inc. nor the names of its
 #       contributors may be used to endorse or promote products derived from
 #       this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -123,7 +123,7 @@ class ClientGoalHandle:
     ## @brief True iff the two ClientGoalHandle's are tracking different goals
     def __ne__(self, o):
         return not (self.comm_state_machine == o.comm_state_machine)
-        
+
 
     ## @brief Sends a cancel message for this specific goal to the ActionServer.
     ##
@@ -136,7 +136,7 @@ class ClientGoalHandle:
             self.comm_state_machine.transition_to(CommState.WAITING_FOR_CANCEL_ACK)
 
     ## @brief Get the state of this goal's communication state machine from interaction with the server
-    ## 
+    ##
     ## Possible States are: WAITING_FOR_GOAL_ACK, PENDING, ACTIVE, WAITING_FOR_RESULT,
     ##                      WAITING_FOR_CANCEL_ACK, RECALLING, PREEMPTING, DONE
     ##
@@ -194,11 +194,11 @@ class ClientGoalHandle:
             return GoalStatus.LOST
 
 
-        
-    
+
+
 NO_TRANSITION = -1
 INVALID_TRANSITION = -2
-_transitions = { 
+_transitions = {
     CommState.WAITING_FOR_GOAL_ACK: {
         GoalStatus.PENDING:    CommState.PENDING,
         GoalStatus.ACTIVE:     CommState.ACTIVE,
@@ -289,7 +289,7 @@ class CommStateMachine:
         self.feedback_cb = feedback_cb
         self.send_goal_fn = send_goal_fn
         self.send_cancel_fn = send_cancel_fn
-        
+
         self.state = CommState.WAITING_FOR_GOAL_ACK
         self.mutex = threading.RLock()
         self.latest_goal_status = GoalStatus(status = GoalStatus.PENDING)
@@ -348,7 +348,7 @@ class CommStateMachine:
         self.state = state
         if self.transition_cb:
             self.transition_cb(ClientGoalHandle(self))
-            
+
     def _mark_as_lost(self):
         self.latest_goal_status.status = GoalStatus.LOST
         self.transition_to(CommState.DONE)
@@ -394,7 +394,7 @@ class GoalManager:
 
         try:
             a = ActionSpec()
-            
+
             self.ActionSpec = ActionSpec
             self.ActionGoal = type(a.action_goal)
             self.ActionResult = type(a.action_result)
@@ -442,9 +442,9 @@ class GoalManager:
             live_statuses = filter(lambda x: x, live_statuses)
             return live_statuses
 
-        
+
     ## Updates the statuses of all goals from the information in status_array.
-    ## 
+    ##
     ## @param status_array (\c actionlib_msgs/GoalStatusArray)
     def update_statuses(self, status_array):
         live_statuses = []
@@ -479,7 +479,7 @@ class ActionClient:
 
         try:
             a = ActionSpec()
-            
+
             self.ActionSpec = ActionSpec
             self.ActionGoal = type(a.action_goal)
             self.ActionResult = type(a.action_result)
@@ -493,7 +493,7 @@ class ActionClient:
         self.manager = GoalManager(ActionSpec)
         self.manager.register_send_goal_fn(self.pub_goal.publish)
         self.manager.register_cancel_fn(self.pub_cancel.publish)
-       
+
         rospy.Subscriber(ns + '/status', GoalStatusArray, self._status_cb)
         rospy.Subscriber(ns + '/result', self.ActionResult, self._result_cb)
         rospy.Subscriber(ns + '/feedback', self.ActionFeedback, self._feedback_cb)
@@ -505,12 +505,12 @@ class ActionClient:
     ## @param transition_cb Callback that gets called on every client
     ## state transition for the sent goal.  It should take in a
     ## ClientGoalHandle as an argument.
-    ## 
+    ##
     ## @param feedback_cb Callback that gets called every time
     ## feedback is received for the sent goal.  It takes two
     ## parameters: a ClientGoalHandle and an instance of the *Feedback
     ## message.
-    ## 
+    ##
     ## @return ClientGoalHandle for the sent goal.
     def send_goal(self, goal, transition_cb = None, feedback_cb = None):
         return self.manager.init_goal(goal, transition_cb, feedback_cb)
@@ -547,9 +547,13 @@ class ActionClient:
 
             if timeout != rospy.Duration(0.0) and rospy.get_rostime() >= timeout_time:
                 break
-            
+
             time.sleep(0.01)
-                
+
+        # Hack to give subscriptions time to connect. Will be removed once an 'advertise callback' exists in ros.
+        if started:
+            time.sleep(1.0)
+
         return started
 
     def _status_cb(self, msg):
