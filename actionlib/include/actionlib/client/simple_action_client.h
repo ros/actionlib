@@ -249,7 +249,6 @@ public:
 private:
   typedef ActionClient<ActionSpec> ActionClientT;
   ros::NodeHandle nh_;
-  boost::scoped_ptr<ActionClientT> ac_;
   GoalHandleT gh_;
 
   SimpleGoalState cur_simple_state_;
@@ -268,6 +267,8 @@ private:
   bool need_to_terminate_;
   boost::thread* spin_thread_;
   ros::CallbackQueue callback_queue;
+
+  boost::scoped_ptr<ActionClientT> ac_;  // Action client depends on callback_queue, so it must be destroyed before callback_queue
 
   // ***** Private Funcs *****
   void initSimpleClient(ros::NodeHandle& n, const std::string& name, bool spin_thread);
@@ -309,6 +310,7 @@ SimpleActionClient<ActionSpec>::~SimpleActionClient()
     spin_thread_->join();
     delete spin_thread_;
   }
+  ac_.reset();
 }
 
 template<class ActionSpec>
