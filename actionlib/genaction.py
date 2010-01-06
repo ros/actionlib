@@ -56,10 +56,11 @@ def write_file(filename, text):
 
 def main():
 
-    if len(sys.argv) < 2:
-        print "Need to give a package path"
+    if len(sys.argv) < 3:
+        print "Need to give a package path and file name"
         sys.exit(1)
     pkg = os.path.abspath(sys.argv[1])
+    filename = sys.argv[2]
 
     if not os.path.exists(os.path.join(pkg, 'manifest.xml')):
         print "Not a package %s" % pkg
@@ -70,56 +71,58 @@ def main():
         os.makedirs(output_dir)
 
     action_dir = os.path.join(pkg, 'action')
-    for action_file in os.listdir(action_dir):
-        if action_file.endswith('.action'):
-            filename = os.path.join(action_dir, action_file)
+    action_file = os.path.join(action_dir, filename)
+    if not action_file.endswith('.action'):
+        print "The file specified has the wrong extension. It must end in .action"
+    else:
+        filename = os.path.join(action_dir, action_file)
 
-            f = open(filename)
-            action_spec = f.read()
-            f.close()
+        f = open(filename)
+        action_spec = f.read()
+        f.close()
 
-            name = os.path.basename(filename)[:-7]
-            print "Generating for action %s" % name
+        name = os.path.basename(filename)[:-7]
+        print "Generating for action %s" % name
 
-            pieces = parse_action_spec(action_spec)
-            if len(pieces) != 3:
-                raise ActionSpecException("%s: wrong number of pieces, %d"%(filename,len(pieces)))
-            goal, result, feedback = pieces
+        pieces = parse_action_spec(action_spec)
+        if len(pieces) != 3:
+            raise ActionSpecException("%s: wrong number of pieces, %d"%(filename,len(pieces)))
+        goal, result, feedback = pieces
 
-            action_msg = AUTOGEN + """
+        action_msg = AUTOGEN + """
 %sActionGoal action_goal
 %sActionResult action_result
 %sActionFeedback action_feedback
 """ % (name, name, name)
 
-            goal_msg = AUTOGEN + goal
-            action_goal_msg = AUTOGEN + """
+        goal_msg = AUTOGEN + goal
+        action_goal_msg = AUTOGEN + """
 Header header
 actionlib_msgs/GoalID goal_id
 %sGoal goal
 """ % name
 
-            result_msg = AUTOGEN + result
-            action_result_msg = AUTOGEN + """
+        result_msg = AUTOGEN + result
+        action_result_msg = AUTOGEN + """
 Header header
 actionlib_msgs/GoalStatus status
 %sResult result
 """ % name
 
-            feedback_msg = AUTOGEN + feedback
-            action_feedback_msg = AUTOGEN + """
+        feedback_msg = AUTOGEN + feedback
+        action_feedback_msg = AUTOGEN + """
 Header header
 actionlib_msgs/GoalStatus status
 %sFeedback feedback
 """ % name
 
-            write_file(os.path.join(output_dir, "%sAction.msg"%name), action_msg)
-            write_file(os.path.join(output_dir, "%sGoal.msg"%name), goal_msg)
-            write_file(os.path.join(output_dir, "%sActionGoal.msg"%name), action_goal_msg)
-            write_file(os.path.join(output_dir, "%sResult.msg"%name), result_msg)
-            write_file(os.path.join(output_dir, "%sActionResult.msg"%name), action_result_msg)
-            write_file(os.path.join(output_dir, "%sFeedback.msg"%name), feedback_msg)
-            write_file(os.path.join(output_dir, "%sActionFeedback.msg"%name), action_feedback_msg)
+        write_file(os.path.join(output_dir, "%sAction.msg"%name), action_msg)
+        write_file(os.path.join(output_dir, "%sGoal.msg"%name), goal_msg)
+        write_file(os.path.join(output_dir, "%sActionGoal.msg"%name), action_goal_msg)
+        write_file(os.path.join(output_dir, "%sResult.msg"%name), result_msg)
+        write_file(os.path.join(output_dir, "%sActionResult.msg"%name), action_result_msg)
+        write_file(os.path.join(output_dir, "%sFeedback.msg"%name), feedback_msg)
+        write_file(os.path.join(output_dir, "%sActionFeedback.msg"%name), action_feedback_msg)
 
 
 if __name__ == '__main__': main()
