@@ -81,11 +81,11 @@ public:
     }
     else if(!node.getParam(param_name, config))
     {
-      ROS_DEBUG("Could not load the configuration for %s, are you sure it was pushed to the parameter server? Assuming that you meant to leave it empty.", param_name.c_str());
+      ROS_DEBUG("Could not load the filter chain configuration from parameter %s, are you sure it was pushed to the parameter server? Assuming that you meant to leave it empty.", param_name.c_str());
       configured_ = true;
       return true;
     }
-    return this->configure(config);
+    return this->configure(config, node.getNamespace());
   }
 
   /** \brief process data through each of the filters added sequentially */
@@ -139,13 +139,13 @@ public:
 
   /** \brief Configure the filter chain 
    * This will call configure on all filters which have been added */
-  bool configure(XmlRpc::XmlRpcValue& config)
+  bool configure(XmlRpc::XmlRpcValue& config, const std::string& filter_ns)
   {
     /*************************** Parse the XmlRpcValue ***********************************/
     //Verify proper naming and structure    
     if (config.getType() != XmlRpc::XmlRpcValue::TypeArray)
     {
-      ROS_ERROR("The filter chain specification must be a list. but is of of XmlRpcType %d", config.getType());
+      ROS_ERROR("%s: The filter chain specification must be a list. but is of of XmlRpcType %d", filter_ns.c_str(), config.getType());
       ROS_ERROR("The xml passed in is formatted as follows:\n %s", config.toXml().c_str());
 
       return false;
@@ -156,17 +156,17 @@ public:
     {
       if(config[i].getType() != XmlRpc::XmlRpcValue::TypeStruct)
       {
-        ROS_ERROR("Filters must be specified as maps, but they are XmlRpcType:%d", config[i].getType());
+        ROS_ERROR("%s: Filters must be specified as maps, but they are XmlRpcType:%d", filter_ns.c_str(), config[i].getType());
         return false;
       }
       else if (!config[i].hasMember("type"))
       {
-        ROS_ERROR("Could not add a filter because no type was given");
+        ROS_ERROR("%s: Could not add a filter because no type was given", filter_ns.c_str());
         return false;
       }
       else if (!config[i].hasMember("name"))
       {
-        ROS_ERROR("Could not add a filter because no name was given");
+        ROS_ERROR("%s: Could not add a filter because no name was given", filter_ns.c_str());
         return false;
       }
       else
@@ -176,7 +176,7 @@ public:
         {
           if(config[j].getType() != XmlRpc::XmlRpcValue::TypeStruct)
           {
-            ROS_ERROR("Filters must be specified as maps, but they are XmlRpcType:%d", config[j].getType());
+            ROS_ERROR("%s: Filters must be specified as maps, but they are XmlRpcType:%d", filter_ns.c_str(), config[j].getType());
             return false;
           }
 
@@ -184,7 +184,7 @@ public:
               ||config[i]["name"].getType() != XmlRpc::XmlRpcValue::TypeString
               || config[j]["name"].getType() != XmlRpc::XmlRpcValue::TypeString)
           {
-            ROS_ERROR("Filters names must be strings, but they are XmlRpcTypes:%d and %d", config[i].getType(), config[j].getType());
+            ROS_ERROR("%s: Filters names must be strings, but they are XmlRpcTypes:%d and %d", filter_ns.c_str(), config[i].getType(), config[j].getType());
             return false;
           }
 
@@ -192,7 +192,7 @@ public:
           std::string namej = config[j]["name"];
           if (namei == namej)
           {
-            ROS_ERROR("A self_filter with the name %s already exists", namei.c_str());
+            ROS_ERROR("%s: A self_filter with the name %s already exists", filter_ns.c_str(), namei.c_str());
             return false;
           }
         }
@@ -212,7 +212,7 @@ public:
       reference_pointers_.push_back(p);
       std::string type = config[i]["type"];
       std::string name = config[i]["name"];
-      ROS_DEBUG("Configured %s:%s filter at %p\n", type.c_str(),
+      ROS_DEBUG("%s: Configured %s:%s filter at %p\n", filter_ns.c_str(), type.c_str(),
                 name.c_str(),  p.get());
     }
     
