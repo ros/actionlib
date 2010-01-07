@@ -40,6 +40,10 @@ rosbuild_add_executable(simple_client_allocator_test test/simple_client_allocato
 rosbuild_add_gtest_build_flags(simple_client_allocator_test)
 target_link_libraries(simple_client_allocator_test ${PROJECT_NAME})
 
+rosbuild_add_gtest(destruction_guard_test test/destruction_guard_test.cpp)
+#rosbuild_add_gtest_build_flags(destruction_guard_test)
+target_link_libraries(destruction_guard_test ${PROJECT_NAME})
+
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/ref_server_test.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/simple_execute_ref_server_test.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_simple_client.launch)
