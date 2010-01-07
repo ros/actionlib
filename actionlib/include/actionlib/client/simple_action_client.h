@@ -83,9 +83,9 @@ public:
    * Constructs a SingleGoalActionClient and sets up the necessary ros topics for the ActionInterface
    * \param name The action name. Defines the namespace in which the action communicates
    * \param spin_thread If true, spins up a thread to service this action's subscriptions. If false,
-   *                    then the user has to call ros::spin().
+   *                    then the user has to call ros::spin() themselves. Defaults to True
    */
-  SimpleActionClient(const std::string& name, bool spin_thread = false) : cur_simple_state_(SimpleGoalState::PENDING)
+  SimpleActionClient(const std::string& name, bool spin_thread = true) : cur_simple_state_(SimpleGoalState::PENDING)
   {
     initSimpleClient(nh_, name, spin_thread);
   }
