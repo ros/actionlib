@@ -328,13 +328,15 @@ class ActionServer:
 
               #status_array.set_status_list_size(len(self.status_list));
 
-              for i,st in enumerate(self.status_list):
+              i=0;
+              while i<len(self.status_list):
+                  st = self.status_list[i]
                   #check if the item is due for deletion from the status list
                   if st.handle_destruction_time != rospy.Time() and st.handle_destruction_time + self.status_list_timeout < rospy.Time.now():
-                      #del self.status_list[i]
-                      pass
+                      del self.status_list[i]
                   else:
                       status_array.status_list.append(st.status);
+                      i+=1
 
 
               status_array.header.stamp = rospy.Time.now()

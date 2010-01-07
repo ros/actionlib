@@ -75,6 +75,7 @@ TEST(SimpleClient, easy_tests)
 }
 
 
+
 void easyDoneCallback(bool* called, const SimpleClientGoalState& state, const TestResultConstPtr& result)
 {
   *called = true;

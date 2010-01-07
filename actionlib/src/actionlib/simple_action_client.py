@@ -191,7 +191,7 @@ class SimpleActionClient:
         if not self.gh:
             rospy.logerr("Called get_state when no goal is running")
             return GoalStatus.LOST
-        status = gh.get_goal_status()
+        status = self.gh.get_goal_status()
         
         if status == GoalStatus.RECALLING:
             status = GoalStatus.PENDING
@@ -199,6 +199,21 @@ class SimpleActionClient:
             status = GoalStatus.ACTIVE
 
         return status
+
+
+    ## @brief Returns the current status text of the goal.
+    ##
+    ## The text is sent by the action server. It is designed to 
+    ## help debugging issues on the server side. 
+    ##
+    ## @return The current status text of the goal.
+    def get_goal_status_text(self):
+        if not self.gh:
+            rospy.logerr("Called get_goal_status_text when no goal is running")
+            return "ERROR: Called get_goal_status_text when no goal is running"
+        
+        return self.gh.get_goal_status_text()
+        
 
 
 

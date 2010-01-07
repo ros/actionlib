@@ -47,12 +47,16 @@ class TestSimpleActionClient(unittest.TestCase):
         self.assert_(client.wait_for_goal_to_finish(rospy.Duration(10.0)),
                      "Goal didn't finish")
         self.assertEqual(GoalStatus.SUCCEEDED, client.get_terminal_state())
+        self.assertEqual(GoalStatus.SUCCEEDED, client.get_state())
+        self.assertEqual("The ref server has succeeded", client.get_goal_status_text())
 
         goal = TestGoal(2)
         client.send_goal(goal)
         self.assert_(client.wait_for_goal_to_finish(rospy.Duration(10.0)),
                      "Goal didn't finish")
         self.assertEqual(GoalStatus.ABORTED, client.get_terminal_state())
+        self.assertEqual(GoalStatus.ABORTED, client.get_state())
+        self.assertEqual("The ref server has aborted", client.get_goal_status_text())
 
 
 if __name__ == '__main__':

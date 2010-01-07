@@ -49,12 +49,14 @@ class TestRefSimpleActionServer(unittest.TestCase):
         self.assert_(client.wait_for_goal_to_finish(rospy.Duration(2.0)),
                      "Goal didn't finish")
         self.assertEqual(GoalStatus.SUCCEEDED, client.get_terminal_state())
+        self.assertEqual(GoalStatus.SUCCEEDED, client.get_state())
 
         goal = TestGoal(2)
         client.send_goal(goal)
         self.assert_(client.wait_for_goal_to_finish(rospy.Duration(10.0)),
                      "Goal didn't finish")
         self.assertEqual(GoalStatus.ABORTED, client.get_terminal_state())
+        self.assertEqual(GoalStatus.ABORTED, client.get_state())
 
 
     def test_preemption(self):

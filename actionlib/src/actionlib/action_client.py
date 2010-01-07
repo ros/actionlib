@@ -159,6 +159,17 @@ class ClientGoalHandle:
             return GoalStatus.PENDING
         return self.comm_state_machine.latest_goal_status.status
 
+    ## @brief Returns the current status text of the goal.
+    ##
+    ## The text is sent by the action server.
+    ##
+    ## @return The current status text of the goal.
+    def get_goal_status_text(self):
+        if not self.comm_state_machine:
+            rospy.logerr("Trying to get_goal_status_text on an inactive ClientGoalHandle.")
+            return "ERROR: Trying to get_goal_status_text on an inactive ClientGoalHandle."
+        return self.comm_state_machine.latest_goal_status.text
+
     ## @brief Gets the result produced by the action server for this goal.
     ##
     ## @return None if no result was receieved.  Otherwise the goal's result as a *Result message.

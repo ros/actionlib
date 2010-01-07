@@ -310,6 +310,7 @@ SimpleActionClient<ActionSpec>::~SimpleActionClient()
     spin_thread_->join();
     delete spin_thread_;
   }
+  gh_.reset();
   ac_.reset();
 }
 
