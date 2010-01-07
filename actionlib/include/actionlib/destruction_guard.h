@@ -90,9 +90,8 @@ namespace actionlib {
            * @brief  Constructor for a ScopedProtector
            * @param guard The DestructionGuard to protect
            */
-          ScopedProtector(const boost::shared_ptr<DestructionGuard>& guard) : guard_(guard), protected_(false){
-            if(guard_.get() != 0)
-              protected_ = guard_->tryProtect();
+          ScopedProtector(DestructionGuard& guard) : guard_(guard), protected_(false){
+            protected_ = guard_.tryProtect();
           }
 
           /**
@@ -108,11 +107,11 @@ namespace actionlib {
            */
           ~ScopedProtector(){
             if(protected_)
-              guard_->unprotect();
+              guard_.unprotect();
           }
 
         private:
-          const boost::shared_ptr<DestructionGuard>& guard_;
+          DestructionGuard& guard_;
           bool protected_;
       };
 
