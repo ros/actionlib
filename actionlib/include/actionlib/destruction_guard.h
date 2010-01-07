@@ -55,7 +55,7 @@ namespace actionlib {
         boost::mutex::scoped_lock lock(mutex_);
         destructing_ = true;
         while(use_count_ > 0){
-          count_condition_.timed_wait(lock, boost::posix_time::milliseconds(time_left.toSec() * 1000.0f)); 
+          count_condition_.timed_wait(lock, boost::posix_time::milliseconds(1000.0f)); 
         }
       }
 
@@ -90,8 +90,9 @@ namespace actionlib {
            * @brief  Constructor for a ScopedProtector
            * @param guard The DestructionGuard to protect
            */
-          ScopedProtector(DestructionGuard& guard) : guard_(guard), protected_(false){
-            protected_ = guard_.tryProtect();
+          ScopedProtector(const boost::shared_ptr<DestructionGuard>& guard) : guard_(guard), protected_(false){
+            if(guard_.get() != 0)
+              protected_ = guard_->tryProtect();
           }
 
           /**
@@ -107,11 +108,11 @@ namespace actionlib {
            */
           ~ScopedProtector(){
             if(protected_)
-              guard_.unprotect();
+              guard_->unprotect();
           }
 
         private:
-          DestructionGuard& guard_;
+          const boost::shared_ptr<DestructionGuard>& guard_;
           bool protected_;
       };
 
