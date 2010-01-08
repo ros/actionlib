@@ -25,6 +25,10 @@ include_directories(${PROJECT_SOURCE_DIR}/msg/cpp/)
 rosbuild_add_executable(ref_server test/ref_server.cpp)
 target_link_libraries(ref_server ${PROJECT_NAME})
 
+rosbuild_add_executable(server_goal_handle_destruction test/server_goal_handle_destruction.cpp)
+rosbuild_add_gtest_build_flags(server_goal_handle_destruction)
+target_link_libraries(server_goal_handle_destruction ${PROJECT_NAME})
+
 rosbuild_add_executable(simple_execute_ref_server test/simple_execute_ref_server.cpp)
 target_link_libraries(simple_execute_ref_server ${PROJECT_NAME})
 
@@ -52,6 +56,7 @@ rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/simple_execute_ref_server_
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_simple_client.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_cpp_simple_client_allocator.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_cpp_action_client_destruction.launch)
+rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_server_goal_handle_destruction.launch)
 
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_imports.launch)
 
