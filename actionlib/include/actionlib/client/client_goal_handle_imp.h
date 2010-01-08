@@ -168,7 +168,7 @@ typename ClientGoalHandle<ActionSpec>::ResultConstPtr ClientGoalHandle<ActionSpe
   if (!protector.isProtected())
   {
     ROS_ERROR("This action client associated with the goal handle has already been destructed. Ignoring this getResult() call");
-    return ClientGoalHandle<ActionSpec>::ResultConstPtr() ;
+    return typename ClientGoalHandle<ActionSpec>::ResultConstPtr() ;
   }
 
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
