@@ -41,6 +41,7 @@
 #include "ros/callback_queue_interface.h"
 #include <actionlib/client/client_helpers.h>
 #include <actionlib/client/connection_monitor.h>
+#include <actionlib/destruction_guard.h>
 
 namespace actionlib
 {
@@ -74,7 +75,7 @@ public:
    * \param queue CallbackQueue from which this action will process messages.
    *              The default (NULL) is to use the global queue
    */
-  ActionClient(const std::string& name, ros::CallbackQueueInterface* queue = NULL) : n_(name)
+  ActionClient(const std::string& name, ros::CallbackQueueInterface* queue = NULL) : n_(name), guard_(new DestructionGuard()), manager_(guard_)
   {
     initClient(queue);
   }
@@ -89,10 +90,18 @@ public:
    * \param queue CallbackQueue from which this action will process messages.
    *              The default (NULL) is to use the global queue
    */
-  ActionClient(const ros::NodeHandle& n, const std::string& name, ros::CallbackQueueInterface* queue = NULL) : n_(n, name)
+  ActionClient(const ros::NodeHandle& n, const std::string& name, ros::CallbackQueueInterface* queue = NULL) : n_(n, name), guard_(new DestructionGuard()), manager_(guard_)
   {
     initClient(queue);
   }
+
+  ~ActionClient()
+  {
+    ROS_DEBUG("ActionClient: Waiting for destruction guard to clean up");
+    guard_->destruct();
+    ROS_DEBUG("ActionClient: destruction guard destruct() done");
+  }
+
 
   /**
    * \brief Sends a goal to the ActionServer, and also registers callbacks
@@ -151,6 +160,7 @@ public:
 private:
   ros::NodeHandle n_;
 
+  boost::shared_ptr<DestructionGuard> guard_;
   GoalManager<ActionSpec> manager_;
   ConnectionMonitor connection_monitor;   // Have to destroy subscribers and publishers before the connection_monitor, since we call callbacks in the connection_monitor
 
@@ -159,6 +169,7 @@ private:
   ros::Publisher  cancel_pub_;
   ros::Subscriber status_sub_;
   ros::Subscriber result_sub_;
+
 
   void sendGoalFunc(const ActionGoalConstPtr& action_goal)
   {
@@ -173,7 +184,6 @@ private:
   void initClient(ros::CallbackQueueInterface* queue)
   {
     // Start publishers and subscribers
-
     goal_pub_ = queue_advertise<ActionGoal>("goal", 1,
                                             boost::bind(&ConnectionMonitor::goalConnectCallback,    &connection_monitor, _1),
                                             boost::bind(&ConnectionMonitor::goalDisconnectCallback, &connection_monitor, _1),

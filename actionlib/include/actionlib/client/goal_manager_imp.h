@@ -71,14 +71,22 @@ ClientGoalHandle<ActionSpec> GoalManager<ActionSpec>::initGoal(const Goal& goal,
   boost::shared_ptr<CommStateMachineT> comm_state_machine(new CommStateMachineT(action_goal, transition_cb, feedback_cb));
 
   boost::recursive_mutex::scoped_lock lock(list_mutex_);
-  typename ManagedListT::Handle list_handle = list_.add(comm_state_machine, boost::bind(&GoalManagerT::listElemDeleter, this, _1));
+  typename ManagedListT::Handle list_handle = list_.add(comm_state_machine, boost::bind(&GoalManagerT::listElemDeleter, this, _1), guard_);
 
-  return GoalHandleT(this, list_handle);
+  return GoalHandleT(this, list_handle, guard_);
 }
 
 template<class ActionSpec>
 void GoalManager<ActionSpec>::listElemDeleter(typename ManagedListT::iterator it)
 {
+  assert(guard_);
+  DestructionGuard::ScopedProtector protector(*guard_);
+  if (!protector.isProtected())
+  {
+    ROS_ERROR("This action client associated with the goal handle has already been destructed. Not going to try delete the CommStateMachine associated with this goal");
+    return;
+  }
+
   ROS_DEBUG("About to erase CommStateMachine");
   boost::recursive_mutex::scoped_lock lock(list_mutex_);
   list_.erase(it);
@@ -93,7 +101,7 @@ void GoalManager<ActionSpec>::updateStatuses(const actionlib_msgs::GoalStatusArr
 
   while (it != list_.end())
   {
-    GoalHandleT gh(this, it.createHandle());
+    GoalHandleT gh(this, it.createHandle(), guard_);
     (*it)->updateStatus(gh, status_array);
     ++it;
   }
@@ -107,7 +115,7 @@ void GoalManager<ActionSpec>::updateFeedbacks(const ActionFeedbackConstPtr& acti
 
   while (it != list_.end())
   {
-    GoalHandleT gh(this, it.createHandle());
+    GoalHandleT gh(this, it.createHandle(), guard_);
     (*it)->updateFeedback(gh, action_feedback);
     ++it;
   }
@@ -121,7 +129,7 @@ void GoalManager<ActionSpec>::updateResults(const ActionResultConstPtr& action_r
 
   while (it != list_.end())
   {
-    GoalHandleT gh(this, it.createHandle());
+    GoalHandleT gh(this, it.createHandle(), guard_);
     (*it)->updateResult(gh, action_result);
     ++it;
   }

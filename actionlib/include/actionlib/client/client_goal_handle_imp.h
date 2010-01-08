@@ -53,11 +53,13 @@ ClientGoalHandle<ActionSpec>::~ClientGoalHandle()
 }
 
 template<class ActionSpec>
-ClientGoalHandle<ActionSpec>::ClientGoalHandle(GoalManagerT* gm, typename ManagedListT::Handle handle)
+ClientGoalHandle<ActionSpec>::ClientGoalHandle(GoalManagerT* gm, typename ManagedListT::Handle handle,
+                                               const boost::shared_ptr<DestructionGuard>& guard)
 {
   gm_ = gm;
   active_ = true;
   list_handle_ = handle;
+  guard_ = guard;
 }
 
 template<class ActionSpec>
@@ -65,6 +67,13 @@ void ClientGoalHandle<ActionSpec>::reset()
 {
   if (active_)
   {
+    DestructionGuard::ScopedProtector protector(*guard_);
+    if (!protector.isProtected())
+    {
+      ROS_ERROR("This action client associated with the goal handle has already been destructed. Ignoring this reset() call");
+      return;
+    }
+
     boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
     list_handle_.reset();
     active_ = false;
@@ -83,7 +92,17 @@ template<class ActionSpec>
 CommState ClientGoalHandle<ActionSpec>::getCommState()
 {
   if (!active_)
+  {
     ROS_ERROR("Trying to getCommState on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
+    return CommState(CommState::DONE);
+  }
+
+  DestructionGuard::ScopedProtector protector(*guard_);
+  if (!protector.isProtected())
+  {
+    ROS_ERROR("This action client associated with the goal handle has already been destructed. Ignoring this getCommState() call");
+    return CommState(CommState::DONE);
+  }
 
   assert(gm_);
 
@@ -94,8 +113,19 @@ CommState ClientGoalHandle<ActionSpec>::getCommState()
 template<class ActionSpec>
 TerminalState ClientGoalHandle<ActionSpec>::getTerminalState()
 {
+
   if (!active_)
+  {
     ROS_ERROR("Trying to getTerminalState on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
+    return TerminalState(TerminalState::LOST);
+  }
+
+  DestructionGuard::ScopedProtector protector(*guard_);
+  if (!protector.isProtected())
+  {
+    ROS_ERROR("This action client associated with the goal handle has already been destructed. Ignoring this getTerminalState() call");
+    return TerminalState(TerminalState::LOST);
+  }
 
   assert(gm_);
 
@@ -133,6 +163,14 @@ typename ClientGoalHandle<ActionSpec>::ResultConstPtr ClientGoalHandle<ActionSpe
   if (!active_)
     ROS_ERROR("Trying to getResult on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
   assert(gm_);
+
+  DestructionGuard::ScopedProtector protector(*guard_);
+  if (!protector.isProtected())
+  {
+    ROS_ERROR("This action client associated with the goal handle has already been destructed. Ignoring this getResult() call");
+    return ClientGoalHandle<ActionSpec>::ResultConstPtr() ;
+  }
+
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
   return list_handle_.getElem()->getResult();
 }
@@ -142,7 +180,16 @@ void ClientGoalHandle<ActionSpec>::resend()
 {
   if (!active_)
     ROS_ERROR("Trying to resend() on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
+
+  DestructionGuard::ScopedProtector protector(*guard_);
+  if (!protector.isProtected())
+  {
+    ROS_ERROR("This action client associated with the goal handle has already been destructed. Ignoring this resend() call");
+    return;
+  }
+
   assert(gm_);
+
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
 
   ActionGoalConstPtr action_goal = list_handle_.getElem()->getActionGoal();
@@ -160,6 +207,14 @@ void ClientGoalHandle<ActionSpec>::cancel()
   if (!active_)
     ROS_ERROR("Trying to cancel() on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
   assert(gm_);
+
+  DestructionGuard::ScopedProtector protector(*guard_);
+  if (!protector.isProtected())
+  {
+    ROS_ERROR("This action client associated with the goal handle has already been destructed. Ignoring this call");
+    return;
+  }
+
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
 
   ActionGoalConstPtr action_goal = list_handle_.getElem()->getActionGoal();
@@ -184,6 +239,13 @@ bool ClientGoalHandle<ActionSpec>::operator==(const ClientGoalHandle<ActionSpec>
   // Check if one or the other is inactive
   if (!active_ || !rhs.active_)
     return false;
+
+  DestructionGuard::ScopedProtector protector(*guard_);
+  if (!protector.isProtected())
+  {
+    ROS_ERROR("This action client associated with the goal handle has already been destructed. Ignoring this operator==() call");
+    return false;
+  }
 
   return (list_handle_ == rhs.list_handle_) ;
 }

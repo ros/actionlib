@@ -53,7 +53,6 @@ TEST(SimpleClientAllocator, easy_test)
   delete traj_client_;
 }
 
-
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
 

@@ -50,6 +50,8 @@
 #include "actionlib/client/comm_state.h"
 #include "actionlib/client/terminal_state.h"
 
+#include "actionlib/destruction_guard.h"
+
 // msgs
 #include "actionlib_msgs/GoalID.h"
 #include "actionlib_msgs/GoalStatusArray.h"
@@ -75,7 +77,7 @@ public:
   typedef boost::function<void (const ActionGoalConstPtr)> SendGoalFunc;
   typedef boost::function<void (const actionlib_msgs::GoalID&)> CancelFunc;
 
-  GoalManager() { }
+  GoalManager(const boost::shared_ptr<DestructionGuard>& guard) : guard_(guard) { }
 
   void registerSendGoalFunc(SendGoalFunc send_goal_func);
   void registerCancelFunc(CancelFunc cancel_func);
@@ -96,6 +98,8 @@ public:
 private:
   SendGoalFunc send_goal_func_ ;
   CancelFunc cancel_func_ ;
+
+  boost::shared_ptr<DestructionGuard> guard_;
 
   boost::recursive_mutex list_mutex_;
 
@@ -199,11 +203,12 @@ private:
   typedef GoalManager<ActionSpec> GoalManagerT;
   typedef ManagedList< boost::shared_ptr<CommStateMachine<ActionSpec> > > ManagedListT;
 
-  ClientGoalHandle(GoalManagerT* gm, typename ManagedListT::Handle handle);
+  ClientGoalHandle(GoalManagerT* gm, typename ManagedListT::Handle handle, const boost::shared_ptr<DestructionGuard>& guard);
 
   GoalManagerT* gm_;
   bool active_;
   //typename ManagedListT::iterator it_;
+  boost::shared_ptr<DestructionGuard> guard_;   // Guard must still exist when the list_handle_ is destroyed
   typename ManagedListT::Handle list_handle_;
 };
 

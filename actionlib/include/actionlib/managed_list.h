@@ -39,8 +39,8 @@
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-
 #include <list>
+#include <actionlib/destruction_guard.h>
 
 namespace actionlib
 {
@@ -85,12 +85,19 @@ private:
   class ElemDeleter
   {
     public:
-      ElemDeleter(iterator it, CustomDeleter deleter) :
-        it_(it), deleter_(deleter)
+      ElemDeleter(iterator it, CustomDeleter deleter, const boost::shared_ptr<DestructionGuard>& guard) :
+        it_(it), deleter_(deleter), guard_(guard)
       { }
 
       void operator() (void* ptr)
       {
+        DestructionGuard::ScopedProtector protector(*guard_);
+        if (!protector.isProtected())
+        {
+          ROS_ERROR("ManagedList: The DestructionGuard associated with this list has already been destructed. You must delete all list handles before deleting the ManagedList");
+          return;
+        }
+
         ROS_DEBUG("IN DELETER");
         if (deleter_)
           deleter_(it_);
@@ -99,6 +106,7 @@ private:
     private:
       iterator it_;
       CustomDeleter deleter_;
+      boost::shared_ptr<DestructionGuard> guard_;
   };
 
 public:
@@ -178,7 +186,7 @@ public:
    * \param elem The element we want to add
    * \param deleter Object on which operator() is called when refcount goes to 0
    */
-  Handle add(const T& elem, CustomDeleter custom_deleter)
+  Handle add(const T& elem, CustomDeleter custom_deleter, const boost::shared_ptr<DestructionGuard>& guard)
   {
     TrackedElem tracked_t;
     tracked_t.elem = elem;
@@ -186,7 +194,7 @@ public:
     typename std::list<TrackedElem>::iterator list_it = list_.insert(list_.end(), tracked_t);
     iterator managed_it = iterator(list_it);
 
-    ElemDeleter deleter(managed_it, custom_deleter);
+    ElemDeleter deleter(managed_it, custom_deleter, guard);
     boost::shared_ptr<void> tracker( (void*) NULL, deleter);
 
     list_it->handle_tracker_ = tracker;
