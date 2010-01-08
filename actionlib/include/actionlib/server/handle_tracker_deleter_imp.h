@@ -39,17 +39,21 @@
 namespace actionlib {
   template <class ActionSpec>
   HandleTrackerDeleter<ActionSpec>::HandleTrackerDeleter(ActionServer<ActionSpec>* as,
-      typename std::list<StatusTracker<ActionSpec> >::iterator status_it)
-    : as_(as), status_it_(status_it) {}
+      typename std::list<StatusTracker<ActionSpec> >::iterator status_it, boost::shared_ptr<DestructionGuard> guard)
+    : as_(as), status_it_(status_it), guard_(guard) {}
 
   template <class ActionSpec>
   void HandleTrackerDeleter<ActionSpec>::operator()(void* ptr){
     if(as_){
-      //make sure to lock while we erase status for this goal from the list
-      as_->lock_.lock();
-      (*status_it_).handle_destruction_time_ = ros::Time::now();
-      //as_->status_list_.erase(status_it_);
-      as_->lock_.unlock();
+      //make sure that the action server hasn't been destroyed yet
+      DestructionGuard::ScopedProtector protector(*guard_);
+      if(protector.isProtected()){
+        //make sure to lock while we erase status for this goal from the list
+        as_->lock_.lock();
+        (*status_it_).handle_destruction_time_ = ros::Time::now();
+        //as_->status_list_.erase(status_it_);
+        as_->lock_.unlock();
+      }
     }
   }
 };

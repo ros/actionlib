@@ -49,6 +49,7 @@
 #include <actionlib/server/status_tracker.h>
 #include <actionlib/server/handle_tracker_deleter.h>
 #include <actionlib/server/server_goal_handle.h>
+#include <actionlib/destruction_guard.h>
 
 #include <list>
 
@@ -95,6 +96,11 @@ namespace actionlib {
        */
       ActionServer(ros::NodeHandle n, std::string name,
           bool auto_start = true);
+
+      /**
+       * @brief  Destructor for the ActionServer
+       */
+      ~ActionServer();
 
       /**
        * @brief  Register a callback to be invoked when a new goal is received, this will replace any  previously registered callback
@@ -176,6 +182,7 @@ namespace actionlib {
 
       GoalIDGenerator id_generator_;
       bool started_;
+      boost::shared_ptr<DestructionGuard> guard_;
   };
 };
 

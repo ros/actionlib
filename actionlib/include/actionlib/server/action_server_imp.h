@@ -41,7 +41,7 @@ namespace actionlib {
   ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
       bool auto_start)
     : node_(n, name), goal_callback_(boost::function<void (GoalHandle)>()),
-      cancel_callback_(boost::function<void (GoalHandle)>()), started_(auto_start){
+      cancel_callback_(boost::function<void (GoalHandle)>()), started_(auto_start), guard_(new DestructionGuard){
     //if we're to autostart... then we'll initialize things
     if(started_){ 
       initialize();
@@ -54,13 +54,18 @@ namespace actionlib {
       boost::function<void (GoalHandle)> goal_cb,
       boost::function<void (GoalHandle)> cancel_cb,
       bool auto_start)
-    : node_(n, name), goal_callback_(goal_cb), cancel_callback_(cancel_cb), started_(auto_start) {
-
+    : node_(n, name), goal_callback_(goal_cb), cancel_callback_(cancel_cb), started_(auto_start), guard_(new DestructionGuard) {
     //if we're to autostart... then we'll initialize things
     if(started_){ 
       initialize();
       publishStatus();
     }
+  }
+
+  template <class ActionSpec>
+  ActionServer<ActionSpec>::~ActionServer(){
+    //block until we can safely destruct
+    guard_->destruct();
   }
 
   template <class ActionSpec>
@@ -150,7 +155,7 @@ namespace actionlib {
 
         if((*it).handle_tracker_.expired()){
           //if the handle tracker is expired, then we need to create a new one
-          HandleTrackerDeleter<ActionSpec> d(this, it);
+          HandleTrackerDeleter<ActionSpec> d(this, it, guard_);
           handle_tracker = boost::shared_ptr<void>((void *)NULL, d);
           (*it).handle_tracker_ = handle_tracker;
 
@@ -160,7 +165,7 @@ namespace actionlib {
 
         //set the status of the goal to PREEMPTING or RECALLING as approriate
         //and check if the request should be passed on to the user
-        GoalHandle gh(it, this, handle_tracker);
+        GoalHandle gh(it, this, handle_tracker, guard_);
         if(gh.setCancelRequested()){
           //call the user's cancel callback on the relevant goal
           cancel_callback_(gh);
@@ -211,19 +216,19 @@ namespace actionlib {
     typename std::list<StatusTracker<ActionSpec> >::iterator it = status_list_.insert(status_list_.end(), StatusTracker<ActionSpec> (goal));
 
     //we need to create a handle tracker for the incoming goal and update the StatusTracker
-    HandleTrackerDeleter<ActionSpec> d(this, it);
+    HandleTrackerDeleter<ActionSpec> d(this, it, guard_);
     boost::shared_ptr<void> handle_tracker((void *)NULL, d);
     (*it).handle_tracker_ = handle_tracker;
 
     //check if this goal has already been canceled based on its timestamp
     if(goal->goal_id.stamp != ros::Time() && goal->goal_id.stamp <= last_cancel_){
       //if it has... just create a GoalHandle for it and setCanceled
-      GoalHandle gh(it, this, handle_tracker);
+      GoalHandle gh(it, this, handle_tracker, guard_);
       gh.setCanceled(Result(), "This goal handle was canceled by the action server because its timestamp is before the timestamp of the last cancel request");
     }
     else{
       //now, we need to create a goal handle and call the user's callback
-      goal_callback_(GoalHandle(it, this, handle_tracker));
+      goal_callback_(GoalHandle(it, this, handle_tracker, guard_));
     }
   }
 

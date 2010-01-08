@@ -38,6 +38,8 @@
 #define ACTONLIB_HANDLE_TRACKER_DELETER_H_
 #include <actionlib/action_definition.h>
 #include <actionlib/server/status_tracker.h>
+#include <actionlib/destruction_guard.h>
+#include <boost/shared_ptr.hpp>
 namespace actionlib {
   //we need to forward declare the ActionServer class
   template <class ActionSpec>
@@ -54,13 +56,14 @@ namespace actionlib {
     class HandleTrackerDeleter {
       public:
         HandleTrackerDeleter(ActionServer<ActionSpec>* as,
-            typename std::list<StatusTracker<ActionSpec> >::iterator status_it);
+            typename std::list<StatusTracker<ActionSpec> >::iterator status_it, boost::shared_ptr<DestructionGuard> guard);
 
         void operator()(void* ptr);
 
       private:
         ActionServer<ActionSpec>* as_;
         typename std::list<StatusTracker<ActionSpec> >::iterator status_it_;
+        boost::shared_ptr<DestructionGuard> guard_;
     };
 };
 #include <actionlib/server/handle_tracker_deleter_imp.h>

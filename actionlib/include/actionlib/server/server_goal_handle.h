@@ -41,6 +41,7 @@
 #include <actionlib_msgs/GoalStatus.h>
 #include <actionlib/action_definition.h>
 #include <actionlib/server/status_tracker.h>
+#include <actionlib/destruction_guard.h>
 #include <boost/shared_ptr.hpp>
 
 namespace actionlib {
@@ -157,7 +158,7 @@ namespace actionlib {
        * @brief  A private constructor used by the ActionServer to initialize a ServerGoalHandle
        */
       ServerGoalHandle(typename std::list<StatusTracker<ActionSpec> >::iterator status_it,
-          ActionServer<ActionSpec>* as, boost::shared_ptr<void> handle_tracker);
+          ActionServer<ActionSpec>* as, boost::shared_ptr<void> handle_tracker, boost::shared_ptr<DestructionGuard> guard);
 
       /**
        * @brief  A private method to set status to PENDING or RECALLING
@@ -169,6 +170,7 @@ namespace actionlib {
       boost::shared_ptr<const ActionGoal> goal_;
       ActionServer<ActionSpec>* as_;
       boost::shared_ptr<void> handle_tracker_;
+      boost::shared_ptr<DestructionGuard> guard_;
       friend class ActionServer<ActionSpec>;
   };
 

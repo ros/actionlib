@@ -38,14 +38,26 @@
 #define ACTIONLIB_SERVER_GOAL_HANDLE_IMP_H_
 namespace actionlib {
   template <class ActionSpec>
-  ServerGoalHandle<ActionSpec>::ServerGoalHandle(){}
+  ServerGoalHandle<ActionSpec>::ServerGoalHandle() : as_(NULL) {}
 
   template <class ActionSpec>
   ServerGoalHandle<ActionSpec>::ServerGoalHandle(const ServerGoalHandle& gh): 
-    status_it_(gh.status_it_), goal_(gh.goal_), as_(gh.as_), handle_tracker_(gh.handle_tracker_){}
+    status_it_(gh.status_it_), goal_(gh.goal_), as_(gh.as_), handle_tracker_(gh.handle_tracker_), guard_(gh.guard_){}
 
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::setAccepted(const std::string& text){
+    if(as_ == NULL){
+      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      return;
+    }
+
+    //check to see if we can use the action server
+    DestructionGuard::ScopedProtector protector(*guard_);
+    if(!protector.isProtected()){
+      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      return;
+    }
+
     ROS_DEBUG("Accepting goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       unsigned int status = (*status_it_).status_.status;
@@ -72,6 +84,18 @@ namespace actionlib {
 
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::setCanceled(const Result& result, const std::string& text){
+    if(as_ == NULL){
+      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      return;
+    }
+
+    //check to see if we can use the action server
+    DestructionGuard::ScopedProtector protector(*guard_);
+    if(!protector.isProtected()){
+      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      return;
+    }
+
     ROS_DEBUG("Setting status to canceled on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       unsigned int status = (*status_it_).status_.status;
@@ -95,6 +119,18 @@ namespace actionlib {
 
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::setRejected(const Result& result, const std::string& text){
+    if(as_ == NULL){
+      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      return;
+    }
+
+    //check to see if we can use the action server
+    DestructionGuard::ScopedProtector protector(*guard_);
+    if(!protector.isProtected()){
+      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      return;
+    }
+
     ROS_DEBUG("Setting status to rejected on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       unsigned int status = (*status_it_).status_.status;
@@ -113,6 +149,18 @@ namespace actionlib {
 
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::setAborted(const Result& result, const std::string& text){
+    if(as_ == NULL){
+      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      return;
+    }
+
+    //check to see if we can use the action server
+    DestructionGuard::ScopedProtector protector(*guard_);
+    if(!protector.isProtected()){
+      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      return;
+    }
+
     ROS_DEBUG("Setting status to aborted on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       unsigned int status = (*status_it_).status_.status;
@@ -131,6 +179,18 @@ namespace actionlib {
 
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::setSucceeded(const Result& result, const std::string& text){
+    if(as_ == NULL){
+      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      return;
+    }
+
+    //check to see if we can use the action server
+    DestructionGuard::ScopedProtector protector(*guard_);
+    if(!protector.isProtected()){
+      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      return;
+    }
+
     ROS_DEBUG("Setting status to succeeded on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       unsigned int status = (*status_it_).status_.status;
@@ -149,6 +209,18 @@ namespace actionlib {
 
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::publishFeedback(const Feedback& feedback){
+    if(as_ == NULL){
+      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      return;
+    }
+
+    //check to see if we can use the action server
+    DestructionGuard::ScopedProtector protector(*guard_);
+    if(!protector.isProtected()){
+      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      return;
+    }
+
     ROS_DEBUG("Publishing feedback for goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_) {
       as_->publishFeedback((*status_it_).status_, feedback);
@@ -170,20 +242,30 @@ namespace actionlib {
 
   template <class ActionSpec>
   actionlib_msgs::GoalID ServerGoalHandle<ActionSpec>::getGoalID() const{
-    if(goal_)
-      return (*status_it_).status_.goal_id;
+    if(goal_ && as_!= NULL){
+      DestructionGuard::ScopedProtector protector(*guard_);
+      if(protector.isProtected())
+        return (*status_it_).status_.goal_id;
+      else
+        return actionlib_msgs::GoalID();
+    }
     else{
-      ROS_ERROR("Attempt to get a goal id on an uninitialized ServerGoalHandle");
+      ROS_ERROR("Attempt to get a goal id on an uninitialized ServerGoalHandle or one that has no ActionServer associated with it.");
       return actionlib_msgs::GoalID();
     }
   }
 
   template <class ActionSpec>
   actionlib_msgs::GoalStatus ServerGoalHandle<ActionSpec>::getGoalStatus() const{
-    if(goal_)
-      return (*status_it_).status_;
+    if(goal_ && as_!= NULL){
+      DestructionGuard::ScopedProtector protector(*guard_);
+      if(protector.isProtected())
+        return (*status_it_).status_;
+      else
+        return actionlib_msgs::GoalStatus();
+    }
     else{
-      ROS_ERROR("Attempt to get goal status on an uninitialized ServerGoalHandle");
+      ROS_ERROR("Attempt to get goal status on an uninitialized ServerGoalHandle or one that has no ActionServer associated with it.");
       return actionlib_msgs::GoalStatus();
     }
   }
@@ -194,6 +276,7 @@ namespace actionlib {
     goal_ = gh.goal_;
     as_ = gh.as_;
     handle_tracker_ = gh.handle_tracker_;
+    guard_ = gh.guard_;
     return *this;
   }
 
@@ -217,12 +300,24 @@ namespace actionlib {
 
   template <class ActionSpec>
   ServerGoalHandle<ActionSpec>::ServerGoalHandle(typename std::list<StatusTracker<ActionSpec> >::iterator status_it,
-      ActionServer<ActionSpec>* as, boost::shared_ptr<void> handle_tracker)
+      ActionServer<ActionSpec>* as, boost::shared_ptr<void> handle_tracker, boost::shared_ptr<DestructionGuard> guard)
     : status_it_(status_it), goal_((*status_it).goal_),
-    as_(as), handle_tracker_(handle_tracker){}
+    as_(as), handle_tracker_(handle_tracker), guard_(guard){}
 
   template <class ActionSpec>
   bool ServerGoalHandle<ActionSpec>::setCancelRequested(){
+    if(as_ == NULL){
+      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      return false;
+    }
+
+    //check to see if we can use the action server
+    DestructionGuard::ScopedProtector protector(*guard_);
+    if(!protector.isProtected()){
+      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      return false;
+    }
+
     ROS_DEBUG("Transisitoning to a cancel requested state on goal id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       unsigned int status = (*status_it_).status_.status;
