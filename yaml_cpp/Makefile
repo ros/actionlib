@@ -20,6 +20,7 @@ yaml-cpp: $(SOURCE_DIR)/unpacked
 
 clean:
 	rm -rf yaml-cpp $(SOURCE_DIR)
+	cd build && make clean
 
 wipe: clean
 	rm -rf build
