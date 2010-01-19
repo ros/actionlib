@@ -317,6 +317,7 @@ SimpleActionClient<ActionSpec>::~SimpleActionClient()
 template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::spinThread()
 {
+  ros::Rate r(100.0);
   while (nh_.ok())
   {
     {
@@ -325,6 +326,7 @@ void SimpleActionClient<ActionSpec>::spinThread()
         break;
     }
     callback_queue.callAvailable();
+    r.sleep();
   }
 }
 
