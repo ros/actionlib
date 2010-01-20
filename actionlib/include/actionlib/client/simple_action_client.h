@@ -324,7 +324,7 @@ void SimpleActionClient<ActionSpec>::spinThread()
       if (need_to_terminate_)
         break;
     }
-    callback_queue.callAvailable();
+    callback_queue.callAvailable(ros::WallDuration(0.1f));
   }
 }
 
