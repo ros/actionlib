@@ -34,65 +34,70 @@ import rospy
 
 import sys
 
-from actionlib.simple_action_server import SimpleActionServer
+from actionlib.action_server import ActionServer
 from actionlib.msg import TestAction
 
-class RefSimpleServer:
+class RefServer (ActionServer):
 
     def __init__(self,name):
         action_spec=TestAction
-        self.srv=SimpleActionServer(name,action_spec,self.execute);
-
-        rospy.loginfo("Creating reference SimpleActionServer [%s]\n", name);
+        ActionServer.__init__(self,name,action_spec,self.goalCallback,self.cancelCallback);
+        rospy.loginfo("Creating ActionServer [%s]\n", name);
 
         self.saved_goals=[]
 
-    def execute(self,goal):
-        
-        rospy.loginfo("Got goal %d", int(goal.goal.goal))
-        if goal.goal.goal == 1:
-            self.srv.set_succeeded(None, "The ref server has succeeded");
+    def goalCallback(self,gh):
+        goal = gh.get_goal();
 
-        elif goal.goal.goal == 2:
-            self.srv.set_aborted(None, "The ref server has aborted");
+        rospy.loginfo("Got goal %d", int(goal.goal))
+        if goal.goal == 1:
+            gh.set_accepted();
+            gh.set_succeeded(None, "The ref server has succeeded");
+        elif goal.goal == 2:
+            gh.set_accepted();
+            gh.set_aborted(None, "The ref server has aborted");
+        elif goal.goal == 3:
+            gh.set_rejected(None, "The ref server has rejected");
 
-        elif goal.goal.goal == 3:
-            self.srv.set_aborted();
+
+        elif goal.goal == 4:
+            
+            self.saved_goals.append(gh);
+            gh.set_accepted();
+
+        elif goal.goal == 5:
+
+            gh.set_accepted();
+            for g in self.saved_goals:
+                g.set_succeeded();
+            self.saved_goals = [];
+            gh.set_succeeded();
 
 
-        elif goal.goal.goal == 4:
-            self.srv.set_aborted();
+        elif goal.goal == 6:
+            gh.set_accepted();
+            for g in self.saved_goals:
+                g.set_aborted();
+            self.saved_goals = [];
+            gh.set_succeeded();
 
-        elif goal.goal.goal == 5:
-            self.srv.set_aborted();
+        elif goal.goal == 7:
+            gh.set_accepted();
+            n=len(self.saved_goals);
+            for i,g in enumerate(self.saved_goals):
+                g.publish_feedback(n-i);
+            gh.set_succeeded();
 
-        elif goal.goal.goal == 6:
-            self.srv.set_aborted();
-
-        if goal.goal.goal == 7:
-            rospy.sleep(rospy.Duration(1));
-            self.srv.set_succeeded();
-
-        if goal.goal.goal == 8:
-            """This one succeeds only on non-preempted goals"""
-            rospy.sleep(rospy.Duration(1));
-            print "preempt?", self.srv.preempt_request
-            if self.srv.preempt_request:
-                self.srv.set_aborted()
-            else:
-                self.srv.set_succeeded();
 
         else:
             pass
-
-        rospy.loginfo("END execute")
 
     def cancelCallback(self,gh):
         pass
 
 if __name__=="__main__":
-  rospy.init_node("ref_simple_server");
-  ref_server = RefSimpleServer("reference_simple_action");
+  rospy.init_node("ref_server");
+  ref_server = RefServer("reference_action");
 
   rospy.spin();
 

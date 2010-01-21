@@ -35,7 +35,7 @@ import rospy
 import sys
 
 from actionlib.action_server import ActionServer
-from actionlib.msg import TestAction
+from actionlib.msg import TestAction,TestFeedback,TestResult
 
 class RefServer (ActionServer):
 
@@ -80,6 +80,26 @@ class RefServer (ActionServer):
                 g.set_aborted();
             self.saved_goals = [];
             gh.set_succeeded();
+
+        elif goal.goal == 7:
+            gh.set_accepted();
+            n=len(self.saved_goals);
+            for i,g in enumerate(self.saved_goals):
+                g.publish_feedback(TestFeedback(n-i));
+
+            gh.set_succeeded();
+
+        elif goal.goal == 8:
+            gh.set_accepted();
+            n=len(self.saved_goals);
+            for i,g in enumerate(self.saved_goals):
+                if i % 2 ==0:
+                    g.set_succeeded(TestResult(n-i), "The ref server has succeeded");
+                else:
+                    g.set_aborted(TestResult(n-i), "The ref server has aborted")
+            self.saved_goals=[];
+            gh.set_succeeded();
+
 
         else:
             pass

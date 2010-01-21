@@ -63,6 +63,7 @@ rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_imports.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_server_components.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_server.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_server2.launch)
+rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_server3.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_simple_server.launch)
 
 
