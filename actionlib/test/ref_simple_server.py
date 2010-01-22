@@ -34,70 +34,65 @@ import rospy
 
 import sys
 
-from actionlib.action_server import ActionServer
-from actionlib.msg import TestAction
+from actionlib.simple_action_server import SimpleActionServer
+from actionlib.msg import TestAction,TestFeedback
 
-class RefServer (ActionServer):
+
+class RefSimpleServer (SimpleActionServer):
 
     def __init__(self,name):
         action_spec=TestAction
-        ActionServer.__init__(self,name,action_spec,self.goalCallback,self.cancelCallback);
-        rospy.loginfo("Creating ActionServer [%s]\n", name);
+        SimpleActionServer.__init__(self,name,action_spec,self.goal_callback,self.cancel_callback);
+        rospy.loginfo("Creating SimpleActionServer [%s]\n", name);
 
-        self.saved_goals=[]
 
-    def goalCallback(self,gh):
-        goal = gh.get_goal();
+    def goal_callback(self,goal):
 
         rospy.loginfo("Got goal %d", int(goal.goal))
         if goal.goal == 1:
-            gh.set_accepted();
-            gh.set_succeeded(None, "The ref server has succeeded");
+            self.set_succeeded(None, "The ref server has succeeded");
         elif goal.goal == 2:
-            gh.set_accepted();
-            gh.set_aborted(None, "The ref server has aborted");
+            self.set_aborted(None, "The ref server has aborted");
+
         elif goal.goal == 3:
-            gh.set_rejected(None, "The ref server has rejected");
+            self.set_aborted(None, "The simple action server can't reject goals");
 
 
         elif goal.goal == 4:
-            
-            self.saved_goals.append(gh);
-            gh.set_accepted();
+            self.set_aborted(None, "Simple server can't save goals");
+
 
         elif goal.goal == 5:
-
-            gh.set_accepted();
-            for g in self.saved_goals:
-                g.set_succeeded();
-            self.saved_goals = [];
-            gh.set_succeeded();
-
+            self.set_aborted(None, "Simple server can't save goals");
 
         elif goal.goal == 6:
-            gh.set_accepted();
-            for g in self.saved_goals:
-                g.set_aborted();
-            self.saved_goals = [];
-            gh.set_succeeded();
+            self.set_aborted(None, "Simple server can't save goals");
+
+
 
         elif goal.goal == 7:
-            gh.set_accepted();
-            n=len(self.saved_goals);
-            for i,g in enumerate(self.saved_goals):
-                g.publish_feedback(n-i);
-            gh.set_succeeded();
+            self.set_aborted(None, "Simple server can't save goals");
+
+        elif goal.goal == 8:
+            self.set_aborted(None, "Simple server can't save goals");
+
+        elif goal.goal == 9:
+            rospy.sleep(1);
+            rospy.loginfo("Sending feedback")
+            self.publish_feedback(TestFeedback(9)); #by the goal ID
+            rospy.sleep(1);
+            self.set_succeeded(None, "The ref server has succeeded");
 
 
         else:
             pass
 
-    def cancelCallback(self,gh):
+    def cancel_callback(self,gh):
         pass
 
 if __name__=="__main__":
-  rospy.init_node("ref_server");
-  ref_server = RefServer("reference_action");
+  rospy.init_node("ref_simple_server");
+  ref_server = RefSimpleServer("reference_simple_action");
 
   rospy.spin();
 

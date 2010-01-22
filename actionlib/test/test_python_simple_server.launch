@@ -1,5 +1,5 @@
 <launch>
-  <!--node pkg="actionlib" type="simple_execute_ref_server" name="ref_server" output="screen" -->
+  <node pkg="actionlib" type="ref_simple_server.py" name="ref_simple_server" output="screen"/>
   
-  <test test-name="test_goal_id_generator" pkg="actionlib" type="test_server_components.py" />
+  <test test-name="test_simple_python_server" pkg="actionlib" type="test_ref_simple_action_server.py" />
 </launch>

@@ -59,6 +59,7 @@ class TestSimpleActionClient(unittest.TestCase):
         self.assertEqual("The ref server has aborted", client.get_goal_status_text())
 
 
+
 if __name__ == '__main__':
     import rostest
     rospy.init_node('simple_python_client_test')
