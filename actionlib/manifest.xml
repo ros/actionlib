@@ -7,7 +7,7 @@
   </description>
   <author>Eitan Marder-Eppstein, Vijay Pradeep</author>
   <license>BSD</license>
-  <review status="api cleared" notes=""/>
+  <review status="Doc reviewed" notes="2009/10/07"/>
   <url>http://ros.org/wiki/actionlib</url>
 
   <depend package="roscpp" />
