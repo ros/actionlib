@@ -202,7 +202,7 @@ class ServerGoalHandle:
         rospy.logdebug("Publishing feedback for goal, id: %s, stamp: %.2f", 
                        self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal:
-            self.action_server.publishFeedback(self.status_tracker.status, feedback);
+            self.action_server.publish_feedback(self.status_tracker.status, feedback);
         else:
             rospy.logerr("Attempt to publish feedback on an uninitialized ServerGoalHandle");
 

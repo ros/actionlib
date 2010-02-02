@@ -25,8 +25,9 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+PKG='actionlib'
+import roslib; roslib.load_manifest(PKG)
 
-import roslib; roslib.update_path('actionlib')
 
 import sys
 import unittest
@@ -38,8 +39,7 @@ from actionlib.msg import TestAction, TestGoal
 
 class TestRefSimpleActionServer(unittest.TestCase):
 
-    def testsimple(self):
-        return
+    def test_one(self):
         client = SimpleActionClient('reference_simple_action', TestAction)
         self.assert_(client.wait_for_action_server_to_start(rospy.Duration(2.0)),
                      'Could not connect to the action server')
@@ -58,59 +58,34 @@ class TestRefSimpleActionServer(unittest.TestCase):
         self.assertEqual(GoalStatus.ABORTED, client.get_terminal_state())
         self.assertEqual(GoalStatus.ABORTED, client.get_state())
 
+        goal = TestGoal(3)
+        client.send_goal(goal)
+        self.assert_(client.wait_for_goal_to_finish(rospy.Duration(10.0)),
+                     "Goal didn't finish")
 
-    def test_preemption(self):
-        client = ActionClient('reference_simple_action', TestAction)
-        self.assert_(client.wait_for_server(rospy.Duration(2.0)),
-                     'Could not connect to the action server')
+        #The simple server can't reject goals
+        self.assertEqual(GoalStatus.ABORTED, client.get_terminal_state())
+        self.assertEqual(GoalStatus.ABORTED, client.get_state())
 
-        goal = TestGoal(8)
-        g1=client.send_goal(goal)
-        rospy.sleep(0.5);
-        g2=client.send_goal(goal)
-        g3=client.send_goal(goal)
-        g4=client.send_goal(goal)
-        g5=client.send_goal(goal)
-        rospy.sleep(2);
 
-        print g1.get_goal_status()
-        print g2.get_goal_status()
-        print g3.get_goal_status()
-        print g4.get_goal_status()
-        print g5.get_goal_status()
+        goal = TestGoal(9)
+        saved_feedback={};
+        def on_feedback(fb):
+            rospy.loginfo("Got feedback")
+            saved_feedback[0]=fb
+            
+        client.send_goal(goal,feedback_cb=on_feedback)
+        self.assert_(client.wait_for_goal_to_finish(rospy.Duration(10.0)),
+                     "Goal didn't finish")
+        self.assertEqual(GoalStatus.SUCCEEDED, client.get_terminal_state())
+        self.assertEqual(GoalStatus.SUCCEEDED, client.get_state())
 
-        self.assertEqual(g1.get_goal_status(),GoalStatus.ABORTED,"Should be aborted, because we started processing it")
-        self.assertEqual(g2.get_goal_status(),GoalStatus.RECALLED,"Should be recalled")
-        self.assertEqual(g3.get_goal_status(),GoalStatus.RECALLED,"Shoule be recalled")
-        self.assertEqual(g4.get_goal_status(),GoalStatus.RECALLED,"Should be recalled")
-        self.assertEqual(g5.get_goal_status(),GoalStatus.SUCCEEDED,"Succeeded")
+        self.assertEqual(saved_feedback[0].feedback,9)
 
 
 
-    def test_preemption2(self):
-        client = ActionClient('reference_simple_action', TestAction)
-        self.assert_(client.wait_for_server(rospy.Duration(2.0)),
-                     'Could not connect to the action server')
 
-        goal = TestGoal(6) #Abort immediately
-        g1=client.send_goal(goal)
-        g2=client.send_goal(goal)
-        g3=client.send_goal(goal)
-        g4=client.send_goal(goal)
-        g5=client.send_goal(goal)
-        rospy.sleep(2);
 
-        print g1.get_goal_status()
-        print g2.get_goal_status()
-        print g3.get_goal_status()
-        print g4.get_goal_status()
-        print g5.get_goal_status()
-
-        self.assertEqual(g1.get_goal_status(),GoalStatus.RECALLED,"Hopefully, it's recalled")
-        self.assertEqual(g2.get_goal_status(),GoalStatus.RECALLED,"Should be recalled")
-        self.assertEqual(g3.get_goal_status(),GoalStatus.RECALLED,"Shoule be recalled")
-        self.assertEqual(g4.get_goal_status(),GoalStatus.RECALLED,"Should be recalled")
-        self.assertEqual(g5.get_goal_status(),GoalStatus.ABORTED,"That's what should be for goal 6")
 
 
 

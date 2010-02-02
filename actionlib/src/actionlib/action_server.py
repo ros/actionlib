@@ -196,7 +196,7 @@ class ActionServer:
 
           with self.lock:
 
-              af=ActionFeedback();
+              af=self.ActionFeedback();
               af.header.stamp = rospy.Time.now();
               af.status = status;
               af.feedback = feedback;

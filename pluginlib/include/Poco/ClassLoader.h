@@ -198,8 +198,9 @@ public:
 				if (li.pLibrary->hasSymbol(pocoBuildManifestSymbol))
 				{
 					BuildManifestFunc buildManifest = (BuildManifestFunc) li.pLibrary->getSymbol(pocoBuildManifestSymbol);
-					if (buildManifest(const_cast<Manif*>(li.vpManifest.back().first)))
+					if (buildManifest(const_cast<Manif*>(li.vpManifest.back().first))){
 						_map[path] = li;
+					}
 					else
 						throw LibraryLoadException(std::string("Manifest class mismatch in ") + path, manifest);
 				}
@@ -210,6 +211,7 @@ public:
 				delete li.pLibrary;
 				delete li.vpManifest.back().first; //known only one long
                                 li.vpManifest.pop_back();
+				_map.erase(path);
 				throw;
 			}
 		}
@@ -239,16 +241,23 @@ public:
 				if (it->second.pLibrary->hasSymbol(pocoBuildManifestSymbol))
 				{
 					BuildManifestFunc buildManifest = (BuildManifestFunc) it->second.pLibrary->getSymbol(pocoBuildManifestSymbol);
-					if (!buildManifest(const_cast<Manif*>(it->second.vpManifest.back().first)))
+					if (it->second.vpManifest.empty() || !buildManifest(const_cast<Manif*>(it->second.vpManifest.back().first))){	
 						throw LibraryLoadException(std::string("Manifest class mismatch in ") + path, manifest);
+					}
 				}
 				else throw LibraryLoadException(std::string("No manifest in ") + path, manifest);
 			}
-			catch (...)
+			catch (LibraryLoadException& ex)
 			{
                           // don't delete here for there are other manifests using it delete it->second.pLibrary;
-				delete it->second.vpManifest.back().first; //only last one
-                                it->second.vpManifest.pop_back();
+				typename std::vector< manifest_pair >::iterator man_it = it->second.vpManifest.begin();
+				for(;man_it != it->second.vpManifest.end(); ++man_it){
+					if(man_it->second == manifest){
+						delete man_it->first; //only last one
+						it->second.vpManifest.erase(man_it);
+						break;
+					}
+				}
 				throw;
 			}
                   }

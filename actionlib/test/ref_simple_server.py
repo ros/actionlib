@@ -35,59 +35,59 @@ import rospy
 import sys
 
 from actionlib.simple_action_server import SimpleActionServer
-from actionlib.msg import TestAction
+from actionlib.msg import TestAction,TestFeedback
 
-class RefSimpleServer:
+
+class RefSimpleServer (SimpleActionServer):
 
     def __init__(self,name):
         action_spec=TestAction
-        self.srv=SimpleActionServer(name,action_spec,self.execute);
-
-        rospy.loginfo("Creating reference SimpleActionServer [%s]\n", name);
-
-        self.saved_goals=[]
-
-    def execute(self,goal):
-        
-        rospy.loginfo("Got goal %d", int(goal.goal.goal))
-        if goal.goal.goal == 1:
-            self.srv.set_succeeded(None, "The ref server has succeeded");
-
-        elif goal.goal.goal == 2:
-            self.srv.set_aborted(None, "The ref server has aborted");
-
-        elif goal.goal.goal == 3:
-            self.srv.set_aborted();
+        SimpleActionServer.__init__(self,name,action_spec,self.goal_callback,self.cancel_callback);
+        rospy.loginfo("Creating SimpleActionServer [%s]\n", name);
 
 
-        elif goal.goal.goal == 4:
-            self.srv.set_aborted();
+    def goal_callback(self,goal):
 
-        elif goal.goal.goal == 5:
-            self.srv.set_aborted();
+        rospy.loginfo("Got goal %d", int(goal.goal))
+        if goal.goal == 1:
+            self.set_succeeded(None, "The ref server has succeeded");
+        elif goal.goal == 2:
+            self.set_aborted(None, "The ref server has aborted");
 
-        elif goal.goal.goal == 6:
-            self.srv.set_aborted();
+        elif goal.goal == 3:
+            self.set_aborted(None, "The simple action server can't reject goals");
 
-        if goal.goal.goal == 7:
-            rospy.sleep(rospy.Duration(1));
-            self.srv.set_succeeded();
 
-        if goal.goal.goal == 8:
-            """This one succeeds only on non-preempted goals"""
-            rospy.sleep(rospy.Duration(1));
-            print "preempt?", self.srv.preempt_request
-            if self.srv.preempt_request:
-                self.srv.set_aborted()
-            else:
-                self.srv.set_succeeded();
+        elif goal.goal == 4:
+            self.set_aborted(None, "Simple server can't save goals");
+
+
+        elif goal.goal == 5:
+            self.set_aborted(None, "Simple server can't save goals");
+
+        elif goal.goal == 6:
+            self.set_aborted(None, "Simple server can't save goals");
+
+
+
+        elif goal.goal == 7:
+            self.set_aborted(None, "Simple server can't save goals");
+
+        elif goal.goal == 8:
+            self.set_aborted(None, "Simple server can't save goals");
+
+        elif goal.goal == 9:
+            rospy.sleep(1);
+            rospy.loginfo("Sending feedback")
+            self.publish_feedback(TestFeedback(9)); #by the goal ID
+            rospy.sleep(1);
+            self.set_succeeded(None, "The ref server has succeeded");
+
 
         else:
             pass
 
-        rospy.loginfo("END execute")
-
-    def cancelCallback(self,gh):
+    def cancel_callback(self,gh):
         pass
 
 if __name__=="__main__":
