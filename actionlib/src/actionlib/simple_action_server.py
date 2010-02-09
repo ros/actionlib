@@ -271,7 +271,7 @@ class SimpleActionServer:
                   #the goal requested has already been preempted by a different goal, so we're not going to execute it
                   goal.set_canceled(None, "This goal was canceled because another goal was received by the simple action server");
                   self.execute_condition.release();
-          except e:
+          except Exception, e:
               rospy.logerr("SimpleActionServer.internal_goal_callback - exception %s",str(e))
               self.execute_condition.release();
 

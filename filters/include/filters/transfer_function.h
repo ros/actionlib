@@ -102,7 +102,7 @@ protected:
   boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > input_buffer_; //The input sample history.
   boost::scoped_ptr<RealtimeCircularBuffer<std::vector<T> > > output_buffer_; //The output sample history.
 
-  std::vector<T>  temp; //used for storage and preallocation
+  std::vector<T>  temp_; //used for storage and preallocation
 
   std::vector<double> a_;   //Transfer functon coefficients (output).
   std::vector<double> b_;   //Transfer functon coefficients (input).
@@ -138,9 +138,9 @@ bool TransferFunctionFilter<T>::configure()
   }///\todo check length
 
   // Create the input and output buffers of the correct size.
-  temp.resize(this->number_of_channels_);
-  input_buffer_.reset(new RealtimeCircularBuffer<std::vector<T> >(b_.size()-1, temp));
-  output_buffer_.reset(new RealtimeCircularBuffer<std::vector<T> >(a_.size()-1, temp));
+  temp_.resize(this->number_of_channels_);
+  input_buffer_.reset(new RealtimeCircularBuffer<std::vector<T> >(b_.size()-1, temp_));
+  output_buffer_.reset(new RealtimeCircularBuffer<std::vector<T> >(a_.size()-1, temp_));
 
   // Prevent divide by zero while normalizing coeffs.
   if ( a_[0] == 0)
@@ -178,11 +178,11 @@ bool TransferFunctionFilter<T>::update(const std::vector<T>  & data_in, std::vec
     return false;
   }
   // Copy data to prevent mutation if in and out are the same ptr
-  temp = data_in;
+  temp_ = data_in;
 
-  for (uint32_t i = 0; i < temp.size(); i++)
+  for (uint32_t i = 0; i < temp_.size(); i++)
   {
-    data_out[i]=b_[0] * temp[i];
+    data_out[i]=b_[0] * temp_[i];
 
     for (uint32_t row = 1; row <= input_buffer_->size(); row++)
     {
@@ -193,7 +193,7 @@ bool TransferFunctionFilter<T>::update(const std::vector<T>  & data_in, std::vec
       (data_out)[i] -= a_[row] * (*output_buffer_)[row-1][i];
     }
   }
-  input_buffer_->push_front(temp);
+  input_buffer_->push_front(temp_);
   output_buffer_->push_front(data_out);
 
   return true;
@@ -454,10 +454,9 @@ bool MultiChannelTransferFunctionFilter<T>::update(const std::vector<T>  & data_
   }
   input_buffer_->push_front(temp_);
   output_buffer_->push_front(data_out);
-
   return true;
 };
 
 }
 
-#endif //#ifndef FILTERS_TRANSFER_FUNCTION_H_
+#endif //#ifndef FILTERS_TRAjNSFER_FUNCTION_H_

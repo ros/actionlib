@@ -46,21 +46,23 @@ namespace filters
 template <typename T>
 class RealtimeCircularBuffer
 {
+private:
+  RealtimeCircularBuffer();
+
 public:
-  
   RealtimeCircularBuffer(int size, const T& default_val):
-    counter_(0)
+    counter_(0), cb_(size)
   {
-    cb_.set_capacity(size);
     for (unsigned int i = 0; i < cb_.capacity(); i++)
     {
       cb_.push_back(default_val);
     }
-    
   };
 
   void push_back(const T& item)
   {
+    if (cb_.capacity() == 0) return;
+
     if ( counter_ < cb_.size()) 
     {
       cb_[counter_] = item; 
@@ -72,6 +74,7 @@ public:
   
   void push_front(const T& item)
   {
+    if (cb_.capacity() == 0) return;
     cb_.push_front(item);
     counter_ ++;
   };
@@ -94,10 +97,10 @@ public:
   T& at(size_t index){return cb_.at(index);};
   T& operator[](size_t index){return cb_[index];}
 private:
+
   unsigned int counter_; //<! special counter to keep track of first N times through
 
   boost::circular_buffer<T> cb_;
-
 };
 } //namespace filters
 #endif //#ifndef REALTIME_CIRCULAR_BUFFER_H_

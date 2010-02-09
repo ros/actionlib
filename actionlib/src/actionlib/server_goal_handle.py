@@ -104,7 +104,7 @@ class ServerGoalHandle:
 
         if(self.goal):
             status = self.status_tracker.status.status;
-            if(status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.mgs.GoalStatus.RECALLING):
+            if(status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.msg.GoalStatus.RECALLING):
                 self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.RECALLED;
                 self.status_tracker.status.text = text
                 self.action_server.publish_result(self.status_tracker.status, result);
