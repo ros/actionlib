@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg3664"
+   version="1.1"
+   inkscape:version="0.47pre4 r22446"
+   sodipodi:docname="simple_goal_reception.svg">
+  <defs
+     id="defs3666">
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path4816"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 526.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective3672" />
+    <inkscape:perspective
+       id="perspective4459"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4484"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4510"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4535"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4560"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4588"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4616"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4641"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4666"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4691"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective4773"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5266"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5297"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5297-0"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5403"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-1"
+       style="overflow:visible">
+      <path
+         id="path4816-2"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <inkscape:perspective
+       id="perspective5458"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5489"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective5511"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective6539"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-8"
+       style="overflow:visible">
+      <path
+         id="path3179-0"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="marker6545"
+       style="overflow:visible">
+      <path
+         id="path6547"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.979899"
+     inkscape:cx="428.55458"
+     inkscape:cy="823.04576"
+     inkscape:document-units="px"
+     inkscape:current-layer="g5528"
+     showgrid="false"
+     inkscape:window-width="1691"
+     inkscape:window-height="1326"
+     inkscape:window-x="730"
+     inkscape:window-y="67"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata3669">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+       x="3.7952533"
+       y="20.87635"
+       id="text7210"
+       inkscape:transform-center-x="78.867159"
+       inkscape:transform-center-y="-21.946782"
+       inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
+         sodipodi:role="line"
+         id="tspan7212"
+         x="3.7952533"
+         y="20.87635"
+         style="font-size:20px;fill:#336699;fill-opacity:1"
+         rotate="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0">Simple Action Server - Goal Reception</tspan></text>
+    <g
+       id="g5528"
+       transform="translate(-3.4777606,0)">
+      <path
+         id="rect3676"
+         d="m 116.63434,72.526296 0,190.700124 106.64085,0 0,-190.700124 -106.64085,0 z"
+         style="fill:#cdcdcd;fill-opacity:1;stroke:#000000;stroke-width:0.36229473;stroke-opacity:1" />
+      <text
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+         xml:space="preserve"
+         style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="170.77103"
+         y="179.2674"
+         id="text3953-4-7"><tspan
+           sodipodi:role="line"
+           id="tspan3955-8-0"
+           x="170.77103"
+           y="179.2674"
+           style="font-size:14px;text-align:center;text-anchor:middle">Current Goal</tspan></text>
+      <rect
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+         style="fill:#d4e7fa;fill-opacity:1;stroke:#000000;stroke-width:0.93948925;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         id="rect3945-1-06-3"
+         width="40.217854"
+         height="32.392994"
+         x="150.40233"
+         y="184.4624"
+         ry="13.497081"
+         rx="6.5394878" />
+      <text
+         id="text4498-0"
+         y="206.97234"
+         x="164.35892"
+         style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="206.97234"
+           x="164.35892"
+           id="tspan4500-0"
+           sodipodi:role="line">A</tspan></text>
+      <text
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/client_states_detailed.png"
+         xml:space="preserve"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#336699;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="170.51419"
+         y="233.21582"
+         id="text3961-0-0-9-1-1-8-8-6-7"><tspan
+           id="tspan3432-5-42-5"
+           sodipodi:role="line"
+           x="170.51419"
+           y="233.21582"
+           style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1">[ACTIVE]</tspan></text>
+      <g
+         transform="translate(0,68.262695)"
+         id="g4799">
+        <text
+           id="text3953-4"
+           y="26.761353"
+           x="170.47708"
+           style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+           xml:space="preserve"
+           inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             style="font-size:14px;text-align:center;text-anchor:middle"
+             y="26.761353"
+             x="170.47708"
+             id="tspan3955-8"
+             sodipodi:role="line">Pending Goal</tspan></text>
+        <rect
+           rx="6.5394878"
+           ry="13.497081"
+           y="34.640041"
+           x="150.40233"
+           height="32.392994"
+           width="40.217854"
+           id="rect3945-1-06-3-9"
+           style="fill:#d4e7fa;fill-opacity:1;stroke:#000000;stroke-width:0.93948925;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <text
+           xml:space="preserve"
+           style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+           x="164.09085"
+           y="57.14999"
+           id="text4498-0-7"><tspan
+             sodipodi:role="line"
+             id="tspan4500-0-9"
+             x="164.09085"
+             y="57.14999">B</tspan></text>
+        <text
+           id="text3961-0-0-9-1-1-8-8-6-6"
+           y="84.403618"
+           x="170.51419"
+           style="font-size:40px;font-style:normal;font-weight:normal;fill:#336699;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+           xml:space="preserve"
+           inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/client_states_detailed.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1"
+             y="84.403618"
+             x="170.51419"
+             sodipodi:role="line"
+             id="tspan3432-5-42-51">[PENDING]</tspan></text>
+      </g>
+      <g
+         transform="translate(0,67.602877)"
+         id="g4790">
+        <rect
+           rx="6.5394878"
+           ry="13.497081"
+           y="34.407822"
+           x="34.944397"
+           height="32.392994"
+           width="40.217854"
+           id="rect3945-1-06"
+           style="fill:#d4e7fa;fill-opacity:1;stroke:#000000;stroke-width:0.93948925;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <text
+           xml:space="preserve"
+           style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+           x="48.751568"
+           y="56.917763"
+           id="text4498"><tspan
+             sodipodi:role="line"
+             id="tspan4500"
+             x="48.751568"
+             y="56.917763">C</tspan></text>
+        <text
+           id="text3961-0-0-9-1-1-8-8-6"
+           y="84.929008"
+           x="55.056255"
+           style="font-size:40px;font-style:normal;font-weight:normal;fill:#336699;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+           xml:space="preserve"
+           inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/client_states_detailed.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1"
+             y="84.929008"
+             x="55.056255"
+             sodipodi:role="line"
+             id="tspan3432-5-42">[PENDING]</tspan></text>
+        <text
+           id="text3961-9"
+           y="26.036068"
+           x="15.953716"
+           style="font-size:40px;font-style:normal;font-weight:normal;fill:#ae0000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+           xml:space="preserve"
+           inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             style="font-size:12px;fill:#ae0000;fill-opacity:1"
+             y="26.036068"
+             x="15.953716"
+             id="tspan3963-9"
+             sodipodi:role="line">Receive Goal</tspan></text>
+      </g>
+      <path
+         id="path4808"
+         d="m 77.27667,118.29086 36.87057,0"
+         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)" />
+      <g
+         transform="translate(-48,67.267744)"
+         id="g5434">
+        <g
+           id="g5423">
+          <rect
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+             style="fill:#d4e7fa;fill-opacity:1;stroke:#000000;stroke-width:0.93948925;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+             id="rect3945-1-06-3-9-7"
+             width="40.217854"
+             height="32.392994"
+             x="497.52756"
+             y="35.432198"
+             ry="13.497081"
+             rx="6.5394878" />
+          <text
+             id="text4498-0-7-8"
+             y="57.942146"
+             x="511.21606"
+             style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+             xml:space="preserve"><tspan
+               y="57.942146"
+               x="511.21606"
+               id="tspan4500-0-9-0"
+               sodipodi:role="line">B</tspan></text>
+          <text
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/client_states_detailed.png"
+             xml:space="preserve"
+             style="font-size:40px;font-style:normal;font-weight:normal;fill:#336699;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+             x="517.6394"
+             y="83.680557"
+             id="text3961-0-0-9-1-1-8-8-6-6-9"><tspan
+               id="tspan3432-5-42-51-4"
+               sodipodi:role="line"
+               x="517.6394"
+               y="83.680557"
+               style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1">[RECALLED]</tspan></text>
+          <text
+             inkscape:export-ydpi="90"
+             inkscape:export-xdpi="90"
+             inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+             xml:space="preserve"
+             style="font-size:40px;font-style:normal;font-weight:normal;fill:#336699;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+             x="517.8562"
+             y="27.954851"
+             id="text3961-0-0-9-0"><tspan
+               sodipodi:role="line"
+               id="tspan3963-7-1-0-6"
+               x="517.8562"
+               y="27.954851"
+               style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1">setCancelled</tspan><tspan
+               id="tspan6359-4"
+               sodipodi:role="line"
+               x="517.8562"
+               y="42.954849"
+               style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1" /><tspan
+               id="tspan5828-4"
+               sodipodi:role="line"
+               x="517.8562"
+               y="57.954849"
+               style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1" /></text>
+        </g>
+      </g>
+      <path
+         id="rect3676-1"
+         d="m 285.23084,72.52633 0,190.70012 106.64085,0 0,-190.70012 -106.64085,0 z"
+         style="fill:#cdcdcd;fill-opacity:1;stroke:#000000;stroke-width:0.36229473;stroke-opacity:1" />
+      <text
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+         xml:space="preserve"
+         style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="339.36752"
+         y="179.26743"
+         id="text3953-4-7-1"><tspan
+           sodipodi:role="line"
+           id="tspan3955-8-0-0"
+           x="339.36752"
+           y="179.26743"
+           style="font-size:14px;text-align:center;text-anchor:middle">Current Goal</tspan></text>
+      <rect
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+         style="fill:#d4e7fa;fill-opacity:1;stroke:#000000;stroke-width:0.93948925;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         id="rect3945-1-06-3-8"
+         width="40.217854"
+         height="32.392994"
+         x="318.99884"
+         y="184.46245"
+         ry="13.497081"
+         rx="6.5394878" />
+      <text
+         id="text4498-0-1"
+         y="206.97237"
+         x="332.95541"
+         style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           y="206.97237"
+           x="332.95541"
+           id="tspan4500-0-2"
+           sodipodi:role="line">A</tspan></text>
+      <text
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/client_states_detailed.png"
+         xml:space="preserve"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#336699;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         x="339.11069"
+         y="233.21585"
+         id="text3961-0-0-9-1-1-8-8-6-7-8"><tspan
+           id="tspan3432-5-42-5-8"
+           sodipodi:role="line"
+           x="339.11069"
+           y="233.21585"
+           style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1">[ACTIVE]</tspan></text>
+      <g
+         transform="translate(168.5965,68.262729)"
+         id="g4799-4">
+        <text
+           id="text3953-4-9"
+           y="26.761353"
+           x="170.47708"
+           style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+           xml:space="preserve"
+           inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             style="font-size:14px;text-align:center;text-anchor:middle"
+             y="26.761353"
+             x="170.47708"
+             id="tspan3955-8-1"
+             sodipodi:role="line">Pending Goal</tspan></text>
+        <rect
+           rx="6.5394878"
+           ry="13.497081"
+           y="34.640041"
+           x="150.40233"
+           height="32.392994"
+           width="40.217854"
+           id="rect3945-1-06-3-9-1"
+           style="fill:#d4e7fa;fill-opacity:1;stroke:#000000;stroke-width:0.93948925;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+           inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90" />
+        <text
+           xml:space="preserve"
+           style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+           x="164.09085"
+           y="57.14999"
+           id="text4498-0-7-6"><tspan
+             sodipodi:role="line"
+             id="tspan4500-0-9-2"
+             x="164.09085"
+             y="57.14999">C</tspan></text>
+        <text
+           id="text3961-0-0-9-1-1-8-8-6-6-3"
+           y="84.403618"
+           x="170.51419"
+           style="font-size:40px;font-style:normal;font-weight:normal;fill:#336699;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+           xml:space="preserve"
+           inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/client_states_detailed.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90"><tspan
+             style="font-size:12px;text-align:center;text-anchor:middle;fill:#336699;fill-opacity:1"
+             y="84.403618"
+             x="170.51419"
+             sodipodi:role="line"
+             id="tspan3432-5-42-51-5">[PENDING]</tspan></text>
+      </g>
+      <path
+         id="path4808-8"
+         d="m 395.88082,118.29088 36.87057,0"
+         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)" />
+      <text
+         id="text5475"
+         y="59.887318"
+         x="96.523666"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           style="font-size:18px"
+           y="59.887318"
+           x="96.523666"
+           id="tspan5477"
+           sodipodi:role="line">step 1</tspan></text>
+      <rect
+         ry="10.258395"
+         rx="5.8400922"
+         y="36.56572"
+         x="9.0033073"
+         height="242.61273"
+         width="230.49092"
+         id="rect5479"
+         style="fill:none;stroke:#000000;stroke-width:0.82386816;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.29547285, 3.29547285;stroke-dashoffset:0" />
+      <rect
+         ry="10.25783"
+         rx="6.0317144"
+         y="36.572411"
+         x="278.54553"
+         height="242.59933"
+         width="238.05368"
+         id="rect5479-2"
+         style="fill:none;stroke:#000000;stroke-width:0.83725214;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.34900887, 3.34900887;stroke-dashoffset:0" />
+      <text
+         id="text5475-5"
+         y="59.887352"
+         x="369.9176"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"><tspan
+           style="font-size:18px"
+           y="59.887352"
+           x="369.9176"
+           id="tspan5477-0"
+           sodipodi:role="line">step 2</tspan></text>
+      <rect
+         style="fill:none;stroke:#000000;stroke-width:1.0760181;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         id="rect4321"
+         width="150.63211"
+         height="98.521965"
+         x="528.44489"
+         y="36.691795"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend-8)"
+         d="m 547.76091,60.893227 112.00002,0"
+         id="path4072"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <text
+         id="text3961-1"
+         y="55.366901"
+         x="556.60175"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#ae0000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90"><tspan
+           style="font-size:12px;fill:#ae0000;fill-opacity:1"
+           y="55.366901"
+           x="556.60175"
+           id="tspan3963-3"
+           sodipodi:role="line">Client Triggered</tspan></text>
+      <path
+         style="fill:none;stroke:#000000;stroke-width:0.99999994px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend-8)"
+         d="m 547.76091,85.964997 112.00002,0"
+         id="path4072-0"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <text
+         id="text3961-1-0"
+         y="80.438675"
+         x="554.23456"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#336699;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90"><tspan
+           style="font-size:12px;fill:#336699;fill-opacity:1"
+           y="80.438675"
+           x="554.23456"
+           id="tspan3963-3-6"
+           sodipodi:role="line">Server Triggered</tspan></text>
+      <rect
+         style="fill:#cdcdcd;fill-opacity:1;stroke:#000000;stroke-width:0.36199999;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         id="rect2862-9-9-0-6"
+         width="127.11237"
+         height="23.828096"
+         x="540.20477"
+         y="99.622879"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90" />
+      <text
+         id="text3961-1-7"
+         y="114.1404"
+         x="551.112"
+         style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"
+         xml:space="preserve"
+         inkscape:export-filename="/wg/arc/vpradeep/ros-64/pkgs-trunk/common/actionlib/docs/server_states_detailed.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90"><tspan
+           style="font-size:10px;fill:#000000;fill-opacity:1"
+           y="114.1404"
+           x="551.112"
+           id="tspan3963-3-9"
+           sodipodi:role="line">Simple Action Server</tspan></text>
+    </g>
+  </g>
+</svg>
