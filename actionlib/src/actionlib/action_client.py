@@ -118,10 +118,14 @@ class ClientGoalHandle:
 
     ## @brief True iff the two ClientGoalHandle's are tracking the same goal
     def __eq__(self, o):
+        if not o:
+            return False
         return self.comm_state_machine == o.comm_state_machine
 
     ## @brief True iff the two ClientGoalHandle's are tracking different goals
     def __ne__(self, o):
+        if not o:
+            return True
         return not (self.comm_state_machine == o.comm_state_machine)
 
 
