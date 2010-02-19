@@ -136,8 +136,15 @@ void CommStateMachine<ActionSpec>::updateResult(GoalHandleT& gh, const ActionRes
     case CommState::WAITING_FOR_CANCEL_ACK:
     case CommState::RECALLING:
     case CommState::PREEMPTING:
+    {
+      // A little bit of hackery to call all the right state transitions before processing result
+      actionlib_msgs::GoalStatusArrayPtr status_array(new actionlib_msgs::GoalStatusArray());
+      status_array->status_list.push_back(action_result->status);
+      updateStatus(gh, status_array);
+
       transitionToState(gh, CommState::DONE);
       break;
+    }
     case CommState::DONE:
       ROS_ERROR("Got a result when we were already in the DONE state"); break;
     default:
@@ -177,19 +184,40 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
         switch (goal_status->status)
         {
           case actionlib_msgs::GoalStatus::PENDING:
-            transitionToState(gh, CommState::PENDING); break;
+            transitionToState(gh, CommState::PENDING);
+            break;
           case actionlib_msgs::GoalStatus::ACTIVE:
-            transitionToState(gh, CommState::ACTIVE); break;
+            transitionToState(gh, CommState::ACTIVE);
+            break;
           case actionlib_msgs::GoalStatus::PREEMPTED:
-          case actionlib_msgs::GoalStatus::SUCCEEDED:
-          case actionlib_msgs::GoalStatus::ABORTED:
-          case actionlib_msgs::GoalStatus::REJECTED:
-          case actionlib_msgs::GoalStatus::RECALLED:
-            transitionToState(gh, CommState::WAITING_FOR_RESULT); break;
-          case actionlib_msgs::GoalStatus::PREEMPTING:
+            transitionToState(gh, CommState::ACTIVE);
             transitionToState(gh, CommState::PREEMPTING);
+            transitionToState(gh, CommState::WAITING_FOR_RESULT);
+            break;
+          case actionlib_msgs::GoalStatus::SUCCEEDED:
+            transitionToState(gh, CommState::ACTIVE);
+            transitionToState(gh, CommState::WAITING_FOR_RESULT);
+            break;
+          case actionlib_msgs::GoalStatus::ABORTED:
+            transitionToState(gh, CommState::ACTIVE);
+            transitionToState(gh, CommState::WAITING_FOR_RESULT);
+            break;
+          case actionlib_msgs::GoalStatus::REJECTED:
+            transitionToState(gh, CommState::PENDING);
+            transitionToState(gh, CommState::WAITING_FOR_RESULT);
+            break;
+          case actionlib_msgs::GoalStatus::RECALLED:
+            transitionToState(gh, CommState::PENDING);
+            transitionToState(gh, CommState::WAITING_FOR_RESULT);
+            break;
+          case actionlib_msgs::GoalStatus::PREEMPTING:
+            transitionToState(gh, CommState::ACTIVE);
+            transitionToState(gh, CommState::PREEMPTING);
+            break;
           case actionlib_msgs::GoalStatus::RECALLING:
+            transitionToState(gh, CommState::PENDING);
             transitionToState(gh, CommState::RECALLING);
+            break;
           default:
             ROS_ERROR("BUG: Got an unknown status from the ActionServer. status = %u", goal_status->status);
             break;
@@ -207,13 +235,27 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
           transitionToState(gh, CommState::ACTIVE);
           break;
         case actionlib_msgs::GoalStatus::PREEMPTED:
+          transitionToState(gh, CommState::ACTIVE);
+          transitionToState(gh, CommState::PREEMPTING);
+          transitionToState(gh, CommState::WAITING_FOR_RESULT);
+          break;
         case actionlib_msgs::GoalStatus::SUCCEEDED:
+          transitionToState(gh, CommState::ACTIVE);
+          transitionToState(gh, CommState::WAITING_FOR_RESULT);
+          break;
         case actionlib_msgs::GoalStatus::ABORTED:
+          transitionToState(gh, CommState::ACTIVE);
+          transitionToState(gh, CommState::WAITING_FOR_RESULT);
+          break;
         case actionlib_msgs::GoalStatus::REJECTED:
+          transitionToState(gh, CommState::WAITING_FOR_RESULT);
+          break;
         case actionlib_msgs::GoalStatus::RECALLED:
+          transitionToState(gh, CommState::RECALLING);
           transitionToState(gh, CommState::WAITING_FOR_RESULT);
           break;
         case actionlib_msgs::GoalStatus::PREEMPTING:
+          transitionToState(gh, CommState::ACTIVE);
           transitionToState(gh, CommState::PREEMPTING);
           break;
         case actionlib_msgs::GoalStatus::RECALLING:
@@ -240,6 +282,9 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
         case actionlib_msgs::GoalStatus::RECALLED:
           ROS_ERROR("Invalid transition from ACTIVE to RECALLED"); break;
         case actionlib_msgs::GoalStatus::PREEMPTED:
+          transitionToState(gh, CommState::PREEMPTING);
+          transitionToState(gh, CommState::WAITING_FOR_RESULT);
+          break;
         case actionlib_msgs::GoalStatus::SUCCEEDED:
         case actionlib_msgs::GoalStatus::ABORTED:
           transitionToState(gh, CommState::WAITING_FOR_RESULT); break;
@@ -282,10 +327,16 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
           break;
         case actionlib_msgs::GoalStatus::ACTIVE:
           break;
-        case actionlib_msgs::GoalStatus::PREEMPTED:
-        case actionlib_msgs::GoalStatus::RECALLED:
         case actionlib_msgs::GoalStatus::SUCCEEDED:
         case actionlib_msgs::GoalStatus::ABORTED:
+        case actionlib_msgs::GoalStatus::PREEMPTED:
+          transitionToState(gh, CommState::PREEMPTING);
+          transitionToState(gh, CommState::WAITING_FOR_RESULT);
+          break;
+        case actionlib_msgs::GoalStatus::RECALLED:
+          transitionToState(gh, CommState::RECALLING);
+          transitionToState(gh, CommState::WAITING_FOR_RESULT);
+          break;
         case actionlib_msgs::GoalStatus::REJECTED:
           transitionToState(gh, CommState::WAITING_FOR_RESULT); break;
         case actionlib_msgs::GoalStatus::PREEMPTING:
@@ -306,10 +357,15 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
           ROS_ERROR("Invalid Transition from RECALLING to PENDING"); break;
         case actionlib_msgs::GoalStatus::ACTIVE:
           ROS_ERROR("Invalid Transition from RECALLING to ACTIVE"); break;
-        case actionlib_msgs::GoalStatus::PREEMPTED:
-        case actionlib_msgs::GoalStatus::RECALLED:
         case actionlib_msgs::GoalStatus::SUCCEEDED:
         case actionlib_msgs::GoalStatus::ABORTED:
+        case actionlib_msgs::GoalStatus::PREEMPTED:
+          transitionToState(gh, CommState::PREEMPTING);
+          transitionToState(gh, CommState::WAITING_FOR_RESULT);
+          break;
+        case actionlib_msgs::GoalStatus::RECALLED:
+          transitionToState(gh, CommState::WAITING_FOR_RESULT);
+          break;
         case actionlib_msgs::GoalStatus::REJECTED:
           transitionToState(gh, CommState::WAITING_FOR_RESULT); break;
         case actionlib_msgs::GoalStatus::PREEMPTING:
