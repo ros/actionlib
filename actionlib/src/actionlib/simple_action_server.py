@@ -299,7 +299,7 @@ class SimpleActionServer:
           """
           Called from a separate thread to call blocking execute calls
           """
-          loop_duration = rospy.Duration.from_seconds(.1);
+          loop_duration = rospy.Duration.from_sec(.1);
 
           while (not rospy.is_shutdown()):
               rospy.logdebug("SAS: execute");

@@ -535,8 +535,8 @@ class ActionClient:
     ## Preempts all goals running on the action server at the point
     ## that the cancel message is serviced by the action server.
     def cancel_all_goals(self):
-        cancel_msg = GoalID(stamp = rospy.Time.from_seconds(0.0),
-                            id = rospy.Time.from_seconds(0.0))
+        cancel_msg = GoalID(stamp = rospy.Time.from_sec(0.0),
+                            id = rospy.Time.from_sec(0.0))
         self.pub_cancel.publish(cancel_msg)
 
     ## @brief [Deprecated] Use wait_for_server
