@@ -59,7 +59,9 @@ def ros_timer(callable,frequency):
         end = rospy.get_time()
         sleep_time = cycle_time - (end - start)
         if sleep_time > 0:
-            rospy.sleep(sleep_time)
+            try:
+                rospy.sleep(sleep_time)
+            except rospy.ROSInterruptException: pass
         else:
             rospy.logwarn("Timer missed cycle time of %.2f seconds" % (-sleep_time))
 

@@ -70,14 +70,14 @@ namespace actionlib {
 
   template <class ActionSpec>
   void ActionServer<ActionSpec>::initialize(){
-    result_pub_ = node_.advertise<ActionResult>("result", 1);
-    feedback_pub_ = node_.advertise<ActionFeedback>("feedback", 1);
-    status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", 1);
+    result_pub_ = node_.advertise<ActionResult>("result", 50);
+    feedback_pub_ = node_.advertise<ActionFeedback>("feedback", 50);
+    status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", 50);
 
-    goal_sub_ = node_.subscribe<ActionGoal>("goal", 1,
+    goal_sub_ = node_.subscribe<ActionGoal>("goal", 50,
         boost::bind(&ActionServer::goalCallback, this, _1));
 
-    cancel_sub_ = node_.subscribe<actionlib_msgs::GoalID>("cancel", 1,
+    cancel_sub_ = node_.subscribe<actionlib_msgs::GoalID>("cancel", 50,
         boost::bind(&ActionServer::cancelCallback, this, _1));
 
     //read the frequency with which to publish status from the parameter server

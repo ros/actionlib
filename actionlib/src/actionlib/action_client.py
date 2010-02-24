@@ -118,10 +118,14 @@ class ClientGoalHandle:
 
     ## @brief True iff the two ClientGoalHandle's are tracking the same goal
     def __eq__(self, o):
+        if not o:
+            return False
         return self.comm_state_machine == o.comm_state_machine
 
     ## @brief True iff the two ClientGoalHandle's are tracking different goals
     def __ne__(self, o):
+        if not o:
+            return True
         return not (self.comm_state_machine == o.comm_state_machine)
 
 
@@ -531,8 +535,8 @@ class ActionClient:
     ## Preempts all goals running on the action server at the point
     ## that the cancel message is serviced by the action server.
     def cancel_all_goals(self):
-        cancel_msg = GoalID(stamp = rospy.Time.from_seconds(0.0),
-                            id = rospy.Time.from_seconds(0.0))
+        cancel_msg = GoalID(stamp = rospy.Time.from_sec(0.0),
+                            id = rospy.Time.from_sec(0.0))
         self.pub_cancel.publish(cancel_msg)
 
     ## @brief [Deprecated] Use wait_for_server
