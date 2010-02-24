@@ -38,8 +38,15 @@
 #define PLUGINLIB_CLASS_LIST_MACROS_H_
 #include "Poco/ClassLibrary.h"
 
+//#warning "You are using a deprecated version of the PLUGINLIB_REGISTER_CLASS macro. Please switch to the new version. For further information, see http://ros.org/wiki/pluginlib"
+
 #define PLUGINLIB_REGISTER_CLASS(class_name, class_type, base_class_type) \
   POCO_BEGIN_NAMED_MANIFEST(class_name, base_class_type) \
+  POCO_EXPORT_CLASS(class_type) \
+  POCO_END_MANIFEST
+
+#define PLUGINLIB_DECLARE_CLASS(pkg, class_name, class_type, base_class_type) \
+  POCO_BEGIN_NAMED_MANIFEST(pkg##__##class_name, base_class_type) \
   POCO_EXPORT_CLASS(class_type) \
   POCO_END_MANIFEST
 

@@ -40,6 +40,7 @@
 #include <map>
 
 #include "boost/filesystem.hpp"
+#include "boost/algorithm/string.hpp"
 
 namespace fs = boost::filesystem;
 
@@ -201,7 +202,7 @@ namespace pluginlib
          * @param  library_path The path to the library to load
          * @param  list_name The name of the class list to load
          */
-        void loadClassLibraryInternal(const std::string& library_path, const std::string& list_name = std::string(""));
+        void loadClassLibraryInternal(const std::string& library_path, const std::string& list_name_arg = std::string(""));
 
         //used for proper unloading of automatically loaded libraries
         LibraryCountMap loaded_libraries_;

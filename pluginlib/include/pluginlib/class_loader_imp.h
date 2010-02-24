@@ -119,8 +119,7 @@ namespace pluginlib {
           std::string lookup_name = class_element->Attribute("name");
           std::string derived_class = class_element->Attribute("type");
 
-          
-          
+
           //make sure that this class is of the right type before registering it
           if(base_class_type == base_class){
 
@@ -319,7 +318,10 @@ namespace pluginlib {
   }
 
   template <class T>
-  void ClassLoader<T>::loadClassLibraryInternal(const std::string& library_path, const std::string& list_name) {
+  void ClassLoader<T>::loadClassLibraryInternal(const std::string& library_path, const std::string& list_name_arg) {
+    std::string list_name = list_name_arg;
+    boost::replace_first(list_name, "/", "__"); 
+
     poco_class_loader_.loadLibrary(library_path, list_name);
     LibraryCountMap::iterator it = loaded_libraries_.find(library_path);
     if (it == loaded_libraries_.end())
@@ -340,7 +342,9 @@ namespace pluginlib {
 
     for (typename Poco::Manifest<T>::Iterator it = manifest->begin(); it != manifest->end(); ++it)
     {
-      lookup_names.push_back(it->name());
+      std::string name = it->name();
+      boost::replace_first(name, "__", "/"); 
+      lookup_names.push_back(name);
     }
     return lookup_names;
   }
