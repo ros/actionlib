@@ -99,6 +99,34 @@ class SimpleActionClient:
         self.gh = self.action_client.send_goal(goal, self._handle_transition, self._handle_feedback)
 
     
+    ## @brief Sends a goal to the ActionServer, waits for the goal to complete, and preempts goal is necessary
+    ## 
+    ## If a previous goal is already active when this is called. We simply forget
+    ## about that goal and start tracking the new goal. No cancel requests are made.
+    ##
+    ## If the goal does not complete within the execute_timeout, the goal gets preempted
+    ## 
+    ## If preemption of the goal does not complete withing the preempt_timeout, this
+    ## method simply returns
+    ##
+    ## @param execute_timeout The time to wait for the goal to complete
+    ##
+    ## @param preempt_timeout The time to wait for preemption to complete
+    ##
+    ## @return The goal's state.
+    def send_goal_and_wait(self, goal, execute_timeout = rospy.Duration(), preempt_timeout = rospy.Duration()):
+        self.send_goal(goal)
+        if not self.wait_for_result(execute_timeout):
+            # preempt action
+            rospy.logdebug("Canceling goal")
+            self.cancel_goal()
+            if self.wait_for_result(preempt_timeout):
+                rospy.logdebug("Preempt finished within specified preempt_timeout [%.2f]", preempt_timeout.to_sec());
+            else:
+                rospy.logdebug("Preempt didn't finish specified preempt_timeout [%.2f]", preempt_timeout.to_sec());
+        return self.get_state()
+
+
     ## @brief [Deprecated] Use wait_for_result
     def wait_for_goal_to_finish(self, timeout = rospy.Duration()):
         return self.wait_for_result(timeout)
