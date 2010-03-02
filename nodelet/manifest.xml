@@ -1,0 +1,21 @@
+<package>
+  <description brief="nodelet base class and wrappers">
+
+     nodelet base class and wrappers
+
+  </description>
+  <author>Tully Foote, Radu Bogdan Rusu</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/nodelet</url>
+  <depend package="pluginlib"/>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="message_filters"/>
+
+<export>
+  <cpp cflags="-I${prefix}/include"/>
+</export>
+</package>
+
+
