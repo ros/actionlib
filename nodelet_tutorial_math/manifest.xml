@@ -1,0 +1,20 @@
+<package>
+  <description brief="nodelet_tutorial_math">
+
+     nodelet_tutorial_math
+
+  </description>
+  <author>Tully Foote</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/nodelet_tutorial_math</url>
+  <depend package="nodelet"/>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+
+  <export>
+    <nodelet plugin="${prefix}/nodelet_math.xml"/>
+  </export>
+</package>
+
+
