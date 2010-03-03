@@ -32,6 +32,7 @@
 
 #include <string>
 #include "ros/ros.h"
+#include "ros/callback_queue.h"
 
 #define NODELET_DEBUG(...) ROS_DEBUG_NAMED(getName().c_str(), __VA_ARGS__)
 #define NODELET_DEBUG_STREAM(...) ROS_DEBUG_STREAM_NAMED(getName().c_str(), __VA_ARGS__)
@@ -71,6 +72,8 @@ public:
     nodelet_name_ = name;
     nh_ = ros::NodeHandle("", remapping_args);
     private_nh_ = ros::NodeHandle(name, remapping_args);
+    mt_spinner_.start();
+    NODELET_DEBUG("Nodelet initializing");
     this->init();
   }
   //friend class NodletLoader; //so it can call the internal init method
@@ -80,8 +83,14 @@ protected:
   std::string getName() { return nodelet_name_;};
   ros::NodeHandle nh_;
   ros::NodeHandle private_nh_;
+
+  ros::CallbackQueue multithreaded_callback_queue_;
 private:
   std::string nodelet_name_;
+
+  ros::AsyncSpinner mt_spinner_; //\TODO this should be removed
+public:
+  Nodelet(): nodelet_name_("uninitialized"), mt_spinner_(0, &multithreaded_callback_queue_){};
 };
 
 }
