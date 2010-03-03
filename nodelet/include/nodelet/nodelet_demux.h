@@ -58,17 +58,13 @@ namespace nodelet
     typedef typename boost::shared_ptr<const T> TConstPtr;
     public:
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      /** \brief Nodelet initialization routine.
-        * \param nh ROS node handle
-        * \param local_nh ROS node handle
-        */
+      /** \brief Nodelet initialization routine. */
       void
-        init (ros::NodeHandle &nh, ros::NodeHandle &local_nh)
+        init ()
       {
-        node_handle_ = boost::make_shared <ros::NodeHandle> (local_nh);
-        sub_input_.subscribe (*node_handle_, "input", 1, bind (&NodeletDEMUX<T,Subscriber>::input_callback, this, _1));
+        sub_input_.subscribe (private_nh_, "input", 1, bind (&NodeletDEMUX<T,Subscriber>::input_callback, this, _1));
 
-        if (!node_handle_->getParam ("output_topics", output_topics_))
+        if (!private_nh_.getParam ("output_topics", output_topics_))
         {
           ROS_ERROR ("[nodelet::NodeletDEMUX::init] Need a 'output_topics' parameter to be set before continuing!");
           return; 
@@ -96,7 +92,7 @@ namespace nodelet
 
             pubs_output_.resize (output_topics_.size ());
             for (int d = 0; d < output_topics_.size (); ++d)
-              *pubs_output_[d] = node_handle_->template advertise<T> ((std::string)(output_topics_[d]), 1);
+              *pubs_output_[d] = private_nh_.template advertise<T> ((std::string)(output_topics_[d]), 1);
             break;
           }
           default:
@@ -117,8 +113,6 @@ namespace nodelet
           pubs_output_[d]->publish (input);
       }
 
-      /** \brief The ROS node handle used by the nodelet. */  
-      boost::shared_ptr<ros::NodeHandle> node_handle_;
       /** \brief The output list of publishers. */
       std::vector<boost::shared_ptr <ros::Publisher> > pubs_output_;
       /** \brief The input subscriber. */

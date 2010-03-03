@@ -58,18 +58,14 @@ namespace nodelet
     typedef typename boost::shared_ptr<const T> TConstPtr;
     public:
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      /** \brief Nodelet initialization routine.
-        * \param nh ROS node handle
-        * \param local_nh ROS node handle
-        */
+      /** \brief Nodelet initialization routine. */
       void
-        init (ros::NodeHandle &nh, ros::NodeHandle &local_nh)
+        init ()
       {
-        node_handle_ = boost::make_shared <ros::NodeHandle> (local_nh);
-        pub_output_  = node_handle_->template advertise<T> ("output", 1);
+        pub_output_  = private_nh_.template advertise<T> ("output", 1);
 
         XmlRpc::XmlRpcValue input_topics;
-        if (!node_handle_->getParam ("input_topics", input_topics))
+        if (!private_nh_.getParam ("input_topics", input_topics))
         {
           ROS_ERROR ("[nodelet::NodeletMUX::init] Need a 'input_topics' parameter to be set before continuing!");
           return; 
@@ -99,7 +95,7 @@ namespace nodelet
             filters_.resize (input_topics.size ());
             for (int d = 0; d < input_topics.size (); ++d)
             {
-              Transport input_transport (*node_handle_);
+              Transport input_transport (private_nh_);
               filters_[d] = boost::make_shared<Filter> ();
               filters_[d]->subscribe (input_transport, (std::string)(input_topics[d]), 1);
             }
@@ -188,8 +184,6 @@ namespace nodelet
       void input8 (const TConstPtr &in1, const TConstPtr &in2, const TConstPtr &in3, const TConstPtr &in4, const TConstPtr &in5, const TConstPtr &in6, const TConstPtr &in7, const TConstPtr &in8)
       { pub_output_.publish (in1); pub_output_.publish (in2); pub_output_.publish (in3); pub_output_.publish (in4); pub_output_.publish (in5); pub_output_.publish (in6); pub_output_.publish (in7); pub_output_.publish (in8); }
 
-      /** \brief The ROS node handle used by the nodelet. */  
-      boost::shared_ptr<ros::NodeHandle> node_handle_;
       /** \brief The output ROS publisher. */
       ros::Publisher pub_output_;
 
