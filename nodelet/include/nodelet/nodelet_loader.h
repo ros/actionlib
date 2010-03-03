@@ -127,15 +127,13 @@ namespace nodelet
         reference_pointers_[name] = p;
         ROS_DEBUG("Done loading nodelet %s", name.c_str());
 
-        ros::NodeHandle nh("", remappings);
-        ros::NodeHandle private_nh(name, remappings);
         std::map< std::string, boost::shared_ptr<Nodelet> >::iterator it = reference_pointers_.find(name);
         if (it == reference_pointers_.end())
         {
           ROS_ERROR("Could not start nodelet '%s' for it has not been loaded", name.c_str());
           return false;
         }
-        it->second->init(nh, private_nh);
+        it->second->nodelet_internal_init(name, remappings);
         ROS_DEBUG("Done initing nodelet %s", name.c_str());
         return true;
       };

@@ -33,18 +33,20 @@
 #include <stdio.h>
 #include "boost/make_shared.hpp"
 
+
+#include <math.h> //fabs
+
 namespace nodelet_tutorial_math
 {
 class Plus : public nodelet::Nodelet
 {
 public:
   Plus(void):value_(0){printf("Plus created\n");};
-  void init(ros::NodeHandle &node_handle, ros::NodeHandle &private_node_handle)
+  void init()
   {
-    node_handle_ = private_node_handle;
-    node_handle_.getParam("value", value_);
-    pub = node_handle_.advertise<std_msgs::Float64>("out", 10);
-    sub = node_handle_.subscribe("in", 10, &Plus::callback, this);
+    private_nh_.getParam("value", value_);
+    pub = private_nh_.advertise<std_msgs::Float64>("out", 10);
+    sub = private_nh_.subscribe("in", 10, &Plus::callback, this);
 
   };
   
@@ -56,12 +58,14 @@ private:
   {
     std_msgs::Float64 output;
     output.data= input->data + value_;
-    
+    if (fabs(value_) < 0.0001)
+      NODELET_ERROR("Adding %f to get %f", value_, output.data);
+    else
+      NODELET_DEBUG("Adding %f to get %f", value_, output.data);
     std_msgs::Float64::ConstPtr out_const = boost::make_shared<const std_msgs::Float64>(output);
     pub.publish(out_const);
   };
 
-  ros::NodeHandle node_handle_;
   ros::Publisher pub;
   ros::Subscriber sub;
   double value_;

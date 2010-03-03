@@ -33,13 +33,55 @@
 #include <string>
 #include "ros/ros.h"
 
+#define NODELET_DEBUG(...) ROS_DEBUG_NAMED(getName().c_str(), __VA_ARGS__)
+#define NODELET_DEBUG_STREAM(...) ROS_DEBUG_STREAM_NAMED(getName().c_str(), __VA_ARGS__)
+//#define NODELET_DEBUG_COND(...) ROS_DEBUG_COND_NAMED(getName().c_str(), __VA_ARGS__)
+//#define NODELET_DEBUG_STREAM_COND(...) ROS_DEBUG_STREAM_COND_NAMED(getName().c_str(), __VA_ARGS__)
+
+#define NODELET_INFO(...) ROS_INFO_NAMED(getName().c_str(), __VA_ARGS__)
+#define NODELET_INFO_STREAM(...) ROS_INFO_STREAM_NAMED(getName().c_str(), __VA_ARGS__)
+//#define NODELET_INFO_COND(...) ROS_INFO_COND_NAMED(getName().c_str(), __VA_ARGS__)
+//#define NODELET_INFO_STREAM_COND(...) ROS_INFO_STREAM_COND_NAMED(getName().c_str(), __VA_ARGS__)
+
+#define NODELET_WARN(...) ROS_WARN_NAMED(getName().c_str(), __VA_ARGS__)
+#define NODELET_WARN_STREAM(...) ROS_WARN_STREAM_NAMED(getName().c_str(), __VA_ARGS__)
+//#define NODELET_WARN_COND(...) ROS_WARN_COND_NAMED(getName().c_str(), __VA_ARGS__)
+//#define NODELET_WARN_STREAM_COND(...) ROS_WARN_STREAM_COND_NAMED(getName().c_str(), __VA_ARGS__)
+
+#define NODELET_ERROR(...) ROS_ERROR_NAMED(getName().c_str(), __VA_ARGS__)
+#define NODELET_ERROR_STREAM(...) ROS_ERROR_STREAM_NAMED(getName().c_str(), __VA_ARGS__)
+//#define NODELET_ERROR_COND(...) ROS_ERROR_COND_NAMED(getName().c_str(), __VA_ARGS__)
+//#define NODELET_ERROR_STREAM_COND(...) ROS_ERROR_STREAM_COND_NAMED(getName().c_str(), __VA_ARGS__)
+
+#define NODELET_FATAL(...) ROS_FATAL_NAMED(getName().c_str(), __VA_ARGS__)
+#define NODELET_FATAL_STREAM(...) ROS_FATAL_STREAM_NAMED(getName().c_str(), __VA_ARGS__)
+//#define NODELET_FATAL_COND(...) ROS_FATAL_COND_NAMED(getName().c_str(), __VA_ARGS__)
+//#define NODELET_FATAL_STREAM_COND(...) ROS_FATAL_STREAM_COND_NAMED(getName().c_str(), __VA_ARGS__)
+
 namespace nodelet
 {
 class Nodelet
 {
 public: 
-  virtual void init(ros::NodeHandle &node_handle, ros::NodeHandle &private_node_handle)=0; //\TODO make this protected and make Nodelet a friend of the manager
+  virtual void init()=0; //\TODO make this protected and make Nodelet a friend of the manager
 
+  //private: \TODO make this private or protected and friend the loader
+  void nodelet_internal_init(const std::string& name, const ros::M_string& remapping_args)
+  {
+    nodelet_name_ = name;
+    nh_ = ros::NodeHandle("", remapping_args);
+    private_nh_ = ros::NodeHandle(name, remapping_args);
+    this->init();
+  }
+  //friend class NodletLoader; //so it can call the internal init method
+
+
+protected:
+  std::string getName() { return nodelet_name_;};
+  ros::NodeHandle nh_;
+  ros::NodeHandle private_nh_;
+private:
+  std::string nodelet_name_;
 };
 
 }
