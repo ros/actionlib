@@ -36,28 +36,28 @@
 
 #define NODELET_DEBUG(...) ROS_DEBUG_NAMED(getName().c_str(), __VA_ARGS__)
 #define NODELET_DEBUG_STREAM(...) ROS_DEBUG_STREAM_NAMED(getName().c_str(), __VA_ARGS__)
-//#define NODELET_DEBUG_COND(...) ROS_DEBUG_COND_NAMED(getName().c_str(), __VA_ARGS__)
-//#define NODELET_DEBUG_STREAM_COND(...) ROS_DEBUG_STREAM_COND_NAMED(getName().c_str(), __VA_ARGS__)
+#define NODELET_DEBUG_COND(cond, ...) ROS_DEBUG_COND_NAMED(cond, getName().c_str(), __VA_ARGS__)
+#define NODELET_DEBUG_STREAM_COND(cond, ...) ROS_DEBUG_STREAM_COND_NAMED(cond, getName().c_str(), __VA_ARGS__)
 
 #define NODELET_INFO(...) ROS_INFO_NAMED(getName().c_str(), __VA_ARGS__)
 #define NODELET_INFO_STREAM(...) ROS_INFO_STREAM_NAMED(getName().c_str(), __VA_ARGS__)
-//#define NODELET_INFO_COND(...) ROS_INFO_COND_NAMED(getName().c_str(), __VA_ARGS__)
-//#define NODELET_INFO_STREAM_COND(...) ROS_INFO_STREAM_COND_NAMED(getName().c_str(), __VA_ARGS__)
+#define NODELET_INFO_COND(cond, ...) ROS_INFO_COND_NAMED(cond, getName().c_str(), __VA_ARGS__)
+#define NODELET_INFO_STREAM_COND(cond, ...) ROS_INFO_STREAM_COND_NAMED(cond, getName().c_str(), __VA_ARGS__)
 
 #define NODELET_WARN(...) ROS_WARN_NAMED(getName().c_str(), __VA_ARGS__)
 #define NODELET_WARN_STREAM(...) ROS_WARN_STREAM_NAMED(getName().c_str(), __VA_ARGS__)
-//#define NODELET_WARN_COND(...) ROS_WARN_COND_NAMED(getName().c_str(), __VA_ARGS__)
-//#define NODELET_WARN_STREAM_COND(...) ROS_WARN_STREAM_COND_NAMED(getName().c_str(), __VA_ARGS__)
+#define NODELET_WARN_COND(cond, ...) ROS_WARN_COND_NAMED(cond, getName().c_str(), __VA_ARGS__)
+#define NODELET_WARN_STREAM_COND(cond, ...) ROS_WARN_STREAM_COND_NAMED(cond, getName().c_str(), __VA_ARGS__)
 
 #define NODELET_ERROR(...) ROS_ERROR_NAMED(getName().c_str(), __VA_ARGS__)
 #define NODELET_ERROR_STREAM(...) ROS_ERROR_STREAM_NAMED(getName().c_str(), __VA_ARGS__)
-//#define NODELET_ERROR_COND(...) ROS_ERROR_COND_NAMED(getName().c_str(), __VA_ARGS__)
-//#define NODELET_ERROR_STREAM_COND(...) ROS_ERROR_STREAM_COND_NAMED(getName().c_str(), __VA_ARGS__)
+#define NODELET_ERROR_COND(cond, ...) ROS_ERROR_COND_NAMED(cond, getName().c_str(), __VA_ARGS__)
+#define NODELET_ERROR_STREAM_COND(cond, ...) ROS_ERROR_STREAM_COND_NAMED(cond, getName().c_str(), __VA_ARGS__)
 
 #define NODELET_FATAL(...) ROS_FATAL_NAMED(getName().c_str(), __VA_ARGS__)
 #define NODELET_FATAL_STREAM(...) ROS_FATAL_STREAM_NAMED(getName().c_str(), __VA_ARGS__)
-//#define NODELET_FATAL_COND(...) ROS_FATAL_COND_NAMED(getName().c_str(), __VA_ARGS__)
-//#define NODELET_FATAL_STREAM_COND(...) ROS_FATAL_STREAM_COND_NAMED(getName().c_str(), __VA_ARGS__)
+#define NODELET_FATAL_COND(cond, ...) ROS_FATAL_COND_NAMED(cond, getName().c_str(), __VA_ARGS__)
+#define NODELET_FATAL_STREAM_COND(cond, ...) ROS_FATAL_STREAM_COND_NAMED(cond, getName().c_str(), __VA_ARGS__)
 
 namespace nodelet
 {
