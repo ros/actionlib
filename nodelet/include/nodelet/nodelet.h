@@ -66,17 +66,8 @@ class Nodelet
 public: 
   virtual void init()=0; //\TODO make this protected and make Nodelet a friend of the manager
 
-  //private: \TODO make this private or protected and friend the loader
-  void nodelet_internal_init(const std::string& name, const ros::M_string& remapping_args)
-  {
-    nodelet_name_ = name;
-    nh_ = ros::NodeHandle("", remapping_args);
-    private_nh_ = ros::NodeHandle(name, remapping_args);
-    mt_spinner_.start();
-    NODELET_DEBUG("Nodelet initializing");
-    this->init();
-  }
-  //friend class NodletLoader; //so it can call the internal init method
+private:
+
 
 
 protected:
@@ -89,6 +80,17 @@ private:
   std::string nodelet_name_;
 
   ros::AsyncSpinner mt_spinner_; //\TODO this should be removed
+
+  void nodelet_internal_init(const std::string& name, const ros::M_string& remapping_args)
+  {
+    nodelet_name_ = name;
+    nh_ = ros::NodeHandle("", remapping_args);
+    private_nh_ = ros::NodeHandle(name, remapping_args);
+    mt_spinner_.start();
+    NODELET_DEBUG("Nodelet initializing");
+    this->init();
+  } friend class NodeletLoader;
+
 public:
   Nodelet(): nodelet_name_("uninitialized"), mt_spinner_(0, &multithreaded_callback_queue_){};
 };
