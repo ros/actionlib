@@ -301,8 +301,13 @@ class SimpleActionClient:
                 rospy.logerr("SimpleActionClient received DONE twice")
 
     def _handle_feedback(self, gh, feedback):
+        if not self.gh:
+            rospy.logerr("Got a feedback callback when we're not tracking a goal. (id: %s)" % \
+                             gh.comm_state_machine.action_goal.goal_id.id)
         if gh != self.gh:
-            rospy.logerr("Got a feedback callback on a goal handle that we're not tracking. %s vs %s" % (self.gh.comm_state_machine.action_goal.goal_id.id, gh.comm_state_machine.action_goal.goal_id.id))
+            rospy.logerr("Got a feedback callback on a goal handle that we're not tracking. %s vs %s" % \
+                             (self.gh.comm_state_machine.action_goal.goal_id.id,
+                              gh.comm_state_machine.action_goal.goal_id.id))
             return
         if self.feedback_cb:
             self.feedback_cb(feedback)
