@@ -127,7 +127,7 @@ namespace nodelet
         reference_pointers_[name] = p;
         ROS_DEBUG("Done loading nodelet %s", name.c_str());
 
-        p->nodelet_internal_init(name, remappings);
+        p->init_request(name, remappings);
         ROS_DEBUG("Done initing nodelet %s", name.c_str());
         return true;
       };

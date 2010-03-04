@@ -63,25 +63,28 @@ namespace nodelet
 {
 class Nodelet
 {
-public: 
-  virtual void init()=0; //\TODO make this protected and make Nodelet a friend of the manager
 
-private:
-
-
-
+  //Protected data fields for use by the subclass.
 protected:
   std::string getName() { return nodelet_name_;};
   ros::NodeHandle nh_;
   ros::NodeHandle private_nh_;
-
   ros::CallbackQueue multithreaded_callback_queue_;
+
+  //Internal storage;
 private:
   std::string nodelet_name_;
 
   ros::AsyncSpinner mt_spinner_; //\TODO this should be removed
 
-  void nodelet_internal_init(const std::string& name, const ros::M_string& remapping_args)
+  // Method to be overridden by subclass when starting up. 
+  virtual void init()=0;
+  
+
+  //Public API used for launching
+public:
+  Nodelet(): nodelet_name_("uninitialized"), mt_spinner_(0, &multithreaded_callback_queue_){};
+  void init_request(const std::string& name, const ros::M_string& remapping_args)
   {
     nodelet_name_ = name;
     nh_ = ros::NodeHandle("", remapping_args);
@@ -89,10 +92,7 @@ private:
     mt_spinner_.start();
     NODELET_DEBUG("Nodelet initializing");
     this->init();
-  } friend class NodeletLoader;
-
-public:
-  Nodelet(): nodelet_name_("uninitialized"), mt_spinner_(0, &multithreaded_callback_queue_){};
+  };
 };
 
 }
