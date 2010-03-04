@@ -47,33 +47,18 @@ public:
     private_nh_.getParam("value", value_);
     pub = private_nh_.advertise<std_msgs::Float64>("out", 10);
     sub = private_nh_.subscribe("in", 10, &Plus::callback, this);
-
   };
-  
-
-
-
 private:
   void callback(const std_msgs::Float64::ConstPtr& input)
   {
-    std_msgs::Float64 output;
-    output.data= input->data + value_;
-    if (fabs(value_) < 0.0001)
-      NODELET_ERROR("Adding %f to get %f", value_, output.data);
-    else
-      NODELET_DEBUG("Adding %f to get %f", value_, output.data);
-    std_msgs::Float64::ConstPtr out_const = boost::make_shared<const std_msgs::Float64>(output);
-    pub.publish(out_const);
+    boost::shared_ptr<std_msgs::Float64> output(new std_msgs::Float64());
+    output->data= input->data + value_;
+    NODELET_DEBUG("Adding %f to get %f", value_, output->data);
+    pub.publish(output);
   };
-
   ros::Publisher pub;
   ros::Subscriber sub;
   double value_;
 };
-
-
-
-
-
 PLUGINLIB_DECLARE_CLASS(nodelet_tutorial_math, Plus, nodelet_tutorial_math::Plus, nodelet::Nodelet);
 }
