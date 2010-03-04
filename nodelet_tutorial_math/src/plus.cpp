@@ -40,15 +40,12 @@ namespace nodelet_tutorial_math
 {
 class Plus : public nodelet::Nodelet
 {
-public:
-  Plus(void):value_(0){printf("Plus created\n");};
   void init()
   {
     private_nh_.getParam("value", value_);
     pub = private_nh_.advertise<std_msgs::Float64>("out", 10);
     sub = private_nh_.subscribe("in", 10, &Plus::callback, this);
   };
-private:
   void callback(const std_msgs::Float64::ConstPtr& input)
   {
     boost::shared_ptr<std_msgs::Float64> output(new std_msgs::Float64());
