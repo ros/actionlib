@@ -143,7 +143,7 @@ int
     ROS_ERROR ("Need at least 4 arguments to continue: <name> <type> <manager_node>");
     return (-1);
   }
-  bool unload = false, load_only = false;
+  bool unload = false; 
   int unload_idx = parseArguments<bool> (argc, argv, "--unload", unload);
 
   NodeletInterface ni;
@@ -151,10 +151,8 @@ int
     ni.unloadNodelet (argv[unload_idx], argv[unload_idx+1]);
   else
   {
-    parseArguments<bool> (argc, argv, "--non-blocking", load_only);
     ni.loadNodelet (argv[1], argv[2], argv[3]);
-    if (!load_only)
-      ros::spin ();
+    ros::spin ();
   }
 
   return (0);
