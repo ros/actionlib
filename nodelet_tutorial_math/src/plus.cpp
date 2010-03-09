@@ -40,11 +40,12 @@ namespace nodelet_tutorial_math
 {
 class Plus : public nodelet::Nodelet
 {
-  void init()
+  void onInit()
   {
-    private_nh_.getParam("value", value_);
-    pub = private_nh_.advertise<std_msgs::Float64>("out", 10);
-    sub = private_nh_.subscribe("in", 10, &Plus::callback, this);
+    ros::NodeHandle private_nh = getPrivateNodeHandle();
+    private_nh.getParam("value", value_);
+    pub = private_nh.advertise<std_msgs::Float64>("out", 10);
+    sub = private_nh.subscribe("in", 10, &Plus::callback, this);
   };
   void callback(const std_msgs::Float64::ConstPtr& input)
   {

@@ -82,9 +82,11 @@ namespace nodelet
     // Public API used for launching
     public:
 
-      inline ros::NodeHandle& getNodeHandle () { return (nh_); }
-      inline ros::NodeHandle& getPrivateNodeHandle () { return (private_nh_); }
-      inline ros::CallbackQueue& getMTCallbackQueue () { return (multithreaded_callback_queue_); }
+    inline ros::NodeHandle& getNodeHandle () { return (nh_); }
+    inline ros::NodeHandle& getPrivateNodeHandle () { return (private_nh_); }
+    inline ros::NodeHandle getMTNodeHandle () { ros::NodeHandle nh = nh_; nh.setCallbackQueue(&multithreaded_callback_queue_); return (nh); }
+    inline ros::NodeHandle getMTPrivateNodeHandle ()  { ros::NodeHandle nh = private_nh_; nh.setCallbackQueue(&multithreaded_callback_queue_); return (nh); }
+    inline ros::CallbackQueue& getMTCallbackQueue () { return (multithreaded_callback_queue_); }
 
       Nodelet (): nodelet_name_("uninitialized"), mt_spinner_ (0, &multithreaded_callback_queue_) {};
 
