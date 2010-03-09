@@ -36,13 +36,16 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "standalone_nodelet_manager");//, ros::init_options::AnonymousName);
 
   nodelet::NodeletLoader n;
-  if (argc == 3)
+  if (argc >= 3)
   {
     ros::NodeHandle nh;
     ros::M_string remappings;
     std::string nodelet_name = argv[1];
     std::string nodelet_type = argv[2];
-    n.load(nodelet_name, nodelet_type, remappings);
+    std::vector<std::string> my_argv;
+    for (int i = 3; i < argc; i++)
+      my_argv.push_back(argv[i]);
+    n.load(nodelet_name, nodelet_type, remappings, my_argv);
     ROS_DEBUG("Successfully loaded nodelet of type '%s' into name '%s'\n", nodelet_name.c_str(), nodelet_name.c_str());
   }
 

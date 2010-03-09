@@ -66,12 +66,20 @@ namespace nodelet
     // Protected data fields for use by the subclass.
     protected:
     const std::string& getName() const { return (nodelet_name_); }
+    inline ros::NodeHandle& getNodeHandle () { return (nh_); }
+    inline ros::NodeHandle& getPrivateNodeHandle () { return (private_nh_); }
+    inline ros::NodeHandle getMTNodeHandle ()  { ros::NodeHandle nh = nh_; nh.setCallbackQueue(&multithreaded_callback_queue_); return (nh); }
+    inline ros::NodeHandle getMTPrivateNodeHandle ()  { ros::NodeHandle nh = private_nh_; nh.setCallbackQueue(&multithreaded_callback_queue_); return (nh); }
+    inline ros::CallbackQueue& getMTCallbackQueue () { return (multithreaded_callback_queue_); }
+    inline std::vector<std::string> getMyArgv() const { return my_argv_;};
+
 
     // Internal storage;
     private:
       std::string nodelet_name_;
       ros::NodeHandle nh_;
       ros::NodeHandle private_nh_;
+    std::vector<std::string> my_argv_;
 
       ros::AsyncSpinner mt_spinner_; //\TODO this should be removed
       ros::CallbackQueue multithreaded_callback_queue_;
@@ -81,20 +89,19 @@ namespace nodelet
       
     // Public API used for launching
     public:
-
-    inline ros::NodeHandle& getNodeHandle () { return (nh_); }
-    inline ros::NodeHandle& getPrivateNodeHandle () { return (private_nh_); }
-    inline ros::NodeHandle getMTNodeHandle () { ros::NodeHandle nh = nh_; nh.setCallbackQueue(&multithreaded_callback_queue_); return (nh); }
-    inline ros::NodeHandle getMTPrivateNodeHandle ()  { ros::NodeHandle nh = private_nh_; nh.setCallbackQueue(&multithreaded_callback_queue_); return (nh); }
-    inline ros::CallbackQueue& getMTCallbackQueue () { return (multithreaded_callback_queue_); }
-
-      Nodelet (): nodelet_name_("uninitialized"), mt_spinner_ (0, &multithreaded_callback_queue_) {};
-
-      void 
-        init (const std::string& name, const ros::M_string& remapping_args)
+    /**\brief Empty constructor required for dynamic loading */
+    Nodelet (): nodelet_name_("uninitialized"), mt_spinner_ (0, &multithreaded_callback_queue_) {};
+    
+    /**\brief Init function called at startup
+     * \param name The name of the nodelet
+     * \param remapping_args The remapping args in a map for the nodelet
+     * \param my_args The commandline arguments for this nodelet stripped of special arguments such as ROS arguments 
+     */
+    void init (const std::string& name, const ros::M_string& remapping_args, const std::vector<std::string>& my_argv)
       {
         nodelet_name_ = name;
         nh_ = ros::NodeHandle ("", remapping_args);
+        my_argv_ = my_argv;
         private_nh_ = ros::NodeHandle (name, remapping_args);
         mt_spinner_.start ();
         NODELET_DEBUG ("Nodelet initializing");

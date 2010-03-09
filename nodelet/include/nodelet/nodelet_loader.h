@@ -100,7 +100,7 @@ namespace nodelet
             ROS_DEBUG("%s:%s\n", ros::names::resolve(req.remap_source_args[i]).c_str(), remappings[ros::names::resolve(req.remap_source_args[i])].c_str());
           }
         }
-        res.success = load(req.name, req.type, remappings);
+        res.success = load(req.name, req.type, remappings, req.my_argv);
         return res.success;
       }
 
@@ -118,7 +118,7 @@ namespace nodelet
         res.nodelets = listLoadedNodelets();
         return true;
       }
-    bool load(const std::string &name, const std::string& type, const ros::M_string& remappings)
+    bool load(const std::string &name, const std::string& type, const ros::M_string& remappings, const std::vector<std::string> & my_argv)
       {
         //\TODO store type in string format too, or provide accessors from pluginlib
         boost::shared_ptr<Nodelet > p(loader_.createClassInstance(type));
@@ -127,7 +127,7 @@ namespace nodelet
         reference_pointers_[name] = p;
         ROS_DEBUG("Done loading nodelet %s", name.c_str());
 
-        p->init (name, remappings);
+        p->init (name, remappings, my_argv);
         ROS_DEBUG("Done initing nodelet %s", name.c_str());
         return true;
       };
