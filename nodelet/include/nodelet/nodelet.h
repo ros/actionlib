@@ -101,6 +101,11 @@ namespace nodelet
      */
     void init (const std::string& name, const ros::M_string& remapping_args, const std::vector<std::string>& my_argv)
       {
+        if (inited_)
+        {
+          NODELET_ERROR("Nodelet already inited, it cannot be reinited");
+          return;
+        }
         inited_ = true;
         mt_spinner_ = new ros::AsyncSpinner(0, &multithreaded_callback_queue_);
         mt_spinner_->start ();
