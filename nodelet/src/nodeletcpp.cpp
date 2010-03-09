@@ -105,13 +105,14 @@ class NodeletInterface
         ROS_INFO_STREAM (sources[i] << " -> " << targets[i]);
       }
 
+      // Get and set the parameters
+      XmlRpc::XmlRpcValue param;
       std::string node_name = ros::this_node::getName ();
-      std::cerr << "getNamespace: " << node_name << std::endl;
+      n_.getParam (node_name, param);
+      n_.setParam (name, param);
 
       std::string service_name = std::string (manager) + "/load_nodelet";
 
-//      std::cerr << ros::param::get (node_name) << std::endl;
-     
       // Wait until the service is advertised
       ros::ServiceClient client = n_.serviceClient<nodelet::NodeletLoad> (service_name);
       client.waitForExistence ();
