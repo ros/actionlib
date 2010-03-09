@@ -120,6 +120,11 @@ namespace nodelet
       }
     bool load(const std::string &name, const std::string& type, const ros::M_string& remappings, const std::vector<std::string> & my_argv)
       {
+        if (reference_pointers_.count(name) > 0)
+          {
+            ROS_ERROR("Cannot load nodelet %s for one exists with that name already", name.c_str());
+            return false;
+          }
         //\TODO store type in string format too, or provide accessors from pluginlib
         boost::shared_ptr<Nodelet > p(loader_.createClassInstance(type));
         if (p.get() == NULL)
