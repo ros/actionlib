@@ -60,8 +60,9 @@ namespace nodelet
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       /** \brief Nodelet initialization routine. */
       void
-        init ()
+        onInit ()
       {
+        private_nh_ = getPrivateNodeHandle ();
         sub_input_.subscribe (private_nh_, "input", 1, bind (&NodeletDEMUX<T,Subscriber>::input_callback, this, _1));
 
         if (!private_nh_.getParam ("output_topics", output_topics_))
@@ -113,6 +114,8 @@ namespace nodelet
           pubs_output_[d]->publish (input);
       }
 
+      /** \brief ROS local node handle. */
+      ros::NodeHandle private_nh_;
       /** \brief The output list of publishers. */
       std::vector<boost::shared_ptr <ros::Publisher> > pubs_output_;
       /** \brief The input subscriber. */

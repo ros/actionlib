@@ -59,10 +59,11 @@ namespace nodelet
     public:
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       /** \brief Nodelet initialization routine. */
-      void
-        init ()
+      virtual void
+        onInit ()
       {
-        pub_output_  = private_nh_.template advertise<T> ("output", 1);
+        private_nh_ = getPrivateNodeHandle ();
+        pub_output_ = private_nh_.template advertise<T> ("output", 1);
 
         XmlRpc::XmlRpcValue input_topics;
         if (!private_nh_.getParam ("input_topics", input_topics))
@@ -184,6 +185,8 @@ namespace nodelet
       void input8 (const TConstPtr &in1, const TConstPtr &in2, const TConstPtr &in3, const TConstPtr &in4, const TConstPtr &in5, const TConstPtr &in6, const TConstPtr &in7, const TConstPtr &in8)
       { pub_output_.publish (in1); pub_output_.publish (in2); pub_output_.publish (in3); pub_output_.publish (in4); pub_output_.publish (in5); pub_output_.publish (in6); pub_output_.publish (in7); pub_output_.publish (in8); }
 
+      /** \brief ROS local node handle. */
+      ros::NodeHandle private_nh_;
       /** \brief The output ROS publisher. */
       ros::Publisher pub_output_;
 
