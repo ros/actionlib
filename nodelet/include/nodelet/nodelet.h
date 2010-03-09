@@ -65,7 +65,7 @@ namespace nodelet
   {
     // Protected data fields for use by the subclass.
     protected:
-      std::string getName() const { return (nodelet_name_); }
+    const std::string& getName() const { return (nodelet_name_); }
 
     // Internal storage;
     private:
