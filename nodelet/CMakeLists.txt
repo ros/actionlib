@@ -22,11 +22,8 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 rosbuild_gensrv()
 
 rosbuild_add_boost_directories()
-rosbuild_add_executable(standalone_nodelet src/standalone_nodelet.cpp)
-target_link_libraries (standalone_nodelet pthread)
-rosbuild_link_boost (standalone_nodelet filesystem system)
 
-rosbuild_add_executable(nodelet src/nodeletcpp.cpp)
+rosbuild_add_executable(nodelet src/nodelet.cpp)
 target_link_libraries (nodelet pthread)
 rosbuild_link_boost (nodelet filesystem system)
 
