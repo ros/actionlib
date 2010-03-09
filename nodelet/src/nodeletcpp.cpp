@@ -64,6 +64,16 @@ template <typename Type> int
   return (-1);
 }
 
+std::vector<std::string> getMyArgv (int argc, char** argv, int num_built_in_args)
+{
+  std::vector<std::string> my_argv;
+  for (int i = num_built_in_args; i < argc; i++)
+    my_argv.push_back(argv[i]);
+  return my_argv;
+}
+
+
+
 class NodeletInterface
 {
   public:
@@ -93,7 +103,7 @@ class NodeletInterface
     ////////////////////////////////////////////////////////////////////////////////
     /** \brief Load the nodelet */
     bool
-      loadNodelet (const char *name, const char *type, const char *manager)
+    loadNodelet (const std::string name, const std::string& type, const std::string& manager, const std::vector<std::string> & args)
     {
       ros::M_string remappings = ros::names::getRemappings ();
       std::vector<std::string> sources (remappings.size ()), targets (remappings.size ());
@@ -101,7 +111,8 @@ class NodeletInterface
       int i = 0;
       for (ros::M_string::iterator it = remappings.begin (); it != remappings.end (); ++it, ++i)
       {
-        sources[i] = (*it).first; targets[i] = (*it).second;
+        sources[i] = (*it).first; 
+        targets[i] = (*it).second;
         ROS_INFO_STREAM (sources[i] << " -> " << targets[i]);
       }
 
@@ -123,6 +134,7 @@ class NodeletInterface
       srv.request.type = std::string (type);
       srv.request.remap_source_args = sources;
       srv.request.remap_target_args = targets;
+      srv.request.my_argv = args;
       if (!client.call (srv))
       {
         ROS_ERROR ("Failed to call service!");
@@ -134,26 +146,65 @@ class NodeletInterface
     ros::NodeHandle n_;
 };
 
-/* ---[ */
-int
-  main (int argc, char** argv)
+
+int main (int argc, char** argv)
 {
-  ros::init (argc, argv, "nodeletcpp", ros::init_options::AnonymousName);
-  if (argc < 4)
+  ros::init (argc, argv, "nodelet");
+  if (argc < 2)
   {
-    ROS_ERROR ("Need at least 4 arguments to continue: <name> <type> <manager_node>");
+    ROS_ERROR ("Nodelet Needs a command [manager, standalone, load, unload]");
     return (-1);
   }
-  bool unload = false; 
-  int unload_idx = parseArguments<bool> (argc, argv, "--unload", unload);
+  std::string command = argv[1];
+  
 
-  NodeletInterface ni;
-  if (unload)
-    ni.unloadNodelet (argv[unload_idx], argv[unload_idx+1]);
+  if (command == "manager")
+  {
+    nodelet::NodeletLoader n;
+    ros::spin();
+  }
+  else if (command == "standalone")
+  {
+    nodelet::NodeletLoader n(false);
+    if (argc >= 3)
+    {
+      ros::NodeHandle nh;
+      ros::M_string remappings; //Remappings are already applied by ROS no need to generate them.
+      std::string nodelet_name = ros::this_node::getName ();
+      std::string nodelet_type = argv[2];
+      n.load(nodelet_name, nodelet_type, remappings, getMyArgv(argc, argv, 3));
+      ROS_DEBUG("Successfully loaded nodelet of type '%s' into name '%s'\n", nodelet_name.c_str(), nodelet_name.c_str());
+    }
+    ros::spin();
+  }
+
+  else if (command == "load")
+  {  
+    if (argc < 4)
+    {
+      ROS_ERROR ("Nodelet load needs at least 4 args");
+      return (-1);
+    }
+    
+    NodeletInterface ni;
+    ros::NodeHandle nh;
+    std::string name = ros::this_node::getName ();
+    std::string type = argv[2];
+    std::string manager = argv[3];
+    ni.loadNodelet (name, type , manager, getMyArgv(argc, argv, 4));
+    //\TODO register Ctrl-C handler for unload before shutdown
+    ros::spin ();
+  }
+  else if (command == "unload")
+  {
+    NodeletInterface ni;
+    ni.unloadNodelet (argv[2], argv[3]);
+    
+  }
   else
   {
-    ni.loadNodelet (argv[1], argv[2], argv[3]);
-    ros::spin ();
+    ROS_ERROR("Command %s unknown", command.c_str());
+    return -1;
   }
 
   return (0);

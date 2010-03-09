@@ -26,9 +26,9 @@ rosbuild_add_executable(standalone_nodelet src/standalone_nodelet.cpp)
 target_link_libraries (standalone_nodelet pthread)
 rosbuild_link_boost (standalone_nodelet filesystem system)
 
-rosbuild_add_executable(nodeletcpp src/nodeletcpp.cpp)
-target_link_libraries (nodeletcpp pthread)
-rosbuild_link_boost (nodeletcpp filesystem system)
+rosbuild_add_executable(nodelet src/nodeletcpp.cpp)
+target_link_libraries (nodelet pthread)
+rosbuild_link_boost (nodelet filesystem system)
 
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)

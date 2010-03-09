@@ -53,29 +53,32 @@ namespace nodelet
   /** \brief A class which will construct and sequentially call Nodelets according to xml
    * This is the primary way in which users are expected to interact with Nodelets
    */
-  class NodeletLoader
+class NodeletLoader
   {
     private:
-      pluginlib::ClassLoader<Nodelet> loader_;
+    pluginlib::ClassLoader<Nodelet> loader_;
     ros::ServiceServer load_server_, unload_server_, list_server_;
-
+    
     public:
       /** \brief Create the filter chain object */
-      NodeletLoader(): loader_("nodelet", "nodelet::Nodelet")
+    NodeletLoader(bool provide_ros_api = true): loader_("nodelet", "nodelet::Nodelet")
+    {
+      std::string lib_string = "";
+      std::vector<std::string> libs = loader_.getDeclaredClasses();
+      for (size_t i = 0 ; i < libs.size(); ++i)
       {
-        std::string lib_string = "";
-        std::vector<std::string> libs = loader_.getDeclaredClasses();
-        for (size_t i = 0 ; i < libs.size(); ++i)
-        {
-          lib_string = lib_string + std::string(", ") + libs[i];
-        }    
+        lib_string = lib_string + std::string(", ") + libs[i];
+      }    
         
+      if (provide_ros_api)
+      {
         ros::NodeHandle server_nh_("~");
         load_server_ = server_nh_.advertiseService("load_nodelet", &NodeletLoader::serviceLoad, this); 
         unload_server_ = server_nh_.advertiseService("unload_nodelet", &NodeletLoader::serviceUnload, this); 
         list_server_ = server_nh_.advertiseService("list", &NodeletLoader::serviceList, this); 
         ROS_DEBUG("In FilterChain ClassLoader found the following libs: %s", lib_string.c_str());
-      };
+      }
+    };
 
       ~NodeletLoader()
       {
