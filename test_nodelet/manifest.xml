@@ -9,6 +9,7 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/test_nodelet</url>
   <depend package="nodelet"/>
+  <depend package="std_msgs"/>
 
 </package>
 
