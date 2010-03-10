@@ -1,0 +1,20 @@
+<package>
+  <description brief="nodelet_topic_tools">
+
+     nodelet_topic_tools
+
+  </description>
+  <author>Tully Foote</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/nodelet_topic_tools</url>
+  <depend package="nodelet"/>
+  <depend package="message_filters"/>
+
+  <export>
+    <cpp cflags="-I${prefix}/include"/>
+  </export>
+  
+</package>
+
+
