@@ -61,71 +61,69 @@
 
 namespace nodelet
 {
-  class Nodelet
+class Nodelet
+{
+  // Protected data fields for use by the subclass.
+protected:
+  const std::string& getName() const { return (nodelet_name_); }
+  inline ros::NodeHandle& getNodeHandle () { if (!inited_) NODELET_FATAL("nodelet init must be called first");  return (*nh_); }
+  inline ros::NodeHandle& getPrivateNodeHandle () { if (!inited_) NODELET_FATAL("nodelet init must be called first");  return (*private_nh_); }
+  inline ros::NodeHandle getMTNodeHandle ()  { if (!inited_) NODELET_FATAL("nodelet init must be called first"); ros::NodeHandle nh = *nh_; nh.setCallbackQueue(&multithreaded_callback_queue_); return (nh); }
+  inline ros::NodeHandle getMTPrivateNodeHandle ()  { if (!inited_) NODELET_FATAL("nodelet init must be called first");  ros::NodeHandle nh = *private_nh_; nh.setCallbackQueue(&multithreaded_callback_queue_); return (nh); }
+  inline ros::CallbackQueue& getMTCallbackQueue () { return (multithreaded_callback_queue_); }
+  inline std::vector<std::string> getMyArgv() const { return my_argv_;};
+
+
+  // Internal storage;
+private:
+  bool inited_;
+  
+  std::string nodelet_name_;
+  ros::NodeHandlePtr nh_;
+  ros::NodeHandlePtr private_nh_;
+  std::vector<std::string> my_argv_;
+
+  ros::AsyncSpinner* mt_spinner_; //\TODO this should be removed
+  ros::CallbackQueue multithreaded_callback_queue_;
+
+  // Method to be overridden by subclass when starting up. 
+  virtual void onInit () = 0;
+  
+  // Public API used for launching
+public:
+  /**\brief Empty constructor required for dynamic loading */
+  Nodelet (): inited_(false), nodelet_name_("uninitialized"), mt_spinner_ (NULL) {};
+  
+  /**\brief Init function called at startup
+   * \param name The name of the nodelet
+   * \param remapping_args The remapping args in a map for the nodelet
+   * \param my_args The commandline arguments for this nodelet stripped of special arguments such as ROS arguments 
+   */
+  void init (const std::string& name, const ros::M_string& remapping_args, const std::vector<std::string>& my_argv)
   {
-    // Protected data fields for use by the subclass.
-    protected:
-    const std::string& getName() const { return (nodelet_name_); }
-    inline ros::NodeHandle& getNodeHandle () { if (!inited_) NODELET_FATAL("nodelet init must be called first");  return (*nh_); }
-    inline ros::NodeHandle& getPrivateNodeHandle () { if (!inited_) NODELET_FATAL("nodelet init must be called first");  return (*private_nh_); }
-    inline ros::NodeHandle getMTNodeHandle ()  { if (!inited_) NODELET_FATAL("nodelet init must be called first"); ros::NodeHandle nh = *nh_; nh.setCallbackQueue(&multithreaded_callback_queue_); return (nh); }
-    inline ros::NodeHandle getMTPrivateNodeHandle ()  { if (!inited_) NODELET_FATAL("nodelet init must be called first");  ros::NodeHandle nh = *private_nh_; nh.setCallbackQueue(&multithreaded_callback_queue_); return (nh); }
-    inline ros::CallbackQueue& getMTCallbackQueue () { return (multithreaded_callback_queue_); }
-    inline std::vector<std::string> getMyArgv() const { return my_argv_;};
-
-
-    // Internal storage;
-    private:
-    bool inited_;
-    
-    std::string nodelet_name_;
-    ros::NodeHandle* nh_;
-    ros::NodeHandle* private_nh_;
-    std::vector<std::string> my_argv_;
-
-      ros::AsyncSpinner* mt_spinner_; //\TODO this should be removed
-      ros::CallbackQueue multithreaded_callback_queue_;
-
-      // Method to be overridden by subclass when starting up. 
-      virtual void onInit () = 0;
-      
-    // Public API used for launching
-    public:
-    /**\brief Empty constructor required for dynamic loading */
-    Nodelet (): inited_(false), nodelet_name_("uninitialized"), mt_spinner_ (NULL) {};
-    
-    /**\brief Init function called at startup
-     * \param name The name of the nodelet
-     * \param remapping_args The remapping args in a map for the nodelet
-     * \param my_args The commandline arguments for this nodelet stripped of special arguments such as ROS arguments 
-     */
-    void init (const std::string& name, const ros::M_string& remapping_args, const std::vector<std::string>& my_argv)
-      {
-        if (inited_)
-        {
-          NODELET_ERROR("Nodelet already inited, it cannot be reinited");
-          return;
-        }
-        inited_ = true;
-        mt_spinner_ = new ros::AsyncSpinner(0, &multithreaded_callback_queue_);
-        mt_spinner_->start ();
-
-        nodelet_name_ = name;
-        nh_ = new ros::NodeHandle ("", remapping_args);
-        my_argv_ = my_argv;
-        private_nh_ = new ros::NodeHandle (name, remapping_args);
-        NODELET_DEBUG ("Nodelet initializing");
-        this->onInit ();
-      };
-
-    virtual ~Nodelet () 
-    { 
-      NODELET_DEBUG ("nodelet destructor.");  
-      delete mt_spinner_;
-      delete nh_;
-      delete private_nh_;
+    if (inited_)
+    {
+      NODELET_ERROR("Nodelet already inited, it cannot be reinited");
+      return;
     }
+    mt_spinner_ = new ros::AsyncSpinner(0, &multithreaded_callback_queue_);
+    mt_spinner_->start ();
+
+    nodelet_name_ = name;
+    nh_.reset (new ros::NodeHandle ("", remapping_args));
+    my_argv_ = my_argv;
+    private_nh_.reset (new ros::NodeHandle (name, remapping_args));
+    NODELET_DEBUG ("Nodelet initializing");
+    inited_ = true;
+    this->onInit ();
   };
+
+  virtual ~Nodelet () 
+  { 
+    NODELET_DEBUG ("nodelet destructor.");  
+    delete mt_spinner_;
+  }
+};
 
 }
 #endif //nodelet_nodelet_h
