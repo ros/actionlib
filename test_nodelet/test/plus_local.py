@@ -33,46 +33,56 @@ import rospy
 from std_msgs.msg import Float64
 import unittest
 import rostest
+import random
 
-class PlusTest(unittest.TestCase):
-    def setUp(self):
+class PlusTester:
+    def __init__(self, topic_in, topic_out, delta):
+        self.pub = rospy.Publisher(topic_in, Float64)
+        self.sub = rospy.Subscriber(topic_out, Float64, self.callback)
+        self.expected_delta = delta
+        self.send_value = random.random()
+        self.recieved = False
         self.result = False
-        self.value = 1.9
-        self.pub = rospy.Publisher('Plus/in', Float64)
-        rospy.Subscriber("Plus/out", Float64, self.callback)
+        self.delta = delta
+
+    def run(self, cycles = 10):
+        for i in range(1, cycles):
+            self.pub.publish(Float64(self.send_value))
+            rospy.loginfo("Sent %f"%self.send_value);
+            if self.recieved == True:
+                break
+            rospy.sleep(1.0)
+        return self.result 
 
     def callback(self, data):
-        rospy.loginfo(rospy.get_name()+"I heard %s",data.data)
-        if data.data ==  self.value + 2.1:
+        rospy.loginfo(rospy.get_name()+" I heard %s which was a change of %f",data.data, data.data-self.send_value)
+        if data.data ==  self.send_value + self.delta:
             self.result = True
+        self.recieved = True
 
-    def test_local(self):
-        for i in range(1, 10):
-            self.pub.publish(Float64(1.9))
-            rospy.loginfo("Sent 1.9");
-            rospy.sleep(1.0)
-        self.assertTrue(self.result)
+class TestPlus(unittest.TestCase):
+    def test_param(self):
+        pb = PlusTester("Plus/in", "Plus/out", 2.1)
+        self.assertTrue(pb.run())
 
-class PlusRemap(unittest.TestCase):
-    def setUp(self):
-        self.result = False
-        self.value = 1.9
-        self.pub = rospy.Publisher('plus_remap/in', Float64)
-        rospy.Subscriber("remapped_output", Float64, self.callback)
+    def test_default_param(self):
+        pb = PlusTester("Plus2/in", "Plus2/out", 10.0)
+        self.assertTrue(pb.run())
 
-    def callback(self, data):
-        rospy.loginfo(rospy.get_name()+"I heard %s",data.data)
-        if data.data ==  self.value + 2.1:
-            self.result = True
+    def test_standalone(self):
+        pb = PlusTester("Plus2/out", "Plus3/out", 2.5)
+        self.assertTrue(pb.run())
 
-    def test_local(self):
-        for i in range(1, 10):
-            self.pub.publish(Float64(1.9))
-            rospy.loginfo("Sent 1.9");
-            rospy.sleep(1.0)
-        self.assertTrue(self.result)
+    def test_remap(self):
+        pb = PlusTester("plus_remap/in", "remapped_output", 2.1)
+        self.assertTrue(pb.run())
+
+    def test_chain(self):
+        pb = PlusTester("Plus2/in", "Plus3/out", 12.5)
+        self.assertTrue(pb.run())
+
 
 if __name__ == '__main__':
     rospy.init_node('plus_local')
-    rostest.unitrun('test_nodelet', 'test_local', PlusTest, coverage_packages=['nodelet'])
-    rostest.unitrun('test_nodelet', 'test_remapping', PlusRemap, coverage_packages=['nodelet'])
+    rostest.unitrun('test_nodelet', 'test_local', TestPlus, coverage_packages=['nodelet'])
+
