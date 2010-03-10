@@ -39,6 +39,25 @@ class PlusTest(unittest.TestCase):
         self.result = False
         self.value = 1.9
         self.pub = rospy.Publisher('Plus/in', Float64)
+        rospy.Subscriber("Plus/out", Float64, self.callback)
+
+    def callback(self, data):
+        rospy.loginfo(rospy.get_name()+"I heard %s",data.data)
+        if data.data ==  self.value + 2.1:
+            self.result = True
+
+    def test_local(self):
+        for i in range(1, 10):
+            self.pub.publish(Float64(1.9))
+            rospy.loginfo("Sent 1.9");
+            rospy.sleep(1.0)
+        self.assertTrue(self.result)
+
+class PlusRemap(unittest.TestCase):
+    def setUp(self):
+        self.result = False
+        self.value = 1.9
+        self.pub = rospy.Publisher('plus_remap/in', Float64)
         rospy.Subscriber("remapped_output", Float64, self.callback)
 
     def callback(self, data):
@@ -56,3 +75,4 @@ class PlusTest(unittest.TestCase):
 if __name__ == '__main__':
     rospy.init_node('plus_local')
     rostest.unitrun('test_nodelet', 'test_local', PlusTest, coverage_packages=['nodelet'])
+    rostest.unitrun('test_nodelet', 'test_remapping', PlusRemap, coverage_packages=['nodelet'])
