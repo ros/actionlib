@@ -6,7 +6,7 @@
   </description>
   <author>Tully Foote</author>
   <license>BSD</license>
-  <review status="unreviewed" notes=""/>
+  <review status="unittest" notes=""/>
   <url>http://ros.org/wiki/test_nodelet</url>
   <depend package="nodelet"/>
   <depend package="std_msgs"/>
