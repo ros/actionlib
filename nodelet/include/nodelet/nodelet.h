@@ -99,7 +99,8 @@ public:
    * \param remapping_args The remapping args in a map for the nodelet
    * \param my_args The commandline arguments for this nodelet stripped of special arguments such as ROS arguments 
    */
-  void init (const std::string& name, const ros::M_string& remapping_args, const std::vector<std::string>& my_argv)
+  void 
+    init (const std::string& name, const ros::M_string& remapping_args, const std::vector<std::string>& my_argv)
   {
     if (inited_)
     {
@@ -119,9 +120,10 @@ public:
   };
 
   virtual ~Nodelet () 
-  { 
-    NODELET_DEBUG ("nodelet destructor.");  
-    delete mt_spinner_;
+  {
+    NODELET_DEBUG ("nodelet destructor.");
+    if (mt_spinner_)
+      delete mt_spinner_;
   }
 };
 
