@@ -4,7 +4,7 @@
      nodelet_topic_tools
 
   </description>
-  <author>Tully Foote</author>
+  <author>Tully Foote, Radu Bogdan Rusu</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/nodelet_topic_tools</url>
