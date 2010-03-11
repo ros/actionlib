@@ -38,7 +38,7 @@
 #define PLUGINLIB_CLASS_LIST_MACROS_H_
 #include "Poco/ClassLibrary.h"
 
-__attribute__((deprecated)) void PLUGINLIB_REGISTER_CLASS (){
+inline __attribute__((deprecated)) void PLUGINLIB_REGISTER_CLASS (){
 // "You are using a deprecated version of the PLUGINLIB_REGISTER_CLASS macro. Please switch to the new version PLUGINLIB_DECLARE_CLASS. For further information, see http://ros.org/wiki/pluginlib"
   return;
 };
