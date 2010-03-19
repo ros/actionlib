@@ -194,6 +194,18 @@ private:
   ros::NodeHandle n_;
 };
 
+void print_usage(int argc, char** argv)
+{
+  printf("Your usage: \n");
+  for (int i = 0; i < argc; i++)
+    printf("%s ", argv[i]);
+  printf("\nnodelet usage:\n");
+  printf("nodelet load pkg/Type manager - Launch a nodelet of type pkg/Type on manager manager\n");
+  printf("nodelet standalone pkg/Type   - Launch a nodelet of type pkg/Type in a standalone node\n");
+  //  printf("nodelet unload name manager   - Unload a nodelet a nodelet by name from manager\n");
+  printf("nodelet manager               - Launch a nodelet manager node\n");
+
+};
 
 int main (int argc, char** argv)
 {
@@ -201,12 +213,7 @@ int main (int argc, char** argv)
 
   if (!arg_parser.parseArgs(argc, argv))
   {
-    ros::init (argc, argv, "nodelet");
-    //\TODO More usage
-    for (int i = 0; i < argc; i++)
-      printf("%s ", argv[i]);
-    printf("  ARGS!!!!!!!!!!!!!\n");
-    ROS_ERROR("Nodelet Needs a command [manager, standalone, load, unload]");
+    print_usage(argc, argv);
     return (-1);
   }
   std::string command = arg_parser.getCommand();
