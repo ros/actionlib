@@ -48,161 +48,214 @@
 #include "nodelet/NodeletLoad.h"
 #include "nodelet/NodeletUnload.h"
 
-////////////////////////////////////////////////////////////////////////////////
-/** \brief Parse for a specific given command line argument. */
-template <typename Type> int
-  parseArguments (int argc, char** argv, const char* str, Type &value)
+
+class NodeletArgumentParsing
 {
-  for (int i = 1; i < argc; ++i)
+private:
+  std::string command_;
+  std::string type_;
+  std::string default_name_;  
+  std::string manager_;
+  std::vector<std::string> local_args_;    
+
+public:
+  //NodeletArgumentParsing() { };
+  bool parseArgs(int argc, char** argv)
   {
-    if ((strcmp (argv[i], str) == 0) && (++i < argc))
+    std::vector<std::string> non_ros_args;
+    ros::removeROSArgs(argc, argv, non_ros_args);
+    size_t used_args = 0;
+
+    if (non_ros_args.size() > 1)
+      command_ = non_ros_args[1];
+    else
+      return false;
+
+    
+    if (command_ == "load" && non_ros_args.size() > 3)
     {
-      value = boost::lexical_cast<Type>(argv[i]);
-      return (i-1);
+      type_ = non_ros_args[2];
+      manager_ = non_ros_args[3];
+      used_args = 4;
     }
-  }
-  return (-1);
-}
+    
+    
+    if (non_ros_args.size() > 2)
+    {
+      if (command_ == "unload")
+      {
+        manager_ = non_ros_args[2];
+        used_args = 3;
+      }
+      else if (command_ == "standalone")
+      {
+        type_ = non_ros_args[2];
+        printf("type is %s\n", type_.c_str());
+        used_args = 3;
+      }
+    }
+    
+    if (command_ == "manager")
+      used_args = 2;
+      
+    for (size_t i = used_args; i < non_ros_args.size(); i++)
+      local_args_.push_back(non_ros_args[i]);
 
-std::vector<std::string> getMyArgv (int argc, char** argv, int num_built_in_args)
-{
-  std::vector<std::string> my_argv;
-  for (int i = num_built_in_args; i < argc; i++)
-    my_argv.push_back(argv[i]);
-  return my_argv;
-}
+    
+    if (used_args > 0) return true;
+    else return false;
+  
+  };
 
 
-
+  std::string getCommand() const {return command_;};
+  std::string getType() const {return type_;};
+  std::string getManager() const {return manager_;};
+  std::vector<std::string> getMyArgv () const {return local_args_;};
+  std::string getDefaultName()
+  {
+    std::string s = type_; 
+    replace(s.begin(), s.end(), '/', '_'); 
+    return s;
+  };
+  
+};
+  
+  
 class NodeletInterface
 {
-  public:
-    ////////////////////////////////////////////////////////////////////////////////
-    /** \brief Unload the nodelet */
-    bool
-      unloadNodelet (const char *name, const char *manager)
-    {
-      ROS_INFO_STREAM ("Unloading nodelet " << name << " from manager " << manager);
+public:
+  ////////////////////////////////////////////////////////////////////////////////
+  /** \brief Unload the nodelet */
+  bool
+  unloadNodelet (const char *name, const char *manager)
+  {
+    ROS_INFO_STREAM ("Unloading nodelet " << name << " from manager " << manager);
       
-      std::string service_name = std::string (manager) + "/unload_nodelet";
-      // Wait until the service is advertised
-      ros::ServiceClient client = n_.serviceClient<nodelet::NodeletUnload> (service_name);
-      client.waitForExistence ();
+    std::string service_name = std::string (manager) + "/unload_nodelet";
+    // Wait until the service is advertised
+    ros::ServiceClient client = n_.serviceClient<nodelet::NodeletUnload> (service_name);
+    client.waitForExistence ();
 
-      // Call the service
-      nodelet::NodeletLoad srv;
-      srv.request.name = std::string (name);
-      if (!client.call (srv))
-      {
-        ROS_ERROR ("Failed to call service!");
-        return (false);
-      }
-      return (true);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////
-    /** \brief Load the nodelet */
-    bool
-    loadNodelet (const std::string name, const std::string& type, const std::string& manager, const std::vector<std::string> & args)
+    // Call the service
+    nodelet::NodeletLoad srv;
+    srv.request.name = std::string (name);
+    if (!client.call (srv))
     {
-      ros::M_string remappings = ros::names::getRemappings ();
-      std::vector<std::string> sources (remappings.size ()), targets (remappings.size ());
-      ROS_INFO_STREAM ("Loading nodelet " << name << " of type " << type << " to manager " << manager << " with the following remappings:");
-      int i = 0;
-      for (ros::M_string::iterator it = remappings.begin (); it != remappings.end (); ++it, ++i)
-      {
-        sources[i] = (*it).first; 
-        targets[i] = (*it).second;
-        ROS_INFO_STREAM (sources[i] << " -> " << targets[i]);
-      }
-
-      // Get and set the parameters
-      XmlRpc::XmlRpcValue param;
-      std::string node_name = ros::this_node::getName ();
-      n_.getParam (node_name, param);
-      n_.setParam (name, param);
-
-      std::string service_name = std::string (manager) + "/load_nodelet";
-
-      // Wait until the service is advertised
-      ros::ServiceClient client = n_.serviceClient<nodelet::NodeletLoad> (service_name);
-      client.waitForExistence ();
-
-      // Call the service
-      nodelet::NodeletLoad srv;
-      srv.request.name = std::string (name);
-      srv.request.type = std::string (type);
-      srv.request.remap_source_args = sources;
-      srv.request.remap_target_args = targets;
-      srv.request.my_argv = args;
-      if (!client.call (srv))
-      {
-        ROS_ERROR ("Failed to call service!");
-        return (false);
-      }
-      return (true);
+      ROS_ERROR ("Failed to call service!");
+      return (false);
     }
-  private:
-    ros::NodeHandle n_;
+    return (true);
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+  /** \brief Load the nodelet */
+  bool
+  loadNodelet (const std::string name, const std::string& type, const std::string& manager, const std::vector<std::string> & args)
+  {
+    ros::M_string remappings = ros::names::getRemappings ();
+    std::vector<std::string> sources (remappings.size ()), targets (remappings.size ());
+    ROS_INFO_STREAM ("Loading nodelet " << name << " of type " << type << " to manager " << manager << " with the following remappings:");
+    int i = 0;
+    for (ros::M_string::iterator it = remappings.begin (); it != remappings.end (); ++it, ++i)
+    {
+      sources[i] = (*it).first; 
+      targets[i] = (*it).second;
+      ROS_INFO_STREAM (sources[i] << " -> " << targets[i]);
+    }
+
+    // Get and set the parameters
+    XmlRpc::XmlRpcValue param;
+    std::string node_name = ros::this_node::getName ();
+    n_.getParam (node_name, param);
+    n_.setParam (name, param);
+
+    std::string service_name = std::string (manager) + "/load_nodelet";
+
+    // Wait until the service is advertised
+    ros::ServiceClient client = n_.serviceClient<nodelet::NodeletLoad> (service_name);
+    client.waitForExistence ();
+
+    // Call the service
+    nodelet::NodeletLoad srv;
+    srv.request.name = std::string (name);
+    srv.request.type = std::string (type);
+    srv.request.remap_source_args = sources;
+    srv.request.remap_target_args = targets;
+    srv.request.my_argv = args;
+    if (!client.call (srv))
+    {
+      ROS_ERROR ("Failed to call service!");
+      return false;
+    }
+    return true;
+  }
+private:
+  ros::NodeHandle n_;
 };
 
 
 int main (int argc, char** argv)
 {
-  ros::init (argc, argv, "nodelet");
-  if (argc < 2)
+  NodeletArgumentParsing arg_parser;  
+
+  if (!arg_parser.parseArgs(argc, argv))
   {
-    ROS_ERROR ("Nodelet Needs a command [manager, standalone, load, unload]");
+    ros::init (argc, argv, "nodelet");
+    //\TODO More usage
+    for (int i = 0; i < argc; i++)
+      printf("%s ", argv[i]);
+    printf("  ARGS!!!!!!!!!!!!!\n");
+    ROS_ERROR("Nodelet Needs a command [manager, standalone, load, unload]");
     return (-1);
   }
-  std::string command = argv[1];
-  
-
+  std::string command = arg_parser.getCommand();
+    
+    
   if (command == "manager")
   {
+    ros::init (argc, argv, "manager");
     nodelet::NodeletLoader n;
     ros::spin();
   }
   else if (command == "standalone")
   {
+    ros::init (argc, argv, arg_parser.getDefaultName());
+    
     nodelet::NodeletLoader n(false);
-    if (argc >= 3)
-    {
-      ros::NodeHandle nh;
-      ros::M_string remappings; //Remappings are already applied by ROS no need to generate them.
-      std::string nodelet_name = ros::this_node::getName ();
-      std::string nodelet_type = argv[2];
-      n.load(nodelet_name, nodelet_type, remappings, getMyArgv(argc, argv, 3));
-      ROS_DEBUG("Successfully loaded nodelet of type '%s' into name '%s'\n", nodelet_name.c_str(), nodelet_name.c_str());
-    }
+    ros::NodeHandle nh;
+    ros::M_string remappings; //Remappings are already applied by ROS no need to generate them.
+    std::string nodelet_name = ros::this_node::getName ();
+    std::string nodelet_type = arg_parser.getType();
+    n.load(nodelet_name, nodelet_type, remappings, arg_parser.getMyArgv());
+    ROS_DEBUG("Successfully loaded nodelet of type '%s' into name '%s'\n", nodelet_name.c_str(), nodelet_name.c_str());
+    
     ros::spin();
   }
 
   else if (command == "load")
   {  
-    if (argc < 4)
-    {
-      ROS_ERROR ("Nodelet load needs at least 4 args");
-      return (-1);
-    }
     
+    ros::init (argc, argv, arg_parser.getDefaultName());
     NodeletInterface ni;
     ros::NodeHandle nh;
     std::string name = ros::this_node::getName ();
-    std::string type = argv[2];
-    std::string manager = argv[3];
-    ni.loadNodelet (name, type , manager, getMyArgv(argc, argv, 4));
+    std::string type = arg_parser.getType();
+    std::string manager = arg_parser.getManager();
+    ni.loadNodelet (name, type , manager, arg_parser.getMyArgv());
     //\TODO register Ctrl-C handler for unload before shutdown
     ros::spin ();
   }
   else if (command == "unload")
   {
+    ros::init (argc, argv, arg_parser.getDefaultName());
     NodeletInterface ni;
     ni.unloadNodelet (argv[2], argv[3]);
     
   }
   else
   {
+    ros::init(argc, argv, "nodelet");
     ROS_ERROR("Command %s unknown", command.c_str());
     return -1;
   }
