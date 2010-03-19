@@ -8,6 +8,7 @@
 
 \section ActionServerAPI ActionServer Code API
 - actionlib::SimpleActionServer
+- \link actionlib::simple_action_server::SimpleActionServer SimpleActionServer (Python) \endlink
 
 \section protocol Communication Protocol
 The values for the status of a goal are as follows:
