@@ -59,10 +59,9 @@ import time
 import rospy
 from roslib.msg import Header
 from actionlib_msgs.msg import *
+from actionlib.exceptions import *
 
 g_goal_id = 1
-
-class ActionException(Exception): pass
 
 def get_name_of_constant(C, n):
     for k,v in C.__dict__.iteritems():
