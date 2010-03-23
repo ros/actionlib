@@ -377,6 +377,7 @@ class CommStateMachine:
             self.latest_result = action_result
 
             if self.state in [CommState.WAITING_FOR_GOAL_ACK,
+                              CommState.WAITING_FOR_CANCEL_ACK,
                               CommState.PENDING,
                               CommState.ACTIVE,
                               CommState.WAITING_FOR_RESULT,
