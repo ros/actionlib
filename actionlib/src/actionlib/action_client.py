@@ -216,30 +216,30 @@ _transitions = {
     CommState.WAITING_FOR_GOAL_ACK: {
         GoalStatus.PENDING:    CommState.PENDING,
         GoalStatus.ACTIVE:     CommState.ACTIVE,
-        GoalStatus.REJECTED:   CommState.WAITING_FOR_RESULT,
-        GoalStatus.RECALLING:  CommState.RECALLING,
-        GoalStatus.RECALLED:   CommState.WAITING_FOR_RESULT,
-        GoalStatus.PREEMPTED:  CommState.WAITING_FOR_RESULT,
-        GoalStatus.SUCCEEDED:  CommState.WAITING_FOR_RESULT,
-        GoalStatus.ABORTED:    CommState.WAITING_FOR_RESULT,
-        GoalStatus.PREEMPTING: CommState.PREEMPTING },
+        GoalStatus.REJECTED:   (CommState.PENDING, CommState.WAITING_FOR_RESULT),
+        GoalStatus.RECALLING:  (CommState.PENDING, CommState.RECALLING),
+        GoalStatus.RECALLED:   (CommState.PENDING, CommState.WAITING_FOR_RESULT),
+        GoalStatus.PREEMPTED:  (CommState.ACTIVE, CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
+        GoalStatus.SUCCEEDED:  (CommState.ACTIVE, CommState.WAITING_FOR_RESULT),
+        GoalStatus.ABORTED:    (CommState.ACTIVE, CommState.WAITING_FOR_RESULT),
+        GoalStatus.PREEMPTING: (CommState.ACTIVE, CommState.PREEMPTING) },
     CommState.PENDING: {
         GoalStatus.PENDING:    NO_TRANSITION,
         GoalStatus.ACTIVE:     CommState.ACTIVE,
         GoalStatus.REJECTED:   CommState.WAITING_FOR_RESULT,
         GoalStatus.RECALLING:  CommState.RECALLING,
-        GoalStatus.RECALLED:   CommState.WAITING_FOR_RESULT,
-        GoalStatus.PREEMPTED:  CommState.WAITING_FOR_RESULT,
-        GoalStatus.SUCCEEDED:  CommState.WAITING_FOR_RESULT,
-        GoalStatus.ABORTED:    CommState.WAITING_FOR_RESULT,
-        GoalStatus.PREEMPTING: CommState.PREEMPTING },
+        GoalStatus.RECALLED:   (CommState.RECALLING, CommState.WAITING_FOR_RESULT),
+        GoalStatus.PREEMPTED:  (CommState.ACTIVE, CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
+        GoalStatus.SUCCEEDED:  (CommState.ACTIVE, CommState.WAITING_FOR_RESULT),
+        GoalStatus.ABORTED:    (CommState.ACTIVE, CommState.WAITING_FOR_RESULT),
+        GoalStatus.PREEMPTING: (CommState.ACTIVE, CommState.PREEMPTING) },
     CommState.ACTIVE: {
         GoalStatus.PENDING:    INVALID_TRANSITION,
         GoalStatus.ACTIVE:     NO_TRANSITION,
         GoalStatus.REJECTED:   INVALID_TRANSITION,
         GoalStatus.RECALLING:  INVALID_TRANSITION,
         GoalStatus.RECALLED:   INVALID_TRANSITION,
-        GoalStatus.PREEMPTED:  CommState.WAITING_FOR_RESULT,
+        GoalStatus.PREEMPTED:  (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
         GoalStatus.SUCCEEDED:  CommState.WAITING_FOR_RESULT,
         GoalStatus.ABORTED:    CommState.WAITING_FOR_RESULT,
         GoalStatus.PREEMPTING: CommState.PREEMPTING },
@@ -258,10 +258,10 @@ _transitions = {
         GoalStatus.ACTIVE:     NO_TRANSITION,
         GoalStatus.REJECTED:   CommState.WAITING_FOR_RESULT,
         GoalStatus.RECALLING:  CommState.RECALLING,
-        GoalStatus.RECALLED:   CommState.WAITING_FOR_RESULT,
-        GoalStatus.PREEMPTED:  CommState.WAITING_FOR_RESULT,
-        GoalStatus.SUCCEEDED:  CommState.WAITING_FOR_RESULT,
-        GoalStatus.ABORTED:    CommState.WAITING_FOR_RESULT,
+        GoalStatus.RECALLED:   (CommState.RECALLING, CommState.WAITING_FOR_RESULT),
+        GoalStatus.PREEMPTED:  (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
+        GoalStatus.SUCCEEDED:  (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
+        GoalStatus.ABORTED:    (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
         GoalStatus.PREEMPTING: CommState.PREEMPTING },
     CommState.RECALLING: {
         GoalStatus.PENDING:    INVALID_TRANSITION,
@@ -269,9 +269,9 @@ _transitions = {
         GoalStatus.REJECTED:   CommState.WAITING_FOR_RESULT,
         GoalStatus.RECALLING:  NO_TRANSITION,
         GoalStatus.RECALLED:   CommState.WAITING_FOR_RESULT,
-        GoalStatus.PREEMPTED:  CommState.WAITING_FOR_RESULT,
-        GoalStatus.SUCCEEDED:  CommState.WAITING_FOR_RESULT,
-        GoalStatus.ABORTED:    CommState.WAITING_FOR_RESULT,
+        GoalStatus.PREEMPTED:  (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
+        GoalStatus.SUCCEEDED:  (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
+        GoalStatus.ABORTED:    (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
         GoalStatus.PREEMPTING: CommState.PREEMPTING },
     CommState.PREEMPTING: {
         GoalStatus.PENDING:    INVALID_TRANSITION,
@@ -353,7 +353,11 @@ class CommStateMachine:
                 rospy.logerr("Invalid goal status transition from %s to %s" %
                              (CommState.to_string(self.state), GoalStatus.to_string(status.status)))
             else:
-                self.transition_to(next_state)
+                if hasattr(next_state, '__getitem__'):
+                    for s in next_state:
+                        self.transition_to(s)
+                else:
+                    self.transition_to(next_state)
 
     def transition_to(self, state):
         rospy.logdebug("Transitioning to %s (from %s, goal: %s)",
@@ -383,6 +387,11 @@ class CommStateMachine:
                               CommState.WAITING_FOR_RESULT,
                               CommState.RECALLING,
                               CommState.PREEMPTING]:
+                # Stuffs the goal status in the result into a GoalStatusArray
+                status_array = GoalStatusArray()
+                status_array.status_list.append(action_result.status)
+                self.update_status(status_array)
+                
                 self.transition_to(CommState.DONE)
             elif self.state == CommState.DONE:
                 rospy.logerr("Got a result when we were already in the DONE state")
