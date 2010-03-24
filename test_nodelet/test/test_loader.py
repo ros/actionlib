@@ -30,58 +30,35 @@
 
 import roslib; roslib.load_manifest('test_nodelet')
 import rospy
-from std_msgs.msg import Float64
 import unittest
 import rostest
 import random
 
-class PlusTester:
-    def __init__(self, topic_in, topic_out, delta):
-        self.pub = rospy.Publisher(topic_in, Float64)
-        self.sub = rospy.Subscriber(topic_out, Float64, self.callback)
-        self.expected_delta = delta
-        self.send_value = random.random()
-        self.recieved = False
-        self.result = False
-        self.delta = delta
+from nodelet.srv import *
 
-    def run(self, cycles = 10):
-        for i in range(1, cycles):
-            self.pub.publish(Float64(self.send_value))
-            rospy.loginfo("Sent %f"%self.send_value);
-            if self.recieved == True:
-                break
-            rospy.sleep(1.0)
-        return self.result 
-
-    def callback(self, data):
-        rospy.loginfo(rospy.get_name()+" I heard %s which was a change of %f",data.data, data.data-self.send_value)
-        if data.data ==  self.send_value + self.delta:
-            self.result = True
-        self.recieved = True
-
-class TestPlus(unittest.TestCase):
-    def test_param(self):
-        pb = PlusTester("Plus/in", "Plus/out", 2.1)
-        self.assertTrue(pb.run())
-
-    def test_default_param(self):
-        pb = PlusTester("Plus2/in", "Plus2/out", 10.0)
-        self.assertTrue(pb.run())
-
-    def test_standalone(self):
-        pb = PlusTester("Plus2/out", "Plus3/out", 2.5)
-        self.assertTrue(pb.run())
-
-    def test_remap(self):
-        pb = PlusTester("plus_remap/in", "remapped_output", 2.1)
-        self.assertTrue(pb.run())
-
-    def test_chain(self):
-        pb = PlusTester("Plus2/in", "Plus3/out", 12.5)
-        self.assertTrue(pb.run())
+class TestLoader(unittest.TestCase):
+    def test_loader(self):
+        load = rospy.ServiceProxy('/nodelet_manager/load_nodelet', NodeletLoad)
+        unload = rospy.ServiceProxy('/nodelet_manager/unload_nodelet', NodeletUnload)
+        list = rospy.ServiceProxy('/nodelet_manager/list', NodeletList)
+        
+        req = NodeletLoadRequest()
+        req.name = "/my_nodelet"
+        req.type = "test_nodelet/Plus"
+        
+        res = load.call(req)
+        self.assertTrue(res.success)
+        
+        req = NodeletListRequest()
+        res = list.call(req)
+        self.assertTrue("/my_nodelet" in res.nodelets)
+        
+        req = NodeletUnloadRequest()
+        req.name = "/my_nodelet"
+        res = unload.call(req)
+        self.assertTrue(res.success)
 
 if __name__ == '__main__':
-    rospy.init_node('plus_local')
-    rostest.unitrun('test_nodelet', 'test_plus', TestPlus)
+    rospy.init_node('test_loader')
+    rostest.unitrun('test_loader', 'test_loader', TestLoader)
 

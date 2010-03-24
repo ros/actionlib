@@ -25,3 +25,4 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 rosbuild_add_library(${PROJECT_NAME} src/plus.cpp)
 
 rosbuild_add_rostest(test_local.launch)
+rosbuild_add_rostest(test_loader.launch)
