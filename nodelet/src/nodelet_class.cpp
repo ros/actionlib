@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2010, Willow Garage, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
  *     * Neither the name of the Willow Garage, Inc. nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,46 +27,58 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <pluginlib/class_list_macros.h>
 #include <nodelet/nodelet.h>
+
 #include <ros/ros.h>
-#include <std_msgs/Float64.h>
-#include <stdio.h>
+#include <ros/callback_queue.h>
 
-
-#include <math.h> //fabs
-
-namespace nodelet_tutorial_math
+namespace nodelet
 {
 
-class Plus : public nodelet::Nodelet
+Nodelet::Nodelet ()
+: inited_(false)
+, nodelet_name_("uninitialized")
 {
-public:
-  Plus()
-  : value_(0)
-  {}
-
-private:
-  virtual void onInit()
-  {
-    ros::NodeHandle& private_nh = getPrivateNodeHandle();
-    private_nh.getParam("value", value_);
-    pub = private_nh.advertise<std_msgs::Float64>("out", 10);
-    sub = private_nh.subscribe("in", 10, &Plus::callback, this);
-  }
-
-  void callback(const std_msgs::Float64::ConstPtr& input)
-  {
-    std_msgs::Float64Ptr output(new std_msgs::Float64());
-    output->data = input->data + value_;
-    NODELET_DEBUG("Adding %f to get %f", value_, output->data);
-    pub.publish(output);
-  }
-
-  ros::Publisher pub;
-  ros::Subscriber sub;
-  double value_;
-};
-
-PLUGINLIB_DECLARE_CLASS(nodelet_tutorial_math, Plus, nodelet_tutorial_math::Plus, nodelet::Nodelet);
 }
+
+Nodelet::~Nodelet ()
+{
+  NODELET_DEBUG ("nodelet destructor.");
+}
+
+void Nodelet::init(const std::string& name, const M_string& remapping_args, const V_string& my_argv)
+{
+  if (inited_)
+  {
+    NODELET_ERROR("Nodelet already inited, it cannot be reinited");
+    return;
+  }
+
+  st_callback_queue_.reset(new ros::CallbackQueue);
+  mt_callback_queue_.reset(new ros::CallbackQueue);
+
+  mt_spinner_.reset(new ros::AsyncSpinner(0, mt_callback_queue_.get()));
+  mt_spinner_->start();
+
+  st_spinner_.reset(new ros::AsyncSpinner(1, st_callback_queue_.get()));
+  st_spinner_->start();
+
+  nodelet_name_ = name;
+  my_argv_ = my_argv;
+
+  nh_.reset(new ros::NodeHandle ("", remapping_args));
+  nh_->setCallbackQueue(st_callback_queue_.get());
+  private_nh_.reset(new ros::NodeHandle (name, remapping_args));
+  private_nh_->setCallbackQueue(st_callback_queue_.get());
+
+  mt_nh_.reset(new ros::NodeHandle ("", remapping_args));
+  mt_nh_->setCallbackQueue(mt_callback_queue_.get());
+  mt_private_nh_.reset(new ros::NodeHandle (name, remapping_args));
+  mt_private_nh_->setCallbackQueue(mt_callback_queue_.get());
+
+  NODELET_DEBUG ("Nodelet initializing");
+  inited_ = true;
+  this->onInit ();
+}
+
+} // namespace nodelet

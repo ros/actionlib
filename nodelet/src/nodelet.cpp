@@ -43,7 +43,7 @@
 @b nodeletcpp is a tool for loading/unloading nodelets to/from a Nodelet manager.
 **/
 #include <ros/ros.h>
-#include "nodelet/nodelet_loader.h"
+#include "nodelet/loader.h"
 #include "nodelet/NodeletList.h"
 #include "nodelet/NodeletLoad.h"
 #include "nodelet/NodeletUnload.h"
@@ -138,7 +138,7 @@ public:
     client.waitForExistence ();
 
     // Call the service
-    nodelet::NodeletLoad srv;
+    nodelet::NodeletUnload srv;
     srv.request.name = std::string (name);
     if (!client.call (srv))
     {
@@ -222,14 +222,14 @@ int main (int argc, char** argv)
   if (command == "manager")
   {
     ros::init (argc, argv, "manager");
-    nodelet::NodeletLoader n;
+    nodelet::Loader n;
     ros::spin();
   }
   else if (command == "standalone")
   {
     ros::init (argc, argv, arg_parser.getDefaultName());
     
-    nodelet::NodeletLoader n(false);
+    nodelet::Loader n(false);
     ros::NodeHandle nh;
     ros::M_string remappings; //Remappings are already applied by ROS no need to generate them.
     std::string nodelet_name = ros::this_node::getName ();

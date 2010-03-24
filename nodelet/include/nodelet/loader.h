@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2010, Willow Garage, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
  *     * Neither the name of the Willow Garage, Inc. nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,46 +27,68 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <pluginlib/class_list_macros.h>
-#include <nodelet/nodelet.h>
-#include <ros/ros.h>
-#include <std_msgs/Float64.h>
-#include <stdio.h>
+/**
+@mainpage
 
+\author Tully Foote 
+**/
 
-#include <math.h> //fabs
+#ifndef NODELET_LOADER_H
+#define NODELET_LOADER_H
 
-namespace nodelet_tutorial_math
+#include <map>
+#include <vector>
+#include <boost/shared_ptr.hpp>
+
+namespace pluginlib
 {
+template<typename T> class ClassLoader;
+}
 
-class Plus : public nodelet::Nodelet
+namespace nodelet
+{
+class Nodelet;
+typedef boost::shared_ptr<Nodelet> NodeletPtr;
+typedef std::map<std::string, std::string> M_string;
+typedef std::vector<std::string> V_string;
+
+namespace detail
+{
+class LoaderROS;
+typedef boost::shared_ptr<LoaderROS> LoaderROSPtr;
+} // namespace detail
+
+/** \brief A class which will construct and sequentially call Nodelets according to xml
+ * This is the primary way in which users are expected to interact with Nodelets
+ */
+class Loader
 {
 public:
-  Plus()
-  : value_(0)
-  {}
+    /** \brief Create the filter chain object */
+  Loader(bool provide_ros_api = true);
 
+  ~Loader();
+
+  bool load(const std::string& name, const std::string& type, const M_string& remappings, const V_string& my_argv);
+  bool unload(const std::string& name);
+
+  /** \brief Clear all nodelets from this chain */
+  bool clear();
+
+  /**\brief List the names of all loaded nodelets */
+  std::vector<std::string> listLoadedNodelets();
 private:
-  virtual void onInit()
-  {
-    ros::NodeHandle& private_nh = getPrivateNodeHandle();
-    private_nh.getParam("value", value_);
-    pub = private_nh.advertise<std_msgs::Float64>("out", 10);
-    sub = private_nh.subscribe("in", 10, &Plus::callback, this);
-  }
+  detail::LoaderROSPtr services_;
 
-  void callback(const std_msgs::Float64::ConstPtr& input)
-  {
-    std_msgs::Float64Ptr output(new std_msgs::Float64());
-    output->data = input->data + value_;
-    NODELET_DEBUG("Adding %f to get %f", value_, output->data);
-    pub.publish(output);
-  }
+  typedef std::map<std::string, NodeletPtr> M_stringToNodelet;
+  M_stringToNodelet nodelets_; ///<! A map of name to pointers of currently constructed nodelets
 
-  ros::Publisher pub;
-  ros::Subscriber sub;
-  double value_;
+  typedef boost::shared_ptr<pluginlib::ClassLoader<Nodelet> > ClassLoaderPtr;
+  ClassLoaderPtr loader_;
 };
 
-PLUGINLIB_DECLARE_CLASS(nodelet_tutorial_math, Plus, nodelet_tutorial_math::Plus, nodelet::Nodelet);
-}
+
+};
+
+#endif //#ifndef NODELET_LOADER_H
+
