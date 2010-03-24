@@ -28,6 +28,8 @@
  */
 
 #include <nodelet/nodelet.h>
+#include <nodelet/detail/callback_queue.h>
+#include <nodelet/detail/callback_queue_manager.h>
 
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
@@ -44,6 +46,9 @@ Nodelet::Nodelet ()
 Nodelet::~Nodelet ()
 {
   NODELET_DEBUG ("nodelet destructor.");
+
+  callback_manager_->removeQueue(st_callback_queue_);
+  callback_manager_->removeQueue(mt_callback_queue_);
 }
 
 ros::CallbackQueueInterface& Nodelet::getSTCallbackQueue () const
@@ -51,7 +56,6 @@ ros::CallbackQueueInterface& Nodelet::getSTCallbackQueue () const
   if (!inited_)
   {
     throw UninitializedException("getSTCallbackQueue");
-
   }
 
   return *st_callback_queue_;
@@ -104,21 +108,19 @@ ros::NodeHandle& Nodelet::getMTPrivateNodeHandle() const
   return *mt_private_nh_;
 }
 
-void Nodelet::init(const std::string& name, const M_string& remapping_args, const V_string& my_argv)
+void Nodelet::init(const std::string& name, const M_string& remapping_args, const V_string& my_argv, detail::CallbackQueueManager* callback_manager)
 {
   if (inited_)
   {
     throw MultipleInitializationException();
   }
 
-  st_callback_queue_.reset(new ros::CallbackQueue);
-  mt_callback_queue_.reset(new ros::CallbackQueue);
+  callback_manager_ = callback_manager;
+  st_callback_queue_.reset(new detail::CallbackQueue(callback_manager));
+  mt_callback_queue_.reset(new detail::CallbackQueue(callback_manager));
 
-  mt_spinner_.reset(new ros::AsyncSpinner(0, mt_callback_queue_.get()));
-  mt_spinner_->start();
-
-  st_spinner_.reset(new ros::AsyncSpinner(1, st_callback_queue_.get()));
-  st_spinner_->start();
+  callback_manager->addQueue(st_callback_queue_, false);
+  callback_manager->addQueue(mt_callback_queue_, true);
 
   nodelet_name_ = name;
   my_argv_ = my_argv;

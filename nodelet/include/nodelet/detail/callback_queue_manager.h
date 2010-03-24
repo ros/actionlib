@@ -27,72 +27,68 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
-@mainpage
+#ifndef NODELET_CALLBACK_QUEUE_MANAGER_H
+#define NODELET_CALLBACK_QUEUE_MANAGER_H
 
-\author Tully Foote 
-**/
-
-#ifndef NODELET_LOADER_H
-#define NODELET_LOADER_H
-
-#include <map>
-#include <vector>
 #include <boost/shared_ptr.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/thread.hpp>
 
-namespace pluginlib
-{
-template<typename T> class ClassLoader;
-}
+#include <vector>
+#include <deque>
 
 namespace nodelet
 {
-class Nodelet;
-typedef boost::shared_ptr<Nodelet> NodeletPtr;
-typedef std::map<std::string, std::string> M_string;
-typedef std::vector<std::string> V_string;
-
 namespace detail
 {
-class LoaderROS;
-typedef boost::shared_ptr<LoaderROS> LoaderROSPtr;
-class CallbackQueueManager;
-typedef boost::shared_ptr<CallbackQueueManager> CallbackQueueManagerPtr;
-} // namespace detail
+class CallbackQueue;
+typedef boost::shared_ptr<CallbackQueue> CallbackQueuePtr;
 
-/** \brief A class which will construct and sequentially call Nodelets according to xml
- * This is the primary way in which users are expected to interact with Nodelets
- */
-class Loader
+class CallbackQueueManager
 {
 public:
-    /** \brief Create the filter chain object */
-  Loader(bool provide_ros_api = true);
+  CallbackQueueManager();
+  ~CallbackQueueManager();
 
-  ~Loader();
+  void addQueue(const CallbackQueuePtr& queue, bool threaded);
+  void removeQueue(const CallbackQueuePtr& queue);
+  void callbackAdded(const CallbackQueuePtr& queue);
 
-  bool load(const std::string& name, const std::string& type, const M_string& remappings, const V_string& my_argv);
-  bool unload(const std::string& name);
-
-  /** \brief Clear all nodelets from this chain */
-  bool clear();
-
-  /**\brief List the names of all loaded nodelets */
-  std::vector<std::string> listLoadedNodelets();
 private:
-  detail::LoaderROSPtr services_;
+  void managerThread();
+  void workerThread();
 
-  typedef std::map<std::string, NodeletPtr> M_stringToNodelet;
-  M_stringToNodelet nodelets_; ///<! A map of name to pointers of currently constructed nodelets
+  struct QueueInfo
+  {
+    QueueInfo()
+    : threaded(false)
+    {}
 
-  typedef boost::shared_ptr<pluginlib::ClassLoader<Nodelet> > ClassLoaderPtr;
-  ClassLoaderPtr loader_;
+    CallbackQueuePtr queue;
+    bool threaded;
+  };
 
-  detail::CallbackQueueManagerPtr callback_manager_;
+  typedef boost::unordered_map<CallbackQueue*, QueueInfo> M_Queue;
+  M_Queue queues_;
+  boost::mutex queues_mutex_;
+
+  typedef std::vector<CallbackQueuePtr> V_Queue;
+  V_Queue waiting_;
+  boost::mutex waiting_mutex_;
+  boost::condition_variable waiting_cond_;
+  boost::thread_group tg_;
+
+  // TODO: mrsw lockfree queue.  shared_queue_mutex_ has the potential for a lot of contention
+  typedef std::deque<CallbackQueuePtr> D_Queue;
+  D_Queue shared_queue_;
+  boost::mutex shared_queue_mutex_;
+  boost::condition_variable shared_queue_cond_;
+
+  bool running_;
 };
 
+} // namespace detail
+} // namespace nodelet
 
-};
-
-#endif //#ifndef NODELET_LOADER_H
-
+#endif // NODELET_CALLBACK_QUEUE_MANAGER_H

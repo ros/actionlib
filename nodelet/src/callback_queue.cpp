@@ -27,72 +27,44 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
-@mainpage
+#include <nodelet/detail/callback_queue.h>
+#include <nodelet/detail/callback_queue_manager.h>
 
-\author Tully Foote 
-**/
-
-#ifndef NODELET_LOADER_H
-#define NODELET_LOADER_H
-
-#include <map>
-#include <vector>
-#include <boost/shared_ptr.hpp>
-
-namespace pluginlib
-{
-template<typename T> class ClassLoader;
-}
+#include <ros/callback_queue.h>
 
 namespace nodelet
 {
-class Nodelet;
-typedef boost::shared_ptr<Nodelet> NodeletPtr;
-typedef std::map<std::string, std::string> M_string;
-typedef std::vector<std::string> V_string;
-
 namespace detail
 {
-class LoaderROS;
-typedef boost::shared_ptr<LoaderROS> LoaderROSPtr;
-class CallbackQueueManager;
-typedef boost::shared_ptr<CallbackQueueManager> CallbackQueueManagerPtr;
-} // namespace detail
 
-/** \brief A class which will construct and sequentially call Nodelets according to xml
- * This is the primary way in which users are expected to interact with Nodelets
- */
-class Loader
+CallbackQueue::CallbackQueue(CallbackQueueManager* parent)
+: parent_(parent)
+, queue_(new ros::CallbackQueue)
 {
-public:
-    /** \brief Create the filter chain object */
-  Loader(bool provide_ros_api = true);
+}
 
-  ~Loader();
+CallbackQueue::~CallbackQueue()
+{
+  queue_->disable();
+  queue_->clear();
+  delete queue_;
+}
 
-  bool load(const std::string& name, const std::string& type, const M_string& remappings, const V_string& my_argv);
-  bool unload(const std::string& name);
+void CallbackQueue::addCallback(const ros::CallbackInterfacePtr& cb, uint64_t owner_id)
+{
+  queue_->addCallback(cb, owner_id);
+  parent_->callbackAdded(shared_from_this());
+}
 
-  /** \brief Clear all nodelets from this chain */
-  bool clear();
+void CallbackQueue::removeByID(uint64_t owner_id)
+{
+  queue_->removeByID(owner_id);
+}
 
-  /**\brief List the names of all loaded nodelets */
-  std::vector<std::string> listLoadedNodelets();
-private:
-  detail::LoaderROSPtr services_;
+uint32_t CallbackQueue::callOne()
+{
+  return queue_->callOne();
+}
 
-  typedef std::map<std::string, NodeletPtr> M_stringToNodelet;
-  M_stringToNodelet nodelets_; ///<! A map of name to pointers of currently constructed nodelets
-
-  typedef boost::shared_ptr<pluginlib::ClassLoader<Nodelet> > ClassLoaderPtr;
-  ClassLoaderPtr loader_;
-
-  detail::CallbackQueueManagerPtr callback_manager_;
-};
-
-
-};
-
-#endif //#ifndef NODELET_LOADER_H
-
+} // namespace detail
+} // namespace nodelet

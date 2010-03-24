@@ -75,10 +75,15 @@ class AsyncSpinner;
 namespace nodelet
 {
 typedef boost::shared_ptr<ros::NodeHandle> NodeHandlePtr;
-typedef boost::shared_ptr<ros::CallbackQueue> CallbackQueuePtr;
-typedef boost::shared_ptr<ros::AsyncSpinner> AsyncSpinnerPtr;
 typedef std::map<std::string, std::string> M_string;
 typedef std::vector<std::string> V_string;
+
+namespace detail
+{
+class CallbackQueueManager;
+class CallbackQueue;
+typedef boost::shared_ptr<CallbackQueue> CallbackQueuePtr;
+}
 
 class UninitializedException : public Exception
 {
@@ -118,17 +123,15 @@ private:
   
   std::string nodelet_name_;
 
-  CallbackQueuePtr mt_callback_queue_;
-  CallbackQueuePtr st_callback_queue_;
+  detail::CallbackQueuePtr mt_callback_queue_;
+  detail::CallbackQueuePtr st_callback_queue_;
+  detail::CallbackQueueManager* callback_manager_;
 
   NodeHandlePtr nh_;
   NodeHandlePtr private_nh_;
   NodeHandlePtr mt_nh_;
   NodeHandlePtr mt_private_nh_;
   V_string my_argv_;
-
-  AsyncSpinnerPtr mt_spinner_; //\TODO this should be removed
-  AsyncSpinnerPtr st_spinner_; //\TODO this should be removed
 
   // Method to be overridden by subclass when starting up. 
   virtual void onInit () = 0;
@@ -143,7 +146,7 @@ public:
    * \param remapping_args The remapping args in a map for the nodelet
    * \param my_args The commandline arguments for this nodelet stripped of special arguments such as ROS arguments 
    */
-  void init (const std::string& name, const M_string& remapping_args, const V_string& my_argv);
+  void init (const std::string& name, const M_string& remapping_args, const V_string& my_argv, detail::CallbackQueueManager* callback_manager);
 
   virtual ~Nodelet();
 };

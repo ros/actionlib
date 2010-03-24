@@ -29,6 +29,7 @@
 
 #include <nodelet/loader.h>
 #include <nodelet/nodelet.h>
+#include <nodelet/detail/callback_queue_manager.h>
 #include <pluginlib/class_loader.h>
 
 #include <ros/ros.h>
@@ -112,6 +113,7 @@ private:
 /** \brief Create the filter chain object */
 Loader::Loader(bool provide_ros_api)
 : loader_(new pluginlib::ClassLoader<Nodelet>("nodelet", "nodelet::Nodelet"))
+, callback_manager_(new detail::CallbackQueueManager)
 {
   std::string lib_string = "";
   std::vector<std::string> libs = loader_->getDeclaredClasses();
@@ -154,7 +156,7 @@ bool Loader::load(const std::string &name, const std::string& type, const ros::M
     nodelets_[name] = p;
     ROS_DEBUG("Done loading nodelet %s", name.c_str());
 
-    p->init (name, remappings, my_argv);
+    p->init(name, remappings, my_argv, callback_manager_.get());
     ROS_DEBUG("Done initing nodelet %s", name.c_str());
     return true;
   }
