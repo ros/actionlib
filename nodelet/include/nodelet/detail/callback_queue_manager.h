@@ -55,6 +55,8 @@ public:
   void removeQueue(const CallbackQueuePtr& queue);
   void callbackAdded(const CallbackQueuePtr& queue);
 
+  uint32_t getNumWorkerThreads();
+
 private:
   void managerThread();
   void workerThread();

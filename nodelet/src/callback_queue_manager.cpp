@@ -63,6 +63,11 @@ CallbackQueueManager::~CallbackQueueManager()
   tg_.join_all();
 }
 
+uint32_t CallbackQueueManager::getNumWorkerThreads()
+{
+  return boost::thread::hardware_concurrency();
+}
+
 void CallbackQueueManager::addQueue(const CallbackQueuePtr& queue, bool threaded)
 {
   boost::mutex::scoped_lock lock(queues_mutex_);
