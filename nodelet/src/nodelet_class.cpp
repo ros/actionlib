@@ -46,12 +46,69 @@ Nodelet::~Nodelet ()
   NODELET_DEBUG ("nodelet destructor.");
 }
 
+ros::CallbackQueueInterface& Nodelet::getSTCallbackQueue () const
+{
+  if (!inited_)
+  {
+    throw UninitializedException("getSTCallbackQueue");
+
+  }
+
+  return *st_callback_queue_;
+}
+
+ros::CallbackQueueInterface& Nodelet::getMTCallbackQueue () const
+{
+  if (!inited_)
+  {
+    throw UninitializedException("getMTCallbackQueue");
+  }
+
+  return *mt_callback_queue_;
+}
+
+ros::NodeHandle& Nodelet::getNodeHandle() const
+{
+  if (!inited_)
+  {
+    throw UninitializedException("getNodeHandle");
+  }
+
+  return *nh_;
+}
+ros::NodeHandle& Nodelet::getPrivateNodeHandle() const
+{
+  if (!inited_)
+  {
+    throw UninitializedException("getPrivateNodeHandle");
+  }
+
+  return *private_nh_;
+}
+ros::NodeHandle& Nodelet::getMTNodeHandle() const
+{
+  if (!inited_)
+  {
+    throw UninitializedException("getMTNodeHandle");
+  }
+
+  return *mt_nh_;
+}
+ros::NodeHandle& Nodelet::getMTPrivateNodeHandle() const
+{
+  if (!inited_)
+  {
+    throw UninitializedException("getMTPrivateNodeHandle");
+  }
+
+  return *mt_private_nh_;
+}
+
 void Nodelet::init(const std::string& name, const M_string& remapping_args, const V_string& my_argv)
 {
   if (inited_)
   {
-    NODELET_ERROR("Nodelet already inited, it cannot be reinited");
-    return;
+    throw MultipleInitializationException();
   }
 
   st_callback_queue_.reset(new ros::CallbackQueue);

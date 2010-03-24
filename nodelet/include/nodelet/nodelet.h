@@ -30,6 +30,8 @@
 #ifndef NODELET_NODELET_H
 #define NODELET_NODELET_H
 
+#include "exception.h"
+
 #include <string>
 #include <vector>
 #include <map>
@@ -41,6 +43,7 @@ namespace ros
 {
 class NodeHandle;
 class CallbackQueue;
+class CallbackQueueInterface;
 class AsyncSpinner;
 }
 
@@ -77,17 +80,36 @@ typedef boost::shared_ptr<ros::AsyncSpinner> AsyncSpinnerPtr;
 typedef std::map<std::string, std::string> M_string;
 typedef std::vector<std::string> V_string;
 
+class UninitializedException : public Exception
+{
+public:
+  UninitializedException(const std::string& method_name)
+  : Exception("Calling [" + method_name + "] before the Nodelet is initialized is not allowed.")
+  {}
+};
+
+class MultipleInitializationException : public Exception
+{
+public:
+  MultipleInitializationException()
+  : Exception("Initialized multiple times")
+  {}
+};
+
 class Nodelet
 {
   // Protected data fields for use by the subclass.
 protected:
-  const std::string& getName() const { return nodelet_name_; }
-  inline ros::NodeHandle& getNodeHandle () { if (!inited_) NODELET_FATAL("nodelet init must be called first");  return *nh_; }
-  inline ros::NodeHandle& getPrivateNodeHandle () { if (!inited_) NODELET_FATAL("nodelet init must be called first");  return *private_nh_; }
-  inline ros::NodeHandle& getMTNodeHandle ()  { if (!inited_) NODELET_FATAL("nodelet init must be called first"); return *mt_nh_; }
-  inline ros::NodeHandle& getMTPrivateNodeHandle ()  { if (!inited_) NODELET_FATAL("nodelet init must be called first");  return *mt_private_nh_; }
-  inline ros::CallbackQueue& getMTCallbackQueue () { return *mt_callback_queue_; }
-  inline std::vector<std::string> getMyArgv() const { return my_argv_;};
+  inline const std::string& getName() const { return nodelet_name_; }
+  inline const V_string& getMyArgv() const { return my_argv_; }
+
+  ros::NodeHandle& getNodeHandle() const;
+  ros::NodeHandle& getPrivateNodeHandle() const;
+  ros::NodeHandle& getMTNodeHandle() const;
+  ros::NodeHandle& getMTPrivateNodeHandle() const;
+
+  ros::CallbackQueueInterface& getSTCallbackQueue() const;
+  ros::CallbackQueueInterface& getMTCallbackQueue() const;
 
 
   // Internal storage;
