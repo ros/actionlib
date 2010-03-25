@@ -54,7 +54,7 @@ typedef boost::shared_ptr<CallbackQueue> CallbackQueuePtr;
  * Uses 1 manager thread + N worker threads.  The manager thread gives work to the worker threads by
  * finding the thread with the fewest pending tasks and appending to that list.  This does mean that a
  * single long-running callback can potentially block other callbacks from being executed.  Some kind of
- * work-stealing could mitigate this, and is a direction for future work.
+ * work-stealing could mitigate this, and is a good direction for future work.
  */
 class CallbackQueueManager
 {

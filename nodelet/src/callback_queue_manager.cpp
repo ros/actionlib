@@ -169,12 +169,16 @@ void CallbackQueueManager::managerThread()
           ThreadInfo* ti = 0;
           if (info->threaded)
           {
+            // If this queue is thread-safe we immediately add it to the thread with the least work queued
             ti = getSmallestQueue();
             boost::mutex::scoped_lock lock(*ti->queue_mutex);
             ti->queue.push_back(std::make_pair(queue, info));
           }
           else
           {
+            // If this queue is non-thread-safe and has no in-progress calls happening, we add it to the thread with the last
+            // work queued.  If the queue already has calls in-progress we add it to the thread it's already being called from
+
             boost::mutex::scoped_lock lock(info->st_mutex);
 
             ++info->in_thread;
