@@ -48,10 +48,11 @@ CallbackQueueManager::CallbackQueueManager()
 {
   tg_.create_thread(boost::bind(&CallbackQueueManager::managerThread, this));
 
-  size_t num_threads = boost::thread::hardware_concurrency();
+  size_t num_threads = getNumWorkerThreads();
+  thread_info_.resize(num_threads);
   for (size_t i = 0; i < num_threads; ++i)
   {
-    tg_.create_thread(boost::bind(&CallbackQueueManager::workerThread, this));
+    tg_.create_thread(boost::bind(&CallbackQueueManager::workerThread, this, &thread_info_[i]));
   }
 }
 
@@ -59,7 +60,13 @@ CallbackQueueManager::~CallbackQueueManager()
 {
   running_ = false;
   waiting_cond_.notify_all();
-  shared_queue_cond_.notify_all();
+
+  size_t num_threads = getNumWorkerThreads();
+  for (size_t i = 0; i < num_threads; ++i)
+  {
+    thread_info_[i].queue_cond->notify_all();
+  }
+
   tg_.join_all();
 }
 
@@ -71,11 +78,12 @@ uint32_t CallbackQueueManager::getNumWorkerThreads()
 void CallbackQueueManager::addQueue(const CallbackQueuePtr& queue, bool threaded)
 {
   boost::mutex::scoped_lock lock(queues_mutex_);
-  ROS_ASSERT(queues_.find(queue.get()) == queues_.end());
 
-  QueueInfo& info = queues_[queue.get()];
-  info.queue = queue;
-  info.threaded = threaded;
+  QueueInfoPtr& info = queues_[queue.get()];
+  ROS_ASSERT(!info);
+  info.reset(new QueueInfo);
+  info->queue = queue;
+  info->threaded = threaded;
 }
 
 void CallbackQueueManager::removeQueue(const CallbackQueuePtr& queue)
@@ -96,10 +104,36 @@ void CallbackQueueManager::callbackAdded(const CallbackQueuePtr& queue)
   waiting_cond_.notify_all();
 }
 
+CallbackQueueManager::ThreadInfo* CallbackQueueManager::getSmallestQueue()
+{
+  size_t smallest = std::numeric_limits<size_t>::max();
+  uint32_t smallest_index = 0xffffffff;
+  V_ThreadInfo::iterator it = thread_info_.begin();
+  V_ThreadInfo::iterator end = thread_info_.end();
+  for (; it != end; ++it)
+  {
+    ThreadInfo& ti = *it;
+    boost::mutex::scoped_lock lock(*ti.queue_mutex);
+
+    size_t size = ti.queue.size() + ti.calling;
+    if (size == 0)
+    {
+      return &ti;
+    }
+
+    if (size < smallest)
+    {
+      smallest = size;
+      smallest_index = it - thread_info_.begin();
+    }
+  }
+
+  return &thread_info_[smallest_index];
+}
+
 void CallbackQueueManager::managerThread()
 {
   V_Queue local_waiting;
-  V_Queue single_threaded;
 
   while (running_)
   {
@@ -131,51 +165,56 @@ void CallbackQueueManager::managerThread()
         M_Queue::iterator it = queues_.find(queue.get());
         if (it != queues_.end())
         {
-          QueueInfo& info = it->second;
-          if (info.threaded)
+          QueueInfoPtr& info = it->second;
+          ThreadInfo* ti = 0;
+          if (info->threaded)
           {
-            boost::mutex::scoped_lock lock(shared_queue_mutex_);
-            shared_queue_.push_back(queue);
-            shared_queue_cond_.notify_one();
+            ti = getSmallestQueue();
+            boost::mutex::scoped_lock lock(*ti->queue_mutex);
+            ti->queue.push_back(std::make_pair(queue, info));
           }
           else
           {
-            single_threaded.push_back(queue);
+            boost::mutex::scoped_lock lock(info->st_mutex);
+
+            ++info->in_thread;
+
+            if (info->in_thread > 1)
+            {
+              ti = &thread_info_[info->thread_index];
+              boost::mutex::scoped_lock lock(*ti->queue_mutex);
+              ti->queue.push_back(std::make_pair(queue, info));
+            }
+            else
+            {
+              ti = getSmallestQueue();
+              info->thread_index = ti - &thread_info_.front();
+              boost::mutex::scoped_lock lock(*ti->queue_mutex);
+              ti->queue.push_back(std::make_pair(queue, info));
+            }
           }
+
+          ti->queue_cond->notify_all();
         }
       }
     }
 
-    V_Queue::iterator it = single_threaded.begin();
-    V_Queue::iterator end = single_threaded.end();
-    for (; it != end; ++it)
-    {
-      (*it)->callOne();
-
-      if ((*it)->callOne() == ros::CallbackQueue::TryAgain)
-      {
-        boost::mutex::scoped_lock lock(waiting_mutex_);
-        waiting_.push_back(*it);
-      }
-    }
-
     local_waiting.clear();
-    single_threaded.clear();
   }
 }
 
-void CallbackQueueManager::workerThread()
+void CallbackQueueManager::workerThread(ThreadInfo* info)
 {
-  V_Queue local_queues;
+  std::vector<std::pair<CallbackQueuePtr, QueueInfoPtr> > local_queues;
 
   while (running_)
   {
     {
-      boost::mutex::scoped_lock lock(shared_queue_mutex_);
+      boost::mutex::scoped_lock lock(*info->queue_mutex);
 
-      while (shared_queue_.empty() && running_)
+      while (info->queue.empty() && running_)
       {
-        shared_queue_cond_.wait(lock);
+        info->queue_cond->wait(lock);
       }
 
       if (!running_)
@@ -183,24 +222,31 @@ void CallbackQueueManager::workerThread()
         return;
       }
 
-      local_queues.push_back(shared_queue_.front());
-      shared_queue_.pop_front();
+      info->calling += info->queue.size();
+      info->queue.swap(local_queues);
     }
 
-    V_Queue::iterator it = local_queues.begin();
-    V_Queue::iterator end = local_queues.end();
+    std::vector<std::pair<CallbackQueuePtr, QueueInfoPtr> >::iterator it = local_queues.begin();
+    std::vector<std::pair<CallbackQueuePtr, QueueInfoPtr> >::iterator end = local_queues.end();
     for (; it != end; ++it)
     {
-      CallbackQueuePtr& queue = *it;
+      CallbackQueuePtr& queue = it->first;
+      QueueInfoPtr& qi = it->second;
       if (queue->callOne() == ros::CallbackQueue::TryAgain)
       {
-        boost::mutex::scoped_lock lock(shared_queue_mutex_);
-        shared_queue_.push_back(queue);
-        shared_queue_cond_.notify_one();
+        callbackAdded(queue);
+      }
+
+      if (!qi->threaded)
+      {
+        boost::mutex::scoped_lock lock(qi->st_mutex);
+        --qi->in_thread;
       }
     }
 
     local_queues.clear();
+
+    info->calling = 0;
   }
 }
 

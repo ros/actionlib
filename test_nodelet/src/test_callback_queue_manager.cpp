@@ -54,11 +54,11 @@ public:
       boost::mutex::scoped_lock lock(mutex_);
       if (!inited_)
       {
-        initial_call_id_ = boost::this_thread::get_id();
+        initial_call_id = boost::this_thread::get_id();
         inited_ = true;
       }
 
-      if (initial_call_id_ != boost::this_thread::get_id())
+      if (initial_call_id != boost::this_thread::get_id())
       {
         success = false;
       }
@@ -73,10 +73,10 @@ public:
 
   bool success;
   uint32_t calls;
+  boost::thread::id initial_call_id;
 
 private:
   bool inited_;
-  boost::thread::id initial_call_id_;
   boost::mutex mutex_;
 };
 typedef boost::shared_ptr<SingleThreadedCallback> SingleThreadedCallbackPtr;
@@ -100,6 +100,34 @@ TEST(CallbackQueueManager, singleThreaded)
 
   EXPECT_EQ(cb->calls, 10U);
   ASSERT_TRUE(cb->success);
+}
+
+TEST(CallbackQueueManager, multipleSingleThreaded)
+{
+  CallbackQueueManager man;
+  CallbackQueuePtr queue1(new CallbackQueue(&man));
+  CallbackQueuePtr queue2(new CallbackQueue(&man));
+  man.addQueue(queue1, false);
+  man.addQueue(queue2, false);
+
+  SingleThreadedCallbackPtr cb1(new SingleThreadedCallback);
+  SingleThreadedCallbackPtr cb2(new SingleThreadedCallback);
+  for (uint32_t i = 0; i < 10; ++i)
+  {
+    queue1->addCallback(cb1, 1);
+    queue2->addCallback(cb2, 1);
+  }
+
+  while (cb1->calls < 10 && cb2->calls < 10)
+  {
+    ros::WallDuration(0.01).sleep();
+  }
+
+  EXPECT_EQ(cb1->calls, 10U);
+  EXPECT_EQ(cb2->calls, 10U);
+  EXPECT_TRUE(cb1->success);
+  EXPECT_TRUE(cb2->success);
+  EXPECT_NE(cb1->initial_call_id, cb2->initial_call_id);
 }
 
 class MultiThreadedCallback : public ros::CallbackInterface

@@ -45,6 +45,17 @@ namespace detail
 class CallbackQueue;
 typedef boost::shared_ptr<CallbackQueue> CallbackQueuePtr;
 
+/**
+ * \brief Internal use
+ *
+ * Manages a set of callback queues, potentially calling callbacks from them concurrently in
+ * different threads.  Essentially a task manager specialized for callback queues.
+ *
+ * Uses 1 manager thread + N worker threads.  The manager thread gives work to the worker threads by
+ * finding the thread with the fewest pending tasks and appending to that list.  This does mean that a
+ * single long-running callback can potentially block other callbacks from being executed.  Some kind of
+ * work-stealing could mitigate this, and is a direction for future work.
+ */
 class CallbackQueueManager
 {
 public:
@@ -59,33 +70,63 @@ public:
 
 private:
   void managerThread();
-  void workerThread();
+  struct ThreadInfo;
+  void workerThread(ThreadInfo*);
+
+  class ThreadInfo;
+  ThreadInfo* getSmallestQueue();
 
   struct QueueInfo
   {
     QueueInfo()
     : threaded(false)
+    , thread_index(0xffffffff)
+    , in_thread(0)
     {}
 
     CallbackQueuePtr queue;
     bool threaded;
-  };
 
-  typedef boost::unordered_map<CallbackQueue*, QueueInfo> M_Queue;
+    // Only used if threaded == false
+    boost::mutex st_mutex;
+    // TODO: atomic
+    uint32_t thread_index;
+    uint32_t in_thread;
+  };
+  typedef boost::shared_ptr<QueueInfo> QueueInfoPtr;
+
+  typedef boost::unordered_map<CallbackQueue*, QueueInfoPtr> M_Queue;
   M_Queue queues_;
   boost::mutex queues_mutex_;
 
+  // TODO: srmw lockfree queue.  waiting_mutex_ has the potential for a lot of contention
   typedef std::vector<CallbackQueuePtr> V_Queue;
   V_Queue waiting_;
   boost::mutex waiting_mutex_;
   boost::condition_variable waiting_cond_;
   boost::thread_group tg_;
 
-  // TODO: mrsw lockfree queue.  shared_queue_mutex_ has the potential for a lot of contention
-  typedef std::deque<CallbackQueuePtr> D_Queue;
-  D_Queue shared_queue_;
-  boost::mutex shared_queue_mutex_;
-  boost::condition_variable shared_queue_cond_;
+  struct ThreadInfo
+  {
+    ThreadInfo()
+    : queue_mutex(new boost::mutex)
+    , queue_cond(new boost::condition_variable)
+    , calling(0)
+    {}
+
+    // TODO: srsw lockfree queue
+    boost::shared_ptr<boost::mutex> queue_mutex;
+    boost::shared_ptr<boost::condition_variable> queue_cond;
+    std::vector<std::pair<CallbackQueuePtr, QueueInfoPtr> > queue;
+    uint32_t calling;
+
+    // Pad to then next cache line
+    // TODO: magic number
+    uint8_t pad[64 - sizeof(V_Queue) - sizeof(boost::mutex)];
+  };
+  // TODO: Once the allocators package moves mainstream, align to cache-line boundary
+  typedef std::vector<ThreadInfo> V_ThreadInfo;
+  V_ThreadInfo thread_info_;
 
   bool running_;
 };
