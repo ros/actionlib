@@ -12,8 +12,8 @@ sdl-image:
   macports: libsdl_image
   gentoo: sdl-image
 atlas:
-  ubuntu: libatlas-base-dev libatlas-cpp-0.6-dev
-  debian: libatlas-base-dev libatlas-cpp-0.6-dev
+  ubuntu: libatlas-base-dev
+  debian: libatlas-base-dev
   arch: |
   macports: atlas
   gentoo: atlas
