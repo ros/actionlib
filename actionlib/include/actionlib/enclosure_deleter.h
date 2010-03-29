@@ -65,6 +65,14 @@ template <class Enclosure> class EnclosureDeleter {
     boost::shared_ptr<Enclosure> enc_ptr_;
 };
 
+template <class Enclosure, class Member>
+boost::shared_ptr<Member> share_member(boost::shared_ptr<Enclosure> enclosure, Member &member)
+{
+  EnclosureDeleter<Enclosure> d(enclosure);
+  boost::shared_ptr<Member> p(&member, d);
+  return p;
+}
+
 }
 
 #endif
