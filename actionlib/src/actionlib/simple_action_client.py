@@ -150,7 +150,7 @@ class SimpleActionClient:
                 if self.simple_state == SimpleGoalState.DONE:
                     break
 
-                if time_left > loop_period:
+                if time_left > loop_period or timeout == rospy.Duration():
                     time_left = loop_period
 
                 self.done_condition.wait(time_left.to_sec())
