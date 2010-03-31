@@ -26,8 +26,8 @@ wiped: Makefile
 
 clean:
 	rm -rf $(INSTALL_DIR)
-	rm -rf $(SVN_DIR)/build
+	rm -rf $(SVN_DIR)
 	rm -rf installed
 
 wipe: 	clean
-	rm -rf $(SVN_DIR)
+
