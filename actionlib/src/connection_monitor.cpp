@@ -224,7 +224,7 @@ bool ConnectionMonitor::waitForActionServerToStart(const ros::Duration& timeout,
     ros::Duration time_left = timeout_time - ros::Time::now();
 
     // Check if we're past the timeout time
-    if (timeout != ros::Duration(0,0) && time_left <= ros::Duration() )
+    if (timeout != ros::Duration(0,0) && time_left <= ros::Duration(0,0) )
       break;
 
     // Truncate the time left
