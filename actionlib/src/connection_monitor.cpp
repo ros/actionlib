@@ -224,11 +224,11 @@ bool ConnectionMonitor::waitForActionServerToStart(const ros::Duration& timeout,
     ros::Duration time_left = timeout_time - ros::Time::now();
 
     // Check if we're past the timeout time
-    if (timeout != ros::Duration(0,0) && time_left <= ros::Duration(0,0) )
+    if (timeout != ros::Duration(0,0) && time_left <= ros::Duration() )
       break;
 
     // Truncate the time left
-    if (time_left > loop_period)
+    if (time_left > loop_period || timeout == ros::Duration())
       time_left = loop_period;
 
     check_connection_condition_.timed_wait(lock, boost::posix_time::milliseconds(time_left.toSec() * 1000.0f));
