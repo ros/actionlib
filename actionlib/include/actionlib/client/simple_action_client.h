@@ -653,7 +653,7 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration& timeout 
       break;
 
     // Truncate the time left
-    if (time_left > loop_period)
+    if (time_left > loop_period || timeout == ros::Duration())
       time_left = loop_period;
 
     done_condition_.timed_wait(lock, boost::posix_time::milliseconds(time_left.toSec() * 1000.0f));
