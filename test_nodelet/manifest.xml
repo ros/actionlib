@@ -11,6 +11,11 @@
   <depend package="nodelet"/>
   <depend package="std_msgs"/>
   <depend package="rostest"/>
+  <depend package="pluginlib"/>
+  
+  <export>
+    <nodelet plugin="${prefix}/test_nodelet.xml"/>
+  </export>
 
 </package>
 

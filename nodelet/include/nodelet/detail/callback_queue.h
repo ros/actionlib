@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2009, Willow Garage, Inc.
+ * Copyright (c) 2010, Willow Garage, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
  *     * Neither the name of the Willow Garage, Inc. nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -27,46 +27,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <pluginlib/class_list_macros.h>
-#include <nodelet/nodelet.h>
-#include <ros/ros.h>
-#include <std_msgs/Float64.h>
-#include <stdio.h>
+#ifndef NODELET_CALLBACK_QUEUE_H
+#define NODELET_CALLBACK_QUEUE_H
 
+#include "ros/callback_queue_interface.h"
+#include <boost/enable_shared_from_this.hpp>
 
-#include <math.h> //fabs
+namespace ros
+{
+class CallbackQueue;
+}
 
-namespace nodelet_tutorial_math
+namespace nodelet
+{
+namespace detail
 {
 
-class Plus : public nodelet::Nodelet
+class CallbackQueueManager;
+
+class CallbackQueue : public ros::CallbackQueueInterface, public boost::enable_shared_from_this<CallbackQueue>
 {
 public:
-  Plus()
-  : value_(0)
-  {}
+  CallbackQueue(CallbackQueueManager* parent);
+  ~CallbackQueue();
+
+  virtual void addCallback(const ros::CallbackInterfacePtr& callback, uint64_t owner_id = 0);
+  virtual void removeByID(uint64_t owner_id);
+
+  uint32_t callOne();
 
 private:
-  virtual void onInit()
-  {
-    ros::NodeHandle& private_nh = getPrivateNodeHandle();
-    private_nh.getParam("value", value_);
-    pub = private_nh.advertise<std_msgs::Float64>("out", 10);
-    sub = private_nh.subscribe("in", 10, &Plus::callback, this);
-  }
-
-  void callback(const std_msgs::Float64::ConstPtr& input)
-  {
-    std_msgs::Float64Ptr output(new std_msgs::Float64());
-    output->data = input->data + value_;
-    NODELET_DEBUG("Adding %f to get %f", value_, output->data);
-    pub.publish(output);
-  }
-
-  ros::Publisher pub;
-  ros::Subscriber sub;
-  double value_;
+  CallbackQueueManager* parent_;
+  ros::CallbackQueue* queue_;
 };
 
-PLUGINLIB_DECLARE_CLASS(nodelet_tutorial_math, Plus, nodelet_tutorial_math::Plus, nodelet::Nodelet);
-}
+} // namespace detail
+} // namespace nodelet
+
+#endif // NODELET_CALLBACK_QUEUE_H

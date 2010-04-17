@@ -24,13 +24,9 @@ rosbuild_gensrv()
 rosbuild_add_boost_directories()
 
 rosbuild_add_executable(nodelet src/nodelet.cpp)
-target_link_libraries (nodelet pthread)
+target_link_libraries (nodelet nodeletlib)
 rosbuild_link_boost (nodelet filesystem system)
 
-#common commands for building c++ executables and libraries
-#rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
-#target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
-#rosbuild_link_boost(${PROJECT_NAME} thread)
-#rosbuild_add_executable(example examples/example.cpp)
-#target_link_libraries(example ${PROJECT_NAME})
+rosbuild_add_library(nodeletlib src/nodelet_class.cpp src/loader.cpp src/callback_queue.cpp src/callback_queue_manager.cpp)
+rosbuild_link_boost(nodeletlib thread)
+

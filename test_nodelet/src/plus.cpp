@@ -36,7 +36,7 @@
 
 #include <math.h> //fabs
 
-namespace nodelet_tutorial_math
+namespace test_nodelet
 {
 
 class Plus : public nodelet::Nodelet
@@ -68,5 +68,5 @@ private:
   double value_;
 };
 
-PLUGINLIB_DECLARE_CLASS(nodelet_tutorial_math, Plus, nodelet_tutorial_math::Plus, nodelet::Nodelet);
+PLUGINLIB_DECLARE_CLASS(test_nodelet, Plus, test_nodelet::Plus, nodelet::Nodelet);
 }
