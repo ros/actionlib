@@ -226,6 +226,21 @@ namespace pluginlib {
   }
 
   template <class T>
+  std::string ClassLoader<T>::getName(const std::string& lookup_name)
+  {
+    //remove the package name to get the raw plugin name
+    std::vector<std::string> split;
+    boost::split(split, lookup_name, boost::is_any_of("/"));
+    return split.back();
+  }
+
+  template <class T>
+  bool ClassLoader<T>::isClassAvailable(const std::string& lookup_name)
+  {
+    return classes_available_.find(lookup_name) != classes_available_.end();
+  }
+
+  template <class T>
   std::string ClassLoader<T>::getClassType(const std::string& lookup_name)
   {
     ClassMapIterator it = classes_available_.find(lookup_name);

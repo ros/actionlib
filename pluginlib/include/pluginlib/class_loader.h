@@ -112,6 +112,20 @@ namespace pluginlib
         std::vector<std::string> getDeclaredClasses();
 
         /**
+         * @brief  Strips the package name off of a lookup name
+         * @param lookup_name The name of the plugin
+         * @return The name of the plugin stripped of the package name
+         */
+        std::string getName(const std::string& lookup_name);
+
+        /**
+         * @brief  Checks if the class associated with a plugin name is available to be loaded
+         * @param lookup_name The name of the plugin 
+         * @return True if the plugin is available, false otherwise
+         */
+        bool isClassAvailable(const std::string& lookup_name);
+
+        /**
          * @brief  Given the lookup name of a class, returns the type of the derived class associated with it
          * @param lookup_name The name of the class 
          * @return The name of the associated derived class
