@@ -34,23 +34,18 @@
  * $Id: nodelet_mux.h 27892 2010-02-25 06:47:29Z rusu $
  *
  */
-/**
-@mainpage
-
-\author Radu Bogdan Rusu
-
-@b NodeletDEMUX represent a demux nodelet for topics: it takes 1 input topic, and publishes on N (<=8) output topics.
-**/
-
 #ifndef NODELET_NODELET_DEMUX_H_
 #define NODELET_NODELET_DEMUX_H_
 
+#include <ros/ros.h>
 #include <nodelet/nodelet.h>
-#include <boost/make_shared.hpp>
 #include <message_filters/time_synchronizer.h>
 
 namespace nodelet
 {
+  /** \brief @b NodeletDEMUX represent a demux nodelet for topics: it takes 1 input topic, and publishes on N (<=8) output topics.
+    * \author Radu Bogdan Rusu
+    */
   template <typename T, typename Subscriber>
   class NodeletDEMUX: public Nodelet
   {

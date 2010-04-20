@@ -34,23 +34,18 @@
  * $Id$
  *
  */
-/**
-@mainpage
-
-\author Radu Bogdan Rusu
-
-@b NodeletMUX represent a mux nodelet for topics: it takes N (<=8) input topics, and publishes all of them on one output topic.
-**/
-
 #ifndef NODELET_NODELET_MUX_H_
 #define NODELET_NODELET_MUX_H_
 
+#include <ros/ros.h>
 #include <nodelet/nodelet.h>
-#include <boost/make_shared.hpp>
 #include <message_filters/time_synchronizer.h>
 
 namespace nodelet
 {
+  /** \brief @b NodeletMUX represent a mux nodelet for topics: it takes N (<=8) input topics, and publishes all of them on one output topic.
+    * \author Radu Bogdan Rusu
+    */
   template <typename T, typename Filter>
   class NodeletMUX: public Nodelet
   {
@@ -96,7 +91,7 @@ namespace nodelet
             filters_.resize (input_topics.size ());
             for (int d = 0; d < input_topics.size (); ++d)
             {
-              filters_[d] = boost::make_shared<Filter> ();
+              filters_[d].reset (new Filter ());
               filters_[d]->subscribe (private_nh_, (std::string)(input_topics[d]), 1);
             }
 
@@ -104,49 +99,49 @@ namespace nodelet
             {
               case 2:
               {
-                ts2_ = boost::make_shared <message_filters::TimeSynchronizer<T,T> > (3);
+                ts2_.reset (new message_filters::TimeSynchronizer<T,T> (3));
                 ts2_->connectInput (*filters_[0], *filters_[1]);
                 ts2_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input2, this, _1, _2));
                 break;
               }
               case 3:
               {
-                ts3_ = boost::make_shared <message_filters::TimeSynchronizer<T,T,T> > (3);
+                ts3_.reset (new message_filters::TimeSynchronizer<T,T,T> (3));
                 ts3_->connectInput (*filters_[0], *filters_[1], *filters_[2]);
                 ts3_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input3, this, _1, _2, _3));
                 break;
               }
               case 4:
               {
-                ts4_ = boost::make_shared <message_filters::TimeSynchronizer<T,T,T,T> > (3);
+                ts4_.reset (new message_filters::TimeSynchronizer<T,T,T,T> (3));
                 ts4_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3]);
                 ts4_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input4, this, _1, _2, _3, _4));
                 break;
               }
               case 5:
               {
-                ts5_ = boost::make_shared <message_filters::TimeSynchronizer<T,T,T,T,T> > (3);
+                ts5_.reset (new message_filters::TimeSynchronizer<T,T,T,T,T> (3));
                 ts5_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4]);
                 ts5_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input5, this, _1, _2, _3, _4, _5));
                 break;
               }
               case 6:
               {
-                ts6_ = boost::make_shared <message_filters::TimeSynchronizer<T,T,T,T,T,T> > (3);
+                ts6_.reset (new message_filters::TimeSynchronizer<T,T,T,T,T,T> (3));
                 ts6_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5]);
                 ts6_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input6, this, _1, _2, _3, _4, _5, _6));
                 break;
               }
               case 7:
               {
-                ts7_ = boost::make_shared <message_filters::TimeSynchronizer<T,T,T,T,T,T,T> > (3);
+                ts7_.reset (new message_filters::TimeSynchronizer<T,T,T,T,T,T,T> (3));
                 ts7_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5], *filters_[6]);
                 ts7_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input7, this, _1, _2, _3, _4, _5, _6, _7));
                 break;
               }
               case 8:
               {
-                ts8_ = boost::make_shared <message_filters::TimeSynchronizer<T,T,T,T,T,T,T,T> > (3);
+                ts8_.reset (new message_filters::TimeSynchronizer<T,T,T,T,T,T,T,T> (3));
                 ts8_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5], *filters_[6], *filters_[7]);
                 ts8_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input8, this, _1, _2, _3, _4, _5, _6, _7, _8));
                 break;
