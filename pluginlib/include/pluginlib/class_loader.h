@@ -176,6 +176,12 @@ namespace pluginlib
          */
         void loadLibraryForClass(const std::string & lookup_name);
 
+        /**
+         * @brief  Returns the libraries that are registered and can be loaded
+         * @return A vector of strings corresponding to the names of registered libraries
+         */
+        std::vector<std::string> getRegisteredLibraries();
+
       private:
         /**
          * @brief  Given the name of a class, returns the path to its associated library

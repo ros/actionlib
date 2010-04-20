@@ -365,6 +365,22 @@ namespace pluginlib {
   }
 
   template <class T>
+  std::vector<std::string> ClassLoader<T>::getRegisteredLibraries()
+  {
+    std::vector<std::string> library_names;
+    for (ClassMapIterator it = classes_available_.begin(); it != classes_available_.end(); it++){
+      bool duplicate = false;
+      for (unsigned int i=0; i<library_names.size(); i++)
+        if (it->second.library_path_ == library_names[i])
+          duplicate = true;
+      if (!duplicate)
+        library_names.push_back(it->second.library_path_);
+    }
+    return library_names;
+  }
+
+
+  template <class T>
   std::vector<std::string> ClassLoader<T>::getLoadedLibraries()
   {
     std::vector<std::string> library_names;
