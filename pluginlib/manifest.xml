@@ -15,7 +15,7 @@ Pluginlib includes parts of Poco from pocoproject.org
   <depend package="rosconsole"/>
 
   <export>
-    <cpp cflags="-I${prefix}/include -I${prefix} `rosboost-cfg --cflags`" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lpoco_lite `rosboost-cfg -l filesystem`"/>
+    <cpp cflags="-I${prefix}/include -I${prefix} `rosboost-cfg --cflags`" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lpoco_lite `rosboost-cfg -l filesystem,system`"/>
   </export>
 
 </package>
