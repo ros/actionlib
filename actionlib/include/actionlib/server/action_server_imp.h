@@ -258,7 +258,7 @@ namespace actionlib {
 
     status_array.header.stamp = ros::Time::now();
 
-    status_array.set_status_list_size(status_list_.size());
+    status_array.status_list.resize(status_list_.size());
 
     unsigned int i = 0;
     for(typename std::list<StatusTracker<ActionSpec> >::iterator it = status_list_.begin(); it != status_list_.end();){
