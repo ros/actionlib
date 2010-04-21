@@ -47,8 +47,11 @@ Nodelet::~Nodelet ()
 {
   NODELET_DEBUG ("nodelet destructor.");
 
-  callback_manager_->removeQueue(st_callback_queue_);
-  callback_manager_->removeQueue(mt_callback_queue_);
+  if (inited_)
+  {
+    callback_manager_->removeQueue(st_callback_queue_);
+    callback_manager_->removeQueue(mt_callback_queue_);
+  }
 }
 
 ros::CallbackQueueInterface& Nodelet::getSTCallbackQueue () const
