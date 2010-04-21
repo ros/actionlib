@@ -39,12 +39,9 @@
 #include <vector>
 #include <map>
 
-#include "boost/filesystem.hpp"
+
 #include "boost/algorithm/string.hpp"
-
-namespace fs = boost::filesystem;
-
-
+#include "pluginlib/boost_fs_wrapper.h"
 
 namespace pluginlib
 {

@@ -20,3 +20,5 @@ rosbuild_add_boost_directories()
 
 rosbuild_add_library(poco_lite src/Exception.cpp src/File.cpp src/Manifest.cpp src/Mutex.cpp src/Path.cpp src/SharedLibrary.cpp src/StringTokenizer.cpp src/Timestamp.cpp src/UnicodeConverter.cpp src/AtomicCounter.cpp src/UTF16Encoding.cpp src/UTF8Encoding.cpp src/TextEncoding.cpp src/ASCIIEncoding.cpp src/Latin1Encoding.cpp src/Latin9Encoding.cpp src/Windows1252Encoding.cpp src/RWLock.cpp src/DirectoryIterator.cpp src/Bugcheck.cpp src/Environment.cpp src/TextIterator.cpp src/Debugger.cpp src/TextConverter.cpp)
 target_link_libraries(poco_lite dl)
+
+rosbuild_add_library(boost_fs_wrapper src/boost_fs_wrapper.cpp)

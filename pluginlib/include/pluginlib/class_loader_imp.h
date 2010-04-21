@@ -84,33 +84,13 @@ namespace pluginlib {
           continue;
         }
 
-        std::string package_name;
+        
+        std::string package_name = pluginlib::getPackageFromLibraryPath(*it);
+        if (package_name == "")
+          ROS_ERROR("Could not find package name for class %s", it->c_str());
 
-        fs::path p(*it);
-        fs::path parent = p.parent_path();
-        // figure out the package this class is part of
-        while (true)
-        {
-          if (fs::exists(parent / "manifest.xml"))
-          {
-            std::string package = parent.filename();
-            std::string package_path = ros::package::getPath(package);
-            if (it->find(package_path) == 0)
-            {
-              package_name = package;
-              break;
-            }
-          }
-
-          parent = parent.parent_path();
-
-          if (parent.string().empty())
-          {
-            ROS_ERROR("Could not find package name for class %s", it->c_str());
-            break;
-          }
-        }
-        fs::path full_library_path(parent / library_path);
+        std::string parent_dir = ros::package::getPath(package);
+        std::string full_library_path = joinPaths(parent_dir , library_path);
 
         TiXmlElement* class_element = library->FirstChildElement("class");
         while (class_element)
@@ -131,7 +111,7 @@ namespace pluginlib {
             else
               description_str = "No 'description' tag for this plugin in plugin description file.";
 
-            classes_available_.insert(std::pair<std::string, ClassDesc>(lookup_name, ClassDesc(lookup_name, derived_class, base_class_type, package_name, description_str, full_library_path.string())));
+            classes_available_.insert(std::pair<std::string, ClassDesc>(lookup_name, ClassDesc(lookup_name, derived_class, base_class_type, package_name, description_str, full_library_path)));
             ROS_DEBUG("MATCHED Base type for class with name: %s type: %s base_class_type: %s Expecting base_class_type %s", 
                       lookup_name.c_str(), derived_class.c_str(), base_class_type.c_str(), base_class.c_str());
           }
