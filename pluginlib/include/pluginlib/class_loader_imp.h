@@ -89,7 +89,7 @@ namespace pluginlib {
         if (package_name == "")
           ROS_ERROR("Could not find package name for class %s", it->c_str());
 
-        std::string parent_dir = ros::package::getPath(package);
+        std::string parent_dir = ros::package::getPath(package_name);
         std::string full_library_path = joinPaths(parent_dir , library_path);
 
         TiXmlElement* class_element = library->FirstChildElement("class");
