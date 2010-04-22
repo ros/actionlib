@@ -111,20 +111,6 @@ public:
   /**
    * \brief Waits for the ActionServer to connect to this client
    *
-   * [DEPRECATED] Often, it can take a second for the action server & client to negotiate
-   * a connection, thus, risking the first few goals to be dropped. This call lets
-   * the user wait until the network connection to the server is negotiated
-   *
-   * This call is deprecated, and has been replaced by waitForServer
-   *
-   * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
-   * \return True if the server connected in the allocated time. False on timeout
-   */
-   DEPRECATED bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0) ) { return ac_->waitForActionServerToStart(timeout); }
-
-  /**
-   * \brief Waits for the ActionServer to connect to this client
-   *
    * Often, it can take a second for the action server & client to negotiate
    * a connection, thus, risking the first few goals to be dropped. This call lets
    * the user wait until the network connection to the server is negotiated
@@ -164,52 +150,16 @@ public:
 
   /**
    * \brief Blocks until this goal finishes
-   *
-   * [DEPRECATED] Replaced by waitForResult
-   *
-   * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
-   * \return True if the goal finished. False if the goal didn't finish within the allocated timeout
-   */
-  DEPRECATED bool waitForGoalToFinish(const ros::Duration& timeout = ros::Duration(0,0) );
-
-  /**
-   * \brief Blocks until this goal finishes
    * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
    * \return True if the goal finished. False if the goal didn't finish within the allocated timeout
    */
   bool waitForResult(const ros::Duration& timeout = ros::Duration(0,0) );
 
   /**
-   * \brief [DEPRECATED] Get the current state of the goal requested by this SimpleActionClient
-   *
-   * [PENDING], [ACTIVE], or [DONE]
-   *
-   * This is DEPRECATED. Use getState() instead.
-   * \return The terminal state. Prints a ROS_ERROR and returns DONE if there
-   *          is no goal was requested by this SimpleActionClient
-   *
-   */
-  DEPRECATED SimpleGoalState getGoalState();
-
-  /**
    * \brief Get the Result of the current goal
    * \return shared pointer to the result. Note that this pointer will NEVER be NULL
    */
-  //ResultConstPtr getResult();
   ResultConstPtr getResult();
-
-
-  /**
-   * \brief [Deprecated] Get the terminal state information for this goal
-   *
-   * Possible States Are: RECALLED, REJECTED, PREEMPTED, ABORTED, SUCCEEDED, LOST.
-   * This call only makes sense if SimpleGoalState==DONE. This will sends ROS_WARNs if we're not in DONE.
-   * This is DEPRECATED. Use getState() instead.
-   * \return The terminal state. Prints a ROS_ERROR and returns LOST if the
-   *         currentl goal requested by this SimpleActionClient is not in
-   *         a terminal state
-   */
-  DEPRECATED TerminalState getTerminalState();
 
   /**
    * \brief Get the state information for this goal
@@ -428,51 +378,6 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::getState()
   return SimpleClientGoalState(SimpleClientGoalState::LOST);
 }
 
-
-template<class ActionSpec>
-SimpleGoalState SimpleActionClient<ActionSpec>::getGoalState()
-{
-  if (gh_.isExpired())
-  {
-    ROS_ERROR("Trying to getGoalState() when no goal is running. You are incorrectly using SimpleActionClient");
-    return SimpleGoalState(SimpleGoalState::DONE);
-  }
-
-  CommState comm_state_ = gh_.getCommState();
-
-  switch( comm_state_.state_)
-  {
-    case CommState::WAITING_FOR_GOAL_ACK:
-    case CommState::PENDING:
-    case CommState::RECALLING:
-      return SimpleGoalState(SimpleGoalState::PENDING);
-    case CommState::ACTIVE:
-    case CommState::PREEMPTING:
-      return SimpleGoalState(SimpleGoalState::ACTIVE);
-    case CommState::DONE:
-      return SimpleGoalState(SimpleGoalState::DONE);
-    case CommState::WAITING_FOR_RESULT:
-    case CommState::WAITING_FOR_CANCEL_ACK:
-      return cur_simple_state_;
-    default:
-      break;
-  }
-  ROS_ERROR("Error trying to interpret CommState - %u", comm_state_.state_);
-  return SimpleGoalState(SimpleGoalState::DONE);
-}
-
-template<class ActionSpec>
-TerminalState SimpleActionClient<ActionSpec>::getTerminalState()
-{
-  if (gh_.isExpired())
-    ROS_ERROR("Trying to getTerminalState() when no goal is running. You are incorrectly using SimpleActionClient");
-
-  if (gh_.getCommState() != CommState::DONE)
-    ROS_ERROR("Trying to getTerminalState() when we're not yet in a [DONE] state. You are incorrectly using SimpleActionClient");
-
-  return gh_.getTerminalState();
-}
-
 template<class ActionSpec>
 typename SimpleActionClient<ActionSpec>::ResultConstPtr SimpleActionClient<ActionSpec>::getResult()
 {
@@ -613,12 +518,6 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
       ROS_ERROR("Unknown CommState received [%u]", comm_state_.state_);
       break;
   }
-}
-
-template<class ActionSpec>
-bool SimpleActionClient<ActionSpec>::waitForGoalToFinish(const ros::Duration& timeout )
-{
-  return waitForResult(timeout);
 }
 
 template<class ActionSpec>
