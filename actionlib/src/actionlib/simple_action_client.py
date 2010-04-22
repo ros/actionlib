@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 # Copyright (c) 2009, Willow Garage, Inc.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 #       notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
 #     * Neither the name of the Willow Garage, Inc. nor the names of its
 #       contributors may be used to endorse or promote products derived from
 #       this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -58,11 +58,6 @@ class SimpleActionClient:
         self.gh = None
         self.done_condition = threading.Condition()
 
-        
-    ## @brief [Deprecated] Use wait_for_server
-    def wait_for_action_server_to_start(self, timeout = rospy.Duration()):
-        return self.wait_for_server(timeout)
-
     ## @brief Blocks until the action server connects to this client
     ##
     ## @param timeout Max time to block before returning. A zero
@@ -74,7 +69,7 @@ class SimpleActionClient:
 
 
     ## @brief Sends a goal to the ActionServer, and also registers callbacks
-    ## 
+    ##
     ## If a previous goal is already active when this is called. We simply forget
     ## about that goal and start tracking the new goal. No cancel requests are made.
     ##
@@ -98,14 +93,14 @@ class SimpleActionClient:
         self.simple_state = SimpleGoalState.PENDING
         self.gh = self.action_client.send_goal(goal, self._handle_transition, self._handle_feedback)
 
-    
+
     ## @brief Sends a goal to the ActionServer, waits for the goal to complete, and preempts goal is necessary
-    ## 
+    ##
     ## If a previous goal is already active when this is called. We simply forget
     ## about that goal and start tracking the new goal. No cancel requests are made.
     ##
     ## If the goal does not complete within the execute_timeout, the goal gets preempted
-    ## 
+    ##
     ## If preemption of the goal does not complete withing the preempt_timeout, this
     ## method simply returns
     ##
@@ -126,10 +121,6 @@ class SimpleActionClient:
                 rospy.logdebug("Preempt didn't finish specified preempt_timeout [%.2f]", preempt_timeout.to_sec());
         return self.get_state()
 
-
-    ## @brief [Deprecated] Use wait_for_result
-    def wait_for_goal_to_finish(self, timeout = rospy.Duration()):
-        return self.wait_for_result(timeout)
 
     ## @brief Blocks until this goal transitions to done
     ## @param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
@@ -158,29 +149,6 @@ class SimpleActionClient:
         return self.simple_state == SimpleGoalState.DONE
 
 
-    ## @brief [Deprecated] Gets the current state of the goal: [PENDING], [ACTIVE], or [DONE]
-    ##
-    ## Deprecated.  Use get_state instead
-    def get_goal_state(self):
-        rospy.logwarn("SimpleActionClient.get_goal_state has been deprecated")
-        if not self.gh:
-            rospy.logerr("Called get_goal_state when no goal is running")
-            return SimpleGoalState.DONE
-
-        comm_state = self.gh.get_comm_state()
-        if comm_state in [CommState.WAITING_FOR_GOAL_ACK, CommState.PENDING, CommState.RECALLING]:
-            return SimpleGoalState.PENDING
-        elif comm_state in [CommState.ACTIVE, CommState.PREEMPTING]:
-            return SimpleGoalState.ACTIVE
-        elif comm_state in [CommState.DONE]:
-            return SimpleGoalState.DONE
-        elif comm_state in [CommState.WAITING_FOR_RESULT, CommState.WAITING_FOR_CANCEL_ACK]:
-            return self.simple_state
-
-        rospy.logerr("Error trying to interpret CommState in get_goal_state: %i" % comm_state)
-        return SimpleGoalState.DONE
-
-
     ## @brief Gets the Result of the current goal
     def get_result(self):
         if not self.gh:
@@ -190,24 +158,6 @@ class SimpleActionClient:
         return self.gh.get_result()
 
 
-    ## @brief [Deprecated] Get the terminal state information for this goal
-    ##
-    ## Deprecated.  Use get_state instead.
-    ## 
-    ## Possible States Are: RECALLED, REJECTED, PREEMPTED, ABORTED,
-    ## SUCCEEDED, LOST.  This call only makes sense if
-    ## SimpleGoalState==DONE. This will sends ROS_WARNs if we're not
-    ## in DONE
-    ##
-    ## @return The terminal state
-    def get_terminal_state(self):
-        rospy.logwarn("SimpleactionClient.get_terminal_state has been deprecated")
-        if not self.gh:
-            rospy.logerr("Called get_terminal_state when no goal is running")
-            return GoalStatus.LOST
-        return self.gh.get_terminal_state()
-
-    
     ## @brief Get the state information for this goal
     ##
     ## Possible States Are: PENDING, ACTIVE, RECALLED, REJECTED,
@@ -220,7 +170,7 @@ class SimpleActionClient:
             rospy.logerr("Called get_state when no goal is running")
             return GoalStatus.LOST
         status = self.gh.get_goal_status()
-        
+
         if status == GoalStatus.RECALLING:
             status = GoalStatus.PENDING
         elif status == GoalStatus.PREEMPTING:
@@ -231,28 +181,28 @@ class SimpleActionClient:
 
     ## @brief Returns the current status text of the goal.
     ##
-    ## The text is sent by the action server. It is designed to 
-    ## help debugging issues on the server side. 
+    ## The text is sent by the action server. It is designed to
+    ## help debugging issues on the server side.
     ##
     ## @return The current status text of the goal.
     def get_goal_status_text(self):
         if not self.gh:
             rospy.logerr("Called get_goal_status_text when no goal is running")
             return "ERROR: Called get_goal_status_text when no goal is running"
-        
+
         return self.gh.get_goal_status_text()
-        
+
 
 
 
     ## @brief Cancels all goals currently running on the action server
-    ## 
+    ##
     ## This preempts all goals running on the action server at the point that
     ## this message is serviced by the ActionServer.
     def cancel_all_goals(self):
         self.action_client.cancel_all_goals()
 
-    
+
     ## @brief Cancels the goal that we are currently pursuing
     def cancel_goal(self):
         if self.gh:
@@ -260,7 +210,7 @@ class SimpleActionClient:
 
 
     ## @brief Stops tracking the state of the current goal. Unregisters this goal's callbacks
-    ## 
+    ##
     ## This is useful if we want to make sure we stop calling our callbacks before sending a new goal.
     ## Note that this does not cancel the goal, it simply stops looking for status info about this goal.
     def stop_tracking_goal(self):
