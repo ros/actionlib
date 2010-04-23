@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 # Copyright (c) 2009, Willow Garage, Inc.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 #       notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
 #     * Neither the name of the Willow Garage, Inc. nor the names of its
 #       contributors may be used to endorse or promote products derived from
 #       this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Author: Alexander Sorokin. 
+# Author: Alexander Sorokin.
 # Based on C++ action_server.h by Eitan Marder-Eppstein
 from __future__ import with_statement
 
@@ -92,7 +92,7 @@ class ActionServer:
 
         try:
             a = ActionSpec()
-            
+
             self.ActionSpec = ActionSpec
             self.ActionGoal = type(a.action_goal)
             self.ActionResult = type(a.action_result)
@@ -107,26 +107,26 @@ class ActionServer:
         self.status_pub = None
         self.result_pub = None
         self.feedback_pub = None
-        
+
         self.lock = threading.RLock()
-        
+
         self.status_timer = None;
 
         self.status_list = [];
-          
+
         self.last_cancel = rospy.Time();
         self.status_list_timeout = rospy.Duration();
-        
+
         self.id_generator = GoalIDGenerator();
-        
+
         self.goal_callback = goal_cb;
         assert(self.goal_callback);
 
         self.cancel_callback = cancel_cb;
-        self.auto_start = auto_start; 
+        self.auto_start = auto_start;
 
         self.started = False;
-        
+
         if self.auto_start:
             self.initialize()
             self.started = True;
@@ -158,18 +158,18 @@ class ActionServer:
           """
           @brief  Initialize all ROS connections and setup timers
           """
-          self.status_pub = rospy.Publisher(self.ns+"/status", GoalStatusArray);
-          self.result_pub = rospy.Publisher(self.ns+"/result", self.ActionResult);
-          self.feedback_pub = rospy.Publisher(self.ns+"/feedback", self.ActionFeedback);
+          self.status_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/status", GoalStatusArray);
+          self.result_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/result", self.ActionResult);
+          self.feedback_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/feedback", self.ActionFeedback);
 
-          self.goal_sub = rospy.Subscriber(self.ns+"/goal", self.ActionGoal,self.internal_goal_callback);
-          
-          self.cancel_sub = rospy.Subscriber(self.ns+"/cancel", GoalID,self.internal_cancel_callback);
+          self.goal_sub = rospy.Subscriber(rospy.remap_name(self.ns)+"/goal", self.ActionGoal,self.internal_goal_callback);
+
+          self.cancel_sub = rospy.Subscriber(rospy.remap_name(self.ns)+"/cancel", GoalID,self.internal_cancel_callback);
 
           #read the frequency with which to publish status from the parameter server
-          self.status_frequency = rospy.get_param(self.ns+"/status_frequency", 5.0);
+          self.status_frequency = rospy.get_param(rospy.remap_name(self.ns)+"/status_frequency", 5.0);
 
-          status_list_timeout = rospy.get_param(self.ns+"/status_list_timeout", 5.0);
+          status_list_timeout = rospy.get_param(rospy.remap_name(self.ns)+"/status_list_timeout", 5.0);
           self.status_list_timeout = rospy.Duration(status_list_timeout);
 
 
@@ -188,7 +188,7 @@ class ActionServer:
             ar.header.stamp = rospy.Time.now();
             ar.status = status;
             ar.result = result;
-            self.result_pub.publish(ar);          
+            self.result_pub.publish(ar);
 
 
     def publish_feedback(self, status, feedback):
@@ -229,7 +229,7 @@ class ActionServer:
                   cancel_everything = (goal_id.id == "" and goal_id.stamp == rospy.Time() )   #rospy::Time()) #id and stamp 0 --> cancel everything
                   cancel_this_one = ( goal_id.id == it.status.goal_id.id)   #ids match... cancel that goal
                   cancel_before_stamp = (goal_id.stamp != rospy.Time() and it.status.goal_id.stamp <= goal_id.stamp)  #//stamp != 0 --> cancel everything before stamp
-                  
+
                   if cancel_everything or cancel_this_one or cancel_before_stamp:
                       #we need to check if we need to store this cancel request for later
                       if goal_id.id == it.status.goal_id.id:
@@ -242,10 +242,10 @@ class ActionServer:
                           #if the handle tracker is expired, then we need to create a new one
                           handle_tracker = HandleTrackerDeleter(self, it);
                           it.handle_tracker = handle_tracker;
-                      
+
                           #we also need to reset the time that the status is supposed to be removed from the list
                           it.handle_destruction_time = rospy.Time.now()
-                      
+
 
                       #set the status of the goal to PREEMPTING or RECALLING as approriate
                       #and check if the request should be passed on to the user
@@ -265,7 +265,7 @@ class ActionServer:
               #make sure to set last_cancel_ based on the stamp associated with this cancel request
               if goal_id.stamp > self.last_cancel:
                   self.last_cancel = goal_id.stamp;
-              
+
 
     def internal_goal_callback(self, goal):
           """
@@ -286,7 +286,7 @@ class ActionServer:
                       #we'll bump how long it stays in the list
                       if st.handle_tracker is None:
                           st.handle_destruction_time = rospy.Time.now()
-                      
+
                       #make sure not to call any user callbacks or add duplicate status onto the list
                       return;
 
@@ -308,7 +308,7 @@ class ActionServer:
                   #now, we need to create a goal handle and call the user's callback
                   self.goal_callback(gh);
 
-        
+
     def publish_status_async(self):
           """
           * @brief  Publish status for all goals on a timer event
@@ -320,7 +320,7 @@ class ActionServer:
                   return
               self.publish_status();
 
-              
+
 
     def publish_status(self):
           """
