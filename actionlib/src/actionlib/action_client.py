@@ -392,7 +392,7 @@ class CommStateMachine:
                 status_array = GoalStatusArray()
                 status_array.status_list.append(action_result.status)
                 self.update_status(status_array)
-                
+
                 self.transition_to(CommState.DONE)
             elif self.state == CommState.DONE:
                 rospy.logerr("Got a result when we were already in the DONE state")
@@ -512,16 +512,16 @@ class ActionClient:
         except AttributeError:
             raise ActionException("Type is not an action spec: %s" % str(ActionSpec))
 
-        self.pub_goal = rospy.Publisher(ns + '/goal', self.ActionGoal)
-        self.pub_cancel = rospy.Publisher(ns + '/cancel', GoalID)
+        self.pub_goal = rospy.Publisher(rospy.remap_name(ns) + '/goal', self.ActionGoal)
+        self.pub_cancel = rospy.Publisher(rospy.remap_name(ns) + '/cancel', GoalID)
 
         self.manager = GoalManager(ActionSpec)
         self.manager.register_send_goal_fn(self.pub_goal.publish)
         self.manager.register_cancel_fn(self.pub_cancel.publish)
 
-        rospy.Subscriber(ns + '/status', GoalStatusArray, self._status_cb)
-        rospy.Subscriber(ns + '/result', self.ActionResult, self._result_cb)
-        rospy.Subscriber(ns + '/feedback', self.ActionFeedback, self._feedback_cb)
+        rospy.Subscriber(rospy.remap_name(ns) + '/status', GoalStatusArray, self._status_cb)
+        rospy.Subscriber(rospy.remap_name(ns) + '/result', self.ActionResult, self._result_cb)
+        rospy.Subscriber(rospy.remap_name(ns) + '/feedback', self.ActionFeedback, self._feedback_cb)
 
     ## @brief Sends a goal to the action server
     ##
