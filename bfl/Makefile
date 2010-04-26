@@ -8,7 +8,7 @@ UNPACK_CMD = tar xzf
 MD5SUM_FILE = $(FILENAME).md5sum
 include $(shell rospack find mk)/download_unpack_build.mk
 
-TARBALL_PATCH = total.patch
+PATCH = total.patch
 INSTALL_DIR = bfl-boost
 CMAKE = cmake
 BOOST_INCLUDE =$(shell rosboost-cfg --include_dirs)
@@ -19,6 +19,7 @@ CMAKE_ARGS = -DBUILD_TESTS=OFF \
 
 
 installed: $(SOURCE_DIR)/unpacked patched
+	cd $(SOURCE_DIR) && patch -p0 < ../../$(PATCH)
 	mkdir -p $(SOURCE_DIR)/build-boost
 	cd $(SOURCE_DIR)/build-boost && $(CMAKE) $(CMAKE_ARGS) ..
 	cd $(SOURCE_DIR)/build-boost && make $(ROS_PARALLEL_JOBS) && make install
