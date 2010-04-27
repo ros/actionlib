@@ -18,7 +18,7 @@ CMAKE_ARGS = -DBUILD_TESTS=OFF \
 	     -DMATRIX_LIB=boost -DRNG_LIB=boost
 
 
-installed: $(SOURCE_DIR)/unpacked patched
+installed: $(SOURCE_DIR)/unpacked 
 	cd $(SOURCE_DIR) && patch -p0 < ../../$(PATCH)
 	mkdir -p $(SOURCE_DIR)/build-boost
 	cd $(SOURCE_DIR)/build-boost && $(CMAKE) $(CMAKE_ARGS) ..
