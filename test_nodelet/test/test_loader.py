@@ -42,6 +42,10 @@ class TestLoader(unittest.TestCase):
         unload = rospy.ServiceProxy('/nodelet_manager/unload_nodelet', NodeletUnload)
         list = rospy.ServiceProxy('/nodelet_manager/list', NodeletList)
         
+        load.wait_for_service()
+        unload.wait_for_service()
+        list.wait_for_service()
+        
         req = NodeletLoadRequest()
         req.name = "/my_nodelet"
         req.type = "test_nodelet/Plus"
