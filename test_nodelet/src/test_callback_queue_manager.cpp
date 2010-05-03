@@ -118,7 +118,7 @@ TEST(CallbackQueueManager, multipleSingleThreaded)
     queue2->addCallback(cb2, 1);
   }
 
-  while (cb1->calls < 10 && cb2->calls < 10)
+  while (cb1->calls < 10 || cb2->calls < 10)
   {
     ros::WallDuration(0.01).sleep();
   }
