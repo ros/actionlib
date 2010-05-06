@@ -177,7 +177,7 @@ class ClientGoalHandle:
     ##
     ## @return None if no result was receieved.  Otherwise the goal's result as a *Result message.
     def get_result(self):
-        if not self.comm_state_machine:
+        if not self.comm_state_machine.latest_result:
             rospy.logerr("Trying to get_result on an inactive ClientGoalHandle.")
             return None
         return self.comm_state_machine.latest_result.result
