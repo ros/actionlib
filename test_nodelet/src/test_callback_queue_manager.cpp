@@ -42,14 +42,18 @@ using namespace nodelet::detail;
 class SingleThreadedCallback : public ros::CallbackInterface
 {
 public:
-  SingleThreadedCallback()
+  SingleThreadedCallback(boost::barrier* bar)
   : success(true)
   , calls(0)
   , inited_(false)
+  , barrier_(bar)
   {}
 
   ros::CallbackInterface::CallResult call()
   {
+    ros::WallDuration(0.1).sleep();
+    barrier_->wait();
+
     {
       boost::mutex::scoped_lock lock(mutex_);
       if (!inited_)
@@ -66,8 +70,6 @@ public:
       ++calls;
     }
 
-    ros::WallDuration(0.1).sleep();
-
     return Success;
   }
 
@@ -78,6 +80,7 @@ public:
 private:
   bool inited_;
   boost::mutex mutex_;
+  boost::barrier* barrier_;
 };
 typedef boost::shared_ptr<SingleThreadedCallback> SingleThreadedCallbackPtr;
 
@@ -87,7 +90,8 @@ TEST(CallbackQueueManager, singleThreaded)
   CallbackQueuePtr queue(new CallbackQueue(&man));
   man.addQueue(queue, false);
 
-  SingleThreadedCallbackPtr cb(new SingleThreadedCallback);
+  boost::barrier bar(1);
+  SingleThreadedCallbackPtr cb(new SingleThreadedCallback(&bar));
   for (uint32_t i = 0; i < 10; ++i)
   {
     queue->addCallback(cb, 0);
@@ -110,8 +114,9 @@ TEST(CallbackQueueManager, multipleSingleThreaded)
   man.addQueue(queue1, false);
   man.addQueue(queue2, false);
 
-  SingleThreadedCallbackPtr cb1(new SingleThreadedCallback);
-  SingleThreadedCallbackPtr cb2(new SingleThreadedCallback);
+  boost::barrier bar(2);
+  SingleThreadedCallbackPtr cb1(new SingleThreadedCallback(&bar));
+  SingleThreadedCallbackPtr cb2(new SingleThreadedCallback(&bar));
   for (uint32_t i = 0; i < 10; ++i)
   {
     queue1->addCallback(cb1, 1);
