@@ -14,10 +14,11 @@
   <url>http://ros.org/wiki/nodelet</url>
   <depend package="pluginlib"/>
   <depend package="roscpp"/>
+  <depend package="rospy"/>
 
-<export>
-  <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -Wl,-rpath,${prefix}/lib -lnodeletlib"/>
-</export>
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-L${prefix}/lib -Wl,-rpath,${prefix}/lib -lnodeletlib"/>
+  </export>
 </package>
 
 

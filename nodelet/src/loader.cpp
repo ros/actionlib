@@ -174,6 +174,7 @@ bool Loader::unload(const std::string & name)
   if (it != nodelets_.end())
   {
     nodelets_.erase(it);
+    ROS_DEBUG("Done unloading nodelet %s", name.c_str());
     return true;
   }
 
