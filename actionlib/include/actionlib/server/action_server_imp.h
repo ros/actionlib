@@ -167,11 +167,16 @@ namespace actionlib {
         //and check if the request should be passed on to the user
         GoalHandle gh(it, this, handle_tracker, guard_);
         if(gh.setCancelRequested()){
+          //make sure that we're unlocked before we call the users callback
+          lock_.unlock();
+
           //call the user's cancel callback on the relevant goal
           cancel_callback_(gh);
+
+          //lock for further modification of the status list
+          lock_.lock();
         }
       }
-
     }
 
     //if the requested goal_id was not found, and it is non-zero, then we need to store the cancel request
@@ -227,8 +232,15 @@ namespace actionlib {
       gh.setCanceled(Result(), "This goal handle was canceled by the action server because its timestamp is before the timestamp of the last cancel request");
     }
     else{
+      GoalHandle gh = GoalHandle(it, this, handle_tracker, guard_);
+
+      //make sure that we unlock before calling the users callback
+      lock_.unlock();
+
       //now, we need to create a goal handle and call the user's callback
-      goal_callback_(GoalHandle(it, this, handle_tracker, guard_));
+      goal_callback_(gh);
+
+      lock_.lock();
     }
   }
 
@@ -242,7 +254,6 @@ namespace actionlib {
   template <class ActionSpec>
   void ActionServer<ActionSpec>::publishStatus(const ros::TimerEvent& e){
     boost::recursive_mutex::scoped_lock lock(lock_);
-
     //we won't publish status unless we've been started
     if(!started_)
       return;
