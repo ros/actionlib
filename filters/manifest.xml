@@ -21,4 +21,7 @@ However any change will have long term backwards compatability.
   <cpp cflags="-I${prefix}/include `rosboost-cfg --cflags`" lflags=""/> <!--lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lfilter"/-->
   <filters plugin="${prefix}/default_plugins.xml" />
 </export>
+  <platform os="ubuntu" version="9.04"/>
+  <platform os="ubuntu" version="9.10"/>
+  <platform os="ubuntu" version="10.04"/>
 </package>

@@ -17,4 +17,7 @@ we will consider updating.
     <cpp cflags="-I${prefix}/include -DTIXML_USE_STL" lflags="-Wl,-rpath,${prefix} -L${prefix} -ltinyxml"/>
         <doxymaker external="http://www.grinninglizard.com/tinyxml"/>
   </export>
+  <platform os="ubuntu" version="9.04"/>
+  <platform os="ubuntu" version="9.10"/>
+  <platform os="ubuntu" version="10.04"/>
 </package>
