@@ -70,7 +70,8 @@ class ServerGoalHandle:
 
       rospy.logdebug("Accepting goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
       if self.goal:
-          status = self.status_tracker.status.status;
+          with self.action_server.lock:
+              status = self.status_tracker.status.status;
 
           #if we were pending before, then we'll go active
           if(status == actionlib_msgs.msg.GoalStatus.PENDING):
@@ -103,18 +104,19 @@ class ServerGoalHandle:
         rospy.logdebug("Setting status to canceled on goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
 
         if(self.goal):
-            status = self.status_tracker.status.status;
-            if(status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.msg.GoalStatus.RECALLING):
-                self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.RECALLED;
-                self.status_tracker.status.text = text
-                self.action_server.publish_result(self.status_tracker.status, result);
-            elif(status == actionlib_msgs.msg.GoalStatus.ACTIVE or status == actionlib_msgs.msg.GoalStatus.PREEMPTING):
-                self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.PREEMPTED;
-                self.status_tracker.status.text = text
-                self.action_server.publish_result(self.status_tracker.status, result);
-      
-            else:
-                rospy.logerr("To transition to a cancelled state, the goal must be in a pending, recalling, active, or preempting state, it is currently in state: %d",
+            with self.action_server.lock:
+                status = self.status_tracker.status.status;
+                if(status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.msg.GoalStatus.RECALLING):
+                    self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.RECALLED;
+                    self.status_tracker.status.text = text
+                    self.action_server.publish_result(self.status_tracker.status, result);
+                elif(status == actionlib_msgs.msg.GoalStatus.ACTIVE or status == actionlib_msgs.msg.GoalStatus.PREEMPTING):
+                    self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.PREEMPTED;
+                    self.status_tracker.status.text = text
+                    self.action_server.publish_result(self.status_tracker.status, result);
+
+                else:
+                    rospy.logerr("To transition to a cancelled state, the goal must be in a pending, recalling, active, or preempting state, it is currently in state: %d",
                              self.status_tracker.status.status);
     
         else:
@@ -131,14 +133,15 @@ class ServerGoalHandle:
 
         rospy.logdebug("Setting status to rejected on goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal :
-            status = self.status_tracker.status.status;
-            if(status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.msg.GoalStatus.RECALLING):
-                self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.REJECTED;
-                self.status_tracker.status.text = text
-                self.action_server.publish_result(self.status_tracker.status, result);
+            with self.action_server.lock:
+                status = self.status_tracker.status.status;
+                if(status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.msg.GoalStatus.RECALLING):
+                    self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.REJECTED;
+                    self.status_tracker.status.text = text
+                    self.action_server.publish_result(self.status_tracker.status, result);
       
-            else:
-                rospy.logerr("To transition to a rejected state, the goal must be in a pending or recalling state, it is currently in state: %d",
+                else:
+                    rospy.logerr("To transition to a rejected state, the goal must be in a pending or recalling state, it is currently in state: %d",
                              self.status_tracker.status.status);
     
         else:
@@ -155,15 +158,16 @@ class ServerGoalHandle:
 
         rospy.logdebug("Setting status to aborted on goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal:
-            status = self.status_tracker.status.status;
-            if status == actionlib_msgs.msg.GoalStatus.PREEMPTING or status == actionlib_msgs.msg.GoalStatus.ACTIVE:
-                self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.ABORTED;
-                self.status_tracker.status.text = text
-                self.action_server.publish_result(self.status_tracker.status, result);
-                
-            else:
-                rospy.logerr("To transition to an aborted state, the goal must be in a preempting or active state, it is currently in state: %d",
-                             status);
+            with self.action_server.lock:
+                status = self.status_tracker.status.status;
+                if status == actionlib_msgs.msg.GoalStatus.PREEMPTING or status == actionlib_msgs.msg.GoalStatus.ACTIVE:
+                    self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.ABORTED;
+                    self.status_tracker.status.text = text
+                    self.action_server.publish_result(self.status_tracker.status, result);
+                    
+                else:
+                    rospy.logerr("To transition to an aborted state, the goal must be in a preempting or active state, it is currently in state: %d",
+                                 status);
     
         else:
             rospy.logerr("Attempt to set status on an uninitialized ServerGoalHandle");
@@ -180,14 +184,15 @@ class ServerGoalHandle:
         rospy.logdebug("Setting status to succeeded on goal, id: %s, stamp: %.2f",
                        self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal:
-            status = self.status_tracker.status.status;
-            if status == actionlib_msgs.msg.GoalStatus.PREEMPTING or status == actionlib_msgs.msg.GoalStatus.ACTIVE :
-                self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.SUCCEEDED;
-                self.status_tracker.status.text = text
-                self.action_server.publish_result(self.status_tracker.status, result);
+            with self.action_server.lock:
+                status = self.status_tracker.status.status;
+                if status == actionlib_msgs.msg.GoalStatus.PREEMPTING or status == actionlib_msgs.msg.GoalStatus.ACTIVE :
+                    self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.SUCCEEDED;
+                    self.status_tracker.status.text = text
+                    self.action_server.publish_result(self.status_tracker.status, result);
       
-            else:
-                rospy.logerr("To transition to a succeeded state, the goal must be in a preempting or active state, it is currently in state: %d",
+                else:
+                    rospy.logerr("To transition to a succeeded state, the goal must be in a preempting or active state, it is currently in state: %d",
                              status);
                 
         else:
@@ -202,7 +207,8 @@ class ServerGoalHandle:
         rospy.logdebug("Publishing feedback for goal, id: %s, stamp: %.2f", 
                        self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal:
-            self.action_server.publish_feedback(self.status_tracker.status, feedback);
+            with self.action_server.lock:
+                self.action_server.publish_feedback(self.status_tracker.status, feedback);
         else:
             rospy.logerr("Attempt to publish feedback on an uninitialized ServerGoalHandle");
 
@@ -229,7 +235,8 @@ class ServerGoalHandle:
         @return The goal id
         """
         if self.goal:
-            return self.status_tracker.status.goal_id;
+            with self.action_server.lock:
+                return self.status_tracker.status.goal_id;
         else:
             rospy.logerr("Attempt to get a goal id on an uninitialized ServerGoalHandle");
             return actionlib_msgs.msg.GoalID();
@@ -241,7 +248,8 @@ class ServerGoalHandle:
         @return The goal status
         """
         if self.goal:
-            return self.status_tracker.status;
+            with self.action_server.lock:
+                return self.status_tracker.status;
         else:
             rospy.logerr("Attempt to get goal status on an uninitialized ServerGoalHandle");
             return actionlib_msgs.msg.GoalStatus();
@@ -282,11 +290,12 @@ class ServerGoalHandle:
         rospy.logdebug("Transisitoning to a cancel requested state on goal id: %s, stamp: %.2f", 
                        self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal:
-            status = self.status_tracker.status.status;
-            if (status == actionlib_msgs.msg.GoalStatus.PENDING):
-                self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.RECALLING;
-                self.action_server.publish_status();
-                return True;
+            with self.action_server.lock:
+                status = self.status_tracker.status.status;
+                if (status == actionlib_msgs.msg.GoalStatus.PENDING):
+                    self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.RECALLING;
+                    self.action_server.publish_status();
+                    return True;
 
             if(status == actionlib_msgs.msg.GoalStatus.ACTIVE):
                 self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.PREEMPTING;

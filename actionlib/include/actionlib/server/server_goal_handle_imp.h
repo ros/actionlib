@@ -60,6 +60,7 @@ namespace actionlib {
 
     ROS_DEBUG("Accepting goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
+      boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;
 
       //if we were pending before, then we'll go active
@@ -98,6 +99,7 @@ namespace actionlib {
 
     ROS_DEBUG("Setting status to canceled on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
+      boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;
       if(status == actionlib_msgs::GoalStatus::PENDING || status == actionlib_msgs::GoalStatus::RECALLING){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::RECALLED;
@@ -133,6 +135,7 @@ namespace actionlib {
 
     ROS_DEBUG("Setting status to rejected on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
+      boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;
       if(status == actionlib_msgs::GoalStatus::PENDING || status == actionlib_msgs::GoalStatus::RECALLING){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::REJECTED;
@@ -163,6 +166,7 @@ namespace actionlib {
 
     ROS_DEBUG("Setting status to aborted on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
+      boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;
       if(status == actionlib_msgs::GoalStatus::PREEMPTING || status == actionlib_msgs::GoalStatus::ACTIVE){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::ABORTED;
@@ -193,6 +197,7 @@ namespace actionlib {
 
     ROS_DEBUG("Setting status to succeeded on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
+      boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;
       if(status == actionlib_msgs::GoalStatus::PREEMPTING || status == actionlib_msgs::GoalStatus::ACTIVE){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::SUCCEEDED;
@@ -223,6 +228,7 @@ namespace actionlib {
 
     ROS_DEBUG("Publishing feedback for goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_) {
+      boost::recursive_mutex::scoped_lock lock(as_->lock_);
       as_->publishFeedback((*status_it_).status_, feedback);
     }
     else
@@ -244,8 +250,10 @@ namespace actionlib {
   actionlib_msgs::GoalID ServerGoalHandle<ActionSpec>::getGoalID() const{
     if(goal_ && as_!= NULL){
       DestructionGuard::ScopedProtector protector(*guard_);
-      if(protector.isProtected())
+      if(protector.isProtected()){
+        boost::recursive_mutex::scoped_lock lock(as_->lock_);
         return (*status_it_).status_.goal_id;
+      }
       else
         return actionlib_msgs::GoalID();
     }
@@ -259,8 +267,10 @@ namespace actionlib {
   actionlib_msgs::GoalStatus ServerGoalHandle<ActionSpec>::getGoalStatus() const{
     if(goal_ && as_!= NULL){
       DestructionGuard::ScopedProtector protector(*guard_);
-      if(protector.isProtected())
+      if(protector.isProtected()){
+        boost::recursive_mutex::scoped_lock lock(as_->lock_);
         return (*status_it_).status_;
+      }
       else
         return actionlib_msgs::GoalStatus();
     }
@@ -320,6 +330,7 @@ namespace actionlib {
 
     ROS_DEBUG("Transisitoning to a cancel requested state on goal id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
+      boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;
       if(status == actionlib_msgs::GoalStatus::PENDING){
         (*status_it_).status_.status = actionlib_msgs::GoalStatus::RECALLING;
