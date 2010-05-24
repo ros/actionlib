@@ -251,8 +251,11 @@ class ActionServer:
                       #and check if the request should be passed on to the user
                       gh = ServerGoalHandle(it, self, handle_tracker);
                       if gh.set_cancel_requested():
+                          #make sure that we're unlocked before we call the users callback
+                          self.lock.release()
                           #call the user's cancel callback on the relevant goal
                           self.cancel_callback(gh);
+                          self.lock.acquire()
 
 
               #if the requested goal_id was not found, and it is non-zero, then we need to store the cancel request
@@ -305,8 +308,11 @@ class ActionServer:
                   #if it has... just create a GoalHandle for it and setCanceled
                   gh.set_canceled(None, "This goal handle was canceled by the action server because its timestamp is before the timestamp of the last cancel request");
               else:
+                  #make sure that we're unlocked before we call the users callback
+                  self.lock.release()
                   #now, we need to create a goal handle and call the user's callback
                   self.goal_callback(gh);
+                  self.lock.acquire()
 
 
     def publish_status_async(self):
