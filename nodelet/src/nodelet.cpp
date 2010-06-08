@@ -275,6 +275,7 @@ int
         ros::shutdown ();
         break;
       }
+      usleep(100000);
     }
   }
   else if (command == "unload")
