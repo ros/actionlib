@@ -113,7 +113,6 @@ private:
 /** \brief Create the filter chain object */
 Loader::Loader(bool provide_ros_api)
 : loader_(new pluginlib::ClassLoader<Nodelet>("nodelet", "nodelet::Nodelet"))
-, callback_manager_(new detail::CallbackQueueManager)
 {
   std::string lib_string = "";
   std::vector<std::string> libs = loader_->getDeclaredClasses();
@@ -127,7 +126,16 @@ Loader::Loader(bool provide_ros_api)
     ros::NodeHandle server_nh("~");
     services_.reset(new detail::LoaderROS(this, server_nh));
     ROS_DEBUG("In FilterChain ClassLoader found the following libs: %s", lib_string.c_str());
+    
+    int num_threads_param;
+    if (server_nh.getParam ("num_worker_threads", num_threads_param))
+    {
+      callback_manager_ = detail::CallbackQueueManagerPtr (new detail::CallbackQueueManager (num_threads_param));
+      ROS_INFO("Initializing nodelet with %d worker threads.", num_threads_param);
+    }
   }
+  if (!callback_manager_)
+    callback_manager_ = detail::CallbackQueueManagerPtr (new detail::CallbackQueueManager);
 }
 
 Loader::~Loader()

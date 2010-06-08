@@ -43,8 +43,9 @@ namespace nodelet
 namespace detail
 {
 
-CallbackQueueManager::CallbackQueueManager()
-: running_(true)
+CallbackQueueManager::CallbackQueueManager(uint32_t num_worker_threads)
+: running_(true),
+  num_worker_threads_(num_worker_threads)
 {
   tg_.create_thread(boost::bind(&CallbackQueueManager::managerThread, this));
 
@@ -72,7 +73,7 @@ CallbackQueueManager::~CallbackQueueManager()
 
 uint32_t CallbackQueueManager::getNumWorkerThreads()
 {
-  return boost::thread::hardware_concurrency();
+  return num_worker_threads_;
 }
 
 void CallbackQueueManager::addQueue(const CallbackQueuePtr& queue, bool threaded)
