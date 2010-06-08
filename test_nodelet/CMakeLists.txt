@@ -27,4 +27,4 @@ rosbuild_add_library(${PROJECT_NAME} src/plus.cpp)
 rosbuild_add_rostest(test_local.launch)
 rosbuild_add_rostest(test_loader.launch)
 
-rosbuild_add_gtest(test_callback_queue_manager src/test_callback_queue_manager.cpp TIMEOUT 240)
+rosbuild_add_gtest(test_callback_queue_manager src/test_callback_queue_manager.cpp)

@@ -162,20 +162,16 @@ TEST(CallbackQueueManager, multiThreaded)
 
   for (uint32_t j = 0; j < 1000; ++j)
   {
-    printf("j: %u\n", j);
     uint32_t num_threads = man.getNumWorkerThreads();
-    printf("num threads: %u\n", num_threads);
     boost::barrier bar(num_threads + 1);
 
     MultiThreadedCallbackPtr cb(new MultiThreadedCallback(&bar));
     for (uint32_t i = 0; i < num_threads; ++i)
     {
-      printf("i: %u\n", i);
       queue->addCallback(cb, 0);
     }
-    printf("waiting main thread\n");
+
     bar.wait();
-    printf("done waiting main thread\n");
     queue->removeByID(0);
   }
 }
