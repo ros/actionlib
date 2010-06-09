@@ -153,7 +153,7 @@ namespace pluginlib
          * @brief  Creates an instance of a desired class, optionally loading the associated library automatically if necessary
          * @param  lookup_name The name of the class to load
          * @param  auto_load Specifies whether or not to automatically load the library containing the class, set to true by default
-         * @exception pluginlib::LoadLibraryException Thrown when the library associated with the class cannot be loaded
+         * @exception pluginlib::LibraryLoadException Thrown when the library associated with the class cannot be loaded
          * @exception pluginlib::CreateClassException Thrown when the class cannot be instantiated
          * @return An instance of the class
          */
