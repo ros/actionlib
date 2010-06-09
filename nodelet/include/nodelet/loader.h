@@ -39,6 +39,7 @@
 #include <map>
 #include <vector>
 #include <boost/shared_ptr.hpp>
+#include <boost/thread/mutex.hpp>
 
 namespace pluginlib
 {
@@ -80,6 +81,7 @@ public:
   /**\brief List the names of all loaded nodelets */
   std::vector<std::string> listLoadedNodelets();
 private:
+  boost::mutex lock_;
   detail::LoaderROSPtr services_;
 
   typedef std::map<std::string, NodeletPtr> M_stringToNodelet;

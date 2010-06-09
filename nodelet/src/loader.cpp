@@ -176,24 +176,26 @@ bool Loader::load(const std::string &name, const std::string& type, const ros::M
   return false;
 }
 
-bool Loader::unload(const std::string & name)
+bool Loader::unload (const std::string & name)
 {
-  M_stringToNodelet::iterator it = nodelets_.find(name);
-  if (it != nodelets_.end())
+  boost::mutex::scoped_lock lock (lock_);
+  M_stringToNodelet::iterator it = nodelets_.find (name);
+  if (it != nodelets_.end ())
   {
-    nodelets_.erase(it);
-    ROS_DEBUG("Done unloading nodelet %s", name.c_str());
-    return true;
+    nodelets_.erase (it);
+    ROS_DEBUG ("Done unloading nodelet %s", name.c_str ());
+    return (true);
   }
 
-  return false;
+  return (false);
 }
 
 /** \brief Clear all nodelets from this chain */
-bool Loader::clear()
+bool Loader::clear ()
 {
-  nodelets_.clear();
-  return true;
+  boost::mutex::scoped_lock lock (lock_);
+  nodelets_.clear ();
+  return (true);
 };
 
 /**\brief List the names of all loaded nodelets */
