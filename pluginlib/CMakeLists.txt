@@ -22,3 +22,4 @@ rosbuild_add_library(poco_lite src/Exception.cpp src/File.cpp src/Manifest.cpp s
 target_link_libraries(poco_lite dl)
 
 rosbuild_add_library(boost_fs_wrapper src/boost_fs_wrapper.cpp)
+rosbuild_link_boost(boost_fs_wrapper system filesystem) 
