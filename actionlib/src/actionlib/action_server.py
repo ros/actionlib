@@ -48,23 +48,12 @@ def nop_cb(goal_handle):
     pass
 
 def ros_timer(callable,frequency):
-    start = rospy.get_time()
-    cycle_time = 1.0 / frequency;
+    rate = rospy.Rate(frequency)
 
     rospy.logdebug("Starting timer");
     while not rospy.is_shutdown():
-        start = rospy.get_time()
+        rate.sleep()
         callable()
-
-        end = rospy.get_time()
-        sleep_time = cycle_time - (end - start)
-        if sleep_time > 0:
-            try:
-                rospy.sleep(sleep_time)
-            except rospy.ROSInterruptException: pass
-        else:
-            rospy.logwarn("Timer missed cycle time of %.2f seconds" % (-sleep_time))
-
 
 class ActionServer:
     """

@@ -34,6 +34,7 @@ import roslib; roslib.load_manifest('actionlib')
 import rospy
 
 import threading
+import traceback
 
 from actionlib_msgs.msg import *
 
@@ -94,7 +95,7 @@ class SimpleActionServer:
 
 
     def __del__(self):
-        if self.execute_callback:
+        if hasattr(self, 'execute_callback') and self.execute_callback:
             with self.terminate_mutex:
                 self.need_to_terminate = True;
 
@@ -321,16 +322,21 @@ class SimpleActionServer:
                       shall_run=True
 
               if shall_run:
-                  self.execute_callback(goal)
+                  try:
+                      self.execute_callback(goal)
 
-              self.execute_condition.acquire();
-              if (self.is_active()):
-                  rospy.logwarn("Your executeCallback did not set the goal to a terminal status.\n"+
-                                "This is a bug in your ActionServer implementation. Fix your code!\n"+
-                                "For now, the ActionServer will set this goal to aborted");
-                  self.set_aborted(None, "This goal was aborted by the simple action server. The user should have set a terminal status on this goal and did not");
-              self.execute_condition.wait(loop_duration.to_sec());
-              self.execute_condition.release();
+                      if self.is_active():
+                          rospy.logwarn("Your executeCallback did not set the goal to a terminal status.  " +
+                                        "This is a bug in your ActionServer implementation. Fix your code!  "+
+                                        "For now, the ActionServer will set this goal to aborted");
+                          self.set_aborted(None, "No terminal state was set.");
+                  except Exception as ex:
+                      rospy.logerr("Exception in your execute callback: %s\n%s", str(ex),
+                                   traceback.format_exc())
+                      self.set_aborted(None, "Exception in execute callback: %s" % str(ex))
+
+              with self.execute_condition:
+                  self.execute_condition.wait(loop_duration.to_sec());
 
 
 
