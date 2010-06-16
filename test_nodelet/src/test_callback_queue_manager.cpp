@@ -31,6 +31,7 @@
 #include <nodelet/detail/callback_queue.h>
 #include <ros/callback_queue.h>
 #include <ros/time.h>
+#include <ros/console.h>
 
 #include <boost/thread.hpp>
 
@@ -156,12 +157,13 @@ typedef boost::shared_ptr<MultiThreadedCallback> MultiThreadedCallbackPtr;
 
 TEST(CallbackQueueManager, multiThreaded)
 {
-  CallbackQueueManager man;
-  CallbackQueuePtr queue(new CallbackQueue(&man));
-  man.addQueue(queue, true);
-
   for (uint32_t j = 0; j < 1000; ++j)
   {
+    //ROS_INFO_COND(j % 1000 == 0, "%d", j);
+    CallbackQueueManager man;
+    CallbackQueuePtr queue(new CallbackQueue(&man));
+    man.addQueue(queue, true);
+
     uint32_t num_threads = man.getNumWorkerThreads();
     boost::barrier bar(num_threads + 1);
 

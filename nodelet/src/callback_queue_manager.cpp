@@ -65,6 +65,7 @@ CallbackQueueManager::~CallbackQueueManager()
   size_t num_threads = getNumWorkerThreads();
   for (size_t i = 0; i < num_threads; ++i)
   {
+    boost::mutex::scoped_lock lock(*thread_info_[i].queue_mutex);
     thread_info_[i].queue_cond->notify_all();
   }
 
@@ -217,6 +218,8 @@ void CallbackQueueManager::workerThread(ThreadInfo* info)
     {
       boost::mutex::scoped_lock lock(*info->queue_mutex);
 
+      info->calling = 0;
+
       while (info->queue.empty() && running_)
       {
         info->queue_cond->wait(lock);
@@ -251,7 +254,6 @@ void CallbackQueueManager::workerThread(ThreadInfo* info)
 
     local_queues.clear();
 
-    info->calling = 0;
   }
 }
 
