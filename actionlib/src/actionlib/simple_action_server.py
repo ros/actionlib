@@ -330,7 +330,7 @@ class SimpleActionServer:
                                         "This is a bug in your ActionServer implementation. Fix your code!  "+
                                         "For now, the ActionServer will set this goal to aborted");
                           self.set_aborted(None, "No terminal state was set.");
-                  except Exception as ex:
+                  except Exception, ex:
                       rospy.logerr("Exception in your execute callback: %s\n%s", str(ex),
                                    traceback.format_exc())
                       self.set_aborted(None, "Exception in execute callback: %s" % str(ex))
