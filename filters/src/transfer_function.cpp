@@ -30,6 +30,6 @@
 #include "filters/transfer_function.h"
 #include "pluginlib/class_list_macros.h"
 
-PLUGINLIB_REGISTER_CLASS(TransferFunctionFilterDouble, filters::SingleChannelTransferFunctionFilter<double>, filters::FilterBase<double>)
-PLUGINLIB_REGISTER_CLASS(MultiChannelTransferFunctionFilterDouble, filters::MultiChannelTransferFunctionFilter<double>, filters::MultiChannelFilterBase<double>)
+PLUGINLIB_DECLARE_CLASS(filters, TransferFunctionFilterDouble, filters::SingleChannelTransferFunctionFilter<double>, filters::FilterBase<double>)
+PLUGINLIB_DECLARE_CLASS(filters, MultiChannelTransferFunctionFilterDouble, filters::MultiChannelTransferFunctionFilter<double>, filters::MultiChannelFilterBase<double>)
 

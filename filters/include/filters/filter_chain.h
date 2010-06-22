@@ -196,9 +196,43 @@ public:
             return false;
           }
         }
+
+
+	//CHeck for backwards compatible declarations
+	if (std::string(config[i]["type"]).find("/") == std::string::npos)
+	  {
+	    ROS_WARN("Deprecation Warning: No '/' detected in FilterType, Please update to 1.2 plugin syntax. ");
+	    std::vector<std::string> libs = loader_.getDeclaredClasses();
+	    for (std::vector<std::string>::iterator it = libs.begin(); it != libs.end(); ++it)
+	      {
+		size_t position =  it->find(std::string(config[i]["type"]));
+		if (position != std::string::npos)
+		  {
+		    ROS_WARN("Replaced %s with %s", std::string(config[i]["type"]).c_str(), it->c_str());
+		    config[i]["type"] = *it;
+		  }
+	      }
+	  }
+	//Make sure the filter chain has a valid type
+	std::vector<std::string> libs = loader_.getDeclaredClasses();
+	bool found = false;
+	for (std::vector<std::string>::iterator it = libs.begin(); it != libs.end(); ++it)
+	  {
+	    if (*it == std::string(config[i]["type"]))
+	      {
+		found = true;
+		break;
+	      }
+	  }
+	if (!found)
+	  {
+	    ROS_ERROR("Couldn't find filter of type %s", std::string(config[i]["type"]).c_str());
+	    return false;
+	  }
+	
       }
     }
-
+    
 
     bool result = true;    
 
@@ -397,6 +431,39 @@ public:
             return false;
           }
         }
+	//CHeck for backwards compatible declarations
+	if (std::string(config[i]["type"]).find("/") == std::string::npos)
+	  {
+	    ROS_WARN("Deprecation Warning: No '/' detected in FilterType, Please update to 1.2 plugin syntax. ");
+	    std::vector<std::string> libs = loader_.getDeclaredClasses();
+	    for (std::vector<std::string>::iterator it = libs.begin(); it != libs.end(); ++it)
+	      {
+		size_t position =  it->find(std::string(config[i]["type"]));
+		if (position != std::string::npos)
+		  {
+		    ROS_WARN("Replaced %s with %s", std::string(config[i]["type"]).c_str(), it->c_str());
+		    config[i]["type"] = *it;
+		  }
+	      }
+	  }
+	//Make sure the filter chain has a valid type
+	std::vector<std::string> libs = loader_.getDeclaredClasses();
+	bool found = false;
+	for (std::vector<std::string>::iterator it = libs.begin(); it != libs.end(); ++it)
+	  {
+	    if (*it == std::string(config[i]["type"]))
+	      {
+		found = true;
+		break;
+	      }
+	  }
+	if (!found)
+	  {
+	    ROS_ERROR("Couldn't find filter of type %s", std::string(config[i]["type"]).c_str());
+	    return false;
+	  }
+	
+	
       }
     }
 
