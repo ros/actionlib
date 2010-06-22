@@ -6,6 +6,7 @@ rosbuild_add_boost_directories()
 
 #Plugins
 rosbuild_add_library(mean src/mean.cpp)
+rosbuild_add_library(params src/test_params.cpp)
 rosbuild_add_library(increment src/increment.cpp)
 rosbuild_add_library(median src/median.cpp)
 rosbuild_add_library(transfer_function src/transfer_function.cpp)
@@ -27,6 +28,12 @@ rosbuild_add_executable(mean_test EXCLUDE_FROM_ALL test/test_mean.cpp)
 target_link_libraries(mean_test mean)
 rosbuild_add_gtest_build_flags(mean_test)
 rosbuild_add_rostest(test/test_mean.launch)
+
+#test params filter
+rosbuild_add_executable(params_test EXCLUDE_FROM_ALL test/test_params.cpp)
+target_link_libraries(params_test params)
+rosbuild_add_gtest_build_flags(params_test)
+rosbuild_add_rostest(test/test_params.launch)
 
 #Test plugin loading into filter chain
 rosbuild_add_executable(chain_test EXCLUDE_FROM_ALL test/test_chain.cpp)

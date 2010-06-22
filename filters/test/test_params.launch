@@ -1,0 +1,5 @@
+<launch>	
+	<rosparam command="load" file="$(find filters)/test/test_params.yaml"/>
+	<test test-name="params_test" pkg="filters" type="params_test"/>
+
+</launch>

@@ -51,6 +51,14 @@
       </description>
     </class>
   </library>
+  <library path="lib/libtest_param">
+    <class name="ParamTest" type="filters::ParamTest<double>" 
+	    base_class_type="filters::FilterBase<double>">
+      <description>
+	This is a filter designed to test parameter readings.  It's not useful. 
+      </description>
+    </class>
+  </library>
   <library path="lib/libincrement">
     <class name="IncrementFilterInt" type="filters::IncrementFilter<int>" 
 	    base_class_type="filters::FilterBase<int>">

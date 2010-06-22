@@ -131,7 +131,7 @@ protected:
       return false;
     }
 
-    value = it->second;
+    value = std::string(it->second);
     return true;
   }
 

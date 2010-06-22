@@ -1,0 +1,4 @@
+TestDouble:
+  name: double_test
+  type: ParamTestDouble
+  params: {key: 4.0}
