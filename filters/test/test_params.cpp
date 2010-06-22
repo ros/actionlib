@@ -39,8 +39,6 @@ TEST(Parameters, Double)
 {
   ros::NodeHandle nh;
   double epsilon = 1e-6;
-  int length = 5;
-  int rows = 5;
   
   FilterBase<double > * filter = new ParamTest<double>  ();
   EXPECT_TRUE(filter->configure("TestDouble", nh));
@@ -49,6 +47,67 @@ TEST(Parameters, Double)
   EXPECT_NEAR(4,  out, epsilon);
 }
 
+TEST(Parameters, Int)
+{
+  ros::NodeHandle nh;
+  
+  FilterBase<int> * filter = new ParamTest<int>  ();
+  EXPECT_TRUE(filter->configure("TestInt", nh));
+  int out;
+  filter -> update(out, out);
+  EXPECT_EQ(4,  out);
+}
+
+TEST(Parameters, UInt)
+{
+  ros::NodeHandle nh;
+  
+  FilterBase<unsigned int> * filter = new ParamTest<unsigned int>  ();
+  EXPECT_TRUE(filter->configure("TestUInt", nh));
+  unsigned int out;
+  filter -> update(out, out);
+  EXPECT_EQ(4,  out);
+}
+
+TEST(Parameters, String)
+{
+  ros::NodeHandle nh;
+  
+  FilterBase<std::string> * filter = new ParamTest<std::string>  ();
+  EXPECT_TRUE(filter->configure("TestString", nh));
+  std::string out;
+  filter -> update(out, out);
+  EXPECT_STREQ("four",  out.c_str());
+}
+
+TEST(Parameters, DoubleVector)
+{
+  ros::NodeHandle nh;
+  double epsilon = 1e-6;
+  
+  FilterBase<std::vector<double> > * filter = new ParamTest<std::vector<double> >  ();
+  EXPECT_TRUE(filter->configure("TestDoubleVector", nh));
+  std::vector<double> out;
+  filter -> update(out, out);
+  for (std::vector<double>::iterator it = out.begin(); it != out.end(); ++it)
+    {
+      EXPECT_NEAR(4,  *it, epsilon);
+    }
+}
+
+TEST(Parameters, StringVector)
+{
+  ros::NodeHandle nh;
+  
+  FilterBase<std::vector<std::string> > * filter = new ParamTest<std::vector<std::string> >  ();
+  EXPECT_TRUE(filter->configure("TestStringVector", nh));
+  std::vector<std::string> out;
+  filter -> update(out, out);
+  for (std::vector<std::string>::iterator it = out.begin(); it != out.end(); ++it)
+    {
+      EXPECT_STREQ("four",  it->c_str());
+    }
+}
 
 
 int main(int argc, char **argv){

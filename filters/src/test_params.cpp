@@ -36,3 +36,5 @@ PLUGINLIB_REGISTER_CLASS(ParamTestInt, filters::ParamTest<int>, filters::FilterB
 PLUGINLIB_REGISTER_CLASS(ParamTestUInt, filters::ParamTest<unsigned int>, filters::FilterBase<unsigned int>)
 PLUGINLIB_REGISTER_CLASS(ParamTestString, filters::ParamTest<std::string>, filters::FilterBase<std::string>)
 
+PLUGINLIB_REGISTER_CLASS(ParamTestDoubleVector, filters::ParamTest<std::vector<double> >, filters::FilterBase<std::vector<double> >)
+PLUGINLIB_REGISTER_CLASS(ParamTestStringVector, filters::ParamTest<std::vector<std::string> >, filters::FilterBase<std::vector<std::string> >)
