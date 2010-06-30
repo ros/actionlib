@@ -68,7 +68,7 @@ class StatusTracker:
 
             #if the goal id is zero, then we need to make up an id for the goal
             if self.status.goal_id.id == "":
-                self.status.goal_id = self.id_generator.generateID();
+                self.status.goal_id = self.id_generator.generate_ID();
 
             #if the timestamp of the goal is zero, then we'll set it to now()
             if self.status.goal_id.stamp == rospy.Time():
