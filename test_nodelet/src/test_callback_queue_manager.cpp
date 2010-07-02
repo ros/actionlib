@@ -109,7 +109,13 @@ TEST(CallbackQueueManager, singleThreaded)
 
 TEST(CallbackQueueManager, multipleSingleThreaded)
 {
-  CallbackQueueManager man;
+  uint32_t thread_count = boost::thread::hardware_concurrency();
+  // Need at least 2 threads here
+  if (thread_count == 1)
+  {
+    thread_count = 2;
+  }
+  CallbackQueueManager man(thread_count);
   CallbackQueuePtr queue1(new CallbackQueue(&man));
   CallbackQueuePtr queue2(new CallbackQueue(&man));
   man.addQueue(queue1, false);
@@ -160,7 +166,7 @@ TEST(CallbackQueueManager, multiThreaded)
   for (uint32_t j = 0; j < 1000; ++j)
   {
     //ROS_INFO_COND(j % 1000 == 0, "%d", j);
-    CallbackQueueManager man;
+    CallbackQueueManager man(1);
     CallbackQueuePtr queue(new CallbackQueue(&man));
     man.addQueue(queue, true);
 
