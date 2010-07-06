@@ -56,9 +56,9 @@ def ros_timer(callable,frequency):
     while not rospy.is_shutdown():
         try:
             rate.sleep()
+            callable()
         except rospy.exceptions.ROSInterruptException:
             rospy.logdebug("Sleep interrupted");
-        callable()
 
 class ActionServer:
     """
