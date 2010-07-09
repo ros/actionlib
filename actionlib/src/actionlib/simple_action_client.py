@@ -220,8 +220,8 @@ class SimpleActionClient:
     def _handle_transition(self, gh):
         comm_state = gh.get_comm_state()
 
-        error_msg = "Received comm state %s when in simple state %s" % \
-            (CommState.to_string(comm_state), SimpleGoalState.to_string(self.simple_state))
+        error_msg = "Received comm state %s when in simple state %s with SimpleActionClient in NS %s" % \
+            (CommState.to_string(comm_state), SimpleGoalState.to_string(self.simple_state), rospy.resolve_name(self.action_client.ns))
 
         if comm_state == CommState.ACTIVE:
             if self.simple_state == SimpleGoalState.PENDING:
