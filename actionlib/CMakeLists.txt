@@ -8,6 +8,9 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #  RelWithDebInfo : w/ debug symbols, w/ optimization
 #  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
 #set(ROS_BUILD_TYPE RelWithDebInfo)
+rosbuild_find_ros_package(actionlib_msgs)
+include(${actionlib_msgs_PACKAGE_PATH}/cmake/actionbuild.cmake)
+genaction()
 
 rosbuild_init()
 rosbuild_genmsg()
@@ -22,6 +25,10 @@ rosbuild_add_library(${PROJECT_NAME} src/connection_monitor.cpp
                                      src/goal_id_generator.cpp)
 
 include_directories(${PROJECT_SOURCE_DIR}/msg/cpp/)
+
+rosbuild_add_executable(add_two_ints_server test/add_two_ints_server.cpp)
+target_link_libraries(add_two_ints_server ${PROJECT_NAME})
+
 rosbuild_add_executable(ref_server test/ref_server.cpp)
 target_link_libraries(ref_server ${PROJECT_NAME})
 
