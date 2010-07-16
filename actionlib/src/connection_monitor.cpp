@@ -48,7 +48,8 @@ using namespace actionlib;
     ROS_WARN_NAMED("ConnectionMonitor", fmt,##__VA_ARGS__)
 
 
-ConnectionMonitor::ConnectionMonitor()
+ConnectionMonitor::ConnectionMonitor(ros::Subscriber&feedback_sub, ros::Subscriber& result_sub)
+  : feedback_sub_(feedback_sub), result_sub_(result_sub)
 {
   status_received_ = false;
 }
@@ -199,6 +200,18 @@ bool ConnectionMonitor::isServerConnected()
     return false;
   }
 
+  if(feedback_sub_.getNumPublishers() == 0)
+  {
+    CONNECTION_DEBUG("isServerConnected: Client has not yet connected to feedback topic of server [%s]", status_caller_id_.c_str());
+    return false;
+  }
+
+  if(result_sub_.getNumPublishers() == 0)
+  {
+    CONNECTION_DEBUG("isServerConnected: Client has not yet connected to result topic of server [%s]", status_caller_id_.c_str());
+    return false;
+  }
+
   CONNECTION_DEBUG("isServerConnected: Server [%s] is fully connected", status_caller_id_.c_str());
   return true;
 }
@@ -233,9 +246,6 @@ bool ConnectionMonitor::waitForActionServerToStart(const ros::Duration& timeout,
 
     check_connection_condition_.timed_wait(lock, boost::posix_time::milliseconds(time_left.toSec() * 1000.0f));
   }
-
-  //@TODO: THIS IS A HACK UNTIL WE GET PUBLISHER CALLABACKS ON SUBSCRIPTIONS
-  ros::Duration(1.0).sleep();
 
   return isServerConnected();
 }
