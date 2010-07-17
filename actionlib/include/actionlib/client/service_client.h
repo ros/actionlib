@@ -34,50 +34,55 @@
 *
 * Author: Eitan Marder-Eppstein
 *********************************************************************/
-#ifndef ACTIONLIB_SERVER_SERVICE_SERVER_H_
-#define ACTIONLIB_SERVER_SERVICE_SERVER_H_
-
+#ifndef ACTIONLIB_CLIENT_SERVICE_CLIENT_H_
+#define ACTIONLIB_CLIENT_SERVICE_CLIENT_H_
 #include <actionlib/action_definition.h>
-#include <actionlib/server/action_server.h>
+#include <actionlib/client/simple_action_client.h>
 
 namespace actionlib {
-  class ServiceServerImp {
+  class ServiceClientImp {
     public:
-      ServiceServerImp(){}
-      virtual ~ServiceServerImp(){}
+      ServiceClientImp(){}
+      virtual bool call(const ros::Message* goal, std::string goal_md5sum, ros::Message* result, std::string result_md5sum) = 0;
+      virtual bool waitForServer(const ros::Duration& timeout) = 0;
+      virtual ~ServiceClientImp(){}
   };
 
-  class ServiceServer {
+  class ServiceClient {
     public:
-      ServiceServer(boost::shared_ptr<ServiceServerImp> server) : server_(server) {}
+      ServiceClient(boost::shared_ptr<ServiceClientImp> client) : client_(client) {}
+
+      template <class Goal, class Result>
+      bool call(const Goal& goal, Result& result);
+
+      bool waitForServer(const ros::Duration& timeout = ros::Duration(0,0));
 
     private:
-      boost::shared_ptr<ServiceServerImp> server_;
+      boost::shared_ptr<ServiceClientImp> client_;
   };
-
-  template <class ActionSpec> 
-  ServiceServer advertiseService(ros::NodeHandle n, std::string name,
-          boost::function<bool (const typename ActionSpec::_action_goal_type::_goal_type&, 
-                                typename ActionSpec::_action_result_type::_result_type& result)> service_cb);
 
   template <class ActionSpec>
-  class ServiceServerImpT : public ServiceServerImp {
+  ServiceClient serviceClient(ros::NodeHandle n, std::string name);
+
+  template <class ActionSpec>
+  class ServiceClientImpT : public ServiceClientImp
+  {
     public:
-      //generates typedefs that we'll use to make our lives easier
       ACTION_DEFINITION(ActionSpec);
+      typedef ClientGoalHandle<ActionSpec> GoalHandleT;
+      typedef SimpleActionClient<ActionSpec> SimpleActionClientT;
 
-      typedef typename ActionServer<ActionSpec>::GoalHandle GoalHandle;
+      ServiceClientImpT(ros::NodeHandle n, std::string name);
 
-      ServiceServerImpT(ros::NodeHandle n, std::string name, 
-          boost::function<bool (const Goal&, Result& result)> service_cb);
-      void goalCB(GoalHandle g);
+      bool call(const ros::Message* goal, std::string goal_md5sum, ros::Message* result, std::string result_md5sum);
+      bool waitForServer(const ros::Duration& timeout);
 
     private:
-      boost::shared_ptr<ActionServer<ActionSpec> > as_;
-      boost::function<bool (const Goal&, Result& result)> service_cb_;
+      boost::scoped_ptr<SimpleActionClientT> ac_;
+      
   };
 };
 
 //include the implementation
-#include <actionlib/server/service_server_imp.h>
+#include <actionlib/client/service_client_imp.h>
 #endif

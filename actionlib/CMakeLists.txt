@@ -26,6 +26,9 @@ rosbuild_add_library(${PROJECT_NAME} src/connection_monitor.cpp
 
 include_directories(${PROJECT_SOURCE_DIR}/msg/cpp/)
 
+rosbuild_add_executable(add_two_ints_client test/add_two_ints_client.cpp)
+target_link_libraries(add_two_ints_client ${PROJECT_NAME})
+
 rosbuild_add_executable(add_two_ints_server test/add_two_ints_server.cpp)
 target_link_libraries(add_two_ints_server ${PROJECT_NAME})
 

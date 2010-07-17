@@ -238,6 +238,7 @@ private:
 
   void statusCb(const actionlib_msgs::GoalStatusArrayConstPtr& status_array)
   {
+    ROS_DEBUG("Getting status over the wire.");
     if (connection_monitor_)
       connection_monitor_->processStatus(status_array);
     manager_.updateStatuses(status_array);

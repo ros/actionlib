@@ -34,50 +34,43 @@
 *
 * Author: Eitan Marder-Eppstein
 *********************************************************************/
-#ifndef ACTIONLIB_SERVER_SERVICE_SERVER_H_
-#define ACTIONLIB_SERVER_SERVICE_SERVER_H_
+#include <ros/ros.h>
+#include <actionlib/client/service_client.h>
+#include <actionlib/TwoIntsAction.h>
 
-#include <actionlib/action_definition.h>
-#include <actionlib/server/action_server.h>
+int main(int argc, char** argv)
+{
+  ros::init(argc, argv, "add_two_ints_client");
+  if(argc != 3)
+  {
+    ROS_INFO("Usage: add_two_ints_client X Y");
+    return 1;
+  }
 
-namespace actionlib {
-  class ServiceServerImp {
-    public:
-      ServiceServerImp(){}
-      virtual ~ServiceServerImp(){}
-  };
+  ROS_INFO("Constructing things");
 
-  class ServiceServer {
-    public:
-      ServiceServer(boost::shared_ptr<ServiceServerImp> server) : server_(server) {}
+  ros::NodeHandle n;
+  ROS_INFO("Node handle");
+  actionlib::ServiceClient client = actionlib::serviceClient<actionlib::TwoIntsAction>(n, "add_two_ints");
+  ROS_INFO("client");
+  client.waitForServer();
+  ROS_INFO("done waiting");
+  actionlib::TwoIntsGoal req;
+  actionlib::TwoIntsResult resp;
 
-    private:
-      boost::shared_ptr<ServiceServerImp> server_;
-  };
+  ROS_INFO("Done Constructing things");
 
-  template <class ActionSpec> 
-  ServiceServer advertiseService(ros::NodeHandle n, std::string name,
-          boost::function<bool (const typename ActionSpec::_action_goal_type::_goal_type&, 
-                                typename ActionSpec::_action_result_type::_result_type& result)> service_cb);
+  req.a = atoi(argv[1]);
+  req.b = atoi(argv[2]);
 
-  template <class ActionSpec>
-  class ServiceServerImpT : public ServiceServerImp {
-    public:
-      //generates typedefs that we'll use to make our lives easier
-      ACTION_DEFINITION(ActionSpec);
+  ROS_INFO("Attempting to make call");
 
-      typedef typename ActionServer<ActionSpec>::GoalHandle GoalHandle;
+  if(client.call(req, resp))
+  {
+    ROS_INFO("Sum: %ld", (long int)resp.sum);
+    return 1;
+  }
 
-      ServiceServerImpT(ros::NodeHandle n, std::string name, 
-          boost::function<bool (const Goal&, Result& result)> service_cb);
-      void goalCB(GoalHandle g);
+  return 0;
+}
 
-    private:
-      boost::shared_ptr<ActionServer<ActionSpec> > as_;
-      boost::function<bool (const Goal&, Result& result)> service_cb_;
-  };
-};
-
-//include the implementation
-#include <actionlib/server/service_server_imp.h>
-#endif
