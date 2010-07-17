@@ -75,7 +75,9 @@ public:
    * \param queue CallbackQueue from which this action will process messages.
    *              The default (NULL) is to use the global queue
    */
-  ActionClient(const std::string& name, ros::CallbackQueueInterface* queue = NULL) : n_(name), guard_(new DestructionGuard()), manager_(guard_)
+ ActionClient(const std::string& name, ros::CallbackQueueInterface* queue = NULL) 
+  : n_(name), guard_(new DestructionGuard()), 
+    manager_(guard_)
   {
     initClient(queue);
   }
@@ -90,7 +92,9 @@ public:
    * \param queue CallbackQueue from which this action will process messages.
    *              The default (NULL) is to use the global queue
    */
-  ActionClient(const ros::NodeHandle& n, const std::string& name, ros::CallbackQueueInterface* queue = NULL) : n_(n, name), guard_(new DestructionGuard()), manager_(guard_)
+  ActionClient(const ros::NodeHandle& n, const std::string& name, ros::CallbackQueueInterface* queue = NULL) 
+    : n_(n, name), guard_(new DestructionGuard()), 
+    manager_(guard_)
   {
     initClient(queue);
   }
@@ -154,7 +158,10 @@ public:
    */
   bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0) )
   {
-    return connection_monitor.waitForActionServerToStart(timeout, n_);
+    if (connection_monitor_)
+      return connection_monitor_->waitForActionServerToStart(timeout, n_);
+    else
+      return false;
   }
 
 private:
@@ -162,14 +169,15 @@ private:
 
   boost::shared_ptr<DestructionGuard> guard_;
   GoalManager<ActionSpec> manager_;
-  ConnectionMonitor connection_monitor;   // Have to destroy subscribers and publishers before the connection_monitor, since we call callbacks in the connection_monitor
 
+  ros::Subscriber result_sub_;
   ros::Subscriber feedback_sub_;
+
+  boost::shared_ptr<ConnectionMonitor> connection_monitor_;   // Have to destroy subscribers and publishers before the connection_monitor_, since we call callbacks in the connection_monitor_
+
   ros::Publisher  goal_pub_;
   ros::Publisher  cancel_pub_;
   ros::Subscriber status_sub_;
-  ros::Subscriber result_sub_;
-
 
   void sendGoalFunc(const ActionGoalConstPtr& action_goal)
   {
@@ -183,22 +191,25 @@ private:
 
   void initClient(ros::CallbackQueueInterface* queue)
   {
+    status_sub_   = queue_subscribe("status",   1, &ActionClientT::statusCb,   this, queue);
+    feedback_sub_ = queue_subscribe("feedback", 1, &ActionClientT::feedbackCb, this, queue);
+    result_sub_   = queue_subscribe("result",   1, &ActionClientT::resultCb,   this, queue);
+
+    connection_monitor_.reset(new ConnectionMonitor(feedback_sub_, status_sub_));
+
     // Start publishers and subscribers
     goal_pub_ = queue_advertise<ActionGoal>("goal", 1,
-                                            boost::bind(&ConnectionMonitor::goalConnectCallback,    &connection_monitor, _1),
-                                            boost::bind(&ConnectionMonitor::goalDisconnectCallback, &connection_monitor, _1),
+                                            boost::bind(&ConnectionMonitor::goalConnectCallback,    connection_monitor_, _1),
+                                            boost::bind(&ConnectionMonitor::goalDisconnectCallback, connection_monitor_, _1),
                                             queue);
     cancel_pub_ = queue_advertise<actionlib_msgs::GoalID>("cancel", 1,
-                                            boost::bind(&ConnectionMonitor::cancelConnectCallback,    &connection_monitor, _1),
-                                            boost::bind(&ConnectionMonitor::cancelDisconnectCallback, &connection_monitor, _1),
+                                            boost::bind(&ConnectionMonitor::cancelConnectCallback,    connection_monitor_, _1),
+                                            boost::bind(&ConnectionMonitor::cancelDisconnectCallback, connection_monitor_, _1),
                                             queue);
 
     manager_.registerSendGoalFunc(boost::bind(&ActionClientT::sendGoalFunc, this, _1));
     manager_.registerCancelFunc(boost::bind(&ActionClientT::sendCancelFunc, this, _1));
 
-    status_sub_   = queue_subscribe("status",   1, &ActionClientT::statusCb,   this, queue);
-    feedback_sub_ = queue_subscribe("feedback", 1, &ActionClientT::feedbackCb, this, queue);
-    result_sub_   = queue_subscribe("result",   1, &ActionClientT::resultCb,   this, queue);
   }
 
   template <class M>
@@ -227,7 +238,8 @@ private:
 
   void statusCb(const actionlib_msgs::GoalStatusArrayConstPtr& status_array)
   {
-    connection_monitor.processStatus(status_array);
+    if (connection_monitor_)
+      connection_monitor_->processStatus(status_array);
     manager_.updateStatuses(status_array);
   }
 

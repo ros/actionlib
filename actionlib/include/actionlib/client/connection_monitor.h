@@ -49,7 +49,7 @@ namespace actionlib
 class ConnectionMonitor
 {
 public:
-  ConnectionMonitor();
+  ConnectionMonitor(ros::Subscriber&feedback_sub, ros::Subscriber& result_sub);
 
   void goalConnectCallback(const ros::SingleSubscriberPublisher& pub);
 
@@ -63,6 +63,7 @@ public:
 
   bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0), const ros::NodeHandle& nh = ros::NodeHandle() );
   bool isServerConnected();
+
 private:
 
   // status stuff
@@ -78,6 +79,9 @@ private:
 
   std::string goalSubscribersString();
   std::string cancelSubscribersString();
+
+  ros::Subscriber& feedback_sub_;
+  ros::Subscriber& result_sub_;
 };
 
 }
