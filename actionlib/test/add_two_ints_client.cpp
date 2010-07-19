@@ -47,23 +47,14 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  ROS_INFO("Constructing things");
-
   ros::NodeHandle n;
-  ROS_INFO("Node handle");
   actionlib::ServiceClient client = actionlib::serviceClient<actionlib::TwoIntsAction>(n, "add_two_ints");
-  ROS_INFO("client");
   client.waitForServer();
-  ROS_INFO("done waiting");
   actionlib::TwoIntsGoal req;
   actionlib::TwoIntsResult resp;
 
-  ROS_INFO("Done Constructing things");
-
   req.a = atoi(argv[1]);
   req.b = atoi(argv[2]);
-
-  ROS_INFO("Attempting to make call");
 
   if(client.call(req, resp))
   {

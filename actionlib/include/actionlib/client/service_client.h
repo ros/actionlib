@@ -45,6 +45,7 @@ namespace actionlib {
       ServiceClientImp(){}
       virtual bool call(const ros::Message* goal, std::string goal_md5sum, ros::Message* result, std::string result_md5sum) = 0;
       virtual bool waitForServer(const ros::Duration& timeout) = 0;
+      virtual bool isServerConnected() = 0;
       virtual ~ServiceClientImp(){}
   };
 
@@ -56,6 +57,7 @@ namespace actionlib {
       bool call(const Goal& goal, Result& result);
 
       bool waitForServer(const ros::Duration& timeout = ros::Duration(0,0));
+      bool isServerConnected();
 
     private:
       boost::shared_ptr<ServiceClientImp> client_;
@@ -76,6 +78,7 @@ namespace actionlib {
 
       bool call(const ros::Message* goal, std::string goal_md5sum, ros::Message* result, std::string result_md5sum);
       bool waitForServer(const ros::Duration& timeout);
+      bool isServerConnected();
 
     private:
       boost::scoped_ptr<SimpleActionClientT> ac_;

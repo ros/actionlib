@@ -164,6 +164,15 @@ public:
       return false;
   }
 
+  /**
+   * @brief  Checks if the action client is successfully connected to the action server
+   * @return True if the server is connected, false otherwise
+   */
+  bool isServerConnected()
+  {
+    return connection_monitor_->isServerConnected();
+  }
+
 private:
   ros::NodeHandle n_;
 

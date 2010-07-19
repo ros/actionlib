@@ -44,8 +44,12 @@ namespace actionlib {
 
   template <class ActionSpec>
     bool ServiceClientImpT<ActionSpec>::waitForServer(const ros::Duration& timeout){
-      ROS_INFO("Calling the correct wait for server on the simple action client");
       return ac_->waitForServer(timeout);
+    }
+
+  template <class ActionSpec>
+    bool ServiceClientImpT<ActionSpec>::isServerConnected(){
+      return ac_->isServerConnected();
     }
 
   template <class ActionSpec>
@@ -63,7 +67,11 @@ namespace actionlib {
         return false;
       }
 
-      //TODO: ac_->isServerConnected() -- need to add this at some point
+      if(!ac_->isServerConnected()){
+        ROS_ERROR("Attempting to make a service call when the server isn't actually connected to the client.");
+        return false;
+      }
+
       ac_->sendGoalAndWait(*goal_c);
       if(ac_->getState() == SimpleClientGoalState::SUCCEEDED){
         (*result_c) = *(ac_->getResult());
@@ -82,6 +90,10 @@ namespace actionlib {
 
   bool ServiceClient::waitForServer(const ros::Duration& timeout){
     return client_->waitForServer(timeout);
+  }
+
+  bool ServiceClient::isServerConnected(){
+    return client_->isServerConnected();
   }
 
   //****** actionlib::serviceClient *******************
