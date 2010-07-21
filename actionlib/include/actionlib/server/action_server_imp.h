@@ -74,12 +74,6 @@ namespace actionlib {
     feedback_pub_ = node_.advertise<ActionFeedback>("feedback", 50);
     status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", 50);
 
-    goal_sub_ = node_.subscribe<ActionGoal>("goal", 50,
-        boost::bind(&ActionServer::goalCallback, this, _1));
-
-    cancel_sub_ = node_.subscribe<actionlib_msgs::GoalID>("cancel", 50,
-        boost::bind(&ActionServer::cancelCallback, this, _1));
-
     //read the frequency with which to publish status from the parameter server
     double status_frequency, status_list_timeout;
     node_.param("status_frequency", status_frequency, 5.0);
@@ -91,6 +85,13 @@ namespace actionlib {
       status_timer_ = node_.createTimer(ros::Duration(1.0 / status_frequency),
           boost::bind(&ActionServer::publishStatus, this, _1));
     }
+
+    goal_sub_ = node_.subscribe<ActionGoal>("goal", 50,
+        boost::bind(&ActionServer::goalCallback, this, _1));
+
+    cancel_sub_ = node_.subscribe<actionlib_msgs::GoalID>("cancel", 50,
+        boost::bind(&ActionServer::cancelCallback, this, _1));
+
   }
 
   template <class ActionSpec>
