@@ -45,7 +45,7 @@ Nodelet::Nodelet ()
 
 Nodelet::~Nodelet ()
 {
-  NODELET_DEBUG ("nodelet destructor.");
+  //NODELET_DEBUG ("nodelet destructor.");
 
   if (inited_)
   {

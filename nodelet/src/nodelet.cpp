@@ -138,16 +138,20 @@ class NodeletInterface
       ROS_INFO_STREAM ("Unloading nodelet " << name << " from manager " << manager);
         
       std::string service_name = manager + "/unload_nodelet";
-      // Wait until the service is advertised
+      // Check if the service exists and is available
+      if (!ros::service::exists (service_name, true))
+        return (false);       // exit here as it doesn't make sense to wait until the manager starts, 
+                              // as there's probably no nodelet already loaded to unload
+
       ros::ServiceClient client = n_.serviceClient<nodelet::NodeletUnload> (service_name);
-      client.waitForExistence ();
+      //client.waitForExistence ();
 
       // Call the service
       nodelet::NodeletUnload srv;
       srv.request.name = name;
       if (!client.call (srv))
       {
-        ROS_ERROR ("Failed to call service!");
+        //ROS_ERROR ("Failed to call service!");
         return (false);
       }
       return (true);
@@ -179,6 +183,7 @@ class NodeletInterface
       std::string service_name = std::string (manager) + "/load_nodelet";
 
       // Wait until the service is advertised
+      ROS_DEBUG ("Waiting for service %s to be available...", service_name.c_str ());
       ros::ServiceClient client = n_.serviceClient<nodelet::NodeletLoad> (service_name);
       client.waitForExistence ();
 
@@ -191,7 +196,7 @@ class NodeletInterface
       srv.request.my_argv = args;
       if (!client.call (srv))
       {
-        ROS_ERROR ("Failed to call service!");
+        //ROS_ERROR ("Failed to call service!");
         return false;
       }
       return true;
@@ -239,7 +244,7 @@ int
   {
     ros::init (argc, argv, "manager");
     nodelet::Loader n;
-    ros::spin();
+    ros::spin ();
   }
   else if (command == "standalone")
   {
