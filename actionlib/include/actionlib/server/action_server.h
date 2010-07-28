@@ -70,11 +70,9 @@ namespace actionlib {
       //for convenience when referring to ServerGoalHandles
       typedef ServerGoalHandle<ActionSpec> GoalHandle;
 
-    private:
       //generates typedefs that we'll use to make our lives easier
       ACTION_DEFINITION(ActionSpec);
 
-    public:
       /**
        * @brief  Constructor for an ActionServer
        * @param  n A NodeHandle to create a namespace under
