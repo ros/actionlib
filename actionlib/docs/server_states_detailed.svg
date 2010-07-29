@@ -3459,7 +3459,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -3815,7 +3815,7 @@
          y="-350.64868"
          x="260.31067"
          sodipodi:role="line"
-         id="tspan5828-6">setCancelled</tspan></text>
+         id="tspan5828-6">setCanceled</tspan></text>
     <text
        id="text3961-0-0-9-1-1"
        y="-496.64868"
