@@ -519,9 +519,9 @@ class ActionClient:
         self.manager.register_send_goal_fn(self.pub_goal.publish)
         self.manager.register_cancel_fn(self.pub_cancel.publish)
 
-        rospy.Subscriber(rospy.remap_name(ns) + '/status', GoalStatusArray, self._status_cb)
-        rospy.Subscriber(rospy.remap_name(ns) + '/result', self.ActionResult, self._result_cb)
-        rospy.Subscriber(rospy.remap_name(ns) + '/feedback', self.ActionFeedback, self._feedback_cb)
+        self.status_sub = rospy.Subscriber(rospy.remap_name(ns) + '/status', GoalStatusArray, self._status_cb)
+        self.result_sub = rospy.Subscriber(rospy.remap_name(ns) + '/result', self.ActionResult, self._result_cb)
+        self.feedback_sub = rospy.Subscriber(rospy.remap_name(ns) + '/feedback', self.ActionFeedback, self._feedback_cb)
 
     ## @brief Sends a goal to the action server
     ##
@@ -567,17 +567,32 @@ class ActionClient:
 
                 if self.pub_goal.impl.has_connection(server_id) and \
                         self.pub_cancel.impl.has_connection(server_id):
-                    started = True
-                    break
+                    #We'll also check that all of the subscribers have at least
+                    #one publisher, this isn't a perfect check, but without
+                    #publisher callbacks... it'll have to do
+                    status_num_pubs = 0
+                    for stat in self.status_sub.impl.get_stats()[1]:
+                        if stat[4]:
+                            status_num_pubs += 1
+
+                    result_num_pubs = 0
+                    for stat in self.result_sub.impl.get_stats()[1]:
+                        if stat[4]:
+                            result_num_pubs += 1
+
+                    feedback_num_pubs = 0
+                    for stat in self.feedback_sub.impl.get_stats()[1]:
+                        if stat[4]:
+                            feedback_num_pubs += 1
+
+                    if status_num_pubs > 0 and result_num_pubs > 0 and feedback_num_pubs > 0:
+                        started = True
+                        break
 
             if timeout != rospy.Duration(0.0) and rospy.get_rostime() >= timeout_time:
                 break
 
             time.sleep(0.01)
-
-        # Hack to give subscriptions time to connect. Will be removed once an 'advertise callback' exists in ros.
-        if started:
-            time.sleep(1.0)
 
         return started
 
