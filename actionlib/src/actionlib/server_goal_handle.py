@@ -109,10 +109,14 @@ class ServerGoalHandle:
                 if(status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.msg.GoalStatus.RECALLING):
                     self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.RECALLED;
                     self.status_tracker.status.text = text
+                    #on transition to a terminal state, we'll also set the handle destruction time
+                    self.status_tracker.handle_destruction_time = rospy.Time.now()
                     self.action_server.publish_result(self.status_tracker.status, result);
                 elif(status == actionlib_msgs.msg.GoalStatus.ACTIVE or status == actionlib_msgs.msg.GoalStatus.PREEMPTING):
                     self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.PREEMPTED;
                     self.status_tracker.status.text = text
+                    #on transition to a terminal state, we'll also set the handle destruction time
+                    self.status_tracker.handle_destruction_time = rospy.Time.now()
                     self.action_server.publish_result(self.status_tracker.status, result);
 
                 else:
@@ -138,6 +142,8 @@ class ServerGoalHandle:
                 if(status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.msg.GoalStatus.RECALLING):
                     self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.REJECTED;
                     self.status_tracker.status.text = text
+                    #on transition to a terminal state, we'll also set the handle destruction time
+                    self.status_tracker.handle_destruction_time = rospy.Time.now()
                     self.action_server.publish_result(self.status_tracker.status, result);
       
                 else:
@@ -163,6 +169,8 @@ class ServerGoalHandle:
                 if status == actionlib_msgs.msg.GoalStatus.PREEMPTING or status == actionlib_msgs.msg.GoalStatus.ACTIVE:
                     self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.ABORTED;
                     self.status_tracker.status.text = text
+                    #on transition to a terminal state, we'll also set the handle destruction time
+                    self.status_tracker.handle_destruction_time = rospy.Time.now()
                     self.action_server.publish_result(self.status_tracker.status, result);
                     
                 else:
@@ -189,6 +197,8 @@ class ServerGoalHandle:
                 if status == actionlib_msgs.msg.GoalStatus.PREEMPTING or status == actionlib_msgs.msg.GoalStatus.ACTIVE :
                     self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.SUCCEEDED;
                     self.status_tracker.status.text = text
+                    #on transition to a terminal state, we'll also set the handle destruction time
+                    self.status_tracker.handle_destruction_time = rospy.Time.now()
                     self.action_server.publish_result(self.status_tracker.status, result);
       
                 else:
