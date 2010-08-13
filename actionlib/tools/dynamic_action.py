@@ -35,6 +35,8 @@
 #* Author: Eitan Marder-Eppstein
 #***********************************************************
 import roslib
+import rospy
+import sys
 
 class DynamicAction(object):
     def __init__(self, name):
