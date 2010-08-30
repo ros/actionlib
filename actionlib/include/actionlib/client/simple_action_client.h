@@ -400,7 +400,7 @@ void SimpleActionClient<ActionSpec>::cancelAllGoals()
 template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::cancelGoalsAtAndBeforeTime(const ros::Time& time)
 {
-  ac_->cancelAllGoalsBeforeTime(time);
+  ac_->cancelGoalsAtAndBeforeTime(time);
 }
 
 template<class ActionSpec>
