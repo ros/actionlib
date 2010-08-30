@@ -75,8 +75,8 @@ public:
    * \param queue CallbackQueue from which this action will process messages.
    *              The default (NULL) is to use the global queue
    */
- ActionClient(const std::string& name, ros::CallbackQueueInterface* queue = NULL) 
-  : n_(name), guard_(new DestructionGuard()), 
+ ActionClient(const std::string& name, ros::CallbackQueueInterface* queue = NULL)
+  : n_(name), guard_(new DestructionGuard()),
     manager_(guard_)
   {
     initClient(queue);
@@ -92,8 +92,8 @@ public:
    * \param queue CallbackQueue from which this action will process messages.
    *              The default (NULL) is to use the global queue
    */
-  ActionClient(const ros::NodeHandle& n, const std::string& name, ros::CallbackQueueInterface* queue = NULL) 
-    : n_(n, name), guard_(new DestructionGuard()), 
+  ActionClient(const ros::NodeHandle& n, const std::string& name, ros::CallbackQueueInterface* queue = NULL)
+    : n_(n, name), guard_(new DestructionGuard()),
     manager_(guard_)
   {
     initClient(queue);
@@ -144,10 +144,10 @@ public:
    */
   void cancelGoalsAtAndBeforeTime(const ros::Time& time)
   {
-    ActionGoal cancel_msg;
-    cancel_msg.goal_id.stamp = time;
-    cancel_msg.goal_id.id = ros::Time(0,0);
-    goal_pub_.publish(cancel_msg);
+    actionlib_msgs::GoalID cancel_msg;
+    cancel_msg.stamp = time;
+    cancel_msg.id = "";
+    cancel_pub_.publish(cancel_msg);
   }
 
   /**
