@@ -72,6 +72,9 @@ TEST(SimpleClient, easy_tests)
   EXPECT_TRUE(client.getState().getText() == "The ref server has aborted");
 
   client.cancelAllGoals();
+
+  // Don't need this line, but keep it as a compilation check
+  client.cancelGoalsAtAndBeforeTime(ros::Time(1.0));
 }
 
 

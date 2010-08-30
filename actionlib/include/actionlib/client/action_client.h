@@ -140,10 +140,10 @@ public:
    */
   void cancelGoalsAtAndBeforeTime(const ros::Time& time)
   {
-    ActionGoal cancel_msg;
-    cancel_msg.goal_id.stamp = time;
-    cancel_msg.goal_id.id = ros::Time(0,0);
-    goal_pub_.publish(cancel_msg);
+    actionlib_msgs::GoalID cancel_msg;
+    cancel_msg.stamp = time;
+    cancel_msg.id = "";
+    cancel_pub_.publish(cancel_msg);
   }
 
   /**
