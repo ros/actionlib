@@ -11,7 +11,7 @@ include $(shell rospack find mk)/download_unpack_build.mk
 
 
 
-yaml-cpp: $(SOURCE_DIR)/unpacked
+yaml-cpp: wiped $(SOURCE_DIR)/unpacked
 	cd build && cmake -DCMAKE_INSTALL_PREFIX=../yaml-cpp yaml-cpp-0.2.5
 	cd build && make && make install
 	if [ `uname` = Darwin ]; then \
@@ -25,5 +25,8 @@ clean:
 wipe: clean
 	rm -rf build
 
+wiped: Makefile
+	make -f Makefile wipe
+	touch wiped
 
 
