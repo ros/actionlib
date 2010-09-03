@@ -3,7 +3,7 @@ all: yaml-cpp
 TARBALL = build/yaml-cpp-0.2.5.tar.gz
 TARBALL_URL = http://yaml-cpp.googlecode.com/files/yaml-cpp-0.2.5.tar.gz
 SOURCE_DIR = build/yaml-cpp-0.2.5
-
+MD5SUM_FILE = yaml-cpp-0.2.5.tar.gz.md5sum
 UNPACK_CMD = tar -xzf 
 
 
