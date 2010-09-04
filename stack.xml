@@ -13,3 +13,4 @@
   <depend stack="common_msgs"/> <!-- geometry_msgs, diagnostic_msgs, sensor_msgs --> 
 
 </stack>
+
