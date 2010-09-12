@@ -60,7 +60,10 @@ CallbackQueueManager::CallbackQueueManager(uint32_t num_worker_threads)
 CallbackQueueManager::~CallbackQueueManager()
 {
   running_ = false;
-  waiting_cond_.notify_all();
+  {
+    boost::mutex::scoped_lock lock(waiting_mutex_);
+    waiting_cond_.notify_all();
+  }
 
   size_t num_threads = getNumWorkerThreads();
   for (size_t i = 0; i < num_threads; ++i)
