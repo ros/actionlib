@@ -1,0 +1,22 @@
+<package>
+  <description brief="bondcpp">
+
+     bondcpp
+
+  </description>
+  <author>Stuart Glaser</author>
+  <license>BSD</license>
+  <review status="API cleared" notes="http://www.ros.org/wiki/bond/Reviews/2010-07-28_API_Review"/>
+  <url>http://ros.org/wiki/bondcpp</url>
+  <depend package="bond"/>
+  <depend package="roscpp"/>
+  <depend package="smclib" />
+
+  <export>
+    <cpp cflags="-I${prefix}/include"
+         lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lbondcpp" />
+  </export>
+
+</package>
+
+

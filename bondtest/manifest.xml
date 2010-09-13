@@ -1,0 +1,18 @@
+<package>
+  <description brief="bondtest">
+
+     bondtest
+
+  </description>
+  <author>Stuart Glaser</author>
+  <license>BSD</license>
+  <review status="API cleared" notes="http://www.ros.org/wiki/bond/Reviews/2010-07-28_API_Review"/>
+  <url>http://ros.org/wiki/bondtest</url>
+  <depend package="rostest" />
+  <depend package="bond"/>
+  <depend package="bondpy"/>
+  <depend package="bondcpp" />
+
+</package>
+
+
