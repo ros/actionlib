@@ -47,6 +47,11 @@ namespace pluginlib
 template<typename T> class ClassLoader;
 }
 
+namespace ros
+{
+class NodeHandle;
+}
+
 namespace nodelet
 {
 class Nodelet;
@@ -62,26 +67,31 @@ class CallbackQueueManager;
 typedef boost::shared_ptr<CallbackQueueManager> CallbackQueueManagerPtr;
 } // namespace detail
 
+
 /** \brief A class which will construct and sequentially call Nodelets according to xml
  * This is the primary way in which users are expected to interact with Nodelets
  */
 class Loader
 {
 public:
-    /** \brief Create the filter chain object */
+  /** \brief Construct the nodelet loader with optional ros API at defautl location of NodeHandle("~")*/
   Loader(bool provide_ros_api = true);
-
+  /** \brief Construct the nodelet loader with optional ros API in namespace of passed NodeHandle */
+  Loader(ros::NodeHandle server_nh);
+  
   ~Loader();
 
   bool load(const std::string& name, const std::string& type, const M_string& remappings, const V_string& my_argv, boost::shared_ptr<bond::Bond> bond = boost::shared_ptr<bond::Bond>((bond::Bond*)NULL));
   bool unload(const std::string& name);
 
-  /** \brief Clear all nodelets from this chain */
+  /** \brief Clear all nodelets from this loader */
   bool clear();
 
   /**\brief List the names of all loaded nodelets */
   std::vector<std::string> listLoadedNodelets();
 private:
+  void constructorImplementation(bool provide_ros_api, ros::NodeHandle server_nh);
+
   boost::mutex lock_;  ///<! A lock to protect internal integrity.  Every external method should lock it for safety.
   detail::LoaderROSPtr services_;
 

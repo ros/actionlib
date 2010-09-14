@@ -119,9 +119,19 @@ private:
 };
 } // namespace detail
 
-/** \brief Create the filter chain object */
 Loader::Loader(bool provide_ros_api)
 : loader_(new pluginlib::ClassLoader<Nodelet>("nodelet", "nodelet::Nodelet"))
+{
+  constructorImplementation(provide_ros_api, ros::NodeHandle("~"));
+}
+
+Loader::Loader(ros::NodeHandle server_nh)
+  : loader_(new pluginlib::ClassLoader<Nodelet>("nodelet", "nodelet::Nodelet"))
+{
+  constructorImplementation(true, server_nh);
+}
+
+void Loader::constructorImplementation(bool provide_ros_api, ros::NodeHandle server_nh)
 {
   std::string lib_string = "";
   std::vector<std::string> libs = loader_->getDeclaredClasses();
@@ -132,10 +142,8 @@ Loader::Loader(bool provide_ros_api)
 
   if (provide_ros_api)
   {
-    ros::NodeHandle server_nh("~");
     services_.reset(new detail::LoaderROS(this, server_nh));
-    ROS_DEBUG("In Nodelet ClassLoader found the following libs: %s", lib_string.c_str());
-
+    ROS_DEBUG("In nodelet::Loader found the following libs: %s", lib_string.c_str());
     int num_threads_param;
     if (server_nh.getParam ("num_worker_threads", num_threads_param))
     {
