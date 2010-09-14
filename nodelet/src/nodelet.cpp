@@ -43,13 +43,23 @@
 @b nodeletcpp is a tool for loading/unloading nodelets to/from a Nodelet manager.
 **/
 #include <signal.h>
+#include <uuid/uuid.h>
 
 #include <ros/ros.h>
+#include <bondcpp/bond.h>
 #include "nodelet/loader.h"
 #include "nodelet/NodeletList.h"
 #include "nodelet/NodeletLoad.h"
 #include "nodelet/NodeletUnload.h"
 
+std::string genId()
+{
+  uuid_t uuid;
+  uuid_generate_random(uuid);
+  char uuid_str[40];
+  uuid_unparse(uuid, uuid_str);
+  return std::string(uuid_str);
+}
 
 class NodeletArgumentParsing
 {
@@ -57,13 +67,13 @@ class NodeletArgumentParsing
     std::string command_;
     std::string type_;
     std::string name_;
-    std::string default_name_;  
+    std::string default_name_;
     std::string manager_;
-    std::vector<std::string> local_args_;    
+    std::vector<std::string> local_args_;
 
   public:
     //NodeletArgumentParsing() { };
-    bool 
+    bool
       parseArgs(int argc, char** argv)
     {
       std::vector<std::string> non_ros_args;
@@ -74,14 +84,14 @@ class NodeletArgumentParsing
         command_ = non_ros_args[1];
       else
         return false;
-      
+
       if (command_ == "load" && non_ros_args.size() > 3)
       {
         type_ = non_ros_args[2];
         manager_ = non_ros_args[3];
         used_args = 4;
       }
-      
+
       if (non_ros_args.size() > 2)
       {
         if (command_ == "unload")
@@ -97,17 +107,17 @@ class NodeletArgumentParsing
           used_args = 3;
         }
       }
-      
+
       if (command_ == "manager")
         used_args = 2;
-        
+
       for (size_t i = used_args; i < non_ros_args.size(); i++)
         local_args_.push_back(non_ros_args[i]);
 
-      
+
       if (used_args > 0) return true;
       else return false;
-    
+
     };
 
 
@@ -119,14 +129,14 @@ class NodeletArgumentParsing
     std::vector<std::string> getMyArgv () const {return local_args_;};
     std::string getDefaultName()
     {
-      std::string s = type_; 
-      replace(s.begin(), s.end(), '/', '_'); 
+      std::string s = type_;
+      replace(s.begin(), s.end(), '/', '_');
       return s;
     };
-  
+
 };
-  
-  
+
+
 class NodeletInterface
 {
   public:
@@ -136,11 +146,11 @@ class NodeletInterface
       unloadNodelet (const std::string &name, const std::string &manager)
     {
       ROS_INFO_STREAM ("Unloading nodelet " << name << " from manager " << manager);
-        
+
       std::string service_name = manager + "/unload_nodelet";
       // Check if the service exists and is available
       if (!ros::service::exists (service_name, true))
-        return (false);       // exit here as it doesn't make sense to wait until the manager starts, 
+        return (false);       // exit here as it doesn't make sense to wait until the manager starts,
                               // as there's probably no nodelet already loaded to unload
 
       ros::ServiceClient client = n_.serviceClient<nodelet::NodeletUnload> (service_name);
@@ -160,8 +170,9 @@ class NodeletInterface
     ////////////////////////////////////////////////////////////////////////////////
     /** \brief Load the nodelet */
     bool
-      loadNodelet (const std::string &name, const std::string &type, 
-                   const std::string &manager, const std::vector<std::string> &args)
+      loadNodelet (const std::string &name, const std::string &type,
+                   const std::string &manager, const std::vector<std::string> &args,
+                   const std::string &bond_id)
     {
       ros::M_string remappings = ros::names::getRemappings ();
       std::vector<std::string> sources (remappings.size ()), targets (remappings.size ());
@@ -169,7 +180,7 @@ class NodeletInterface
       int i = 0;
       for (ros::M_string::iterator it = remappings.begin (); it != remappings.end (); ++it, ++i)
       {
-        sources[i] = (*it).first; 
+        sources[i] = (*it).first;
         targets[i] = (*it).second;
         ROS_INFO_STREAM (sources[i] << " -> " << targets[i]);
       }
@@ -194,6 +205,7 @@ class NodeletInterface
       srv.request.remap_source_args = sources;
       srv.request.remap_target_args = targets;
       srv.request.my_argv = args;
+      srv.request.bond_id = bond_id;
       if (!client.call (srv))
       {
         //ROS_ERROR ("Failed to call service!");
@@ -220,17 +232,17 @@ void print_usage(int argc, char** argv)
 
 sig_atomic_t volatile request_shutdown = 0;
 
-void 
+void
   nodeletLoaderSigIntHandler (int sig)
 {
   request_shutdown = 1;
 }
 
 /* ---[ */
-int 
+int
   main (int argc, char** argv)
 {
-  NodeletArgumentParsing arg_parser;  
+  NodeletArgumentParsing arg_parser;
 
   if (!arg_parser.parseArgs(argc, argv))
   {
@@ -238,8 +250,8 @@ int
     return (-1);
   }
   std::string command = arg_parser.getCommand();
-    
-    
+
+
   if (command == "manager")
   {
     ros::init (argc, argv, "manager");
@@ -249,7 +261,7 @@ int
   else if (command == "standalone")
   {
     ros::init (argc, argv, arg_parser.getDefaultName());
-    
+
     nodelet::Loader n(false);
     ros::NodeHandle nh;
     ros::M_string remappings; //Remappings are already applied by ROS no need to generate them.
@@ -257,27 +269,43 @@ int
     std::string nodelet_type = arg_parser.getType();
     n.load(nodelet_name, nodelet_type, remappings, arg_parser.getMyArgv());
     ROS_DEBUG("Successfully loaded nodelet of type '%s' into name '%s'\n", nodelet_name.c_str(), nodelet_name.c_str());
-    
+
     ros::spin();
   }
   else if (command == "load")
-  {  
+  {
     ros::init (argc, argv, arg_parser.getDefaultName (), ros::init_options::NoSigintHandler);
     NodeletInterface ni;
     ros::NodeHandle nh;
     std::string name = ros::this_node::getName ();
     std::string type = arg_parser.getType();
     std::string manager = arg_parser.getManager();
-    ni.loadNodelet (name, type, manager, arg_parser.getMyArgv ());
+    std::string bond_id = name + "_" + genId();
+    bond::Bond bond(manager + "/bond", bond_id);
+    ni.loadNodelet (name, type, manager, arg_parser.getMyArgv(), bond_id);
     signal (SIGINT, nodeletLoaderSigIntHandler);
+    bond.start();
     // Spin our own loop
     while (nh.ok ())
     {
-      ros::spinOnce ();
+      ros::spinOnce();
       if (request_shutdown)
       {
-        ni.unloadNodelet (name, manager);
+        bond.breakBond();
+        // Waits for the manager to acknowledge the bond breaking.
+        for (int i = 0; i < 10; ++i)
+        {
+          ros::spinOnce();
+          if (bond.waitUntilBroken(ros::Duration(0.1)))
+            break;
+        }
+        //ni.unloadNodelet (name, manager);
         ros::shutdown ();
+        break;
+      }
+      else if (bond.isBroken())
+      {
+        ros::shutdown();
         break;
       }
       usleep(100000);

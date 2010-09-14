@@ -1,10 +1,10 @@
 /*
  * Copyright (c) 2010, Willow Garage, Inc.
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  *     * Redistributions of source code must retain the above copyright
  *       notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
  *     * Neither the name of the Willow Garage, Inc. nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -38,6 +38,7 @@
 
 #include <ros/console.h>
 #include <boost/shared_ptr.hpp>
+#include <bondcpp/bond.h>
 
 namespace ros
 {
@@ -120,7 +121,7 @@ protected:
   // Internal storage;
 private:
   bool inited_;
-  
+
   std::string nodelet_name_;
 
   detail::CallbackQueuePtr mt_callback_queue_;
@@ -133,20 +134,22 @@ private:
   NodeHandlePtr mt_private_nh_;
   V_string my_argv_;
 
-  // Method to be overridden by subclass when starting up. 
+  boost::shared_ptr<bond::Bond> bond_;
+
+  // Method to be overridden by subclass when starting up.
   virtual void onInit () = 0;
-  
+
   // Public API used for launching
 public:
   /**\brief Empty constructor required for dynamic loading */
   Nodelet();
-  
+
   /**\brief Init function called at startup
    * \param name The name of the nodelet
    * \param remapping_args The remapping args in a map for the nodelet
-   * \param my_args The commandline arguments for this nodelet stripped of special arguments such as ROS arguments 
+   * \param my_args The commandline arguments for this nodelet stripped of special arguments such as ROS arguments
    */
-  void init (const std::string& name, const M_string& remapping_args, const V_string& my_argv, detail::CallbackQueueManager* callback_manager);
+  void init (const std::string& name, const M_string& remapping_args, const V_string& my_argv, detail::CallbackQueueManager* callback_manager, boost::shared_ptr<bond::Bond> bond);
 
   virtual ~Nodelet();
 };

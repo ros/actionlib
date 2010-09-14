@@ -78,7 +78,16 @@ private:
         ROS_DEBUG("%s:%s\n", ros::names::resolve(req.remap_source_args[i]).c_str(), remappings[ros::names::resolve(req.remap_source_args[i])].c_str());
       }
     }
-    res.success = parent_->load(req.name, req.type, remappings, req.my_argv);
+
+    boost::shared_ptr<bond::Bond> bond;
+    if (!req.bond_id.empty())
+    {
+      bond.reset(new bond::Bond(nh_.getNamespace() + "/bond", req.bond_id));
+    }
+
+    res.success = parent_->load(req.name, req.type, remappings, req.my_argv, bond);
+    if (bond)
+      bond->start();
     return res.success;
   }
 
@@ -125,8 +134,8 @@ Loader::Loader(bool provide_ros_api)
   {
     ros::NodeHandle server_nh("~");
     services_.reset(new detail::LoaderROS(this, server_nh));
-    ROS_DEBUG("In FilterChain ClassLoader found the following libs: %s", lib_string.c_str());
-    
+    ROS_DEBUG("In Nodelet ClassLoader found the following libs: %s", lib_string.c_str());
+
     int num_threads_param;
     if (server_nh.getParam ("num_worker_threads", num_threads_param))
     {
@@ -144,7 +153,7 @@ Loader::~Loader()
 
 }
 
-bool Loader::load(const std::string &name, const std::string& type, const ros::M_string& remappings, const std::vector<std::string> & my_argv)
+bool Loader::load(const std::string &name, const std::string& type, const ros::M_string& remappings, const std::vector<std::string> & my_argv, boost::shared_ptr<bond::Bond> bond)
 {
   boost::mutex::scoped_lock lock (lock_);
   if (nodelets_.count(name) > 0)
@@ -165,7 +174,11 @@ bool Loader::load(const std::string &name, const std::string& type, const ros::M
     nodelets_[name] = p;
     ROS_DEBUG("Done loading nodelet %s", name.c_str());
 
-    p->init(name, remappings, my_argv, callback_manager_.get());
+    p->init(name, remappings, my_argv, callback_manager_.get(), bond);
+
+    if (bond)
+      bond->setBrokenCallback(boost::bind(&Loader::unload, this, name));
+
     ROS_DEBUG("Done initing nodelet %s", name.c_str());
     return true;
   }

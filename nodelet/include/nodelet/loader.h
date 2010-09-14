@@ -30,7 +30,7 @@
 /**
 @mainpage
 
-\author Tully Foote 
+\author Tully Foote
 **/
 
 #ifndef NODELET_LOADER_H
@@ -40,6 +40,7 @@
 #include <vector>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/mutex.hpp>
+#include <bondcpp/bond.h>
 
 namespace pluginlib
 {
@@ -72,7 +73,7 @@ public:
 
   ~Loader();
 
-  bool load(const std::string& name, const std::string& type, const M_string& remappings, const V_string& my_argv);
+  bool load(const std::string& name, const std::string& type, const M_string& remappings, const V_string& my_argv, boost::shared_ptr<bond::Bond> bond = boost::shared_ptr<bond::Bond>((bond::Bond*)NULL));
   bool unload(const std::string& name);
 
   /** \brief Clear all nodelets from this chain */

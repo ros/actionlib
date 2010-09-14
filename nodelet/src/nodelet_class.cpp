@@ -47,6 +47,8 @@ Nodelet::~Nodelet ()
 {
   //NODELET_DEBUG ("nodelet destructor.");
 
+  bond_.reset();
+
   if (inited_)
   {
     callback_manager_->removeQueue(st_callback_queue_);
@@ -111,12 +113,14 @@ ros::NodeHandle& Nodelet::getMTPrivateNodeHandle() const
   return *mt_private_nh_;
 }
 
-void Nodelet::init(const std::string& name, const M_string& remapping_args, const V_string& my_argv, detail::CallbackQueueManager* callback_manager)
+void Nodelet::init(const std::string& name, const M_string& remapping_args, const V_string& my_argv, detail::CallbackQueueManager* callback_manager, boost::shared_ptr<bond::Bond> bond)
 {
   if (inited_)
   {
     throw MultipleInitializationException();
   }
+
+  bond_ = bond;
 
   callback_manager_ = callback_manager;
   st_callback_queue_.reset(new detail::CallbackQueue(callback_manager));
