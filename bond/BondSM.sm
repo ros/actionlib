@@ -22,6 +22,7 @@ Alive {
 AwaitSisterDeath {
 		SisterAlive				AwaitSisterDeath	{}
 		HeartbeatTimeout		AwaitSisterDeath	{}
+		Die						AwaitSisterDeath	{}
 		SisterDead				Dead				{ Death(); }
 		DisconnectTimeout		Dead				{ Death(); }
 }

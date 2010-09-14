@@ -105,6 +105,7 @@ public:
     : SM_Default(name, stateId)
     {};
 
+    void Die(BondSMContext& context);
     void DisconnectTimeout(BondSMContext& context);
     void HeartbeatTimeout(BondSMContext& context);
     void SisterAlive(BondSMContext& context);

@@ -233,6 +233,16 @@ void SM_Alive::SisterDead(BondSMContext& context)
     return;
 }
 
+void SM_AwaitSisterDeath::Die(BondSMContext& context)
+{
+
+    (context.getState()).Exit(context);
+    context.setState(SM::AwaitSisterDeath);
+    (context.getState()).Entry(context);
+
+    return;
+}
+
 void SM_AwaitSisterDeath::DisconnectTimeout(BondSMContext& context)
 {
     BondSM& ctxt(context.getOwner());

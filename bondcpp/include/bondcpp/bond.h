@@ -114,6 +114,10 @@ public:
    */
   void breakBond();
 
+  std::string getTopic() { return topic_; }
+  std::string getId() { return id_; }
+  std::string getInstanceId() { return instance_id_; }
+
 private:
   friend class ::BondSM;
 

@@ -129,6 +129,11 @@ class SM_Alive(SM_Default):
 
 class SM_AwaitSisterDeath(SM_Default):
 
+    def Die(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(SM.AwaitSisterDeath)
+        fsm.getState().Entry(fsm)
+
     def DisconnectTimeout(self, fsm):
         ctxt = fsm.getOwner()
         fsm.getState().Exit(fsm)
