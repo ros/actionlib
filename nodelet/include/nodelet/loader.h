@@ -81,7 +81,7 @@ public:
   /**\brief List the names of all loaded nodelets */
   std::vector<std::string> listLoadedNodelets();
 private:
-  boost::mutex lock_;
+  boost::mutex lock_;  ///<! A lock to protect internal integrity.  Every external method should lock it for safety.
   detail::LoaderROSPtr services_;
 
   typedef std::map<std::string, NodeletPtr> M_stringToNodelet;

@@ -146,6 +146,7 @@ Loader::~Loader()
 
 bool Loader::load(const std::string &name, const std::string& type, const ros::M_string& remappings, const std::vector<std::string> & my_argv)
 {
+  boost::mutex::scoped_lock lock (lock_);
   if (nodelets_.count(name) > 0)
   {
     ROS_ERROR("Cannot load nodelet %s for one exists with that name already", name.c_str());
@@ -201,6 +202,7 @@ bool Loader::clear ()
 /**\brief List the names of all loaded nodelets */
 std::vector<std::string> Loader::listLoadedNodelets()
 {
+  boost::mutex::scoped_lock lock (lock_);
   std::vector<std::string> output;
   std::map< std::string, boost::shared_ptr<Nodelet> >::iterator it = nodelets_.begin();
   for (; it != nodelets_.end(); ++it)
