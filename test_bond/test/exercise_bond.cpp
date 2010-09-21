@@ -33,7 +33,7 @@
 #include <uuid/uuid.h>
 #include <ros/spinner.h>
 
-#include <bondtest/TestBond.h>
+#include <test_bond/TestBond.h>
 
 const std::string TOPIC = "test_bond_topic";
 
@@ -49,7 +49,7 @@ std::string genId()
 ros::ServiceClient getService()
 {
   ros::NodeHandle nh;
-  ros::ServiceClient cli = nh.serviceClient<bondtest::TestBond>("test_bond");
+  ros::ServiceClient cli = nh.serviceClient<test_bond::TestBond>("test_bond");
   EXPECT_TRUE(cli);
   EXPECT_TRUE(cli.waitForExistence(ros::Duration(5.0)));
   return cli;
@@ -62,8 +62,8 @@ TEST(ExerciseBondCpp, normal)
   ros::ServiceClient cli = getService();
   EXPECT_TRUE(cli.isValid());
   EXPECT_TRUE(cli.exists());
-  bondtest::TestBond::Request req;
-  bondtest::TestBond::Response resp;
+  test_bond::TestBond::Request req;
+  test_bond::TestBond::Response resp;
   req.topic = TOPIC;
   req.id = id;
   req.delay_death = ros::Duration(2.0);
@@ -90,8 +90,8 @@ TEST(ExerciseBondCpp, heartbeatTimeout)
   bond::Bond bond(TOPIC, id);
 
   ros::ServiceClient cli = getService();
-  bondtest::TestBond::Request req;
-  bondtest::TestBond::Response resp;
+  test_bond::TestBond::Request req;
+  test_bond::TestBond::Response resp;
   req.topic = TOPIC;
   req.id = id;
   req.delay_death = ros::Duration(2.0);
@@ -110,8 +110,8 @@ TEST(ExerciseBondCpp, cleanLocalDeath)
   bond::Bond bond(TOPIC, id);
 
   ros::ServiceClient cli = getService();
-  bondtest::TestBond::Request req;
-  bondtest::TestBond::Response resp;
+  test_bond::TestBond::Request req;
+  test_bond::TestBond::Response resp;
   req.topic = TOPIC;
   req.id = id;
   req.delay_death = ros::Duration(-1);
@@ -130,8 +130,8 @@ TEST(ExerciseBondCpp, localDeathNoAck)
   bond::Bond bond(TOPIC, id);
 
   ros::ServiceClient cli = getService();
-  bondtest::TestBond::Request req;
-  bondtest::TestBond::Response resp;
+  test_bond::TestBond::Request req;
+  test_bond::TestBond::Response resp;
   req.topic = TOPIC;
   req.id = id;
   req.delay_death = ros::Duration(-1);
@@ -151,8 +151,8 @@ TEST(ExerciseBondCpp, remoteIgnoresLocalDeath)
   bond::Bond bond(TOPIC, id);
 
   ros::ServiceClient cli = getService();
-  bondtest::TestBond::Request req;
-  bondtest::TestBond::Response resp;
+  test_bond::TestBond::Request req;
+  test_bond::TestBond::Response resp;
   req.topic = TOPIC;
   req.id = id;
   req.delay_death = ros::Duration(-1);

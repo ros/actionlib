@@ -1,13 +1,13 @@
 <package>
-  <description brief="bondtest">
+  <description brief="test_bond">
 
-     bondtest
+     test_bond
 
   </description>
   <author>Stuart Glaser</author>
   <license>BSD</license>
   <review status="API cleared" notes="http://www.ros.org/wiki/bond/Reviews/2010-07-28_API_Review"/>
-  <url>http://ros.org/wiki/bondtest</url>
+  <url>http://ros.org/wiki/test_bond</url>
   <depend package="rostest" />
   <depend package="bond"/>
   <depend package="bondpy"/>

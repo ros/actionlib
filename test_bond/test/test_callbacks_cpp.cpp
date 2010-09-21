@@ -33,7 +33,7 @@
 #include <uuid/uuid.h>
 #include <ros/spinner.h>
 
-#include <bondtest/TestBond.h>
+#include <test_bond/TestBond.h>
 
 const std::string TOPIC = "test_bond_topic";
 std::string genId()

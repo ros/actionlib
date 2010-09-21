@@ -33,11 +33,11 @@ import threading
 import time
 import uuid
 
-PKG = 'bondtest'
+PKG = 'test_bond'
 import roslib; roslib.load_manifest(PKG)
 import rospy
 import bondpy
-from bondtest.srv import *
+from test_bond.srv import *
 
 import unittest
 import rostest

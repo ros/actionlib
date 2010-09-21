@@ -34,10 +34,10 @@ import threading
 import time
 import uuid
 
-import roslib; roslib.load_manifest('bondtest')
+import roslib; roslib.load_manifest('test_bond')
 import rospy
 from bond.msg import *
-from bondtest.srv import *
+from test_bond.srv import *
 
 import atexit
 atexit.register(rospy.signal_shutdown, 'exit')

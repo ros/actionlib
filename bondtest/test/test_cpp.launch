@@ -1,4 +1,0 @@
-<launch>
-  <node pkg="bondtest" type="tester.py" name="bond_tester" />
-  <test test-name="exercise_cpp_bond" pkg="bondtest" type="exercise_bond"/>
-</launch>
