@@ -584,7 +584,7 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::sendGoalAndWait(const Goal
     return getState();
   }
 
-  ROS_DEBUG("Goal finished within specified execute_timeout [%.2f]", execute_timeout.toSec());
+  ROS_DEBUG("Goal didn't finish within specified execute_timeout [%.2f]", execute_timeout.toSec());
 
   // It didn't finish in time, so we need to preempt it
   cancelGoal();
