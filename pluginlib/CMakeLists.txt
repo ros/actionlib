@@ -23,3 +23,7 @@ target_link_libraries(poco_lite dl)
 
 rosbuild_add_library(boost_fs_wrapper src/boost_fs_wrapper.cpp)
 rosbuild_link_boost(boost_fs_wrapper system filesystem) 
+
+rosbuild_add_library(test_plugins test/test_plugins.cpp)
+rosbuild_add_gtest(utest test/utest.cpp)
+target_link_libraries(utest boost_fs_wrapper poco_lite)

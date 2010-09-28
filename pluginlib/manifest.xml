@@ -16,6 +16,7 @@ Pluginlib includes parts of Poco from pocoproject.org
 
   <export>
     <cpp cflags="-I${prefix}/include -I${prefix} `rosboost-cfg --cflags`" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lpoco_lite -lboost_fs_wrapper"/>
+    <pluginlib plugin="${prefix}/test/test_plugins.xml" />
   </export>
 
   <platform os="ubuntu" version="9.04"/>
