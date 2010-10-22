@@ -548,6 +548,17 @@ class ActionClient:
                             id = "")
         self.pub_cancel.publish(cancel_msg)
 
+    ## @brief Cancels all goals prior to a given timestamp
+    ##
+    ## This preempts all goals running on the action server for which the 
+    ## time stamp is earlier than the specified time stamp
+    ## this message is serviced by the ActionServer.
+
+    def cancel_goals_at_and_before_time(self, time):
+        cancel_msg = GoalID(stamp = time, id = "")
+        self.pub_cancel.publish(cancel_msg)
+    
+    
     ## @brief [Deprecated] Use wait_for_server
     def wait_for_action_server_to_start(self, timeout = rospy.Duration(0.0)):
         return self.wait_for_server(timeout)

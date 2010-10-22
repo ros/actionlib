@@ -203,6 +203,16 @@ class SimpleActionClient:
         self.action_client.cancel_all_goals()
 
 
+    ## @brief Cancels all goals prior to a given timestamp
+    ##
+    ## This preempts all goals running on the action server for which the 
+    ## time stamp is earlier than the specified time stamp
+    ## this message is serviced by the ActionServer.
+
+    def cancel_goals_at_and_before_time(self, time):
+        self.action_client.cancel_goals_at_and_before_time(time)
+
+
     ## @brief Cancels the goal that we are currently pursuing
     def cancel_goal(self):
         if self.gh:
