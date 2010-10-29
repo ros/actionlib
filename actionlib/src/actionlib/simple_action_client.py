@@ -224,7 +224,6 @@ class SimpleActionClient:
     ## This is useful if we want to make sure we stop calling our callbacks before sending a new goal.
     ## Note that this does not cancel the goal, it simply stops looking for status info about this goal.
     def stop_tracking_goal(self):
-        del self.gh
         self.gh = None
 
     def _handle_transition(self, gh):
