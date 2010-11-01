@@ -76,6 +76,3 @@ rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_server2.launch
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_server3.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_simple_server.launch)
 
-
-
-add_subdirectory(test EXCLUDE_FROM_ALL)
