@@ -115,9 +115,7 @@ class ActionServer:
         self.started = False;
 
         if self.auto_start:
-            self.initialize()
-            self.started = True;
-            self.publish_status()
+            self.start()
 
 
     def register_goal_callback(self, cb):
@@ -134,11 +132,12 @@ class ActionServer:
 
     def start(self):
         """
-        @brief  Explicitly start the action server, used it auto_start is set to false
+        @brief  Start the action server
         """
-        self.initialize();
-        self.started = True;
-        self.publish_status();
+        with self.lock:
+            self.initialize();
+            self.started = True;
+            self.publish_status();
 
 
     def initialize(self):
