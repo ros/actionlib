@@ -121,24 +121,24 @@ class SimpleActionServer:
                 rospy.logerr("Attempting to accept the next goal when a new goal is not available");
                 return None;
 
-        #check if we need to send a preempted message for the goal that we're currently pursuing
-        if self.is_active() and self.current_goal.get_goal() and self.current_goal != self.next_goal:
-            self.current_goal.set_canceled(None, "This goal was canceled because another goal was received by the simple action server");
-        
-        rospy.logdebug("Accepting a new goal");
+            #check if we need to send a preempted message for the goal that we're currently pursuing
+            if self.is_active() and self.current_goal.get_goal() and self.current_goal != self.next_goal:
+                self.current_goal.set_canceled(None, "This goal was canceled because another goal was received by the simple action server");
+            
+            rospy.logdebug("Accepting a new goal");
 
-        #accept the next goal
-        self.current_goal = self.next_goal;
-        self.new_goal = False;
+            #accept the next goal
+            self.current_goal = self.next_goal;
+            self.new_goal = False;
 
-        #set preempt to request to equal the preempt state of the new goal
-        self.preempt_request = self.new_goal_preempt_request;
-        self.new_goal_preempt_request = False;
+            #set preempt to request to equal the preempt state of the new goal
+            self.preempt_request = self.new_goal_preempt_request;
+            self.new_goal_preempt_request = False;
 
-        #set the status of the current goal to be active
-        self.current_goal.set_accepted("This goal has been accepted by the simple action server");
+            #set the status of the current goal to be active
+            self.current_goal.set_accepted("This goal has been accepted by the simple action server");
 
-        return self.current_goal.get_goal();
+            return self.current_goal.get_goal();
 
 
     def is_new_goal_available(self):
