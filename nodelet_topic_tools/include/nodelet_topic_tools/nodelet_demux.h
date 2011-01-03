@@ -40,6 +40,7 @@
 #include <ros/ros.h>
 #include <nodelet/nodelet.h>
 #include <message_filters/time_synchronizer.h>
+#include <message_filters/subscriber.h>
 
 namespace nodelet
 {
