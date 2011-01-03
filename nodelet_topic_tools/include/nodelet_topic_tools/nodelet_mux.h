@@ -43,7 +43,8 @@
 
 namespace nodelet
 {
-  /** \brief @b NodeletMUX represent a mux nodelet for topics: it takes N (<=8) input topics, and publishes all of them on one output topic.
+  /** \brief @b NodeletMUX represent a mux nodelet for topics: it takes N (<=8) input topics, and publishes all of them 
+    * on one output topic.
     * \author Radu Bogdan Rusu
     */
   template <typename T, typename Filter>
@@ -51,7 +52,11 @@ namespace nodelet
   {
     typedef typename boost::shared_ptr<T> TPtr;
     typedef typename boost::shared_ptr<const T> TConstPtr;
+    
     public:
+    
+      NodeletMUX () : maximum_queue_size_ (3) {}
+
       //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       /** \brief Nodelet initialization routine. */
       virtual void
@@ -66,6 +71,9 @@ namespace nodelet
           ROS_ERROR ("[nodelet::NodeletMUX::init] Need a 'input_topics' parameter to be set before continuing!");
           return; 
         }
+        
+        private_nh_.getParam ("max_queue_size", maximum_queue_size_);
+        
         // Check the type
         switch (input_topics.getType ())
         {
@@ -95,55 +103,44 @@ namespace nodelet
               filters_[d]->subscribe (private_nh_, (std::string)(input_topics[d]), 1);
             }
 
+            ts_.reset (new message_filters::TimeSynchronizer<T,T,T,T,T,T,T,T> (maximum_queue_size_));
+           
+            message_filters::NullFilter<T> nf;
             switch (input_topics.size ())
             {
               case 2:
               {
-                ts2_.reset (new message_filters::TimeSynchronizer<T,T> (3));
-                ts2_->connectInput (*filters_[0], *filters_[1]);
-                ts2_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input2, this, _1, _2));
+                ts_->connectInput (*filters_[0], *filters_[1], nf, nf, nf, nf, nf, nf);
                 break;
               }
               case 3:
               {
-                ts3_.reset (new message_filters::TimeSynchronizer<T,T,T> (3));
-                ts3_->connectInput (*filters_[0], *filters_[1], *filters_[2]);
-                ts3_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input3, this, _1, _2, _3));
+                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], nf, nf, nf, nf, nf);
                 break;
               }
               case 4:
               {
-                ts4_.reset (new message_filters::TimeSynchronizer<T,T,T,T> (3));
-                ts4_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3]);
-                ts4_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input4, this, _1, _2, _3, _4));
+                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], nf, nf, nf, nf);
                 break;
               }
               case 5:
               {
-                ts5_.reset (new message_filters::TimeSynchronizer<T,T,T,T,T> (3));
-                ts5_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4]);
-                ts5_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input5, this, _1, _2, _3, _4, _5));
+                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], nf, nf, nf);
                 break;
               }
               case 6:
               {
-                ts6_.reset (new message_filters::TimeSynchronizer<T,T,T,T,T,T> (3));
-                ts6_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5]);
-                ts6_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input6, this, _1, _2, _3, _4, _5, _6));
+                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5], nf, nf);
                 break;
               }
               case 7:
               {
-                ts7_.reset (new message_filters::TimeSynchronizer<T,T,T,T,T,T,T> (3));
-                ts7_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5], *filters_[6]);
-                ts7_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input7, this, _1, _2, _3, _4, _5, _6, _7));
+                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5], *filters_[6], nf);
                 break;
               }
               case 8:
               {
-                ts8_.reset (new message_filters::TimeSynchronizer<T,T,T,T,T,T,T,T> (3));
-                ts8_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5], *filters_[6], *filters_[7]);
-                ts8_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input8, this, _1, _2, _3, _4, _5, _6, _7, _8));
+                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5], *filters_[6], *filters_[7]);
                 break;
               }
               default:
@@ -160,43 +157,32 @@ namespace nodelet
             return;
           }
         }
+        
+        ts_->registerCallback (boost::bind (&NodeletMUX<T,Filter>::input, this, _1, _2, _3, _4, _5, _6, _7, _8));
       }
 
     private:
 
-      void input2 (const TConstPtr &in1, const TConstPtr &in2)
-      { pub_output_.publish (in1); pub_output_.publish (in2); }
-      void input3 (const TConstPtr &in1, const TConstPtr &in2, const TConstPtr &in3)
-      { pub_output_.publish (in1); pub_output_.publish (in2); pub_output_.publish (in3); }
-      void input4 (const TConstPtr &in1, const TConstPtr &in2, const TConstPtr &in3, const TConstPtr &in4)
-      { pub_output_.publish (in1); pub_output_.publish (in2); pub_output_.publish (in3); pub_output_.publish (in4); }
-      void input5 (const TConstPtr &in1, const TConstPtr &in2, const TConstPtr &in3, const TConstPtr &in4, const TConstPtr &in5)
-      { pub_output_.publish (in1); pub_output_.publish (in2); pub_output_.publish (in3); pub_output_.publish (in4); pub_output_.publish (in5); }
-      void input6 (const TConstPtr &in1, const TConstPtr &in2, const TConstPtr &in3, const TConstPtr &in4, const TConstPtr &in5, const TConstPtr &in6)
-      { pub_output_.publish (in1); pub_output_.publish (in2); pub_output_.publish (in3); pub_output_.publish (in4); pub_output_.publish (in5); pub_output_.publish (in6); }
-      void input7 (const TConstPtr &in1, const TConstPtr &in2, const TConstPtr &in3, const TConstPtr &in4, const TConstPtr &in5, const TConstPtr &in6, const TConstPtr &in7)
-      { pub_output_.publish (in1); pub_output_.publish (in2); pub_output_.publish (in3); pub_output_.publish (in4); pub_output_.publish (in5); pub_output_.publish (in6); pub_output_.publish (in7); }
-      void input8 (const TConstPtr &in1, const TConstPtr &in2, const TConstPtr &in3, const TConstPtr &in4, const TConstPtr &in5, const TConstPtr &in6, const TConstPtr &in7, const TConstPtr &in8)
-      { pub_output_.publish (in1); pub_output_.publish (in2); pub_output_.publish (in3); pub_output_.publish (in4); pub_output_.publish (in5); pub_output_.publish (in6); pub_output_.publish (in7); pub_output_.publish (in8); }
+      void input (const TConstPtr &in1, const TConstPtr &in2, const TConstPtr &in3, const TConstPtr &in4, 
+                  const TConstPtr &in5, const TConstPtr &in6, const TConstPtr &in7, const TConstPtr &in8)
+      { 
+        pub_output_.publish (in1); pub_output_.publish (in2); pub_output_.publish (in3); pub_output_.publish (in4); 
+        pub_output_.publish (in5); pub_output_.publish (in6); pub_output_.publish (in7); pub_output_.publish (in8); 
+      }
 
       /** \brief ROS local node handle. */
       ros::NodeHandle private_nh_;
       /** \brief The output ROS publisher. */
       ros::Publisher pub_output_;
 
+      /** \brief The maximum number of messages that we can store in the queue. */
+      int maximum_queue_size_;
+      
       /** \brief A vector of message filters. */
       std::vector<boost::shared_ptr<Filter> > filters_;
 
-      /** \brief Various different synchronizers. 
-        * \note We need to define one type for each increasing number of messages. This will most likely be rewritten soon using the DynamicTimeSynchronizer.
-        */
-      boost::shared_ptr<message_filters::TimeSynchronizer<T,T> > ts2_;
-      boost::shared_ptr<message_filters::TimeSynchronizer<T,T,T> > ts3_;
-      boost::shared_ptr<message_filters::TimeSynchronizer<T,T,T,T> > ts4_;
-      boost::shared_ptr<message_filters::TimeSynchronizer<T,T,T,T,T> > ts5_;
-      boost::shared_ptr<message_filters::TimeSynchronizer<T,T,T,T,T,T> > ts6_;
-      boost::shared_ptr<message_filters::TimeSynchronizer<T,T,T,T,T,T,T> > ts7_;
-      boost::shared_ptr<message_filters::TimeSynchronizer<T,T,T,T,T,T,T,T> > ts8_;
+      /** \brief Synchronizer object. */
+      boost::shared_ptr<message_filters::TimeSynchronizer<T,T,T,T,T,T,T,T> > ts_;
   };
 
 }
