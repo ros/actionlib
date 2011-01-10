@@ -4,12 +4,11 @@
     commonly used throughout the ROS ecosystem.
   </description>
   <author>Maintained by Tully Foote tfoote@willowgarage.com</author>
-  <license>BSD</license>
+  <license>LGPL,BSD, Boost Software License (Poco),ZLib,Mozilla Public License Version 1.1,BSD,MIT</license>  
   <review status="doc reviewed" notes="2009-10-07"/>
   <url>http://ros.org/wiki/common</url>
-
-  <depend stack="ros"/> <!-- rosconsole, rospy, roslaunch, rostest, roscpp, std_msgs, rostopic--> 
-  <depend stack="common_msgs"/> <!-- geometry_msgs, diagnostic_msgs, sensor_msgs --> 
+  <depend stack="common_msgs" /> <!-- actionlib_msgs -->
+  <depend stack="ros" /> <!-- rosbuild, roslib -->
+  <depend stack="ros_comm" /> <!-- rosconsole, roscpp, message_filters, std_msgs, rostest, rospy -->
 
 </stack>
-
