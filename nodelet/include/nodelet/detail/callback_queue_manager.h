@@ -120,9 +120,7 @@ private:
     std::vector<std::pair<CallbackQueuePtr, QueueInfoPtr> > queue;
     uint32_t calling;
 
-    // Pad to then next cache line
-    // TODO: magic number
-    uint8_t pad[64 - sizeof(V_Queue) - sizeof(boost::mutex)];
+    uint8_t pad[sizeof(128 - sizeof(V_Queue) - sizeof(uint32_t) - 2 * sizeof(boost::shared_ptr<void>))];
   };
   // TODO: Once the allocators package moves mainstream, align to cache-line boundary
   typedef std::vector<ThreadInfo> V_ThreadInfo;
