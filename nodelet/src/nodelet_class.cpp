@@ -132,12 +132,12 @@ void Nodelet::init(const std::string& name, const M_string& remapping_args, cons
   nodelet_name_ = name;
   my_argv_ = my_argv;
 
-  nh_.reset(new ros::NodeHandle ("", remapping_args));
-  nh_->setCallbackQueue(st_callback_queue_.get());
   private_nh_.reset(new ros::NodeHandle (name, remapping_args));
   private_nh_->setCallbackQueue(st_callback_queue_.get());
+  nh_.reset(new ros::NodeHandle (private_nh_->getNamespace(), remapping_args));
+  nh_->setCallbackQueue(st_callback_queue_.get());
 
-  mt_nh_.reset(new ros::NodeHandle ("", remapping_args));
+  mt_nh_.reset(new ros::NodeHandle (private_nh_->getNamespace(), remapping_args));
   mt_nh_->setCallbackQueue(mt_callback_queue_.get());
   mt_private_nh_.reset(new ros::NodeHandle (name, remapping_args));
   mt_private_nh_->setCallbackQueue(mt_callback_queue_.get());
