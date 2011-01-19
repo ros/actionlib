@@ -1,0 +1,9 @@
+<launch>
+
+  <node name="ref_simple_server"
+        pkg="actionlib" type="simple_tester_server.py" output="screen" />
+  
+  <test test-name="test_py_simple_server"
+        pkg="actionlib" type="exercise_simple_server.py" />
+
+</launch>

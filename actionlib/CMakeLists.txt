@@ -76,3 +76,5 @@ rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_server2.launch
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_server3.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_simple_server.launch)
 
+# New Python tests, using the TestRequest action
+rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_exercise_py_simple_server.launch)
