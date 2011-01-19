@@ -16,7 +16,7 @@
   <depend package="actionlib_msgs" />
 
   <export>
-    <cpp cflags="-I${prefix}/include -I${prefix}/msg/cpp" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lactionlib" />
+    <cpp cflags="-I${prefix}/include" lflags="-Wl,-rpath,${prefix}/lib -L${prefix}/lib -lactionlib" />
   </export>
 
   <platform os="ubuntu" version="9.04"/>
