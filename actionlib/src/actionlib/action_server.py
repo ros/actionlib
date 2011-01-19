@@ -60,26 +60,22 @@ def ros_timer(callable,frequency):
         except rospy.exceptions.ROSInterruptException:
             rospy.logdebug("Sleep interrupted");
 
+## @class ActionServer
+## @brief The ActionServer is a helpful tool for managing goal requests to a
+## node. It allows the user to specify callbacks that are invoked when goal
+## or cancel requests come over the wire, and passes back GoalHandles that
+## can be used to track the state of a given goal request. The ActionServer
+## makes no assumptions about the policy used to service these goals, and
+## sends status for each goal over the wire until the last GoalHandle
+## associated with a goal request is destroyed.
 class ActionServer:
-    """
-    * @class ActionServer
-    * @brief The ActionServer is a helpful tool for managing goal requests to a
-    * node. It allows the user to specify callbacks that are invoked when goal
-    * or cancel requests come over the wire, and passes back GoalHandles that
-    * can be used to track the state of a given goal request. The ActionServer
-    * makes no assumptions about the policy used to service these goals, and
-    * sends status for each goal over the wire until the last GoalHandle
-    * associated with a goal request is destroyed.
-    """
+    ## @brief  Constructor for an ActionServer
+    ## @param  ns/name A namespace for the action server
+    ## @param  actionspec An explicit specification of the action
+    ## @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
+    ## @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
+    ## @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up
     def __init__(self, ns,  ActionSpec, goal_cb, cancel_cb = nop_cb, auto_start = True):
-        """
-        * @brief  Constructor for an ActionServer
-        * @param  ns/name A namespace for the action server
-        * @param  actionspec An explicit specification of the action
-        * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
-        * @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
-        * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up
-        """
         self.ns=ns;
 
         try:
@@ -123,32 +119,25 @@ class ActionServer:
             self.start()
 
 
+    ## @brief  Register a callback to be invoked when a new goal is received, this will replace any  previously registered callback
+    ## @param  cb The callback to invoke
     def register_goal_callback(self, cb):
-        """ @brief  Register a callback to be invoked when a new goal is received, this will replace any  previously registered callback
-        @param  cb The callback to invoke
-        """
         self.goal_callback = cb
 
+    ## @brief  Register a callback to be invoked when a new cancel is received, this will replace any  previously registered callback
+    ## @param  cb The callback to invoke
     def register_cancel_callback(self,cancel_cb):
-          """ @brief  Register a callback to be invoked when a new cancel is received, this will replace any  previously registered callback
-              @param  cb The callback to invoke
-              """
           self.cancel_callback = cancel_cb
 
+    ## @brief  Start the action server
     def start(self):
-        """
-        @brief  Start the action server
-        """
         with self.lock:
             self.initialize();
             self.started = True;
             self.publish_status();
 
-
+    ## @brief  Initialize all ROS connections and setup timers
     def initialize(self):
-          """
-          @brief  Initialize all ROS connections and setup timers
-          """
           self.status_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/status", GoalStatusArray);
           self.result_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/result", self.ActionResult);
           self.feedback_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/feedback", self.ActionFeedback);
@@ -167,13 +156,10 @@ class ActionServer:
           self.status_timer = threading.Thread( None, ros_timer, None, (self.publish_status_async,self.status_frequency) );
           self.status_timer.start();
 
+    ## @brief  Publishes a result for a given goal
+    ## @param status The status of the goal with which the result is associated
+    ## @param result The result to publish
     def publish_result(self, status, result):
-        """
-        # @brief  Publishes a result for a given goal
-        # @param status The status of the goal with which the result is associated
-        # @param result The result to publish
-        """
-
         with self.lock:
             ar = self.ActionResult();
             ar.header.stamp = rospy.Time.now();
@@ -182,13 +168,10 @@ class ActionServer:
             self.result_pub.publish(ar);
 
 
+    ## @brief  Publishes feedback for a given goal
+    ## @param status The status of the goal with which the feedback is associated
+    ## @param feedback The feedback to publish
     def publish_feedback(self, status, feedback):
-          """
-          * @brief  Publishes feedback for a given goal
-          * @param status The status of the goal with which the feedback is associated
-          * @param feedback The feedback to publish
-          """
-
           with self.lock:
 
               af=self.ActionFeedback();
@@ -198,11 +181,8 @@ class ActionServer:
               self.feedback_pub.publish(af);
 
 
+    ## @brief  The ROS callback for cancel requests coming into the ActionServer
     def internal_cancel_callback(self, goal_id):
-          """
-          * @brief  The ROS callback for cancel requests coming into the ActionServer
-          """
-
           with self.lock:
 
               #if we're not started... then we're not actually going to do anything
@@ -261,11 +241,8 @@ class ActionServer:
                   self.last_cancel = goal_id.stamp;
 
 
+    ## @brief  The ROS callback for goals coming into the ActionServer
     def internal_goal_callback(self, goal):
-          """
-          * @brief  The ROS callback for goals coming into the ActionServer
-          """
-
           with self.lock:
               #if we're not started... then we're not actually going to do anything
               if not self.started:
@@ -306,10 +283,8 @@ class ActionServer:
                   self.lock.acquire()
 
 
+    ## @brief  Publish status for all goals on a timer event
     def publish_status_async(self):
-          """
-          * @brief  Publish status for all goals on a timer event
-          """
           rospy.logdebug("Status async");
           with self.lock:
               #we won't publish status unless we've been started
@@ -319,10 +294,8 @@ class ActionServer:
 
 
 
+    ## @brief  Explicitly publish status
     def publish_status(self):
-          """
-          * @brief  Explicitly publish status
-          """
           with self.lock:
               #build a status array
               status_array = actionlib_msgs.msg.GoalStatusArray()

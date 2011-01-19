@@ -45,28 +45,24 @@ def nop_cb(goal_handle):
     pass
 
 
+## @class SimpleActionServer
+## @brief The SimpleActionServer
+## implements a singe goal policy on top of the ActionServer class. The
+## specification of the policy is as follows: only one goal can have an
+## active status at a time, new goals preempt previous goals based on the
+## stamp in their GoalID field (later goals preempt earlier ones), an
+## explicit preempt goal preempts all goals with timestamps that are less
+## than or equal to the stamp associated with the preempt, accepting a new
+## goal implies successful preemption of any old goal and the status of the
+## old goal will be change automatically to reflect this.
 class SimpleActionServer:
-    """
-    The SimpleActionServer
-    implements a singe goal policy on top of the ActionServer class. The
-    specification of the policy is as follows: only one goal can have an
-    active status at a time, new goals preempt previous goals based on the
-    stamp in their GoalID field (later goals preempt earlier ones), an
-    explicit preempt goal preempts all goals with timestamps that are less
-    than or equal to the stamp associated with the preempt, accepting a new
-    goal implies successful preemption of any old goal and the status of the
-    old goal will be change automatically to reflect this.
-    """
-
+    ## @brief Constructor for a SimpleActionServer
+    ## @param name A name for the action server
+    ## @param execute_cb Optional callback that gets called in a separate thread whenever
+    ## a new goal is received, allowing users to have blocking callbacks.
+    ## Adding an execute callback also deactivates the goalCallback.
+    ## @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up
     def __init__(self, name, ActionSpec, execute_cb = None, auto_start = True):
-        """
-        Constructor for a SimpleActionServer
-        @param name A name for the action server
-        @param execute_cb Optional callback that gets called in a separate thread whenever
-               a new goal is received, allowing users to have blocking callbacks.
-               Adding an execute callback also deactivates the goalCallback.
-        @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up
-        """
 
         self.new_goal = False
         self.preempt_request = False
@@ -103,19 +99,16 @@ class SimpleActionServer:
             self.execute_thread.join();
 
 
+    ## @brief Accepts a new goal when one is available The status of this
+    ## goal is set to active upon acceptance, and the status of any
+    ## previously active goal is set to preempted. Preempts received for the
+    ## new goal between checking if isNewGoalAvailable or invokation of a
+    ## goal callback and the acceptNewGoal call will not trigger a preempt
+    ## callback.  This means, isPreemptReqauested should be called after
+    ## accepting the goal even for callback-based implementations to make
+    ## sure the new goal does not have a pending preempt request.
+    ## @return A shared_ptr to the new goal.
     def accept_new_goal(self):
-        """
-        Accepts a new goal when one is available The status of this
-        goal is set to active upon acceptance, and the status of any
-        previously active goal is set to preempted. Preempts received for the
-        new goal between checking if isNewGoalAvailable or invokation of a
-        goal callback and the acceptNewGoal call will not trigger a preempt
-        callback.  This means, isPreemptReqauested should be called after
-        accepting the goal even for callback-based implementations to make
-        sure the new goal does not have a pending preempt request.
-        @return A shared_ptr to the new goal.
-        """
-
         with self.lock:
             if not self.new_goal or not self.next_goal.get_goal():
                 rospy.logerr("Attempting to accept the next goal when a new goal is not available");
@@ -141,103 +134,81 @@ class SimpleActionServer:
             return self.current_goal.get_goal();
 
 
+    ## @brief Allows  polling implementations to query about the availability of a new goal
+    ## @return True if a new goal is available, false otherwise
     def is_new_goal_available(self):
-        """
-        Allows  polling implementations to query about the availability of a new goal
-        @return True if a new goal is available, false otherwise
-        """
         return self.new_goal;
 
 
+    ## @brief Allows  polling implementations to query about preempt requests
+    ## @return True if a preempt is requested, false otherwise
     def is_preempt_requested(self):
-        """
-        Allows  polling implementations to query about preempt requests
-        @return True if a preempt is requested, false otherwise
-        """
         return self.preempt_request;
 
+    ## @brief Allows  polling implementations to query about the status of the current goal
+    ## @return True if a goal is active, false otherwise
     def is_active(self):
-       """
-       Allows  polling implementations to query about the status of the current goal
-       @return True if a goal is active, false otherwise
-       """
        if not self.current_goal.get_goal():
            return False;
 
        status = self.current_goal.get_goal_status().status;
        return status == actionlib_msgs.msg.GoalStatus.ACTIVE or status == actionlib_msgs.msg.GoalStatus.PREEMPTING;
 
+    ## @brief Sets the status of the active goal to succeeded
+    ## @param  result An optional result to send back to any clients of the goal
     def set_succeeded(self,result=None, text=""):
-      """
-      Sets the status of the active goal to succeeded
-      @param  result An optional result to send back to any clients of the goal
-      """
       with self.lock:
           if not result:
               result=self.get_default_result();
           self.current_goal.set_succeeded(result, text);
 
+    ## @brief Sets the status of the active goal to aborted
+    ## @param  result An optional result to send back to any clients of the goal
     def set_aborted(self, result = None, text=""):
-        """
-        Sets the status of the active goal to aborted
-        @param  result An optional result to send back to any clients of the goal
-        """
         with self.lock:
             if not result:
                 result=self.get_default_result();
             self.current_goal.set_aborted(result, text);
 
+    ## @brief Publishes feedback for a given goal
+    ## @param  feedback Shared pointer to the feedback to publish
     def publish_feedback(self,feedback):
-        """
-        Publishes feedback for a given goal
-        @param  feedback Shared pointer to the feedback to publish
-        """
         self.current_goal.publish_feedback(feedback);
 
 
     def get_default_result(self):
         return self.action_server.ActionResultType();
 
+    ## @brief Sets the status of the active goal to preempted
+    ## @param  result An optional result to send back to any clients of the goal
     def set_preempted(self,result=None, text=""):
-        """
-        Sets the status of the active goal to preempted
-        @param  result An optional result to send back to any clients of the goal
-        """
         if not result:
             result=self.get_default_result();
         with self.lock:
             rospy.logdebug("Setting the current goal as canceled");
             self.current_goal.set_canceled(result, text);
 
+    ## @brief Allows users to register a callback to be invoked when a new goal is available
+    ## @param cb The callback to be invoked
     def register_goal_callback(self,cb):
-        """
-        Allows users to register a callback to be invoked when a new goal is available
-        @param cb The callback to be invoked
-        """
         if self.execute_callback:
             rospy.logwarn("Cannot call SimpleActionServer.register_goal_callback() because an executeCallback exists. Not going to register it.");
         else:
             self.goal_callback = cb;
 
+    ## @brief Allows users to register a callback to be invoked when a new preempt request is available
+    ## @param cb The callback to be invoked
     def register_preempt_callback(self, cb):
-        """
-        Allows users to register a callback to be invoked when a new preempt request is available
-        @param cb The callback to be invoked
-        """
         self.preempt_callback = cb;          
             
 
+    ## @brief Explicitly start the action server, used it auto_start is set to false
     def start(self):
-        """
-        Explicitly start the action server, used it auto_start is set to false
-        """
         self.action_server.start();
         
         
+    ## @brief Callback for when the ActionServer receives a new goal and passes it on
     def internal_goal_callback(self, goal):
-          """
-          Callback for when the ActionServer receives a new goal and passes it on
-          """
           self.execute_condition.acquire();
 
           try:
@@ -276,10 +247,8 @@ class SimpleActionServer:
               rospy.logerr("SimpleActionServer.internal_goal_callback - exception %s",str(e))
               self.execute_condition.release();
 
+    ## @brief Callback for when the ActionServer receives a new preempt and passes it on
     def internal_preempt_callback(self,preempt):
-          """
-          Callback for when the ActionServer receives a new preempt and passes it on
-          """
           with self.lock:
               rospy.logdebug("A preempt has been received by the SimpleActionServer");
 
@@ -296,10 +265,8 @@ class SimpleActionServer:
                   rospy.logdebug("Setting preempt request bit for the next goal to TRUE");
                   self.new_goal_preempt_request = True;
 
+    ## @brief Called from a separate thread to call blocking execute calls
     def executeLoop(self):
-          """
-          Called from a separate thread to call blocking execute calls
-          """
           loop_duration = rospy.Duration.from_sec(.1);
 
           while (not rospy.is_shutdown()):
