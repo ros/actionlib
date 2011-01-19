@@ -403,7 +403,8 @@ class CommStateMachine:
         if self.action_goal.goal_id.id != action_feedback.status.goal_id.id:
             return
 
-        if self.feedback_cb:
+        #with self.mutex:
+        if self.feedback_cb and self.state != CommState.DONE:
             self.feedback_cb(ClientGoalHandle(self), action_feedback.feedback)
 
 
