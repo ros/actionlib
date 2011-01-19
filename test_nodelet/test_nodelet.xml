@@ -4,4 +4,9 @@
       A node to add a value and republish.
     </description>
   </class>
+  <class name="test_nodelet/ConsoleTest" type="test_nodelet::ConsoleTest" base_class_type="nodelet::Nodelet">
+    <description> 
+      Test nodelet rosconsole macros. 
+    </description>
+  </class>
 </library>

@@ -22,9 +22,13 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #rosbuild_gensrv()
 
 #common commands for building c++ executables and libraries
-rosbuild_add_library(${PROJECT_NAME} src/plus.cpp)
+rosbuild_add_library(${PROJECT_NAME} src/plus.cpp src/console_tests.cpp)
 
 rosbuild_add_rostest(test_local.launch)
 rosbuild_add_rostest(test_loader.launch)
 
 rosbuild_add_gtest(test_callback_queue_manager src/test_callback_queue_manager.cpp)
+rosbuild_add_executable(test_console test/test_console.cpp)
+rosbuild_add_gtest_build_flags(test_console)
+
+rosbuild_add_rostest(test/test_console.launch)
