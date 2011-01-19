@@ -4,7 +4,7 @@
     commonly used throughout the ROS ecosystem.
   </description>
   <author>Maintained by Tully Foote tfoote@willowgarage.com</author>
-  <license>LGPL,BSD, Boost Software License (Poco),ZLib,Mozilla Public License Version 1.1,BSD,MIT</license>  
+  <license>LGPL,ZLib,Boost Software License (Poco),Mozilla Public License Version 1.1,BSD,MIT</license>  
   <review status="doc reviewed" notes="2009-10-07"/>
   <url>http://ros.org/wiki/common</url>
   <depend stack="common_msgs" /> <!-- actionlib_msgs -->
