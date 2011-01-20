@@ -1,7 +1,8 @@
 <package>
   <description brief="bondcpp">
 
-     bondcpp
+     C++ implementation of [[bond]], a mechanism for checking when
+     another process has terminated.
 
   </description>
   <author>Stuart Glaser</author>
