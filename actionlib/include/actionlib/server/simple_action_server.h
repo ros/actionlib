@@ -86,7 +86,7 @@ namespace actionlib {
        *                   a new goal is received, allowing users to have blocking callbacks.
        *                   Adding an execute callback also deactivates the goalCallback.
        */
-      ROSCPP_DEPRECATED SimpleActionServer(std::string name, ExecuteCallback execute_cb = NULL);
+      ROS_DEPRECATED SimpleActionServer(std::string name, ExecuteCallback execute_cb = NULL);
 
       /**
        * @brief  Constructor for a SimpleActionServer
@@ -115,7 +115,7 @@ namespace actionlib {
        *                   a new goal is received, allowing users to have blocking callbacks.
        *                   Adding an execute callback also deactivates the goalCallback.
        */
-      ROSCPP_DEPRECATED SimpleActionServer(ros::NodeHandle n, std::string name, ExecuteCallback execute_cb = NULL);
+      ROS_DEPRECATED SimpleActionServer(ros::NodeHandle n, std::string name, ExecuteCallback execute_cb = NULL);
 
       ~SimpleActionServer();
 

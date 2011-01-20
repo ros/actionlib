@@ -104,7 +104,7 @@ namespace actionlib {
        * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
        * @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
        */
-      ROSCPP_DEPRECATED ActionServer(ros::NodeHandle n, std::string name,
+      ROS_DEPRECATED ActionServer(ros::NodeHandle n, std::string name,
           boost::function<void (GoalHandle)> goal_cb,
           boost::function<void (GoalHandle)> cancel_cb = boost::function<void (GoalHandle)>());
 
@@ -122,7 +122,7 @@ namespace actionlib {
        * @param  n A NodeHandle to create a namespace under
        * @param  name The name of the action
        */
-      ROSCPP_DEPRECATED ActionServer(ros::NodeHandle n, std::string name);
+      ROS_DEPRECATED ActionServer(ros::NodeHandle n, std::string name);
 
       /**
        * @brief  Destructor for the ActionServer
