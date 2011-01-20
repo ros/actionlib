@@ -85,13 +85,14 @@ class SimpleActionServer:
         self.current_goal = ServerGoalHandle();
         self.next_goal = ServerGoalHandle();
 
-        #create the action server
-        self.action_server = ActionServer(name, ActionSpec, self.internal_goal_callback,self.internal_preempt_callback,auto_start);
         if self.execute_callback:
             self.execute_thread = threading.Thread(None, self.executeLoop);
             self.execute_thread.start();
         else:
             self.execute_thread = None
+
+        #create the action server
+        self.action_server = ActionServer(name, ActionSpec, self.internal_goal_callback,self.internal_preempt_callback,auto_start);
 
 
     def __del__(self):
