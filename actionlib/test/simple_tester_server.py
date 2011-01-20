@@ -40,7 +40,8 @@ from actionlib.msg import *
 class RefSimpleServer(SimpleActionServer):
 
     def __init__(self, name):
-        SimpleActionServer.__init__(self, name, TestRequestAction, self.execute_cb)
+        SimpleActionServer.__init__(self, name, TestRequestAction, self.execute_cb, False)
+        self.start()
 
     def execute_cb(self, goal):
         rospy.logdebug("Goal:\n" + str(goal))

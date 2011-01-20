@@ -68,9 +68,25 @@ namespace actionlib {
        * @param execute_cb Optional callback that gets called in a separate thread whenever
        *                   a new goal is received, allowing users to have blocking callbacks.
        *                   Adding an execute callback also deactivates the goalCallback.
-       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up
+       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
        */
-      SimpleActionServer(std::string name, ExecuteCallback execute_cb = NULL, bool auto_start = true);
+      SimpleActionServer(std::string name, ExecuteCallback execute_cb, bool auto_start);
+
+      /**
+       * @brief  Constructor for a SimpleActionServer
+       * @param name A name for the action server
+       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+       */
+      SimpleActionServer(std::string name, bool auto_start);
+
+      /**
+       * @brief  DEPRECATED: Constructor for a SimpleActionServer
+       * @param name A name for the action server
+       * @param execute_cb Optional callback that gets called in a separate thread whenever
+       *                   a new goal is received, allowing users to have blocking callbacks.
+       *                   Adding an execute callback also deactivates the goalCallback.
+       */
+      ROSCPP_DEPRECATED SimpleActionServer(std::string name, ExecuteCallback execute_cb = NULL);
 
       /**
        * @brief  Constructor for a SimpleActionServer
@@ -79,9 +95,27 @@ namespace actionlib {
        * @param execute_cb Optional callback that gets called in a separate thread whenever
        *                   a new goal is received, allowing users to have blocking callbacks.
        *                   Adding an execute callback also deactivates the goalCallback.
-       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up
+       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
        */
-      SimpleActionServer(ros::NodeHandle n, std::string name, ExecuteCallback execute_cb = NULL, bool auto_start = true);
+      SimpleActionServer(ros::NodeHandle n, std::string name, ExecuteCallback execute_cb, bool auto_start);
+
+      /**
+       * @brief  Constructor for a SimpleActionServer
+       * @param n A NodeHandle to create a namespace under
+       * @param name A name for the action server
+       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+       */
+      SimpleActionServer(ros::NodeHandle n, std::string name, bool auto_start);
+
+      /**
+       * @brief  Constructor for a SimpleActionServer
+       * @param n A NodeHandle to create a namespace under
+       * @param name A name for the action server
+       * @param execute_cb Optional callback that gets called in a separate thread whenever
+       *                   a new goal is received, allowing users to have blocking callbacks.
+       *                   Adding an execute callback also deactivates the goalCallback.
+       */
+      ROSCPP_DEPRECATED SimpleActionServer(ros::NodeHandle n, std::string name, ExecuteCallback execute_cb = NULL);
 
       ~SimpleActionServer();
 

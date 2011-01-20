@@ -64,7 +64,8 @@ using namespace actionlib;
 
 ServerGoalHandleDestructionTester::ServerGoalHandleDestructionTester()
 {
-  as_ = new ActionServer<TestAction>(nh_, "reference_action", true);
+  as_ = new ActionServer<TestAction>(nh_, "reference_action", false);
+  as_->start();
   as_->registerGoalCallback(boost::bind(&ServerGoalHandleDestructionTester::goalCallback, this, _1));
   gh_ = new GoalHandle();
 

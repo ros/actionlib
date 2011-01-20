@@ -79,21 +79,50 @@ namespace actionlib {
        * @param  name The name of the action
        * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
        * @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
-       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up
+       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
        */
       ActionServer(ros::NodeHandle n, std::string name,
           boost::function<void (GoalHandle)> goal_cb,
-          boost::function<void (GoalHandle)> cancel_cb = boost::function<void (GoalHandle)>(),
-          bool auto_start = true);
+          boost::function<void (GoalHandle)> cancel_cb,
+          bool auto_start);
 
       /**
        * @brief  Constructor for an ActionServer
        * @param  n A NodeHandle to create a namespace under
        * @param  name The name of the action
-       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up
+       * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
+       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
        */
       ActionServer(ros::NodeHandle n, std::string name,
-          bool auto_start = true);
+          boost::function<void (GoalHandle)> goal_cb,
+          bool auto_start);
+
+      /**
+       * @brief  DEPRECATED Constructor for an ActionServer
+       * @param  n A NodeHandle to create a namespace under
+       * @param  name The name of the action
+       * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
+       * @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
+       */
+      ROSCPP_DEPRECATED ActionServer(ros::NodeHandle n, std::string name,
+          boost::function<void (GoalHandle)> goal_cb,
+          boost::function<void (GoalHandle)> cancel_cb = boost::function<void (GoalHandle)>());
+
+      /**
+       * @brief  Constructor for an ActionServer
+       * @param  n A NodeHandle to create a namespace under
+       * @param  name The name of the action
+       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+       */
+      ActionServer(ros::NodeHandle n, std::string name,
+          bool auto_start);
+
+      /**
+       * @brief  DEPRECATED Constructor for an ActionServer
+       * @param  n A NodeHandle to create a namespace under
+       * @param  name The name of the action
+       */
+      ROSCPP_DEPRECATED ActionServer(ros::NodeHandle n, std::string name);
 
       /**
        * @brief  Destructor for the ActionServer

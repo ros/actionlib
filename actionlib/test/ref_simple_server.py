@@ -42,7 +42,8 @@ class RefSimpleServer (SimpleActionServer):
 
     def __init__(self,name):
         action_spec=TestAction
-        SimpleActionServer.__init__(self,name,action_spec,self.goal_callback,self.cancel_callback);
+        SimpleActionServer.__init__(self,name,action_spec,self.goal_callback, False);
+        self.start()
         rospy.loginfo("Creating SimpleActionServer [%s]\n", name);
 
 
@@ -86,9 +87,6 @@ class RefSimpleServer (SimpleActionServer):
 
         else:
             pass
-
-    def cancel_callback(self,gh):
-        pass
 
 if __name__=="__main__":
   rospy.init_node("ref_simple_server");

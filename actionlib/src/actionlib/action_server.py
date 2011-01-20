@@ -74,7 +74,7 @@ class ActionServer:
     ## @param  actionspec An explicit specification of the action
     ## @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
     ## @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
-    ## @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up
+    ## @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
     def __init__(self, ns,  ActionSpec, goal_cb, cancel_cb = nop_cb, auto_start = True):
         self.ns=ns;
 
@@ -116,6 +116,7 @@ class ActionServer:
         self.started = False;
 
         if self.auto_start:
+            rospy.logwarn("You've passed in true for auto_start to the python action server, you should always pass in false to avoid race conditions.")
             self.start()
 
 

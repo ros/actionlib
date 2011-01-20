@@ -41,7 +41,8 @@ class RefServer (ActionServer):
 
     def __init__(self,name):
         action_spec=TestAction
-        ActionServer.__init__(self,name,action_spec,self.goalCallback,self.cancelCallback);
+        ActionServer.__init__(self,name,action_spec,self.goalCallback,self.cancelCallback, False);
+        self.start()
         rospy.loginfo("Creating ActionServer [%s]\n", name);
 
         self.saved_goals=[]

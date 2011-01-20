@@ -64,8 +64,9 @@ RefServer::RefServer(ros::NodeHandle& n, const std::string& name)
   : ActionServer<TestAction>(n, name,
                              boost::bind(&RefServer::goalCallback, this, _1),
                              boost::bind(&RefServer::cancelCallback, this, _1),
-                             true)
+                             false)
 {
+  start();
   printf("Creating ActionServer [%s]\n", name.c_str());
 }
 

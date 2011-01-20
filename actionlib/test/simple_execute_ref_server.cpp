@@ -59,9 +59,9 @@ private:
 
 using namespace actionlib;
 
-SimpleExecuteRefServer::SimpleExecuteRefServer() : as_(nh_, "reference_action", boost::bind(&SimpleExecuteRefServer::executeCallback, this, _1))
+SimpleExecuteRefServer::SimpleExecuteRefServer() : as_(nh_, "reference_action", boost::bind(&SimpleExecuteRefServer::executeCallback, this, _1), false)
 {
-
+  as_.start();
 }
 
 void SimpleExecuteRefServer::executeCallback(const TestGoalConstPtr& goal)

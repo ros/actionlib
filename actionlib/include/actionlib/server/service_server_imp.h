@@ -52,7 +52,8 @@ namespace actionlib {
       : service_cb_(service_cb)
   {
     as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n, name,
-          boost::bind(&ServiceServerImpT::goalCB, this, _1)));
+          boost::bind(&ServiceServerImpT::goalCB, this, _1), false));
+    as_->start();
   }
 
   template <class ActionSpec>
