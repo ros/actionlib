@@ -41,16 +41,17 @@ namespace actionlib {
   SimpleActionServer<ActionSpec>::SimpleActionServer(std::string name, ExecuteCallback execute_callback, bool auto_start)
     : new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(execute_callback), need_to_terminate_(false) {
 
+    if (execute_callback_ != NULL)
+    {
+      execute_thread_ = new boost::thread(boost::bind(&SimpleActionServer::executeLoop, this));
+    }
+
     //create the action server
     as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n_, name,
           boost::bind(&SimpleActionServer::goalCallback, this, _1),
           boost::bind(&SimpleActionServer::preemptCallback, this, _1),
           auto_start));
 
-    if (execute_callback_ != NULL)
-    {
-      execute_thread_ = new boost::thread(boost::bind(&SimpleActionServer::executeLoop, this));
-    }
   }
 
   template <class ActionSpec>
