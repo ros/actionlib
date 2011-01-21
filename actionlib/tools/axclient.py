@@ -68,6 +68,13 @@ class AXClientApp(wx.App):
         self.status_bg.SetBackgroundColour(color)
         self.status.SetLabel(label)
 
+    def set_cancel_button(self, enabled):
+        if enabled:
+            self.cancel_goal.Enable()
+        else:
+            self.cancel_goal.Disable()
+
+
     def set_server_status(self, label, color, enabled):
         self.server_status_bg.SetBackgroundColour(color)
         self.server_status.SetLabel(label)
@@ -85,6 +92,11 @@ class AXClientApp(wx.App):
             wx.CallAfter(self.set_server_status, "Disconnected from server",
                          wx.Colour(200, 0, 0), False)
 
+    def on_cancel(self, event):
+        #we'll cancel the current goal
+        self.client.cancel_goal()
+        self.set_status("Canceling goal", wx.Colour(211, 34, 243))
+
     def on_goal(self, event):
         try:
             self.goal_msg = yaml_msg_str(self.action_type.goal,
@@ -97,6 +109,7 @@ class AXClientApp(wx.App):
             self.client.send_goal(self.goal_msg, self.done_cb, self.active_cb,
                                   self.feedback_cb)
             self.set_status("Goal is pending", wx.Colour(255, 174, 59))
+            self.set_cancel_button(True)
 
         except roslib.message.SerializationError, e:
             self.goal_msg = None
@@ -125,6 +138,7 @@ class AXClientApp(wx.App):
         wx.CallAfter(self.set_status, ''.join(["Goal finished with status: ",
                                                status_string]), status_color)
         wx.CallAfter(self.set_result, result)
+        wx.CallAfter(self.set_cancel_button, False)
 
     def active_cb(self):
         wx.CallAfter(self.set_status, "Goal is active", wx.Colour(0,200,0))
@@ -171,6 +185,10 @@ class AXClientApp(wx.App):
         self.send_goal.Bind(wx.EVT_BUTTON, self.on_goal)
         self.send_goal.Disable()
 
+        self.cancel_goal = wx.Button(self.frame, -1, label="CANCEL GOAL")
+        self.cancel_goal.Bind(wx.EVT_BUTTON, self.on_cancel)
+        self.cancel_goal.Disable()
+
         self.status_bg = wx.Panel(self.frame, -1)
         self.status_bg.SetBackgroundColour(wx.Colour(200,0,0))
         self.status = wx.StaticText(self.status_bg, -1, label="No Goal")
@@ -183,6 +201,7 @@ class AXClientApp(wx.App):
         self.sz.Add(self.feedback_st, 1, wx.EXPAND)
         self.sz.Add(self.result_st, 1, wx.EXPAND)
         self.sz.Add(self.send_goal, 0, wx.EXPAND)
+        self.sz.Add(self.cancel_goal, 0, wx.EXPAND)
         self.sz.Add(self.status_bg, 0, wx.EXPAND)
         self.sz.Add(self.server_status_bg, 0, wx.EXPAND)
 
