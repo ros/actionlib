@@ -1,7 +1,7 @@
 <package>
   <description brief="bondpy">
 
-     Python implementation of [[bond]], a mechanism for checking when
+     Python implementation of bond, a mechanism for checking when
      another process has terminated.
 
   </description>
