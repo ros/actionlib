@@ -247,6 +247,12 @@ namespace actionlib {
     for(typename std::list<StatusTracker<ActionSpec> >::iterator it = status_list_.begin(); it != status_list_.end(); ++it){
       if(goal->goal_id.id == (*it).status_.goal_id.id){
 
+        // The goal could already be in a recalling state if a cancel came in before the goal
+        if ( (*it).status_.status == actionlib_msgs::GoalStatus::RECALLING ) {
+          (*it).status_.status = actionlib_msgs::GoalStatus::RECALLED;
+          publishResult((*it).status_, Result());
+        }
+
         //if this is a request for a goal that has no active handles left,
         //we'll bump how long it stays in the list
         if((*it).handle_tracker_.expired()){

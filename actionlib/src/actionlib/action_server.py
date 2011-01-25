@@ -254,6 +254,12 @@ class ActionServer:
               #we need to check if this goal already lives in the status list
               for st in self.status_list:
                   if goal.goal_id.id == st.status.goal_id.id:
+                      rospy.logdebug("Goal %s was already in the status list with status %i" % (goal.goal_id.id, st.status.status))
+                      # Goal could already be in recalling state if a cancel came in before the goal
+                      if st.status.status == actionlib_msgs.msg.GoalStatus.RECALLING:
+                          st.status.status = actionlib_msgs.msg.GoalStatus.RECALLED
+                          self.publish_result(st.status, self.ActionResultType())
+
                       #if this is a request for a goal that has no active handles left,
                       #we'll bump how long it stays in the list
                       if st.handle_tracker is None:
@@ -308,6 +314,8 @@ class ActionServer:
                   st = self.status_list[i]
                   #check if the item is due for deletion from the status list
                   if st.handle_destruction_time != rospy.Time() and st.handle_destruction_time + self.status_list_timeout < rospy.Time.now():
+                      rospy.logdebug("Item %s with destruction time of %.3f being removed from list.  Now = %.3f" % \
+                                   (st.status.goal_id, st.handle_destruction_time.to_sec(), rospy.Time.now().to_sec()))
                       del self.status_list[i]
                   else:
                       status_array.status_list.append(st.status);
