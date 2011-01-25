@@ -127,8 +127,15 @@ TEST_F(SimpleClientFixture, ignore_cancel_and_succeed)
   goal.the_result = 42;
   ac_.sendGoal(goal);
 
-  // Sleep to ensure that the goal gets there before the cancel
-  ros::Duration(1.0).sleep();
+  // Sleep for 10 seconds or until we hear back from the action server
+  for (unsigned int i=0; i < 100; i++)
+  {
+    ROS_DEBUG("Waiting for Server Response");
+    if (ac_.getState() != SimpleClientGoalState::PENDING)
+      break;
+    ros::Duration(0.1).sleep();
+  }
+
   ac_.cancelGoal();
   ac_.waitForResult(default_wait_ + default_wait_);
   EXPECT_STATE(SUCCEEDED);
