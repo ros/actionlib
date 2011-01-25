@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 # Copyright (c) 2009, Willow Garage, Inc.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 #       notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
 #     * Neither the name of the Willow Garage, Inc. nor the names of its
 #       contributors may be used to endorse or promote products derived from
 #       this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Author: Alexander Sorokin. 
+# Author: Alexander Sorokin.
 # Based on C++ simple_action_server.h by Eitan Marder-Eppstein
 from __future__ import with_statement
 
@@ -118,7 +118,7 @@ class SimpleActionServer:
             #check if we need to send a preempted message for the goal that we're currently pursuing
             if self.is_active() and self.current_goal.get_goal() and self.current_goal != self.next_goal:
                 self.current_goal.set_canceled(None, "This goal was canceled because another goal was received by the simple action server");
-            
+
             rospy.logdebug("Accepting a new goal");
 
             #accept the next goal
@@ -200,14 +200,14 @@ class SimpleActionServer:
     ## @brief Allows users to register a callback to be invoked when a new preempt request is available
     ## @param cb The callback to be invoked
     def register_preempt_callback(self, cb):
-        self.preempt_callback = cb;          
-            
+        self.preempt_callback = cb;
+
 
     ## @brief Explicitly start the action server, used it auto_start is set to false
     def start(self):
         self.action_server.start();
-        
-        
+
+
     ## @brief Callback for when the ActionServer receives a new goal and passes it on
     def internal_goal_callback(self, goal):
           self.execute_condition.acquire();
@@ -221,7 +221,7 @@ class SimpleActionServer:
                   #if next_goal has not been accepted already... its going to get bumped, but we need to let the client know we're preempting
                   if(self.next_goal.get_goal() and (not self.current_goal.get_goal() or self.next_goal != self.current_goal)):
                       self.next_goal.set_canceled(None, "This goal was canceled because another goal was received by the simple action server");
-                  
+
                   self.next_goal = goal;
                   self.new_goal = True;
                   self.new_goal_preempt_request = False;
@@ -236,7 +236,7 @@ class SimpleActionServer:
                   #if the user has defined a goal callback, we'll call it now
                   if self.goal_callback:
                       self.goal_callback();
-                  
+
                   #Trigger runLoop to call execute()
                   self.execute_condition.notify();
                   self.execute_condition.release();
