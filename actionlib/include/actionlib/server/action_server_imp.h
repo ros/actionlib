@@ -43,7 +43,7 @@ namespace actionlib {
     : node_(n, name), goal_callback_(boost::function<void (GoalHandle)>()),
       cancel_callback_(boost::function<void (GoalHandle)>()), started_(auto_start), guard_(new DestructionGuard){
     //if we're to autostart... then we'll initialize things
-    if(started_){ 
+    if(started_){
       ROS_WARN("You've passed in true for auto_start for the C++ action server you should always pass in false to avoid race conditions.");
       initialize();
       publishStatus();
@@ -55,7 +55,7 @@ namespace actionlib {
     : node_(n, name), goal_callback_(boost::function<void (GoalHandle)>()),
       cancel_callback_(boost::function<void (GoalHandle)>()), started_(true), guard_(new DestructionGuard){
     //if we're to autostart... then we'll initialize things
-    if(started_){ 
+    if(started_){
       ROS_WARN("You've passed in true for auto_start for the C++ action server you should always pass in false to avoid race conditions.");
       initialize();
       publishStatus();
@@ -69,7 +69,7 @@ namespace actionlib {
       bool auto_start)
     : node_(n, name), goal_callback_(goal_cb), cancel_callback_(cancel_cb), started_(auto_start), guard_(new DestructionGuard) {
     //if we're to autostart... then we'll initialize things
-    if(started_){ 
+    if(started_){
       ROS_WARN("You've passed in true for auto_start for the C++ action server you should always pass in false to avoid race conditions.");
       initialize();
       publishStatus();
@@ -82,7 +82,7 @@ namespace actionlib {
       boost::function<void (GoalHandle)> cancel_cb)
     : node_(n, name), goal_callback_(goal_cb), cancel_callback_(cancel_cb), started_(true), guard_(new DestructionGuard) {
     //if we're to autostart... then we'll initialize things
-    if(started_){ 
+    if(started_){
       ROS_WARN("You've passed in true for auto_start for the C++ action server you should always pass in false to avoid race conditions.");
       initialize();
       publishStatus();
@@ -95,7 +95,7 @@ namespace actionlib {
       bool auto_start)
     : node_(n, name), goal_callback_(goal_cb), cancel_callback_(boost::function<void (GoalHandle)>()), started_(auto_start), guard_(new DestructionGuard) {
     //if we're to autostart... then we'll initialize things
-    if(started_){ 
+    if(started_){
       ROS_WARN("You've passed in true for auto_start for the C++ action server you should always pass in false to avoid race conditions.");
       initialize();
       publishStatus();
