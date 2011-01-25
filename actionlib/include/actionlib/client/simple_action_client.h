@@ -98,9 +98,9 @@ public:
    * \param n The node handle on top of which we want to namespace our action
    * \param name The action name. Defines the namespace in which the action communicates
    * \param spin_thread If true, spins up a thread to service this action's subscriptions. If false,
-   *                    then the user has to call ros::spin().
+   *                    then the user has to call ros::spin() themselves. Defaults to True
    */
-  SimpleActionClient(ros::NodeHandle& n, const std::string& name, bool spin_thread = false) : cur_simple_state_(SimpleGoalState::PENDING)
+  SimpleActionClient(ros::NodeHandle& n, const std::string& name, bool spin_thread = true) : cur_simple_state_(SimpleGoalState::PENDING)
   {
     initSimpleClient(n, name, spin_thread);
 
