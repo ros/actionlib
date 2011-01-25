@@ -76,5 +76,11 @@ rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_server2.launch
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_server3.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_python_simple_server.launch)
 
-# New Python tests, using the TestRequest action
-rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_exercise_py_simple_server.launch)
+
+# New Testing format
+rosbuild_add_executable(exercise_simple_client test/exercise_simple_client.cpp)
+rosbuild_add_gtest_build_flags(exercise_simple_client)
+target_link_libraries(exercise_simple_client ${PROJECT_NAME})
+
+# New tests, using the TestRequest action
+rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_exercise_simple_clients.launch)

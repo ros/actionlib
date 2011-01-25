@@ -56,7 +56,7 @@ class RefSimpleServer(SimpleActionServer):
                 while rospy.get_rostime() < status_continue_time:
                     time.sleep(0.02)
                 rospy.loginfo("Unlocking the action server")
-            
+
 
         terminate_time = rospy.get_rostime() + goal.delay_terminate
         while rospy.get_rostime() < terminate_time:
@@ -65,6 +65,8 @@ class RefSimpleServer(SimpleActionServer):
                 if self.is_preempt_requested():
                     self.set_preempted(result, goal.result_text)
                     return
+
+        rospy.logdebug("Terminating goal as: %i" % goal.terminate_status)
 
         if goal.terminate_status == TestRequestGoal.TERMINATE_SUCCESS:
             self.set_succeeded(result, goal.result_text)
