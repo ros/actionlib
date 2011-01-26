@@ -47,7 +47,7 @@ using namespace actionlib_msgs;
 class SimpleClientFixture : public testing::Test
 {
 public:
-  SimpleClientFixture() : ac_("test_request_action"), default_wait_(5.0)  {  }
+  SimpleClientFixture() : ac_("test_request_action"), default_wait_(60.0)  {  }
 
 protected:
   virtual void SetUp()
