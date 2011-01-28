@@ -74,9 +74,9 @@ Bond::Bond(const std::string &topic, const std::string &id,
 Bond::~Bond()
 {
   breakBond();
-  if (!waitUntilBroken(ros::Duration(2.0)))
+  if (!waitUntilBroken(ros::Duration(1.0)))
   {
-    ROS_ERROR("Bond failed to break on destruction %s (%s)", id_.c_str(), instance_id_.c_str());
+    ROS_DEBUG("Bond failed to break on destruction %s (%s)", id_.c_str(), instance_id_.c_str());
   }
 
   // Must destroy the subscription before locking mutex_: shutdown()
@@ -245,7 +245,8 @@ void Bond::bondStatusCB(const bond::Status::ConstPtr &msg)
       if (sister_instance_id_.empty())
         sister_instance_id_ = msg->instance_id;
       if (sister_instance_id_ != msg->instance_id) {
-        ROS_ERROR("Bond (%s, %s) has more than two members.",
+        ROS_ERROR("More than two locations are trying to use a single bond (topic: %s, id: %s).  "
+                  "You should only instantiate at most two bond instances for each (topic, id) pair.",
                   topic_.c_str(), id_.c_str());
         return;
       }
