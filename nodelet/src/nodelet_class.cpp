@@ -34,8 +34,44 @@
 #include <ros/ros.h>
 #include <ros/callback_queue.h>
 
+
+
+
 namespace nodelet
 {
+
+///* Temporary until ros_comm 1.4.0 is released */
+std::string parentNamespace(const std::string& name)
+{
+  std::string error;
+  if (!ros::names::validate(name, error))
+  {
+    throw ros::InvalidNameException(error);
+  }
+
+  if (!name.compare(""))  return "";
+  if (!name.compare("/")) return "/";
+
+  std::string stripped_name;
+
+  // rstrip trailing slash                                                                                                                                                                                                       
+  if (name.find_last_of('/') == name.size()-1)
+    stripped_name = name.substr(0, name.size() -2);
+  else
+    stripped_name = name;
+
+  //pull everything up to the last /                                                                                                                                                                                             
+  size_t last_pos = stripped_name.find_last_of('/');
+  if (last_pos == std::string::npos)
+  {
+    return "";
+  }
+  else if (last_pos == 0)
+    return "/";
+  return stripped_name.substr(0, last_pos);
+}
+///* remove and use ros::names::parentNamespace after ros_comm 1.4.1 */
+
 
 Nodelet::Nodelet ()
 : inited_(false)
@@ -134,10 +170,10 @@ void Nodelet::init(const std::string& name, const M_string& remapping_args, cons
 
   private_nh_.reset(new ros::NodeHandle (name, remapping_args));
   private_nh_->setCallbackQueue(st_callback_queue_.get());
-  nh_.reset(new ros::NodeHandle (private_nh_->getNamespace(), remapping_args));
+  nh_.reset(new ros::NodeHandle (parentNamespace(name), remapping_args));
   nh_->setCallbackQueue(st_callback_queue_.get());
 
-  mt_nh_.reset(new ros::NodeHandle (private_nh_->getNamespace(), remapping_args));
+  mt_nh_.reset(new ros::NodeHandle (parentNamespace(name), remapping_args));
   mt_nh_->setCallbackQueue(mt_callback_queue_.get());
   mt_private_nh_.reset(new ros::NodeHandle (name, remapping_args));
   mt_private_nh_->setCallbackQueue(mt_callback_queue_.get());
