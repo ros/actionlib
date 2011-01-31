@@ -194,7 +194,9 @@ class Bond(object):
                     self.sister_instance_id = msg.instance_id
 
                 if msg.instance_id != self.sister_instance_id:
-                    rospy.logerr("Bond (%s, %s) has more than two members." % (self.topic, self.bond_id))
+                    rospy.logerr("More than two locations are trying to use a single bond (topic: %s, id: %s).  " + \
+                                 "You should only instantiate at most two bond instances for each (topic, id) pair." % \
+                                     (self.topic, self.id))
                     return
 
                 if msg.active:
@@ -280,28 +282,38 @@ class Bond(object):
 
     ## \brief Blocks until the bond is formed for at most 'duration'.
     #
-    # \param d Maximum duration to wait.  If -1 then this call will not timeout.
+    # \param timeout Maximum duration to wait.  If None then this call will not timeout.
     # \return true iff the bond has been formed.
     def wait_until_formed(self, timeout = None):
         deadline = timeout and Timeout(timeout).reset()
         with self.lock:
             while self.sm.getState().getName() == 'SM.WaitingForSister':
+                if rospy.is_shutdown():
+                    break
                 if deadline and deadline.left() == rospy.Duration(0):
                     break
-                self.condition.wait(deadline and deadline.left().to_sec())
+                wait_duration = 0.1
+                if deadline:
+                    wait_duration = min(wait_duration, deadline.left().to_sec())
+                self.condition.wait(wait_duration)
             return self.sm.getState().getName() != 'SM.WaitingForSister'
 
     ## \brief Blocks until the bond is broken for at most 'duration'.
     #
-    # \param d Maximum duration to wait.  If -1 then this call will not timeout.
+    # \param timeout Maximum duration to wait.  If None then this call will not timeout.
     # \return true iff the bond has been broken, even if it has never been formed.
     def wait_until_broken(self, timeout = None):
         deadline = timeout and Timeout(timeout).reset()
         with self.lock:
             while self.sm.getState().getName() != 'SM.Dead':
+                if rospy.is_shutdown():
+                    break
                 if deadline and deadline.left() == rospy.Duration(0):
                     break
-                self.condition.wait(deadline and deadline.left().to_sec())
+                wait_duration = 0.1
+                if deadline:
+                    wait_duration = min(wait_duration, deadline.left().to_sec())
+                self.condition.wait(wait_duration)
             return self.sm.getState().getName() == 'SM.Dead'
 
     ## \brief Indicates if the bond is broken

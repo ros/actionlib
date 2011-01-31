@@ -159,32 +159,46 @@ void Bond::setBrokenCallback(boost::function<void(void)> on_broken)
   on_broken_ = on_broken;
 }
 
-bool Bond::waitUntilFormed(ros::Duration d)
+bool Bond::waitUntilFormed(ros::Duration timeout)
 {
   boost::mutex::scoped_lock lock(mutex_);
-  boost::system_time deadline(boost::get_system_time() +
-                              boost::posix_time::microseconds(d.toNSec()/1000L));
+  ros::Time deadline(ros::Time::now() + timeout);
+
   while (sm_.getState().getId() == SM::WaitingForSister.getId())
   {
-    if (d < ros::Duration(0))
-      condition_.wait(mutex_);
-    else if (!condition_.timed_wait(mutex_, deadline))
+    if (!ros::ok())
       break;
+
+    ros::Duration wait_time = ros::Duration(0.1);
+    if (timeout >= ros::Duration(0.0))
+      wait_time = std::min(wait_time, deadline - ros::Time::now());
+
+    if (wait_time <= ros::Duration(0.0))
+      break;  // The deadline has expired
+
+    condition_.timed_wait(mutex_, boost::posix_time::milliseconds(wait_time.toSec() * 1000.0f));
   }
   return sm_.getState().getId() != SM::WaitingForSister.getId();
 }
 
-bool Bond::waitUntilBroken(ros::Duration d)
+bool Bond::waitUntilBroken(ros::Duration timeout)
 {
   boost::mutex::scoped_lock lock(mutex_);
-  boost::system_time deadline(boost::get_system_time() +
-                              boost::posix_time::microseconds(d.toNSec()/1000L));
+  ros::Time deadline(ros::Time::now() + timeout);
+  
   while (sm_.getState().getId() != SM::Dead.getId())
   {
-    if (d < ros::Duration(0))
-      condition_.wait(mutex_);
-    else if (!condition_.timed_wait(mutex_, deadline))
+    if (!ros::ok())
       break;
+
+    ros::Duration wait_time = ros::Duration(0.1);
+    if (timeout >= ros::Duration(0.0))
+      wait_time = std::min(wait_time, deadline - ros::Time::now());
+
+    if (wait_time <= ros::Duration(0.0))
+      break; // The deadline has expired
+
+    condition_.timed_wait(mutex_, boost::posix_time::milliseconds(wait_time.toSec() * 1000.0f));
   }
   return sm_.getState().getId() == SM::Dead.getId();
 }
