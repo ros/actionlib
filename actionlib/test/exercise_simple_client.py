@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 # Copyright (c) 2009, Willow Garage, Inc.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 #       notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
 #     * Neither the name of the Willow Garage, Inc. nor the names of its
 #       contributors may be used to endorse or promote products derived from
 #       this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -41,14 +41,15 @@ from actionlib.msg import *
 class SimpleExerciser(unittest.TestCase):
 
     def setUp(self):
+        self.default_wait = rospy.Duration(60.0)
         self.client = SimpleActionClient('test_request_action', TestRequestAction)
-        self.assert_(self.client.wait_for_server(rospy.Duration(5.0)))
+        self.assert_(self.client.wait_for_server(self.default_wait))
 
     def test_just_succeed(self):
         goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_SUCCESS,
                                the_result = 42)
         self.client.send_goal(goal)
-        self.client.wait_for_result(rospy.Duration(5.0))
+        self.client.wait_for_result(self.default_wait)
 
         self.assertEqual(GoalStatus.SUCCEEDED, self.client.get_state())
         self.assertEqual(42, self.client.get_result().the_result)
@@ -57,7 +58,7 @@ class SimpleExerciser(unittest.TestCase):
         goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_ABORTED,
                                the_result = 42)
         self.client.send_goal(goal)
-        self.client.wait_for_result(rospy.Duration(5.0))
+        self.client.wait_for_result(self.default_wait)
 
         self.assertEqual(GoalStatus.ABORTED, self.client.get_state())
         self.assertEqual(42, self.client.get_result().the_result)
@@ -67,9 +68,15 @@ class SimpleExerciser(unittest.TestCase):
                                delay_terminate = rospy.Duration(100000),
                                the_result = 42)
         self.client.send_goal(goal)
-        self.client.cancel_goal()
-        self.client.wait_for_result(rospy.Duration(5.0))
 
+        # Ensure that the action server got the goal, before continuing
+        timeout_time = rospy.Time.now() + self.default_wait
+        while rospy.Time.now() < timeout_time:
+            if (self.client.get_state() != GoalStatus.PENDING):
+                break
+        self.client.cancel_goal()
+
+        self.client.wait_for_result(self.default_wait)
         self.assertEqual(GoalStatus.PREEMPTED, self.client.get_state())
         self.assertEqual(42, self.client.get_result().the_result)
 
@@ -78,7 +85,7 @@ class SimpleExerciser(unittest.TestCase):
         goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_DROP,
                                the_result = 42)
         self.client.send_goal(goal)
-        self.client.wait_for_result(rospy.Duration(5.0))
+        self.client.wait_for_result(self.default_wait)
 
         self.assertEqual(GoalStatus.ABORTED, self.client.get_state())
         self.assertEqual(0, self.client.get_result().the_result)
@@ -88,7 +95,7 @@ class SimpleExerciser(unittest.TestCase):
         goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_EXCEPTION,
                                the_result = 42)
         self.client.send_goal(goal)
-        self.client.wait_for_result(rospy.Duration(5.0))
+        self.client.wait_for_result(self.default_wait)
 
         self.assertEqual(GoalStatus.ABORTED, self.client.get_state())
         self.assertEqual(0, self.client.get_result().the_result)
@@ -99,8 +106,15 @@ class SimpleExerciser(unittest.TestCase):
                                ignore_cancel = True,
                                the_result = 42)
         self.client.send_goal(goal)
+
+        # Ensure that the action server got the goal, before continuing
+        timeout_time = rospy.Time.now() + self.default_wait
+        while rospy.Time.now() < timeout_time:
+            if (self.client.get_state() != GoalStatus.PENDING):
+                break
         self.client.cancel_goal()
-        self.client.wait_for_result(rospy.Duration(5.0))
+
+        self.client.wait_for_result(self.default_wait)
 
         self.assertEqual(GoalStatus.SUCCEEDED, self.client.get_state())
         self.assertEqual(42, self.client.get_result().the_result)
@@ -110,7 +124,7 @@ class SimpleExerciser(unittest.TestCase):
         goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_LOSE,
                                the_result = 42)
         self.client.send_goal(goal)
-        self.client.wait_for_result(rospy.Duration(10.0))
+        self.client.wait_for_result(self.default_wait)
 
         self.assertEqual(GoalStatus.LOST, self.client.get_state())
 
@@ -126,7 +140,7 @@ class SimpleExerciser(unittest.TestCase):
 
         self.assertEqual(GoalStatus.LOST, self.client.get_state())
 '''
-        
+
 
 
 if __name__ == '__main__':
