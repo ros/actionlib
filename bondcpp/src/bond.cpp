@@ -84,11 +84,14 @@ Bond::~Bond()
   // callback locks mutex_ (in flushPendingCallbacks).
   sub_.shutdown();
 
-  boost::mutex::scoped_lock lock(mutex_);
+  // Stops the timers before locking the mutex.  Makes sure none of
+  // the callbacks are running when we aquire the mutex.
+  publishingTimer_.stop();
   connect_timer_.cancel();
   heartbeat_timer_.cancel();
   disconnect_timer_.cancel();
-  publishingTimer_.stop();
+  
+  boost::mutex::scoped_lock lock(mutex_);
   pub_.shutdown();
 }
 
