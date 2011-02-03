@@ -10,6 +10,7 @@
   <review status="API cleared" notes="http://www.ros.org/wiki/bond/Reviews/2010-07-28_API_Review"/>
   <url>http://ros.org/wiki/bondcpp</url>
   <depend package="bond"/>
+  <depend package="uuid"/>
   <depend package="roscpp"/>
   <depend package="smclib" />
 

@@ -1,5 +1,6 @@
 uuid:
   ubuntu: uuid-dev
+  fedora: libuuid-devel
 sdl:
   ubuntu: libsdl1.2-dev
   debian: libsdl1.2-dev
