@@ -57,7 +57,7 @@ import threading
 import weakref
 import time
 import rospy
-from roslib.msg import Header
+from rospy import Header
 from actionlib_msgs.msg import *
 from actionlib.exceptions import *
 

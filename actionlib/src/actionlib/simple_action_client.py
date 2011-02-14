@@ -33,7 +33,7 @@ import roslib; roslib.load_manifest('actionlib')
 import threading
 import time
 import rospy
-from roslib.msg import Header
+from rospy import Header
 from actionlib_msgs.msg import *
 from action_client import ActionClient, CommState, get_name_of_constant
 
