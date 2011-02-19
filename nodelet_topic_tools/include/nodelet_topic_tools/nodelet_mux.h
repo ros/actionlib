@@ -40,6 +40,7 @@
 #include <ros/ros.h>
 #include <nodelet/nodelet.h>
 #include <message_filters/time_synchronizer.h>
+#include <message_filters/pass_through.h>
 
 namespace nodelet
 {
@@ -103,39 +104,41 @@ namespace nodelet
               filters_[d]->subscribe (private_nh_, (std::string)(input_topics[d]), 1);
             }
 
+            // Subscribe to 1 callback to fill in the passthrough
+            filters_[0]->registerCallback (boost::bind (&NodeletMUX<T,Filter>::filter_cb, this, _1));
+
             ts_.reset (new message_filters::TimeSynchronizer<T,T,T,T,T,T,T,T> (maximum_queue_size_));
            
-            message_filters::NullFilter<T> nf;
             switch (input_topics.size ())
             {
               case 2:
               {
-                ts_->connectInput (*filters_[0], *filters_[1], nf, nf, nf, nf, nf, nf);
+                ts_->connectInput (*filters_[0], *filters_[1], nf_, nf_, nf_, nf_, nf_, nf_);
                 break;
               }
               case 3:
               {
-                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], nf, nf, nf, nf, nf);
+                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], nf_, nf_, nf_, nf_, nf_);
                 break;
               }
               case 4:
               {
-                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], nf, nf, nf, nf);
+                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], nf_, nf_, nf_, nf_);
                 break;
               }
               case 5:
               {
-                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], nf, nf, nf);
+                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], nf_, nf_, nf_);
                 break;
               }
               case 6:
               {
-                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5], nf, nf);
+                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5], nf_, nf_);
                 break;
               }
               case 7:
               {
-                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5], *filters_[6], nf);
+                ts_->connectInput (*filters_[0], *filters_[1], *filters_[2], *filters_[3], *filters_[4], *filters_[5], *filters_[6], nf_);
                 break;
               }
               case 8:
@@ -163,8 +166,15 @@ namespace nodelet
 
     private:
 
-      void input (const TConstPtr &in1, const TConstPtr &in2, const TConstPtr &in3, const TConstPtr &in4, 
-                  const TConstPtr &in5, const TConstPtr &in6, const TConstPtr &in7, const TConstPtr &in8)
+      void
+      filter_cb (const TConstPtr &input)
+      {
+        nf_.add (input);
+      }
+
+      void 
+      input (const TConstPtr &in1, const TConstPtr &in2, const TConstPtr &in3, const TConstPtr &in4, 
+             const TConstPtr &in5, const TConstPtr &in6, const TConstPtr &in7, const TConstPtr &in8)
       { 
         pub_output_.publish (in1); pub_output_.publish (in2); pub_output_.publish (in3); pub_output_.publish (in4); 
         pub_output_.publish (in5); pub_output_.publish (in6); pub_output_.publish (in7); pub_output_.publish (in8); 
@@ -174,6 +184,9 @@ namespace nodelet
       ros::NodeHandle private_nh_;
       /** \brief The output ROS publisher. */
       ros::Publisher pub_output_;
+
+      /** \brief Null filter. */
+      message_filters::PassThrough<T> nf_;
 
       /** \brief The maximum number of messages that we can store in the queue. */
       int maximum_queue_size_;
