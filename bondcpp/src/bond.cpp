@@ -236,6 +236,15 @@ void Bond::onConnectTimeout()
 }
 void Bond::onHeartbeatTimeout()
 {
+  // Checks that heartbeat timeouts haven't been disabled globally.
+  bool disable_heartbeat_timeout;
+  nh_.param(bond::Constants::DISABLE_HEARTBEAT_TIMEOUT_PARAM, disable_heartbeat_timeout, false);
+  if (disable_heartbeat_timeout) {
+    ROS_WARN("Heartbeat timeout is disabled.  Not breaking bond (topic: %s, id: %s)",
+             topic_.c_str(), id_.c_str());
+    return;
+  }
+  
   {
     boost::mutex::scoped_lock lock(mutex_);
     sm_.HeartbeatTimeout();

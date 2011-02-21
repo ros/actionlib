@@ -131,7 +131,7 @@ class BondTester:
         # Filters out messages from other bonds and messages from ourselves
         if msg.id == self.id and msg.instance_id != self.instance_id:
             with self.lock:
-                if msg.active:
+                if msg.active or self.req.inhibit_death:
                     self.sm.SisterAlive()
                 else:
                     self.sm.SisterDead()
@@ -148,7 +148,7 @@ class BondTester:
         msg.instance_id = self.instance_id
         msg.active = active
 
-        if not msg.active and self.req.inhibit_death:
+        if not msg.active and self.req.inhibit_death_message:
             pass
         else:
             self.pub.publish(msg)
@@ -235,6 +235,7 @@ class Tester:
         if self.bond_tester:
             self.bond_tester.shutdown()
         self.bond_tester = BondTester(req)
+        print "Test bond instance id: %s" % self.bond_tester.instance_id
         return TestBondResponse()
 
 def main():

@@ -163,10 +163,19 @@ class Bond(object):
         with self.lock:
             self.sm.ConnectTimeout()
         self._flush_pending_callbacks()
+
     def _on_heartbeat_timeout(self):
+        # Checks that heartbeat timeouts haven't been disabled globally
+        disable_heartbeat_timeout = rospy.get_param(Constants.DISABLE_HEARTBEAT_TIMEOUT_PARAM, False)
+        if disable_heartbeat_timeout:
+            rospy.logwarn("Heartbeat timeout is disabled.  Not breaking bond (topic: %s, id: %s)" % \
+                              (self.topic, self.id))
+            return
+
         with self.lock:
             self.sm.HeartbeatTimeout()
         self._flush_pending_callbacks()
+
     def _on_disconnect_timeout(self):
         with self.lock:
             self.sm.DisconnectTimeout()
@@ -184,7 +193,6 @@ class Bond(object):
                     self.break_bond()
                 self.pub.unregister()
                 self.condition.notify_all()
-                print "Unregistered"
 
     def _on_bond_status(self, msg):
         # Filters out messages from other bonds and messages from ourself
@@ -243,7 +251,6 @@ class Bond(object):
 
     ## \brief INTERNAL
     def Connected(self):
-        print "Connection established!" # TODO
         self.connect_timer.cancel()
         self.condition.notify_all()
         if self.on_formed:
