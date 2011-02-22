@@ -15,7 +15,8 @@ BOOST_INCLUDE =$(shell rosboost-cfg --include_dirs)
 CMAKE_ARGS = -DBUILD_TESTS=OFF \
              -DCMAKE_INSTALL_PREFIX=`rospack find bfl`/$(INSTALL_DIR)/ \
 	     -DCMAKE_INCLUDE_PATH=$(BOOST_INCLUDE) \
-	     -DMATRIX_LIB=boost -DRNG_LIB=boost
+	     -DMATRIX_LIB=boost -DRNG_LIB=boost \
+             -DCMAKE_BUILD_TYPE="Release"
 
 
 installed: $(SOURCE_DIR)/unpacked
