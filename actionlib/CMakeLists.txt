@@ -37,6 +37,7 @@ target_link_libraries(ref_server ${PROJECT_NAME})
 
 rosbuild_add_executable(server_goal_handle_destruction test/server_goal_handle_destruction.cpp)
 rosbuild_add_gtest_build_flags(server_goal_handle_destruction)
+rosbuild_declare_test(server_goal_handle_destruction)
 target_link_libraries(server_goal_handle_destruction ${PROJECT_NAME})
 
 rosbuild_add_executable(simple_execute_ref_server test/simple_execute_ref_server.cpp)
@@ -44,18 +45,22 @@ target_link_libraries(simple_execute_ref_server ${PROJECT_NAME})
 
 rosbuild_add_executable(simple_client_test test/simple_client_test.cpp)
 rosbuild_add_gtest_build_flags(simple_client_test)
+rosbuild_declare_test(simple_client_test)
 target_link_libraries(simple_client_test ${PROJECT_NAME})
 
 rosbuild_add_executable(simple_client_wait_test test/simple_client_wait_test.cpp)
 rosbuild_add_gtest_build_flags(simple_client_wait_test)
+rosbuild_declare_test(simple_client_wait_test)
 target_link_libraries(simple_client_wait_test ${PROJECT_NAME})
 
 rosbuild_add_executable(simple_client_allocator_test test/simple_client_allocator_test.cpp)
 rosbuild_add_gtest_build_flags(simple_client_allocator_test)
+rosbuild_declare_test(simple_client_allocator_test)
 target_link_libraries(simple_client_allocator_test ${PROJECT_NAME})
 
 rosbuild_add_executable(action_client_destruction_test test/action_client_destruction_test.cpp)
 rosbuild_add_gtest_build_flags(action_client_destruction_test)
+rosbuild_declare_test(action_client_destruction_test)
 target_link_libraries(action_client_destruction_test ${PROJECT_NAME})
 
 rosbuild_add_gtest(destruction_guard_test test/destruction_guard_test.cpp)
