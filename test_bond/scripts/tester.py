@@ -106,6 +106,8 @@ class BondTester:
         with self.lock:
             self.sm.ConnectTimeout()
     def _on_heartbeat_timeout(self):
+        if self.req.inhibit_death:
+            return
         with self.lock:
             self.sm.HeartbeatTimeout()
     def _on_disconnect_timeout(self):
@@ -131,9 +133,13 @@ class BondTester:
         # Filters out messages from other bonds and messages from ourselves
         if msg.id == self.id and msg.instance_id != self.instance_id:
             with self.lock:
-                if msg.active or self.req.inhibit_death:
-                    self.sm.SisterAlive()
+                if msg.active:
+                    if not self.is_dead():
+                        self.sm.SisterAlive()
                 else:
+                    if self.req.inhibit_death:
+                        return
+
                     self.sm.SisterDead()
 
                     # Immediate ack for sister's death notification
