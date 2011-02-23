@@ -186,6 +186,11 @@ class SM_Dead(SM_Default):
         fsm.setState(SM.Dead)
         fsm.getState().Entry(fsm)
 
+    def SisterAlive(self, fsm):
+        fsm.getState().Exit(fsm)
+        fsm.setState(SM.Dead)
+        fsm.getState().Entry(fsm)
+
     def SisterDead(self, fsm):
         fsm.getState().Exit(fsm)
         fsm.setState(SM.Dead)

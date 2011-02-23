@@ -124,6 +124,7 @@ public:
     void Die(BondSMContext& context);
     void DisconnectTimeout(BondSMContext& context);
     void HeartbeatTimeout(BondSMContext& context);
+    void SisterAlive(BondSMContext& context);
     void SisterDead(BondSMContext& context);
 };
 

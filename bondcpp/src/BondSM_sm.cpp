@@ -345,6 +345,16 @@ void SM_Dead::HeartbeatTimeout(BondSMContext& context)
     return;
 }
 
+void SM_Dead::SisterAlive(BondSMContext& context)
+{
+
+    (context.getState()).Exit(context);
+    context.setState(SM::Dead);
+    (context.getState()).Entry(context);
+
+    return;
+}
+
 void SM_Dead::SisterDead(BondSMContext& context)
 {
 
