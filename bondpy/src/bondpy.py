@@ -197,7 +197,9 @@ class Bond(object):
     def _on_bond_status(self, msg):
         # Filters out messages from other bonds and messages from ourself
         if msg.id == self.id and msg.instance_id != self.instance_id:
+            rospy.logerr("Bond._on_bond_status: message for self received.  About to lock...")
             with self.lock:
+                rospy.logerr("Bond._on_bond_status: ...locked")
                 if not self.sister_instance_id:
                     self.sister_instance_id = msg.instance_id
 
@@ -302,6 +304,7 @@ class Bond(object):
                 wait_duration = 0.1
                 if deadline:
                     wait_duration = min(wait_duration, deadline.left().to_sec())
+                rospy.logerr("Bond.wait_until_formed: waiting another %.3f seconds for bond formation" % wait_duration)
                 self.condition.wait(wait_duration)
             return self.sm.getState().getName() != 'SM.WaitingForSister'
 
