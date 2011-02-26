@@ -295,7 +295,7 @@ class Bond(object):
     #
     # \param timeout Maximum duration to wait.  If None then this call will not timeout.
     # \return true iff the bond has been formed.
-    def wait_until_formed(self, timeout = None):
+    def wait_until_formed(self, timeout = None): 
         deadline = timeout and Timeout(timeout).reset()
         with self.lock:
             while self.sm.getState().getName() == 'SM.WaitingForSister':
