@@ -209,6 +209,7 @@ class Bond(object):
                                      (self.topic, self.id))
                     return
 
+                rospy.logerr("Bond._on_bond_status: msg.active was %s" % msg.active)
                 if msg.active:
                     self.sm.SisterAlive()
                 else:
@@ -253,6 +254,7 @@ class Bond(object):
 
     ## \brief INTERNAL
     def Connected(self):
+        rospy.logerr("Bond.Connected")
         self.connect_timer.cancel()
         self.condition.notify_all()
         if self.on_formed:
@@ -297,6 +299,7 @@ class Bond(object):
         deadline = timeout and Timeout(timeout).reset()
         with self.lock:
             while self.sm.getState().getName() == 'SM.WaitingForSister':
+                rospy.logerr("Bond.wait_until_formed: Still in state %s" % sm.getState().getName())
                 if rospy.is_shutdown():
                     break
                 if deadline and deadline.left() == rospy.Duration(0):

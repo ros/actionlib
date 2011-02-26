@@ -58,6 +58,7 @@ class Exerciser(unittest.TestCase):
         id = gen_id()
         test_bond.wait_for_service()
         test_bond(id = id, topic = TOPIC, delay_death = rospy.Duration(2.0))
+        rospy.logerr("test_normal: test_bond service call just returned")
         bond = bondpy.Bond(TOPIC, id)
         bond.start()
         
@@ -73,8 +74,6 @@ class Exerciser(unittest.TestCase):
             s += "  sister_instance_id = %s\n" % bond.sister_instance_id
             s += "  is_shutdown = %s\n" % bond.is_shutdown
             s += "  num connections = %d\n" % bond.pub.get_num_connections()
-            s += "  lock id = %d\n" % id(bond.lock)
-            s += "  condition's lock id = %s\n" % id(bond.condition._Condition__lock)
 
             formed_later = bond.wait_until_formed(rospy.Duration(20.0))
             s += "Formed later: %s after %.3f seconds\n" % (formed_later, time.time() - bond_start_time)
