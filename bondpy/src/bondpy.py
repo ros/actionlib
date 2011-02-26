@@ -299,7 +299,7 @@ class Bond(object):
         deadline = timeout and Timeout(timeout).reset()
         with self.lock:
             while self.sm.getState().getName() == 'SM.WaitingForSister':
-                rospy.logerr("Bond.wait_until_formed: Still in state %s" % sm.getState().getName())
+                rospy.logerr("Bond.wait_until_formed: Still in state %s" % self.sm.getState().getName())
                 if rospy.is_shutdown():
                     break
                 if deadline and deadline.left() == rospy.Duration(0):
