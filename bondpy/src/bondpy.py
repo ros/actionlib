@@ -211,7 +211,11 @@ class Bond(object):
 
                 rospy.logerr("Bond._on_bond_status: msg.active was %s" % msg.active)
                 if msg.active:
+                    rospy.logerr("Bond._on_bond_status: Called sm.SisterAlive().  Now in state %s" % \
+                                     self.sm.getState().getName())
                     self.sm.SisterAlive()
+                    rospy.logerr("Bond._on_bond_status: Called sm.SisterAlive().  Now in state %s" % \
+                                     self.sm.getState().getName())
                 else:
                     self.sm.SisterDead()
 
