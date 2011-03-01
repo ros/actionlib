@@ -185,6 +185,7 @@ class Bond(object):
         self.shutdown()
 
     def shutdown(self):
+        rospy.logerr("SHUTDOWN: %s"%(rospy.get_name()))
         if not self.is_shutdown:
             self.sub.unregister()
             with self.lock:
