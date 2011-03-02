@@ -185,7 +185,6 @@ class Bond(object):
         self.shutdown()
 
     def shutdown(self):
-        rospy.logerr("SHUTDOWN: %s"%(rospy.get_name()))
         if not self.is_shutdown:
             self.sub.unregister()
             with self.lock:
@@ -198,10 +197,7 @@ class Bond(object):
     def _on_bond_status(self, msg):
         # Filters out messages from other bonds and messages from ourself
         if msg.id == self.id and msg.instance_id != self.instance_id:
-            rospy.logerr("Bond._on_bond_status: message for self received.  %.6f seconds late.  About to lock..." % \
-                             (time.time() - msg.header.stamp.to_sec()))
             with self.lock:
-                rospy.logerr("Bond._on_bond_status: ...locked")
                 if not self.sister_instance_id:
                     self.sister_instance_id = msg.instance_id
 
@@ -211,13 +207,8 @@ class Bond(object):
                                      (self.topic, self.id))
                     return
 
-                rospy.logerr("Bond._on_bond_status: msg.active was %s" % msg.active)
                 if msg.active:
-                    rospy.logerr("Bond._on_bond_status: Before sm.SisterAlive().  Now in state %s" % \
-                                     self.sm.getState().getName())
                     self.sm.SisterAlive()
-                    rospy.logerr("Bond._on_bond_status: Called sm.SisterAlive().  Now in state %s" % \
-                                     self.sm.getState().getName())
                 else:
                     self.sm.SisterDead()
 
@@ -229,7 +220,6 @@ class Bond(object):
 
 
     def _publish(self, active):
-        rospy.logerr("Bond._publish(%s)" % active)
         msg = Status()
         msg.header.stamp = rospy.Time.now()
         msg.id = self.id
@@ -261,7 +251,6 @@ class Bond(object):
 
     ## \brief INTERNAL
     def Connected(self):
-        rospy.logerr("Bond.Connected")
         self.connect_timer.cancel()
         self.condition.notify_all()
         if self.on_formed:
@@ -303,11 +292,9 @@ class Bond(object):
     # \param timeout Maximum duration to wait.  If None then this call will not timeout.
     # \return true iff the bond has been formed.
     def wait_until_formed(self, timeout = None):
-        rospy.logerr("Bond.wait_until_formed: waiting for %s to form" % self.id)
         deadline = timeout and Timeout(timeout).reset()
         with self.lock:
             while self.sm.getState().getName() == 'SM.WaitingForSister':
-                rospy.logerr("Bond.wait_until_formed: Still in state %s" % self.sm.getState().getName())
                 if rospy.is_shutdown():
                     break
                 if deadline and deadline.left() == rospy.Duration(0):
@@ -315,9 +302,7 @@ class Bond(object):
                 wait_duration = 0.1
                 if deadline:
                     wait_duration = min(wait_duration, deadline.left().to_sec())
-                rospy.logerr("Bond.wait_until_formed: waiting another %.3f seconds for bond formation" % wait_duration)
                 self.condition.wait(wait_duration)
-            rospy.logerr("Bond.wait_until_formed: Returning.  Now in state %s" % self.sm.getState().getName())
             return self.sm.getState().getName() != 'SM.WaitingForSister'
 
     ## \brief Blocks until the bond is broken for at most 'duration'.

@@ -58,37 +58,17 @@ class Exerciser(unittest.TestCase):
         id = gen_id()
         test_bond.wait_for_service()
         test_bond(id = id, topic = TOPIC, delay_death = rospy.Duration(2.0))
-        rospy.logerr("test_normal: test_bond service call just returned")
-        self.bond = bond = bondpy.Bond(TOPIC, id)
+        bond = bondpy.Bond(TOPIC, id)
         bond.start()
-        
-        bond_start_time = time.time()
 
-        formed = bond.wait_until_formed(rospy.Duration(2.0))
-        if not formed:
-            s = ''
-            s += "BONDFAIL\n"
-            s += "wait_until_formed returned %s\n" % formed
-            s += "Bond details:\n"
-            s += "  Started = %s\n" % bond._Bond__started
-            s += "  sister_instance_id = %s\n" % bond.sister_instance_id
-            s += "  is_shutdown = %s\n" % bond.is_shutdown
-            s += "  num connections = %d\n" % bond.pub.get_num_connections()
-
-            formed_later = bond.wait_until_formed(rospy.Duration(20.0))
-            s += "Formed later: %s after %.3f seconds\n" % (formed_later, time.time() - bond_start_time)
-
-            rospy.logerr(s)
-            self.fail(s)
-
-        #self.assertTrue(bond.wait_until_formed(rospy.Duration(2.0)))
+        self.assertTrue(bond.wait_until_formed(rospy.Duration(2.0)))
         self.assertTrue(bond.wait_until_broken(rospy.Duration(5.0)))
 
     # Remote never connects
     def test_no_connect(self):
         id = gen_id()
         # Don't start the other side of the bond
-        self.bond = bond = bondpy.Bond(TOPIC, id)
+        bond = bondpy.Bond(TOPIC, id)
         bond.start()
         self.assertFalse(bond.wait_until_formed(rospy.Duration(1.0)))
         self.assertTrue(bond.wait_until_broken(rospy.Duration(20.0)))
@@ -98,7 +78,7 @@ class Exerciser(unittest.TestCase):
         id = gen_id()
         test_bond.wait_for_service()
         test_bond(id=id, topic=TOPIC, delay_death=rospy.Duration(2.0), inhibit_death_message=True)
-        self.bond = bond = bondpy.Bond(TOPIC, id)
+        bond = bondpy.Bond(TOPIC, id)
         bond.start()
 
         self.assertTrue(bond.wait_until_formed(rospy.Duration(2.0)))
@@ -109,7 +89,7 @@ class Exerciser(unittest.TestCase):
         id = gen_id()
         test_bond.wait_for_service()
         test_bond(id = id, topic = TOPIC, delay_death = rospy.Duration(-1))
-        self.bond = bond = bondpy.Bond(TOPIC, id)
+        bond = bondpy.Bond(TOPIC, id)
         bond.start()
 
         self.assertTrue(bond.wait_until_formed(rospy.Duration(2.0)))
@@ -122,7 +102,7 @@ class Exerciser(unittest.TestCase):
         id = gen_id()
         test_bond.wait_for_service()
         test_bond(id=id, topic=TOPIC, delay_death=rospy.Duration(-1), inhibit_death_message=True)
-        self.bond = bond = bondpy.Bond(TOPIC, id)
+        bond = bondpy.Bond(TOPIC, id)
         bond.start()
 
         self.assertTrue(bond.wait_until_formed(rospy.Duration(2.0)))
@@ -135,7 +115,7 @@ class Exerciser(unittest.TestCase):
         id = gen_id()
         test_bond.wait_for_service()
         test_bond(id=id, topic=TOPIC, delay_death=rospy.Duration(-1), inhibit_death=True)
-        self.bond = bond = bondpy.Bond(TOPIC, id)
+        bond = bondpy.Bond(TOPIC, id)
         bond.start()
 
         self.assertTrue(bond.wait_until_formed(rospy.Duration(2.0)))
@@ -143,13 +123,6 @@ class Exerciser(unittest.TestCase):
         bond.break_bond()
         self.assertFalse(bond.wait_until_broken(rospy.Duration(1.0)))
         self.assertTrue(bond.wait_until_broken(rospy.Duration(10.0)))
-
-    def setUp(self):
-        self.bond = None
-    def tearDown(self):
-        if self.bond:
-            self.bond.shutdown()
-            self.bond = None
 
 
 def main():

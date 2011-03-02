@@ -157,7 +157,6 @@ class BondTester:
         if not msg.active and self.req.inhibit_death_message:
             pass
         else:
-            rospy.logerr("Tester: publishing at %s with stamp %s"%(time.time(), msg.header.stamp.to_sec()))
             self.pub.publish(msg)
 
     def _publishing_thread(self):
