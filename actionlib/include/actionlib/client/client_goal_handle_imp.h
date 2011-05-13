@@ -205,7 +205,10 @@ template<class ActionSpec>
 void ClientGoalHandle<ActionSpec>::cancel()
 {
   if (!active_)
+  {
     ROS_ERROR("Trying to cancel() on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
+    return;
+  }
   assert(gm_);
 
   DestructionGuard::ScopedProtector protector(*guard_);
