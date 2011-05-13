@@ -220,6 +220,24 @@ void ClientGoalHandle<ActionSpec>::cancel()
 
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
 
+  switch(list_handle_.getElem()->getCommState().state_)
+  {
+    case CommState::WAITING_FOR_GOAL_ACK:
+    case CommState::PENDING:
+    case CommState::ACTIVE:
+    case CommState::WAITING_FOR_CANCEL_ACK:
+      break; // Continue standard processing
+    case CommState::WAITING_FOR_RESULT:
+    case CommState::RECALLING:
+    case CommState::PREEMPTING:
+    case CommState::DONE:
+      ROS_DEBUG("Got a cancel() request while in state [%s], so ignoring it", list_handle_.getElem()->getCommState().toString().c_str());
+      return;
+    default:
+      ROS_ERROR("BUG: Unhandled CommState: %u", list_handle_.getElem()->getCommState().state_);
+      return;
+  }
+
   ActionGoalConstPtr action_goal = list_handle_.getElem()->getActionGoal();
 
   actionlib_msgs::GoalID cancel_msg;
