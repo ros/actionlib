@@ -70,9 +70,10 @@ target_link_libraries(action_client_destruction_test ${PROJECT_NAME})
 rosbuild_add_gtest(destruction_guard_test test/destruction_guard_test.cpp)
 target_link_libraries(destruction_guard_test ${PROJECT_NAME})
 
-rosbuild_add_gtest(test_cpp_simple_client_cancel_crash test/test_cpp_simple_client_cancel_crash.cpp)
+rosbuild_add_executable(test_cpp_simple_client_cancel_crash test/test_cpp_simple_client_cancel_crash.cpp)
+rosbuild_add_gtest_build_flags(test_cpp_simple_client_cancel_crash)
+rosbuild_declare_test(test_cpp_simple_client_cancel_crash)
 target_link_libraries(test_cpp_simple_client_cancel_crash ${PROJECT_NAME})
-
 
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/ref_server_test.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/simple_execute_ref_server_test.launch)
@@ -81,8 +82,7 @@ rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_cpp_simple_client_all
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_cpp_action_client_destruction.launch)
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_server_goal_handle_destruction.launch)
 
-# Not sure why this test fails on Hudson yet
-#rosbuild_add_rostest_future(${CMAKE_CURRENT_SOURCE_DIR}/test/test_cpp_simple_client_cancel_crash.launch)
+rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_cpp_simple_client_cancel_crash.launch)
 
 rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_imports.launch)
 
