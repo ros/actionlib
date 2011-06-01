@@ -112,7 +112,7 @@ namespace actionlib {
   void ActionServer<ActionSpec>::initialize(){
     result_pub_ = node_.advertise<ActionResult>("result", 50);
     feedback_pub_ = node_.advertise<ActionFeedback>("feedback", 50);
-    status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", 50);
+    status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", 50, true);
 
     //read the frequency with which to publish status from the parameter server
     double status_frequency, status_list_timeout;
@@ -154,6 +154,7 @@ namespace actionlib {
     ar->result = result;
     ROS_DEBUG("Publishing result for goal with id: %s and stamp: %.2f", status.goal_id.id.c_str(), status.goal_id.stamp.toSec());
     result_pub_.publish(ar);
+    publishStatus();
   }
 
   template <class ActionSpec>
