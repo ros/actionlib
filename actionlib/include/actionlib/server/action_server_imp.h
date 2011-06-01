@@ -115,8 +115,17 @@ namespace actionlib {
     status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", 50, true);
 
     //read the frequency with which to publish status from the parameter server
+    //if not specified locally explicitly, use search param to find actionlib_status_frequency
     double status_frequency, status_list_timeout;
-    node_.param("status_frequency", status_frequency, 5.0);
+    if(!node_.getParam("status_frequency", status_frequency))
+    {
+      std::string status_frequency_param_name;
+      if(!node_.searchParam("actionlib_status_frequency", status_frequency_param_name))
+        status_frequency = 5.0;
+      else
+        node_.param(status_frequency_param_name, status_frequency, 5.0);
+    }
+
     node_.param("status_list_timeout", status_list_timeout, 5.0);
 
     status_list_timeout_ = ros::Duration(status_list_timeout);

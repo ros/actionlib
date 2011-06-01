@@ -148,7 +148,16 @@ class ActionServer:
           self.cancel_sub = rospy.Subscriber(rospy.remap_name(self.ns)+"/cancel", GoalID,self.internal_cancel_callback);
 
           #read the frequency with which to publish status from the parameter server
-          self.status_frequency = rospy.get_param(rospy.remap_name(self.ns)+"/status_frequency", 5.0);
+          #if not specified locally explicitly, use search param to find actionlib_status_frequency
+          resolved_status_frequency_name = rospy.remap_name(self.ns)+"/status_frequency"
+          if rospy.has_param(resolved_status_frequency_name):
+              self.status_frequency = rospy.get_param(resolved_status_frequency_name, 5.0);
+          else:
+              search_status_frequency_name = rospy.search_param("actionlib_status_frequency")
+              if search_status_frequency_name is None:
+                  self.status_frequency = 5.0
+              else:
+                  self.status_frequency = rospy.get_param(search_status_frequency_name, 5.0)
 
           status_list_timeout = rospy.get_param(rospy.remap_name(self.ns)+"/status_list_timeout", 5.0);
           self.status_list_timeout = rospy.Duration(status_list_timeout);
