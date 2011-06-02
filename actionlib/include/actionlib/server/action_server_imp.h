@@ -125,6 +125,8 @@ namespace actionlib {
       else
         node_.param(status_frequency_param_name, status_frequency, 5.0);
     }
+    else
+      ROS_WARN("You're using the deprecated status_frequency parameter, please switch to actionlib_status_frequency.");
 
     node_.param("status_list_timeout", status_list_timeout, 5.0);
 

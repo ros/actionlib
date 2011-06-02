@@ -152,6 +152,7 @@ class ActionServer:
           resolved_status_frequency_name = rospy.remap_name(self.ns)+"/status_frequency"
           if rospy.has_param(resolved_status_frequency_name):
               self.status_frequency = rospy.get_param(resolved_status_frequency_name, 5.0);
+              rospy.logwarn("You're using the deprecated status_frequency parameter, please switch to actionlib_status_frequency.")
           else:
               search_status_frequency_name = rospy.search_param("actionlib_status_frequency")
               if search_status_frequency_name is None:
