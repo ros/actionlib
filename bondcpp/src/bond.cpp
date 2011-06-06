@@ -68,7 +68,6 @@ Bond::Bond(const std::string &topic, const std::string &id,
   setDisconnectTimeout(bond::Constants::DEFAULT_DISCONNECT_TIMEOUT);
   setHeartbeatTimeout(bond::Constants::DEFAULT_HEARTBEAT_TIMEOUT);
   setHeartbeatPeriod(bond::Constants::DEFAULT_HEARTBEAT_PERIOD);
-  pub_ = nh_.advertise<bond::Status>(topic_, 5);
 }
 
 Bond::~Bond()
@@ -139,11 +138,22 @@ void Bond::setHeartbeatPeriod(double dur)
   heartbeat_period_ = dur;
 }
 
+void Bond::setCallbackQueue(ros::CallbackQueueInterface *queue)
+{
+  if (started_) {
+    ROS_ERROR("Cannot set callback queue after calling start()");
+    return;
+  }
+
+  nh_.setCallbackQueue(queue);
+}
+
 
 void Bond::start()
 {
   boost::mutex::scoped_lock lock(mutex_);
   connect_timer_.reset();
+  pub_ = nh_.advertise<bond::Status>(topic_, 5);
   sub_ = nh_.subscribe<bond::Status>(topic_, 30, boost::bind(&Bond::bondStatusCB, this, _1));
 
   publishingTimer_ = nh_.createWallTimer(ros::WallDuration(heartbeat_period_), &Bond::doPublishing, this);

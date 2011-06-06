@@ -79,6 +79,8 @@ public:
   double getHeartbeatPeriod() const { return heartbeat_period_; }
   void setHeartbeatPeriod(double dur);
 
+  void setCallbackQueue(ros::CallbackQueueInterface *queue);
+
   /** \brief Starts the bond and connects to the sister process.
    */
   void start();
