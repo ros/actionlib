@@ -33,6 +33,7 @@
 #include <pluginlib/class_loader.h>
 
 #include <ros/ros.h>
+#include <ros/callback_queue.h>
 #include <nodelet/NodeletLoad.h>
 #include <nodelet/NodeletList.h>
 #include <nodelet/NodeletUnload.h>
@@ -52,10 +53,13 @@ public:
   LoaderROS(Loader* parent, const ros::NodeHandle& nh)
   : parent_(parent)
   , nh_(nh)
+  , bond_spinner_(1, &bond_callback_queue_)
   {
     load_server_ = nh_.advertiseService("load_nodelet", &LoaderROS::serviceLoad, this);
     unload_server_ = nh_.advertiseService("unload_nodelet", &LoaderROS::serviceUnload, this);
     list_server_ = nh_.advertiseService("list", &LoaderROS::serviceList, this);
+
+    bond_spinner_.start();
   }
 
 private:
@@ -83,6 +87,7 @@ private:
     if (!req.bond_id.empty())
     {
       bond.reset(new bond::Bond(nh_.getNamespace() + "/bond", req.bond_id));
+      bond->setCallbackQueue(&bond_callback_queue_);
     }
 
     res.success = parent_->load(req.name, req.type, remappings, req.my_argv, bond);
@@ -116,6 +121,10 @@ private:
   ros::ServiceServer load_server_;
   ros::ServiceServer unload_server_;
   ros::ServiceServer list_server_;
+
+  
+  ros::CallbackQueue bond_callback_queue_;
+  ros::AsyncSpinner bond_spinner_;
 };
 } // namespace detail
 
