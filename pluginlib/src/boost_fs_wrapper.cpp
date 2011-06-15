@@ -55,7 +55,11 @@ std::string getPackageFromLibraryPath(const std::string & path)
   {
     if (boost::filesystem::exists(parent / "manifest.xml"))
     {
+#if BOOST_FILESYSTEM_VERSION && BOOST_FILESYSTEM_VERSION == 3
+      std::string package = parent.filename().string();
+#else
       std::string package = parent.filename();
+#endif
       std::string package_path = ros::package::getPath(package);
       if (path.find(package_path) == 0)
       {
@@ -64,7 +68,11 @@ std::string getPackageFromLibraryPath(const std::string & path)
       }
     }
 
+#if BOOST_FILESYSTEM_VERSION && BOOST_FILESYSTEM_VERSION == 3
+    parent = parent.parent_path().string();
+#else
     parent = parent.parent_path();
+#endif
 
     if (parent.string().empty())
     {
