@@ -262,8 +262,8 @@ int
   {
     ros::init (argc, argv, arg_parser.getDefaultName());
 
-    nodelet::Loader n(false);
     ros::NodeHandle nh;
+    nodelet::Loader n(false);
     ros::M_string remappings; //Remappings are already applied by ROS no need to generate them.
     std::string nodelet_name = ros::this_node::getName ();
     std::string nodelet_type = arg_parser.getType();
