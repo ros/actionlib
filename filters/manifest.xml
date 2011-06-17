@@ -13,7 +13,7 @@ However any change will have long term backwards compatability.
 <author>Tully Foote/tfoote@willowgarage.com</author>
 <license>BSD</license>
 <review status="doc reviewed" notes="2009-10-06"/>
-<url>http://pr.willowgarage.com</url>
+<url>http://ros.org/wiki/filters</url>
 <depend package="rosconsole" />
 <depend package="roscpp" />
 <depend package="pluginlib" />
