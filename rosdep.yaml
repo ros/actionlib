@@ -1,7 +1,3 @@
-uuid:
-  ubuntu: uuid-dev
-  fedora: libuuid-devel
-  macports: ossp-uuid
 sdl:
   ubuntu: libsdl1.2-dev
   debian: libsdl1.2-dev

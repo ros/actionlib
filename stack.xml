@@ -4,11 +4,14 @@
     commonly used throughout the ROS ecosystem.
   </description>
   <author>Maintained by Tully Foote tfoote@willowgarage.com</author>
-  <license>LGPL,ZLib,Boost Software License (Poco),Mozilla Public License Version 1.1,BSD,MIT</license>  
+  <license>LGPL,ZLib,Boost Software License,BSD,MIT</license>  
   <review status="doc reviewed" notes="2009-10-07"/>
   <url>http://ros.org/wiki/common</url>
   <depend stack="common_msgs" /> <!-- actionlib_msgs -->
   <depend stack="ros" /> <!-- rosbuild, roslib -->
-  <depend stack="ros_comm" /> <!-- rosconsole, roscpp, message_filters, std_msgs, rostest, rospy -->
+  <depend stack="ros_comm" /> <!-- rosconsole, rostest, rospy, roscpp -->
+  <!-- backwards compatibility for electric-diamondback -->
+  <depend stack="bond_core" />
+  <depend stack="nodelet_core" />
 
 </stack>

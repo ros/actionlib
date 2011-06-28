@@ -1,3 +1,0 @@
-<launch>
-  <test test-name="test_callbacks_cpp" pkg="test_bond" type="test_callbacks_cpp"/>
-</launch>

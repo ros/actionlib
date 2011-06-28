@@ -1,4 +1,0 @@
-<launch> 
-  <node pkg="nodelet" type="nodelet" name="nodelet_manager"  args="manager" output="screen"/>
-  <test pkg="test_nodelet" type="test_loader.py" test-name="test_loader"/>
-</launch>
