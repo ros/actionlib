@@ -1,1 +1,4 @@
-include $(shell rospack find mk)/cmake.mk
+all:
+	touch built.txt
+clean:
+	-rm built.txt
