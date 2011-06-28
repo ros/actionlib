@@ -10,6 +10,7 @@
   <depend stack="common_msgs" /> <!-- actionlib_msgs -->
   <depend stack="ros" /> <!-- rosbuild, roslib -->
   <depend stack="ros_comm" /> <!-- rosconsole, rostest, rospy, roscpp -->
+  <depend stack="pluginlib" />
   <!-- backwards compatibility for electric-diamondback -->
   <depend stack="bond_core" />
   <depend stack="nodelet_core" />
