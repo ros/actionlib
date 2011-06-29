@@ -14,5 +14,7 @@
   <!-- backwards compatibility for electric-diamondback -->
   <depend stack="bond_core" />
   <depend stack="nodelet_core" />
+  <depend stack="filters" />
+  <depend stack="xacro" />
 
 </stack>
