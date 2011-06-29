@@ -1,8 +1,8 @@
 <package>
   <description brief="A YAML Parsing library for C++">
-    yaml-cpp is a YAML parser and emitter in C++ written around the YAML 1.2 spec. It's based on (but not a wrapper to) the C library libyaml.
-
-    This is version 0.2.2 of yaml-cpp.  We plan to track the latest release assuming backwards compatability. 
+    Deprecated: yaml-cpp is now a rosdep system dependency.  This
+    package will be supported in Electric for backwards compatibility
+    with Diamondback.  It will be removed in future versions.
 
   </description>
   <author>Jesse Beder</author>
@@ -10,11 +10,12 @@
   <review status="3rdparty doc reviewed" notes="2009-10-05"/>
   <url>http://code.google.com/p/yaml-cpp/</url>
 
+  <rosdep name="yaml-cpp" />
   <export>
-    <cpp cflags="-I${prefix}/yaml-cpp/include" lflags="-L${prefix}/yaml-cpp/lib -lyaml-cpp -Wl,-rpath,${prefix}/yaml-cpp/lib"/>
+    <cpp cflags="`pkg-config --cflags yaml-cpp`" lflags="`pkg-config --libs yaml-cpp1"/>
   </export>
 
-  <platform os="ubuntu" version="9.04"/>
-  <platform os="ubuntu" version="9.10"/>
   <platform os="ubuntu" version="10.04"/>
+  <platform os="ubuntu" version="10.10"/>
+  <platform os="ubuntu" version="11.04"/>
 </package>
