@@ -12,7 +12,7 @@
 
   <rosdep name="yaml-cpp" />
   <export>
-    <cpp cflags="`pkg-config --cflags yaml-cpp`" lflags="`pkg-config --libs yaml-cpp1"/>
+    <cpp cflags="`pkg-config --cflags yaml-cpp`" lflags="`pkg-config --libs yaml-cpp`"/>
   </export>
 
   <platform os="ubuntu" version="10.04"/>
