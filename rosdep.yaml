@@ -1,3 +1,6 @@
+checkinstall:
+  ubuntu: checkinstall
+  debian: checkinstall
 sdl:
   ubuntu: libsdl1.2-dev
   debian: libsdl1.2-dev
@@ -19,4 +22,12 @@ atlas:
   macports: atlas
   gentoo: atlas
 yaml-cpp:
-  ubuntu: yaml-cpp0.2.6-dev
+  ubuntu: 
+    apt:  
+      yaml-cpp0.2.6-dev
+  debian:
+    source:
+      url: 
+  fedora:
+    yum: 
+      yaml-cpp
