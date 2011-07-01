@@ -1,1 +1,5 @@
 build
+bfl/bin
+bfl/include
+/wiped
+tinyxml/libtinyxml.so
