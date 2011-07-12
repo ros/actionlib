@@ -18,5 +18,3 @@ atlas:
   arch: |
   macports: atlas
   gentoo: atlas
-yaml-cpp:
-  ubuntu: yaml-cpp0.2.6-dev
