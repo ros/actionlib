@@ -43,7 +43,7 @@ namespace actionlib {
   class ServiceClientImp {
     public:
       ServiceClientImp(){}
-      virtual bool call(const ros::Message* goal, std::string goal_md5sum, ros::Message* result, std::string result_md5sum) = 0;
+      virtual bool call(const void* goal, std::string goal_md5sum, void* result, std::string result_md5sum) = 0;
       virtual bool waitForServer(const ros::Duration& timeout) = 0;
       virtual bool isServerConnected() = 0;
       virtual ~ServiceClientImp(){}
@@ -76,7 +76,7 @@ namespace actionlib {
 
       ServiceClientImpT(ros::NodeHandle n, std::string name);
 
-      bool call(const ros::Message* goal, std::string goal_md5sum, ros::Message* result, std::string result_md5sum);
+      bool call(const void* goal, std::string goal_md5sum, void* result, std::string result_md5sum);
       bool waitForServer(const ros::Duration& timeout);
       bool isServerConnected();
 
