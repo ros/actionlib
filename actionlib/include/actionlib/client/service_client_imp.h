@@ -53,7 +53,9 @@ namespace actionlib {
     }
 
   template <class ActionSpec>
-    bool ServiceClientImpT<ActionSpec>::call(const ros::Message* goal, std::string goal_md5sum, ros::Message* result, std::string result_md5sum){
+    bool ServiceClientImpT<ActionSpec>::call(const void* goal, std::string goal_md5sum, 
+                                             void* result, std::string result_md5sum)
+  {
       //ok... we need to static cast the goal message and result message
       const Goal* goal_c = static_cast<const Goal*>(goal);
       Result* result_c = static_cast<Result*>(result);
