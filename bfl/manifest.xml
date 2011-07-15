@@ -18,7 +18,7 @@
 <url>http://www.orocos.org/bfl</url>
 <export>
   <cpp cflags="-I${prefix}/include/bfl" lflags="-Wl,-rpath,${prefix}/lib  -L${prefix}/lib -lorocos-bfl"/>
-  <doxymaker external="http://orocos.org/bfl" />
+  <rosdoc external="http://people.mech.kuleuven.be/~tdelaet/bfl_doc/doc/html/index.html" />
 </export>
 
 <rosdep name="cppunit"/>
