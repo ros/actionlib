@@ -39,11 +39,12 @@
 #include <string>
 #include "ros/time.h"
 #include "actionlib_msgs/GoalID.h"
+#include "macros.h"
 
 namespace actionlib
 {
 
-class GoalIDGenerator
+class ACTIONLIB_DECL GoalIDGenerator
 {
 public:
 
