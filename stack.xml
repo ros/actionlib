@@ -8,6 +8,7 @@
   <review status="doc reviewed" notes="2009-10-07"/>
   <url>http://ros.org/wiki/common</url>
   <depend stack="common_msgs" /> <!-- actionlib_msgs -->
+  <depend stack="common_rosdeps" />
   <depend stack="ros" /> <!-- rosbuild, roslib -->
   <depend stack="ros_comm" /> <!-- rosconsole, rostest, rospy, roscpp -->
   <depend stack="pluginlib" />

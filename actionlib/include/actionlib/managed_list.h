@@ -121,7 +121,9 @@ public:
 
       const Handle& operator=(const Handle& rhs)
       {
-        it_ = rhs.it_;
+    	if ( rhs.valid_ ) {
+          it_ = rhs.it_;
+    	}
         handle_tracker_ = rhs.handle_tracker_;
         valid_ = rhs.valid_;
         return rhs;
@@ -154,6 +156,8 @@ public:
        */
       bool operator==(const Handle& rhs)
       {
+          assert(valid_);
+          assert(rhs.valid_);
         return (it_ == rhs.it_);
       }
 

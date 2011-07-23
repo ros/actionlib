@@ -1,7 +1,0 @@
-cmake_minimum_required(VERSION 2.4.6)
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
-rosbuild_init()
-include_directories(${tinyxml_SOURCE_DIR}/include/tinyxml)
-set(LIBRARY_OUTPUT_PATH ${tinyxml_SOURCE_DIR})
-add_definitions(-DTIXML_USE_STL)
-rosbuild_add_library(tinyxml tinystr.cpp tinyxml.cpp tinyxmlerror.cpp tinyxmlparser.cpp)

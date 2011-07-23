@@ -43,10 +43,12 @@
 #include <set>
 #include <map>
 
+#include "../macros.h"
+
 namespace actionlib
 {
 
-class ConnectionMonitor
+class ACTIONLIB_DECL ConnectionMonitor
 {
 public:
   ConnectionMonitor(ros::Subscriber&feedback_sub, ros::Subscriber& result_sub);
