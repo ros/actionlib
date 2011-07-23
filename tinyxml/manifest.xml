@@ -1,0 +1,15 @@
+<package>
+  <description brief="Stub package to transition to tinyxml system dependency" >
+This package helps users transition over to the tinyxml system dependency. This package is deprecated.
+  </description>
+  <author>Kevin Watts</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/tinyxml</url>
+  <rosdep name="tinyxml" />
+  <export>
+    <cpp cflags="-I${prefix}/include" lflags="-ltinyxml"/>
+  </export>  
+</package>
+
+
