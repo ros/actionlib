@@ -39,7 +39,7 @@
 #include <string>
 #include "ros/time.h"
 #include "actionlib_msgs/GoalID.h"
-#include "macros.h"
+#include <actionlib/decl.h>
 
 namespace actionlib
 {

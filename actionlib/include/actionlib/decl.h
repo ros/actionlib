@@ -37,21 +37,20 @@
  * Cross platform macros.
  *
  */
-#ifndef ACTIONLIB_MACROS_HPP_
-#define ACTIONLIB_MACROS_HPP_
+#ifndef ACTIONLIB_DECL_H_INCLUDED
+#define ACTIONLIB_DECL_H_INCLUDED
 
 #include <ros/macros.h>
 
 #ifdef ROS_BUILD_SHARED_LIBS // ros is being built around shared libraries
   #ifdef actionlib_EXPORTS // we are building a shared lib/dll
-    #define ACTIONLIB_PUBLIC_API ROS_HELPER_EXPORT
+    #define ACTIONLIB_DECL ROS_HELPER_EXPORT
   #else // we are using shared lib/dll
-    #define ACTIONLIB_PUBLIC_API ROS_HELPER_IMPORT
+    #define ACTIONLIB_DECL ROS_HELPER_IMPORT
   #endif
-  #define ACTIONLIB_PRIVATE_API ROS_HELPER_LOCAL
 #else // ros is being built around static libraries
-  #define ACTIONLIB_PUBLIC_API
-  #define ACTIONLIB_PRIVATE_API
+  #define ACTIONLIB_DECL
+  #define ACTIONLIB_DECL
 #endif
 
-#endif /* ACTIONLIB_MACROS_HPP_ */
+#endif

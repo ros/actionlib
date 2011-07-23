@@ -43,7 +43,7 @@
 #include <set>
 #include <map>
 
-#include "../macros.h"
+#include <actionlib/decl.h>
 
 namespace actionlib
 {
