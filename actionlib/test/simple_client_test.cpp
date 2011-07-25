@@ -112,6 +112,7 @@ TEST(SimpleClient, easy_callback)
   client.sendGoal(goal, func);
   ROS_ERROR("TBFTBF EASY_CALLBACK ABOUT TO WAIT");
   finished = client.waitForResult(ros::Duration(10.0));
+  ROS_ERROR("TBFTBF FINISHED WAITING");
   ASSERT_TRUE(finished);
   EXPECT_TRUE(called) << "easyDoneCallback() was never called" ;
 }
