@@ -81,9 +81,11 @@ TEST(SimpleClient, easy_tests)
 
 void easyDoneCallback(bool* called, const SimpleClientGoalState& state, const TestResultConstPtr& result)
 {
+  ROS_ERROR("TBFTBF CALLBACK EXECUTING");
   *called = true;
   EXPECT_TRUE(state == SimpleClientGoalState::SUCCEEDED)
     << "Expected [SUCCEEDED], but goal state is [" << state.toString() << "]";
+  ROS_ERROR("TBFTBF CALLBACK FINISHING");
 }
 
 void easyOldDoneCallback(bool* called, const TerminalState& terminal_state, const TestResultConstPtr& result)
@@ -108,6 +110,7 @@ TEST(SimpleClient, easy_callback)
   goal.goal = 1;
   SimpleActionClient<TestAction>::SimpleDoneCallback func = boost::bind(&easyDoneCallback, &called, _1, _2);
   client.sendGoal(goal, func);
+  ROS_ERROR("TBFTBF EASY_CALLBACK ABOUT TO WAIT");
   finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);
   EXPECT_TRUE(called) << "easyDoneCallback() was never called" ;

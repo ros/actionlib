@@ -543,7 +543,9 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration& timeout 
 
   ros::Time timeout_time = ros::Time::now() + timeout;
 
+  ROS_ERROR("TBFTBF WAITING FOR LOCK");
   boost::mutex::scoped_lock lock(done_mutex_);
+  ROS_ERROR("TBFTBF GOT LOCK");
 
   // Hardcode how often we check for node.ok()
   ros::Duration loop_period = ros::Duration().fromSec(.1);
@@ -566,6 +568,8 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration& timeout 
 
     done_condition_.timed_wait(lock, boost::posix_time::milliseconds(time_left.toSec() * 1000.0f));
   }
+  
+  ROS_ERROR("TBFTBF SimpleGoalState is %s", cur_simple_state_.toString().c_str());
 
   return (cur_simple_state_ == SimpleGoalState::DONE);
 }
