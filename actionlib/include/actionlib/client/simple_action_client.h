@@ -573,8 +573,8 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration& timeout 
   }
   
   ROS_ERROR("TBFTBF SimpleGoalState is %s", cur_simple_state_.toString().c_str());
-  ros::Duration d(1,0);
-  d.sleep();
+  //ros::Duration d(1,0);
+  //d.sleep();
 
   return (cur_simple_state_ == SimpleGoalState::DONE);
 }
