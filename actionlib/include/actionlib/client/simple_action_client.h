@@ -543,9 +543,7 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration& timeout 
 
   ros::Time timeout_time = ros::Time::now() + timeout;
 
-  ROS_ERROR("TBFTBF WAITING FOR LOCK");
   boost::mutex::scoped_lock lock(done_mutex_);
-  ROS_ERROR("TBFTBF GOT LOCK");
 
   // Hardcode how often we check for node.ok()
   ros::Duration loop_period = ros::Duration().fromSec(.1);
@@ -557,10 +555,17 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration& timeout 
 
     // Check if we're past the timeout time
     if (timeout > ros::Duration(0,0) && time_left <= ros::Duration(0,0) )
+     {
+      ROS_ERROR("TBFTBF TIMED OUT");
       break;
+    }
 
     if (cur_simple_state_ == SimpleGoalState::DONE)
+    {
+      ROS_ERROR("TBFTBF LOOP DONE");
       break;
+    }
+
 
     // Truncate the time left
     if (time_left > loop_period || timeout == ros::Duration())
