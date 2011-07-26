@@ -164,7 +164,7 @@ namespace actionlib {
     boost::recursive_mutex::scoped_lock lock(lock_);
 
     if(!new_goal_ || !next_goal_.getGoal()){
-      ROS_ERROR("Attempting to accept the next goal when a new goal is not available");
+      ROS_ERROR_NAMED("actionlib", "Attempting to accept the next goal when a new goal is not available");
       return boost::shared_ptr<const Goal>();
     }
 
@@ -175,7 +175,7 @@ namespace actionlib {
       current_goal_.setCanceled(Result(), "This goal was canceled because another goal was recieved by the simple action server");
     }
 
-    ROS_DEBUG("Accepting a new goal");
+    ROS_DEBUG_NAMED("actionlib", "Accepting a new goal");
 
     //accept the next goal
     current_goal_ = next_goal_;
@@ -213,21 +213,21 @@ namespace actionlib {
   template <class ActionSpec>
   void SimpleActionServer<ActionSpec>::setSucceeded(const Result& result, const std::string& text){
     boost::recursive_mutex::scoped_lock lock(lock_);
-    ROS_DEBUG("Setting the current goal as succeeded");
+    ROS_DEBUG_NAMED("actionlib", "Setting the current goal as succeeded");
     current_goal_.setSucceeded(result, text);
   }
 
   template <class ActionSpec>
   void SimpleActionServer<ActionSpec>::setAborted(const Result& result, const std::string& text){
     boost::recursive_mutex::scoped_lock lock(lock_);
-    ROS_DEBUG("Setting the current goal as aborted");
+    ROS_DEBUG_NAMED("actionlib", "Setting the current goal as aborted");
     current_goal_.setAborted(result, text);
   }
 
   template <class ActionSpec>
   void SimpleActionServer<ActionSpec>::setPreempted(const Result& result, const std::string& text){
     boost::recursive_mutex::scoped_lock lock(lock_);
-    ROS_DEBUG("Setting the current goal as canceled");
+    ROS_DEBUG_NAMED("actionlib", "Setting the current goal as canceled");
     current_goal_.setCanceled(result, text);
   }
 
@@ -235,7 +235,7 @@ namespace actionlib {
   void SimpleActionServer<ActionSpec>::registerGoalCallback(boost::function<void ()> cb){
     // Cannot register a goal callback if an execute callback exists
     if (execute_callback_)
-      ROS_WARN("Cannot call SimpleActionServer::registerGoalCallback() because an executeCallback exists. Not going to register it.");
+      ROS_WARN_NAMED("actionlib", "Cannot call SimpleActionServer::registerGoalCallback() because an executeCallback exists. Not going to register it.");
     else
       goal_callback_ = cb;
   }
@@ -260,7 +260,7 @@ namespace actionlib {
   template <class ActionSpec>
   void SimpleActionServer<ActionSpec>::goalCallback(GoalHandle goal){
     boost::recursive_mutex::scoped_lock lock(lock_);
-    ROS_DEBUG("A new goal has been recieved by the single goal action server");
+    ROS_DEBUG_NAMED("actionlib", "A new goal has been recieved by the single goal action server");
 
     //check that the timestamp is past or equal to that of the current goal and the next goal
     if((!current_goal_.getGoal() || goal.getGoalID().stamp >= current_goal_.getGoalID().stamp)
@@ -299,11 +299,11 @@ namespace actionlib {
   template <class ActionSpec>
   void SimpleActionServer<ActionSpec>::preemptCallback(GoalHandle preempt){
     boost::recursive_mutex::scoped_lock lock(lock_);
-    ROS_DEBUG("A preempt has been received by the SimpleActionServer");
+    ROS_DEBUG_NAMED("actionlib", "A preempt has been received by the SimpleActionServer");
 
     //if the preempt is for the current goal, then we'll set the preemptRequest flag and call the user's preempt callback
     if(preempt == current_goal_){
-      ROS_DEBUG("Setting preempt_request bit for the current goal to TRUE and invoking callback");
+      ROS_DEBUG_NAMED("actionlib", "Setting preempt_request bit for the current goal to TRUE and invoking callback");
       preempt_request_ = true;
 
       //if the user has registered a preempt callback, we'll call it now
@@ -312,7 +312,7 @@ namespace actionlib {
     }
     //if the preempt applies to the next goal, we'll set the preempt bit for that
     else if(preempt == next_goal_){
-      ROS_DEBUG("Setting preempt request bit for the next goal to TRUE");
+      ROS_DEBUG_NAMED("actionlib", "Setting preempt request bit for the next goal to TRUE");
       new_goal_preempt_request_ = true;
     }
   }
@@ -332,7 +332,7 @@ namespace actionlib {
 
       boost::recursive_mutex::scoped_lock lock(lock_);
       if (isActive())
-        ROS_ERROR("Should never reach this code with an active goal");
+        ROS_ERROR_NAMED("actionlib", "Should never reach this code with an active goal");
       else if (isNewGoalAvailable())
       {
         GoalConstPtr goal = acceptNewGoal();
@@ -346,7 +346,7 @@ namespace actionlib {
 
         if (isActive())
         {
-          ROS_WARN("Your executeCallback did not set the goal to a terminal status.\n"
+          ROS_WARN_NAMED("actionlib", "Your executeCallback did not set the goal to a terminal status.\n"
                    "This is a bug in your ActionServer implementation. Fix your code!\n"
                    "For now, the ActionServer will set this goal to aborted");
           setAborted(Result(), "This goal was aborted by the simple action server. The user should have set a terminal status on this goal and did not");

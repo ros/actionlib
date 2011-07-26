@@ -43,7 +43,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "add_two_ints_client");
   if(argc != 3)
   {
-    ROS_INFO("Usage: add_two_ints_client X Y");
+    ROS_INFO_NAMED("actionlib", "Usage: add_two_ints_client X Y");
     return 1;
   }
 
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 
   if(client.call(req, resp))
   {
-    ROS_INFO("Sum: %ld", (long int)resp.sum);
+    ROS_INFO_NAMED("actionlib", "Sum: %ld", (long int)resp.sum);
     return 1;
   }
 

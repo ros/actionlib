@@ -101,9 +101,9 @@ public:
 
   ~ActionClient()
   {
-    ROS_DEBUG("ActionClient: Waiting for destruction guard to clean up");
+    ROS_DEBUG_NAMED("actionlib", "ActionClient: Waiting for destruction guard to clean up");
     guard_->destruct();
-    ROS_DEBUG("ActionClient: destruction guard destruct() done");
+    ROS_DEBUG_NAMED("actionlib", "ActionClient: destruction guard destruct() done");
   }
 
 
@@ -116,9 +116,9 @@ public:
                       TransitionCallback transition_cb = TransitionCallback(),
                       FeedbackCallback   feedback_cb   = FeedbackCallback())
   {
-    ROS_DEBUG("about to start initGoal()");
+    ROS_DEBUG_NAMED("actionlib", "about to start initGoal()");
     GoalHandle gh = manager_.initGoal(goal, transition_cb, feedback_cb);
-    ROS_DEBUG("Done with initGoal()");
+    ROS_DEBUG_NAMED("actionlib", "Done with initGoal()");
 
     return gh;
   }
@@ -247,7 +247,7 @@ private:
 
   void statusCb(const actionlib_msgs::GoalStatusArrayConstPtr& status_array)
   {
-    ROS_DEBUG("Getting status over the wire.");
+    ROS_DEBUG_NAMED("actionlib", "Getting status over the wire.");
     if (connection_monitor_)
       connection_monitor_->processStatus(status_array);
     manager_.updateStatuses(status_array);

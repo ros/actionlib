@@ -90,7 +90,7 @@ public:
       case DONE:
         return "DONE";
       default:
-        ROS_ERROR("BUG: Unhandled SimpleGoalState: %u", state_);
+        ROS_ERROR_NAMED("actionlib", "BUG: Unhandled SimpleGoalState: %u", state_);
         break;
     }
     return "BUG-UNKNOWN";

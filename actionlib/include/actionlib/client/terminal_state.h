@@ -96,7 +96,7 @@ public:
         return "LOST";
 
       default:
-        ROS_ERROR("BUG: Unhandled TerminalState: %u", state_);
+        ROS_ERROR_NAMED("actionlib", "BUG: Unhandled TerminalState: %u", state_);
         break;
     }
     return "BUG-UNKNOWN";

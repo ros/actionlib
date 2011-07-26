@@ -104,7 +104,7 @@ public:
       case DONE:
         return "DONE";
       default:
-        ROS_ERROR("BUG: Unhandled CommState: %u", state_);
+        ROS_ERROR_NAMED("actionlib", "BUG: Unhandled CommState: %u", state_);
         break;
     }
     return "BUG-UNKNOWN";

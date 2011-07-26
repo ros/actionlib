@@ -79,7 +79,7 @@ ServerGoalHandleDestructionTester::~ServerGoalHandleDestructionTester(){
 
 void ServerGoalHandleDestructionTester::goalCallback(GoalHandle gh)
 {
-  ROS_ERROR("In callback");
+  ROS_ERROR_NAMED("actionlib", "In callback");
   //assign to our stored goal handle
   *gh_ = gh;
 
@@ -116,15 +116,15 @@ TEST(ServerGoalHandleDestruction, destruction_test){
 
   SimpleActionClient<TestAction> client("reference_action", true);
 
-  ROS_ERROR("Waiting for server");
+  ROS_ERROR_NAMED("actionlib", "Waiting for server");
   client.waitForServer();
-  ROS_ERROR("Done waiting for server");
+  ROS_ERROR_NAMED("actionlib", "Done waiting for server");
 
   TestGoal goal;
 
   goal.goal = 1;
   client.sendGoal(goal);
-  ROS_ERROR("Sending goal");
+  ROS_ERROR_NAMED("actionlib", "Sending goal");
 
   spin_thread.join();
 

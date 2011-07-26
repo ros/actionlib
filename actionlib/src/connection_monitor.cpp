@@ -219,7 +219,7 @@ bool ConnectionMonitor::isServerConnected()
 bool ConnectionMonitor::waitForActionServerToStart(const ros::Duration& timeout, const ros::NodeHandle& nh)
 {
   if (timeout < ros::Duration(0,0))
-    ROS_ERROR("Timeouts can't be negative. Timeout is [%.2fs]", timeout.toSec());
+    ROS_ERROR_NAMED("actionlib", "Timeouts can't be negative. Timeout is [%.2fs]", timeout.toSec());
 
   ros::Time timeout_time = ros::Time::now() + timeout;
 

@@ -91,7 +91,7 @@ void CommStateMachine<ActionSpec>::setCommState(const CommState::StateEnum& stat
 template <class ActionSpec>
 void CommStateMachine<ActionSpec>::setCommState(const CommState& state)
 {
-  ROS_DEBUG("Transitioning CommState from %s to %s", state_.toString().c_str(), state.toString().c_str());
+  ROS_DEBUG_NAMED("actionlib", "Transitioning CommState from %s to %s", state_.toString().c_str(), state.toString().c_str());
   state_ = state;
 }
 
@@ -146,9 +146,9 @@ void CommStateMachine<ActionSpec>::updateResult(GoalHandleT& gh, const ActionRes
       break;
     }
     case CommState::DONE:
-      ROS_ERROR("Got a result when we were already in the DONE state"); break;
+      ROS_ERROR_NAMED("actionlib", "Got a result when we were already in the DONE state"); break;
     default:
-      ROS_ERROR("In a funny comm state: %u", state_.state_); break;
+      ROS_ERROR_NAMED("actionlib", "In a funny comm state: %u", state_.state_); break;
   }
 }
 
@@ -219,7 +219,7 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
             transitionToState(gh, CommState::RECALLING);
             break;
           default:
-            ROS_ERROR("BUG: Got an unknown status from the ActionServer. status = %u", goal_status->status);
+            ROS_ERROR_NAMED("actionlib", "BUG: Got an unknown status from the ActionServer. status = %u", goal_status->status);
             break;
         }
       }
@@ -262,7 +262,7 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
           transitionToState(gh, CommState::RECALLING);
           break;
         default:
-          ROS_ERROR("BUG: Got an unknown goal status from the ActionServer. status = %u", goal_status->status);
+          ROS_ERROR_NAMED("actionlib", "BUG: Got an unknown goal status from the ActionServer. status = %u", goal_status->status);
           break;
       }
       break;
@@ -272,15 +272,15 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
       switch (goal_status->status)
       {
         case actionlib_msgs::GoalStatus::PENDING:
-          ROS_ERROR("Invalid transition from ACTIVE to PENDING"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid transition from ACTIVE to PENDING"); break;
         case actionlib_msgs::GoalStatus::ACTIVE:
           break;
         case actionlib_msgs::GoalStatus::REJECTED:
-          ROS_ERROR("Invalid transition from ACTIVE to REJECTED"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid transition from ACTIVE to REJECTED"); break;
         case actionlib_msgs::GoalStatus::RECALLING:
-          ROS_ERROR("Invalid transition from ACTIVE to RECALLING"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid transition from ACTIVE to RECALLING"); break;
         case actionlib_msgs::GoalStatus::RECALLED:
-          ROS_ERROR("Invalid transition from ACTIVE to RECALLED"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid transition from ACTIVE to RECALLED"); break;
         case actionlib_msgs::GoalStatus::PREEMPTED:
           transitionToState(gh, CommState::PREEMPTING);
           transitionToState(gh, CommState::WAITING_FOR_RESULT);
@@ -291,7 +291,7 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
         case actionlib_msgs::GoalStatus::PREEMPTING:
           transitionToState(gh, CommState::PREEMPTING); break;
         default:
-          ROS_ERROR("BUG: Got an unknown goal status from the ActionServer. status = %u", goal_status->status);
+          ROS_ERROR_NAMED("actionlib", "BUG: Got an unknown goal status from the ActionServer. status = %u", goal_status->status);
           break;
       }
       break;
@@ -301,11 +301,11 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
       switch (goal_status->status)
       {
         case actionlib_msgs::GoalStatus::PENDING :
-          ROS_ERROR("Invalid Transition from WAITING_FOR_RESUT to PENDING"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from WAITING_FOR_RESUT to PENDING"); break;
         case actionlib_msgs::GoalStatus::PREEMPTING:
-          ROS_ERROR("Invalid Transition from WAITING_FOR_RESUT to PREEMPTING"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from WAITING_FOR_RESUT to PREEMPTING"); break;
         case actionlib_msgs::GoalStatus::RECALLING:
-          ROS_ERROR("Invalid Transition from WAITING_FOR_RESUT to RECALLING"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from WAITING_FOR_RESUT to RECALLING"); break;
         case actionlib_msgs::GoalStatus::ACTIVE:
         case actionlib_msgs::GoalStatus::PREEMPTED:
         case actionlib_msgs::GoalStatus::SUCCEEDED:
@@ -314,7 +314,7 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
         case actionlib_msgs::GoalStatus::RECALLED:
           break;
         default:
-          ROS_ERROR("BUG: Got an unknown state from the ActionServer. status = %u", goal_status->status);
+          ROS_ERROR_NAMED("actionlib", "BUG: Got an unknown state from the ActionServer. status = %u", goal_status->status);
           break;
       }
       break;
@@ -344,7 +344,7 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
         case actionlib_msgs::GoalStatus::RECALLING:
           transitionToState(gh, CommState::RECALLING); break;
         default:
-          ROS_ERROR("BUG: Got an unknown state from the ActionServer. status = %u", goal_status->status);
+          ROS_ERROR_NAMED("actionlib", "BUG: Got an unknown state from the ActionServer. status = %u", goal_status->status);
           break;
       }
       break;
@@ -354,9 +354,9 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
       switch (goal_status->status)
       {
         case actionlib_msgs::GoalStatus::PENDING:
-          ROS_ERROR("Invalid Transition from RECALLING to PENDING"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from RECALLING to PENDING"); break;
         case actionlib_msgs::GoalStatus::ACTIVE:
-          ROS_ERROR("Invalid Transition from RECALLING to ACTIVE"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from RECALLING to ACTIVE"); break;
         case actionlib_msgs::GoalStatus::SUCCEEDED:
         case actionlib_msgs::GoalStatus::ABORTED:
         case actionlib_msgs::GoalStatus::PREEMPTED:
@@ -373,7 +373,7 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
         case actionlib_msgs::GoalStatus::RECALLING:
           break;
         default:
-          ROS_ERROR("BUG: Got an unknown state from the ActionServer. status = %u", goal_status->status);
+          ROS_ERROR_NAMED("actionlib", "BUG: Got an unknown state from the ActionServer. status = %u", goal_status->status);
           break;
       }
       break;
@@ -383,15 +383,15 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
       switch (goal_status->status)
       {
         case actionlib_msgs::GoalStatus::PENDING:
-          ROS_ERROR("Invalid Transition from PREEMPTING to PENDING"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from PREEMPTING to PENDING"); break;
         case actionlib_msgs::GoalStatus::ACTIVE:
-          ROS_ERROR("Invalid Transition from PREEMPTING to ACTIVE"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from PREEMPTING to ACTIVE"); break;
         case actionlib_msgs::GoalStatus::REJECTED:
-          ROS_ERROR("Invalid Transition from PREEMPTING to REJECTED"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from PREEMPTING to REJECTED"); break;
         case actionlib_msgs::GoalStatus::RECALLING:
-          ROS_ERROR("Invalid Transition from PREEMPTING to RECALLING"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from PREEMPTING to RECALLING"); break;
         case actionlib_msgs::GoalStatus::RECALLED:
-          ROS_ERROR("Invalid Transition from PREEMPTING to RECALLED"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from PREEMPTING to RECALLED"); break;
           break;
         case actionlib_msgs::GoalStatus::PREEMPTED:
         case actionlib_msgs::GoalStatus::SUCCEEDED:
@@ -400,7 +400,7 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
         case actionlib_msgs::GoalStatus::PREEMPTING:
           break;
         default:
-          ROS_ERROR("BUG: Got an unknown state from the ActionServer. status = %u", goal_status->status);
+          ROS_ERROR_NAMED("actionlib", "BUG: Got an unknown state from the ActionServer. status = %u", goal_status->status);
           break;
       }
       break;
@@ -410,13 +410,13 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
       switch (goal_status->status)
       {
         case actionlib_msgs::GoalStatus::PENDING:
-          ROS_ERROR("Invalid Transition from DONE to PENDING"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from DONE to PENDING"); break;
         case actionlib_msgs::GoalStatus::ACTIVE:
-          ROS_ERROR("Invalid Transition from DONE to ACTIVE"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from DONE to ACTIVE"); break;
         case actionlib_msgs::GoalStatus::RECALLING:
-          ROS_ERROR("Invalid Transition from DONE to RECALLING"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from DONE to RECALLING"); break;
         case actionlib_msgs::GoalStatus::PREEMPTING:
-          ROS_ERROR("Invalid Transition from DONE to PREEMPTING"); break;
+          ROS_ERROR_NAMED("actionlib", "Invalid Transition from DONE to PREEMPTING"); break;
         case actionlib_msgs::GoalStatus::PREEMPTED:
         case actionlib_msgs::GoalStatus::SUCCEEDED:
         case actionlib_msgs::GoalStatus::ABORTED:
@@ -424,13 +424,13 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
         case actionlib_msgs::GoalStatus::REJECTED:
           break;
         default:
-          ROS_ERROR("BUG: Got an unknown state from the ActionServer. status = %u", goal_status->status);
+          ROS_ERROR_NAMED("actionlib", "BUG: Got an unknown state from the ActionServer. status = %u", goal_status->status);
           break;
       }
       break;
     }
     default:
-      ROS_ERROR("In a funny comm state: %u", state_.state_);
+      ROS_ERROR_NAMED("actionlib", "In a funny comm state: %u", state_.state_);
       break;
   }
 }
@@ -439,7 +439,7 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT& gh, const actionlib
 template <class ActionSpec>
 void CommStateMachine<ActionSpec>::processLost(GoalHandleT& gh)
 {
-  ROS_WARN("Transitioning goal to LOST");
+  ROS_WARN_NAMED("actionlib", "Transitioning goal to LOST");
   latest_goal_status_.status = actionlib_msgs::GoalStatus::LOST;
   transitionToState(gh, CommState::DONE);
 }
@@ -453,7 +453,7 @@ void CommStateMachine<ActionSpec>::transitionToState(GoalHandleT& gh, const Comm
 template <class ActionSpec>
 void CommStateMachine<ActionSpec>::transitionToState(GoalHandleT& gh, const CommState& next_state)
 {
-  ROS_DEBUG("Trying to transition to %s", next_state.toString().c_str());
+  ROS_DEBUG_NAMED("actionlib", "Trying to transition to %s", next_state.toString().c_str());
   setCommState(next_state);
   if (transition_cb_)
     transition_cb_(gh);

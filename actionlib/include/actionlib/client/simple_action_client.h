@@ -245,7 +245,7 @@ void SimpleActionClient<ActionSpec>::initSimpleClient(ros::NodeHandle& n, const 
 {
   if (spin_thread)
   {
-    ROS_DEBUG("Spinning up a thread for the SimpleActionClient");
+    ROS_DEBUG_NAMED("actionlib", "Spinning up a thread for the SimpleActionClient");
     need_to_terminate_ = false;
     spin_thread_ = new boost::thread(boost::bind(&SimpleActionClient<ActionSpec>::spinThread, this));
     ac_.reset(new ActionClientT(n, name, &callback_queue));
@@ -296,7 +296,7 @@ void SimpleActionClient<ActionSpec>::setSimpleState(const SimpleGoalState::State
 template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::setSimpleState(const SimpleGoalState& next_state)
 {
-  ROS_DEBUG("Transitioning SimpleState from [%s] to [%s]",
+  ROS_DEBUG_NAMED("actionlib", "Transitioning SimpleState from [%s] to [%s]",
             cur_simple_state_.toString().c_str(),
             next_state.toString().c_str());
   cur_simple_state_ = next_state;
@@ -328,7 +328,7 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::getState()
 {
   if (gh_.isExpired())
   {
-    ROS_ERROR("Trying to getState() when no goal is running. You are incorrectly using SimpleActionClient");
+    ROS_ERROR_NAMED("actionlib", "Trying to getState() when no goal is running. You are incorrectly using SimpleActionClient");
     return SimpleClientGoalState(SimpleClientGoalState::LOST);
   }
 
@@ -360,7 +360,7 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::getState()
         case TerminalState::LOST:
           return SimpleClientGoalState(SimpleClientGoalState::LOST, gh_.getTerminalState().text_);
         default:
-          ROS_ERROR("Unknown terminal state [%u]. This is a bug in SimpleActionClient", gh_.getTerminalState().state_);
+          ROS_ERROR_NAMED("actionlib", "Unknown terminal state [%u]. This is a bug in SimpleActionClient", gh_.getTerminalState().state_);
           return SimpleClientGoalState(SimpleClientGoalState::LOST, gh_.getTerminalState().text_);
       }
     }
@@ -374,16 +374,16 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::getState()
         case SimpleGoalState::ACTIVE:
           return SimpleClientGoalState(SimpleClientGoalState::ACTIVE);
         case SimpleGoalState::DONE:
-          ROS_ERROR("In WAITING_FOR_RESULT or WAITING_FOR_CANCEL_ACK, yet we are in SimpleGoalState DONE. This is a bug in SimpleActionClient");
+          ROS_ERROR_NAMED("actionlib", "In WAITING_FOR_RESULT or WAITING_FOR_CANCEL_ACK, yet we are in SimpleGoalState DONE. This is a bug in SimpleActionClient");
           return SimpleClientGoalState(SimpleClientGoalState::LOST);
         default:
-          ROS_ERROR("Got a SimpleGoalState of [%u]. This is a bug in SimpleActionClient", cur_simple_state_.state_);
+          ROS_ERROR_NAMED("actionlib", "Got a SimpleGoalState of [%u]. This is a bug in SimpleActionClient", cur_simple_state_.state_);
       }
     }
     default:
       break;
   }
-  ROS_ERROR("Error trying to interpret CommState - %u", comm_state_.state_);
+  ROS_ERROR_NAMED("actionlib", "Error trying to interpret CommState - %u", comm_state_.state_);
   return SimpleClientGoalState(SimpleClientGoalState::LOST);
 }
 
@@ -391,7 +391,7 @@ template<class ActionSpec>
 typename SimpleActionClient<ActionSpec>::ResultConstPtr SimpleActionClient<ActionSpec>::getResult()
 {
   if (gh_.isExpired())
-    ROS_ERROR("Trying to getResult() when no goal is running. You are incorrectly using SimpleActionClient");
+    ROS_ERROR_NAMED("actionlib", "Trying to getResult() when no goal is running. You are incorrectly using SimpleActionClient");
 
   if (gh_.getResult())
     return gh_.getResult();
@@ -416,7 +416,7 @@ template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::cancelGoal()
 {
   if (gh_.isExpired())
-    ROS_ERROR("Trying to cancelGoal() when no goal is running. You are incorrectly using SimpleActionClient");
+    ROS_ERROR_NAMED("actionlib", "Trying to cancelGoal() when no goal is running. You are incorrectly using SimpleActionClient");
 
   gh_.cancel();
 }
@@ -425,7 +425,7 @@ template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::stopTrackingGoal()
 {
   if (gh_.isExpired())
-    ROS_ERROR("Trying to stopTrackingGoal() when no goal is running. You are incorrectly using SimpleActionClient");
+    ROS_ERROR_NAMED("actionlib", "Trying to stopTrackingGoal() when no goal is running. You are incorrectly using SimpleActionClient");
   gh_.reset();
 }
 
@@ -433,7 +433,7 @@ template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::handleFeedback(GoalHandleT gh, const FeedbackConstPtr& feedback)
 {
   if (gh_ != gh)
-    ROS_ERROR("Got a callback on a goalHandle that we're not tracking.  \
+    ROS_ERROR_NAMED("actionlib", "Got a callback on a goalHandle that we're not tracking.  \
                This is an internal SimpleActionClient/ActionClient bug.  \
                This could also be a GoalID collision");
   if (feedback_cb_)
@@ -447,7 +447,7 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
   switch (comm_state_.state_)
   {
     case CommState::WAITING_FOR_GOAL_ACK:
-      ROS_ERROR("BUG: Shouldn't ever get a transition callback for WAITING_FOR_GOAL_ACK");
+      ROS_ERROR_NAMED("actionlib", "BUG: Shouldn't ever get a transition callback for WAITING_FOR_GOAL_ACK");
       break;
     case CommState::PENDING:
       ROS_ERROR_COND( cur_simple_state_ != SimpleGoalState::PENDING,
@@ -465,7 +465,7 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
         case SimpleGoalState::ACTIVE:
           break;
         case SimpleGoalState::DONE:
-          ROS_ERROR("BUG: Got a transition to CommState [%s] when in SimpleGoalState [%s]",
+          ROS_ERROR_NAMED("actionlib", "BUG: Got a transition to CommState [%s] when in SimpleGoalState [%s]",
                     comm_state_.toString().c_str(), cur_simple_state_.toString().c_str());
           break;
         default:
@@ -493,7 +493,7 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
         case SimpleGoalState::ACTIVE:
           break;
         case SimpleGoalState::DONE:
-          ROS_ERROR("BUG: Got a transition to CommState [%s] when in SimpleGoalState [%s]",
+          ROS_ERROR_NAMED("actionlib", "BUG: Got a transition to CommState [%s] when in SimpleGoalState [%s]",
                      comm_state_.toString().c_str(), cur_simple_state_.toString().c_str());
           break;
         default:
@@ -516,7 +516,7 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
           done_condition_.notify_all();
           break;
         case SimpleGoalState::DONE:
-          ROS_ERROR("BUG: Got a second transition to DONE");
+          ROS_ERROR_NAMED("actionlib", "BUG: Got a second transition to DONE");
           break;
         default:
           ROS_FATAL("Unknown SimpleGoalState %u", cur_simple_state_.state_);
@@ -524,7 +524,7 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
       }
       break;
     default:
-      ROS_ERROR("Unknown CommState received [%u]", comm_state_.state_);
+      ROS_ERROR_NAMED("actionlib", "Unknown CommState received [%u]", comm_state_.state_);
       break;
   }
 }
@@ -534,12 +534,12 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration& timeout 
 {
   if (gh_.isExpired())
   {
-    ROS_ERROR("Trying to waitForGoalToFinish() when no goal is running. You are incorrectly using SimpleActionClient");
+    ROS_ERROR_NAMED("actionlib", "Trying to waitForGoalToFinish() when no goal is running. You are incorrectly using SimpleActionClient");
     return false;
   }
 
   if (timeout < ros::Duration(0,0))
-    ROS_WARN("Timeouts can't be negative. Timeout is [%.2fs]", timeout.toSec());
+    ROS_WARN_NAMED("actionlib", "Timeouts can't be negative. Timeout is [%.2fs]", timeout.toSec());
 
   ros::Time timeout_time = ros::Time::now() + timeout;
 
@@ -585,20 +585,20 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::sendGoalAndWait(const Goal
   // See if the goal finishes in time
   if (waitForResult(execute_timeout))
   {
-    ROS_DEBUG("Goal finished within specified execute_timeout [%.2f]", execute_timeout.toSec());
+    ROS_DEBUG_NAMED("actionlib", "Goal finished within specified execute_timeout [%.2f]", execute_timeout.toSec());
     return getState();
   }
 
-  ROS_DEBUG("Goal didn't finish within specified execute_timeout [%.2f]", execute_timeout.toSec());
+  ROS_DEBUG_NAMED("actionlib", "Goal didn't finish within specified execute_timeout [%.2f]", execute_timeout.toSec());
 
   // It didn't finish in time, so we need to preempt it
   cancelGoal();
 
   // Now wait again and see if it finishes
   if (waitForResult(preempt_timeout))
-    ROS_DEBUG("Preempt finished within specified preempt_timeout [%.2f]", preempt_timeout.toSec());
+    ROS_DEBUG_NAMED("actionlib", "Preempt finished within specified preempt_timeout [%.2f]", preempt_timeout.toSec());
   else
-    ROS_DEBUG("Preempt didn't finish specified preempt_timeout [%.2f]", preempt_timeout.toSec());
+    ROS_DEBUG_NAMED("actionlib", "Preempt didn't finish specified preempt_timeout [%.2f]", preempt_timeout.toSec());
   return getState();
 }
 

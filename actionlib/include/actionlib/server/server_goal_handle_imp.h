@@ -47,18 +47,18 @@ namespace actionlib {
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::setAccepted(const std::string& text){
     if(as_ == NULL){
-      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      ROS_ERROR_NAMED("actionlib", "You are attempting to call methods on an uninitialized goal handle");
       return;
     }
 
     //check to see if we can use the action server
     DestructionGuard::ScopedProtector protector(*guard_);
     if(!protector.isProtected()){
-      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      ROS_ERROR_NAMED("actionlib", "The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
       return;
     }
 
-    ROS_DEBUG("Accepting goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
+    ROS_DEBUG_NAMED("actionlib", "Accepting goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;
@@ -76,28 +76,28 @@ namespace actionlib {
         as_->publishStatus();
       }
       else
-        ROS_ERROR("To transition to an active state, the goal must be in a pending or recalling state, it is currently in state: %d",
+        ROS_ERROR_NAMED("actionlib", "To transition to an active state, the goal must be in a pending or recalling state, it is currently in state: %d",
             (*status_it_).status_.status);
     }
     else
-      ROS_ERROR("Attempt to set status on an uninitialized ServerGoalHandle");
+      ROS_ERROR_NAMED("actionlib", "Attempt to set status on an uninitialized ServerGoalHandle");
   }
 
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::setCanceled(const Result& result, const std::string& text){
     if(as_ == NULL){
-      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      ROS_ERROR_NAMED("actionlib", "You are attempting to call methods on an uninitialized goal handle");
       return;
     }
 
     //check to see if we can use the action server
     DestructionGuard::ScopedProtector protector(*guard_);
     if(!protector.isProtected()){
-      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      ROS_ERROR_NAMED("actionlib", "The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
       return;
     }
 
-    ROS_DEBUG("Setting status to canceled on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
+    ROS_DEBUG_NAMED("actionlib", "Setting status to canceled on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;
@@ -112,28 +112,28 @@ namespace actionlib {
         as_->publishResult((*status_it_).status_, result);
       }
       else
-        ROS_ERROR("To transition to a cancelled state, the goal must be in a pending, recalling, active, or preempting state, it is currently in state: %d",
+        ROS_ERROR_NAMED("actionlib", "To transition to a cancelled state, the goal must be in a pending, recalling, active, or preempting state, it is currently in state: %d",
             (*status_it_).status_.status);
     }
     else
-      ROS_ERROR("Attempt to set status on an uninitialized ServerGoalHandle");
+      ROS_ERROR_NAMED("actionlib", "Attempt to set status on an uninitialized ServerGoalHandle");
   }
 
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::setRejected(const Result& result, const std::string& text){
     if(as_ == NULL){
-      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      ROS_ERROR_NAMED("actionlib", "You are attempting to call methods on an uninitialized goal handle");
       return;
     }
 
     //check to see if we can use the action server
     DestructionGuard::ScopedProtector protector(*guard_);
     if(!protector.isProtected()){
-      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      ROS_ERROR_NAMED("actionlib", "The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
       return;
     }
 
-    ROS_DEBUG("Setting status to rejected on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
+    ROS_DEBUG_NAMED("actionlib", "Setting status to rejected on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;
@@ -143,28 +143,28 @@ namespace actionlib {
         as_->publishResult((*status_it_).status_, result);
       }
       else
-        ROS_ERROR("To transition to a rejected state, the goal must be in a pending or recalling state, it is currently in state: %d",
+        ROS_ERROR_NAMED("actionlib", "To transition to a rejected state, the goal must be in a pending or recalling state, it is currently in state: %d",
             (*status_it_).status_.status);
     }
     else
-      ROS_ERROR("Attempt to set status on an uninitialized ServerGoalHandle");
+      ROS_ERROR_NAMED("actionlib", "Attempt to set status on an uninitialized ServerGoalHandle");
   }
 
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::setAborted(const Result& result, const std::string& text){
     if(as_ == NULL){
-      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      ROS_ERROR_NAMED("actionlib", "You are attempting to call methods on an uninitialized goal handle");
       return;
     }
 
     //check to see if we can use the action server
     DestructionGuard::ScopedProtector protector(*guard_);
     if(!protector.isProtected()){
-      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      ROS_ERROR_NAMED("actionlib", "The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
       return;
     }
 
-    ROS_DEBUG("Setting status to aborted on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
+    ROS_DEBUG_NAMED("actionlib", "Setting status to aborted on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;
@@ -174,28 +174,28 @@ namespace actionlib {
         as_->publishResult((*status_it_).status_, result);
       }
       else
-        ROS_ERROR("To transition to an aborted state, the goal must be in a preempting or active state, it is currently in state: %d",
+        ROS_ERROR_NAMED("actionlib", "To transition to an aborted state, the goal must be in a preempting or active state, it is currently in state: %d",
             status);
     }
     else
-      ROS_ERROR("Attempt to set status on an uninitialized ServerGoalHandle");
+      ROS_ERROR_NAMED("actionlib", "Attempt to set status on an uninitialized ServerGoalHandle");
   }
 
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::setSucceeded(const Result& result, const std::string& text){
     if(as_ == NULL){
-      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      ROS_ERROR_NAMED("actionlib", "You are attempting to call methods on an uninitialized goal handle");
       return;
     }
 
     //check to see if we can use the action server
     DestructionGuard::ScopedProtector protector(*guard_);
     if(!protector.isProtected()){
-      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      ROS_ERROR_NAMED("actionlib", "The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
       return;
     }
 
-    ROS_DEBUG("Setting status to succeeded on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
+    ROS_DEBUG_NAMED("actionlib", "Setting status to succeeded on goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;
@@ -205,34 +205,34 @@ namespace actionlib {
         as_->publishResult((*status_it_).status_, result);
       }
       else
-        ROS_ERROR("To transition to a succeeded state, the goal must be in a preempting or active state, it is currently in state: %d",
+        ROS_ERROR_NAMED("actionlib", "To transition to a succeeded state, the goal must be in a preempting or active state, it is currently in state: %d",
             status);
     }
     else
-      ROS_ERROR("Attempt to set status on an uninitialized ServerGoalHandle");
+      ROS_ERROR_NAMED("actionlib", "Attempt to set status on an uninitialized ServerGoalHandle");
   }
 
   template <class ActionSpec>
   void ServerGoalHandle<ActionSpec>::publishFeedback(const Feedback& feedback){
     if(as_ == NULL){
-      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      ROS_ERROR_NAMED("actionlib", "You are attempting to call methods on an uninitialized goal handle");
       return;
     }
 
     //check to see if we can use the action server
     DestructionGuard::ScopedProtector protector(*guard_);
     if(!protector.isProtected()){
-      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      ROS_ERROR_NAMED("actionlib", "The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
       return;
     }
 
-    ROS_DEBUG("Publishing feedback for goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
+    ROS_DEBUG_NAMED("actionlib", "Publishing feedback for goal, id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_) {
       boost::recursive_mutex::scoped_lock lock(as_->lock_);
       as_->publishFeedback((*status_it_).status_, feedback);
     }
     else
-      ROS_ERROR("Attempt to publish feedback on an uninitialized ServerGoalHandle");
+      ROS_ERROR_NAMED("actionlib", "Attempt to publish feedback on an uninitialized ServerGoalHandle");
   }
 
   template <class ActionSpec>
@@ -258,7 +258,7 @@ namespace actionlib {
         return actionlib_msgs::GoalID();
     }
     else{
-      ROS_ERROR("Attempt to get a goal id on an uninitialized ServerGoalHandle or one that has no ActionServer associated with it.");
+      ROS_ERROR_NAMED("actionlib", "Attempt to get a goal id on an uninitialized ServerGoalHandle or one that has no ActionServer associated with it.");
       return actionlib_msgs::GoalID();
     }
   }
@@ -275,7 +275,7 @@ namespace actionlib {
         return actionlib_msgs::GoalStatus();
     }
     else{
-      ROS_ERROR("Attempt to get goal status on an uninitialized ServerGoalHandle or one that has no ActionServer associated with it.");
+      ROS_ERROR_NAMED("actionlib", "Attempt to get goal status on an uninitialized ServerGoalHandle or one that has no ActionServer associated with it.");
       return actionlib_msgs::GoalStatus();
     }
   }
@@ -317,18 +317,18 @@ namespace actionlib {
   template <class ActionSpec>
   bool ServerGoalHandle<ActionSpec>::setCancelRequested(){
     if(as_ == NULL){
-      ROS_ERROR("You are attempting to call methods on an uninitialized goal handle");
+      ROS_ERROR_NAMED("actionlib", "You are attempting to call methods on an uninitialized goal handle");
       return false;
     }
 
     //check to see if we can use the action server
     DestructionGuard::ScopedProtector protector(*guard_);
     if(!protector.isProtected()){
-      ROS_ERROR("The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
+      ROS_ERROR_NAMED("actionlib", "The ActionServer associated with this GoalHandle is invalid. Did you delete the ActionServer before the GoalHandle?");
       return false;
     }
 
-    ROS_DEBUG("Transisitoning to a cancel requested state on goal id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
+    ROS_DEBUG_NAMED("actionlib", "Transisitoning to a cancel requested state on goal id: %s, stamp: %.2f", getGoalID().id.c_str(), getGoalID().stamp.toSec());
     if(goal_){
       boost::recursive_mutex::scoped_lock lock(as_->lock_);
       unsigned int status = (*status_it_).status_.status;

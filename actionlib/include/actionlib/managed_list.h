@@ -94,11 +94,11 @@ private:
         DestructionGuard::ScopedProtector protector(*guard_);
         if (!protector.isProtected())
         {
-          ROS_ERROR("ManagedList: The DestructionGuard associated with this list has already been destructed. You must delete all list handles before deleting the ManagedList");
+          ROS_ERROR_NAMED("actionlib", "ManagedList: The DestructionGuard associated with this list has already been destructed. You must delete all list handles before deleting the ManagedList");
           return;
         }
 
-        ROS_DEBUG("IN DELETER");
+        ROS_DEBUG_NAMED("actionlib", "IN DELETER");
         if (deleter_)
           deleter_(it_);
       }
@@ -230,7 +230,7 @@ template<class T>
 typename ManagedList<T>::Handle ManagedList<T>::iterator::createHandle()
 {
   if (it_->handle_tracker_.expired())
-    ROS_ERROR("Tried to create a handle to a list elem with refcount 0");
+    ROS_ERROR_NAMED("actionlib", "Tried to create a handle to a list elem with refcount 0");
 
   boost::shared_ptr<void> tracker = it_->handle_tracker_.lock();
 

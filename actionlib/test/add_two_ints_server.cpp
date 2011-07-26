@@ -41,8 +41,8 @@
 bool add(const actionlib::TwoIntsGoal& req, actionlib::TwoIntsResult& res)
 {
   res.sum = req.a + req.b;
-  ROS_INFO("request: x=%ld, y=%ld", (long int)req.a, (long int)req.b);
-  ROS_INFO("   sending back response: [%ld]", (long int)res.sum);
+  ROS_INFO_NAMED("actionlib", "request: x=%ld, y=%ld", (long int)req.a, (long int)req.b);
+  ROS_INFO_NAMED("actionlib", "   sending back response: [%ld]", (long int)res.sum);
   return true;
 }
 

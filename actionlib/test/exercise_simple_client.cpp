@@ -93,7 +93,7 @@ TEST_F(SimpleClientFixture, just_preempt)
   // Sleep for 10 seconds or until we hear back from the action server
   for (unsigned int i=0; i < 100; i++)
   {
-    ROS_DEBUG("Waiting for Server Response");
+    ROS_DEBUG_NAMED("actionlib", "Waiting for Server Response");
     if (ac_.getState() != SimpleClientGoalState::PENDING)
       break;
     ros::Duration(0.1).sleep();
@@ -139,7 +139,7 @@ TEST_F(SimpleClientFixture, ignore_cancel_and_succeed)
   // Sleep for 10 seconds or until we hear back from the action server
   for (unsigned int i=0; i < 100; i++)
   {
-    ROS_DEBUG("Waiting for Server Response");
+    ROS_DEBUG_NAMED("actionlib", "Waiting for Server Response");
     if (ac_.getState() != SimpleClientGoalState::PENDING)
       break;
     ros::Duration(0.1).sleep();

@@ -65,12 +65,12 @@ namespace actionlib {
 
       if(strcmp(mt::md5sum(*goal_c), goal_md5sum.c_str()) || strcmp(mt::md5sum(*result_c), result_md5sum.c_str()))
       {
-        ROS_ERROR("Incorrect md5Sums for goal and result types");
+        ROS_ERROR_NAMED("actionlib", "Incorrect md5Sums for goal and result types");
         return false;
       }
 
       if(!ac_->isServerConnected()){
-        ROS_ERROR("Attempting to make a service call when the server isn't actually connected to the client.");
+        ROS_ERROR_NAMED("actionlib", "Attempting to make a service call when the server isn't actually connected to the client.");
         return false;
       }
 

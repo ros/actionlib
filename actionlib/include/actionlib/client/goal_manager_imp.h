@@ -65,7 +65,7 @@ ClientGoalHandle<ActionSpec> GoalManager<ActionSpec>::initGoal(const Goal& goal,
   if (send_goal_func_)
     send_goal_func_(action_goal);
   else
-    ROS_WARN("Possible coding error: send_goal_func_ set to NULL. Not going to send goal");
+    ROS_WARN_NAMED("actionlib", "Possible coding error: send_goal_func_ set to NULL. Not going to send goal");
 
   typedef CommStateMachine<ActionSpec> CommStateMachineT;
   boost::shared_ptr<CommStateMachineT> comm_state_machine(new CommStateMachineT(action_goal, transition_cb, feedback_cb));
@@ -83,14 +83,14 @@ void GoalManager<ActionSpec>::listElemDeleter(typename ManagedListT::iterator it
   DestructionGuard::ScopedProtector protector(*guard_);
   if (!protector.isProtected())
   {
-    ROS_ERROR("This action client associated with the goal handle has already been destructed. Not going to try delete the CommStateMachine associated with this goal");
+    ROS_ERROR_NAMED("actionlib", "This action client associated with the goal handle has already been destructed. Not going to try delete the CommStateMachine associated with this goal");
     return;
   }
 
-  ROS_DEBUG("About to erase CommStateMachine");
+  ROS_DEBUG_NAMED("actionlib", "About to erase CommStateMachine");
   boost::recursive_mutex::scoped_lock lock(list_mutex_);
   list_.erase(it);
-  ROS_DEBUG("Done erasing CommStateMachine");
+  ROS_DEBUG_NAMED("actionlib", "Done erasing CommStateMachine");
 }
 
 template<class ActionSpec>

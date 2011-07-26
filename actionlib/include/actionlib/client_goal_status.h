@@ -134,7 +134,7 @@ public:
         state_ = ClientGoalStatus::REJECTED; break;
       default:
         state_ = ClientGoalStatus::LOST;
-        ROS_ERROR("Cannot convert GoalStatus %u to ClientGoalState", goal_status.status); break;
+        ROS_ERROR_NAMED("actionlib", "Cannot convert GoalStatus %u to ClientGoalState", goal_status.status); break;
     }
   }
 
@@ -161,7 +161,7 @@ public:
       case LOST:
         return "LOST";
       default:
-        ROS_ERROR("BUG: Unhandled ClientGoalStatus");
+        ROS_ERROR_NAMED("actionlib", "BUG: Unhandled ClientGoalStatus");
         break;
     }
     return "BUG-UNKNOWN";

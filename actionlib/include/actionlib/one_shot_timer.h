@@ -53,7 +53,7 @@ public:
       if (callback_)
         callback_(e);
       else
-        ROS_ERROR("Got a NULL Timer OneShotTimer Callback");
+        ROS_ERROR_NAMED("actionlib", "Got a NULL Timer OneShotTimer Callback");
     }
   }
 

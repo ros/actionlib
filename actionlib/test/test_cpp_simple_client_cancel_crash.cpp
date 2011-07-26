@@ -44,11 +44,11 @@ TEST(SimpleClientCancelCrash, uninitialized_crash)
 {
   ros::NodeHandle nh;
   Client client("test_client", true);
-  ROS_INFO("calling cancelGoal()");
+  ROS_INFO_NAMED("actionlib", "calling cancelGoal()");
   client.cancelGoal();
-  ROS_INFO("Done calling cancelGoal()");
+  ROS_INFO_NAMED("actionlib", "Done calling cancelGoal()");
   EXPECT_TRUE(true);
-  ROS_INFO("Successfully done with test. Exiting");
+  ROS_INFO_NAMED("actionlib", "Successfully done with test. Exiting");
 }
 
 int main(int argc, char **argv){
