@@ -124,6 +124,8 @@ public:
     	if ( rhs.valid_ ) {
           it_ = rhs.it_;
     	}
+        else
+          ROS_ERROR("HIT PATCH FOR 43b2dad1e951");
         handle_tracker_ = rhs.handle_tracker_;
         valid_ = rhs.valid_;
         return rhs;
