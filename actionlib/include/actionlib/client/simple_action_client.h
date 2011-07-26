@@ -555,14 +555,12 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration& timeout 
 
     // Check if we're past the timeout time
     if (timeout > ros::Duration(0,0) && time_left <= ros::Duration(0,0) )
-     {
-      ROS_ERROR("TBFTBF TIMED OUT");
+    {
       break;
     }
-
+    
     if (cur_simple_state_ == SimpleGoalState::DONE)
     {
-      ROS_ERROR("TBFTBF LOOP DONE");
       break;
     }
 
@@ -575,6 +573,8 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration& timeout 
   }
   
   ROS_ERROR("TBFTBF SimpleGoalState is %s", cur_simple_state_.toString().c_str());
+  ros::Duration d(1,0);
+  d.sleep();
 
   return (cur_simple_state_ == SimpleGoalState::DONE);
 }
