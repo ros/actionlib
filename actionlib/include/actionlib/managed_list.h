@@ -136,7 +136,7 @@ public:
       void reset()
       {
         valid_ = false;
-#ifndef MSVC        
+#ifndef _MSC_VER
         // this prevents a crash on MSVC, but I bet the problem is elsewhere.
         // it puts the lotion in the basket.
         it_ = iterator();
