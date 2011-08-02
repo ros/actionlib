@@ -136,7 +136,11 @@ public:
       void reset()
       {
         valid_ = false;
+#ifndef MSVC        
+        // this prevents a crash on MSVC, but I bet the problem is elsewhere.
+        // it puts the lotion in the basket.
         it_ = iterator();
+#endif
         handle_tracker_.reset();
       }
 
