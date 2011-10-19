@@ -5,7 +5,7 @@ sdl-image:
   arch: sdl_image
   macports: libsdl_image
   gentoo: sdl-image
-  osx:
+  osxbrew:
     lion:
       homebrew:
         packages: [ sdl_image ]
