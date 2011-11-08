@@ -1,10 +1,11 @@
 build
 actionlib/src/actionlib/msg
-bfl/bin
-bfl/include
 /wiped
 tinyxml/libtinyxml.so
 syntax: glob
 *.dylib
+*.pyc
+*~
 syntax: regexp
 (bin|build|dist|msg_gen|srv_gen|gen|test_output)/.*
+
