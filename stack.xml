@@ -1,12 +1,14 @@
 <stack>
-  <description brief="common code for personal robots">
-    This stack contains tools built on top of ROS core which are
-    commonly used throughout the ROS ecosystem.
+  <description brief="Actionlib">
+The actionlib stack provides a standardized interface for
+interfacing with preemptible tasks. Examples of this include moving
+the base to a target location, performing a laser scan and returning
+the resulting point cloud, detecting the handle of a door, etc.
   </description>
-  <author>Maintained by Tully Foote tfoote@willowgarage.com</author>
-  <license>BSD,LGPL,MIT,ZLib,Boost Software License</license>  
+  <author>Maintained by Eitan Marder-Eppstein</author>
+  <license>BSD,BSD Software License</license>  
   <review status="doc reviewed" notes="2009-10-07"/>
-  <url>http://ros.org/wiki/common</url>
+  <url>http://ros.org/wiki/actionlib</url>
   <depend stack="common_msgs" /> <!-- actionlib_msgs -->
   <depend stack="ros" />
   <depend stack="ros_comm" /> <!-- rostest, rospy, roscpp -->
