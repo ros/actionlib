@@ -117,4 +117,4 @@ rosbuild_add_rostest(${CMAKE_CURRENT_SOURCE_DIR}/test/test_exercise_simple_clien
 # variables.
 #list(APPEND CPACK_SOURCE_IGNORE_FILES /core/experimental)
 
-rosbuild_make_distribution(1.7.0)
+rosbuild_make_distribution(1.7.1)
