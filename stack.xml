@@ -4,18 +4,11 @@
     commonly used throughout the ROS ecosystem.
   </description>
   <author>Maintained by Tully Foote tfoote@willowgarage.com</author>
-  <license>LGPL,ZLib,Boost Software License,BSD,MIT</license>  
+  <license>BSD,LGPL,MIT,ZLib,Boost Software License</license>  
   <review status="doc reviewed" notes="2009-10-07"/>
   <url>http://ros.org/wiki/common</url>
   <depend stack="common_msgs" /> <!-- actionlib_msgs -->
-  <depend stack="common_rosdeps" />
-  <depend stack="ros" /> <!-- rosbuild, roslib -->
-  <depend stack="ros_comm" /> <!-- rosconsole, rostest, rospy, roscpp -->
-  <depend stack="pluginlib" />
-  <!-- backwards compatibility for electric-diamondback -->
-  <depend stack="bond_core" />
-  <depend stack="nodelet_core" />
-  <depend stack="filters" />
-  <depend stack="xacro" />
+  <depend stack="ros" />
+  <depend stack="ros_comm" /> <!-- rostest, rospy, roscpp -->
 
 </stack>
