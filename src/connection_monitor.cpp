@@ -240,6 +240,13 @@ bool ConnectionMonitor::waitForActionServerToStart(const ros::Duration& timeout,
     if (timeout != ros::Duration(0,0) && time_left <= ros::Duration(0,0) )
       break;
 
+    if ((timeout_time + ros::Duration().fromSec(10)) < ros::Time::now())
+    {
+      ROS_WARN_THROTTLE_NAMED(10, 
+          "actionlib", 
+          "Waiting on an action server to start has taken over 10 seconds and no timeout is set. Are you sure that your callback queue is being serviced while this thread blocks?");
+    }
+
     // Truncate the time left
     if (time_left > loop_period || timeout == ros::Duration())
       time_left = loop_period;
