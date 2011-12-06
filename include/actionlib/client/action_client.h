@@ -155,6 +155,13 @@ public:
    * Often, it can take a second for the action server & client to negotiate
    * a connection, thus, risking the first few goals to be dropped. This call lets
    * the user wait until the network connection to the server is negotiated
+   * NOTE: Using this call in a single threaded ROS application, or any
+   * application where the action client's callback queue is not being
+   * serviced, will not work. Without a separate thread servicing the queue, or
+   * a multi-threaded spinner, there is no way for the client to tell whether
+   * or not the server is up because it can't receive a status message.
+   * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
+   * \return True if the server connected in the allocated time. False on timeout
    */
   bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0) )
   {
