@@ -1,0 +1,19 @@
+Package: actionlib
+Version: 0.0.0
+Section: misc
+Priority: extra
+Architecture: any
+Depends: ${misc:Depends} python-empy, cmake, make, 
+         @(CATKIN_PACKAGE_PREFIX)genmsg, @(CATKIN_PACKAGE_PREFIX)genpy, @(CATKIN_PACKAGE_PREFIX)gencpp,
+Build-Depends: debhelper (>= 7), cmake, gcc, make, python, python-empy, python-setuptools, 
+               @(CATKIN_PACKAGE_PREFIX)catkin, @(CATKIN_PACKAGE_PREFIX)genmsg, 
+               @(CATKIN_PACKAGE_PREFIX)genpy, @(CATKIN_PACKAGE_PREFIX)gencpp,
+Description: The actionlib package provides a standardized interface for interfacing with preemptible tasks in ROS
+Author: Eitan Marder-Eppstein, Vijay Pradeep
+Maintainer: 
+Homepage: http://www.ros.org/wiki/actionlib
+
+Catkin-ProjectName: actionlib
+Catkin-CopyrightType:  willowgarage
+Catkin-Depends: catkin, genmsg, roscpp_core, common_msgs
+Catkin-DebRulesType: cmake

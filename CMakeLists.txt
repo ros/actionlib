@@ -2,10 +2,16 @@ cmake_minimum_required(VERSION 2.4.6)
 
 set(ROSPACK_MAKEDIST true)
 
+if(CATKIN)
+  include(catkin.cmake)
+  return()
+endif()
+
 if(ROSBUILD)
   include(rosbuild.cmake)
   return()
 endif()
+
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 # Set the build type.  Options are:
