@@ -1,50 +1,38 @@
-cmake_minimum_required(VERSION 2.4.6)
+cmake_minimum_required(VERSION 2.8)
+project(actionlib)
+catkin_project(actionlib
+  VERSION 1.7.1
+  LIBRARIES actionlib
+  INCLUDE_DIRS include
+  )
 
-set(ROSPACK_MAKEDIST true)
+find_package(catkin)
+find_package(ROS COMPONENTS
+  rostime roscpp_serialization roscpp_traits cpp_common # serialization stuff
+  roscpp rosconsole  #roscpp stuff
+  actionlib_msgs)
 
-if(CATKIN)
-  include(catkin.cmake)
-  return()
-endif()
+include_directories(include)
+include_directories(${ROS_INCLUDE_DIRS})
 
-if(ROSBUILD)
-  include(rosbuild.cmake)
-  return()
-endif()
+# actionlib library
+add_library(actionlib src/connection_monitor.cpp
+                      src/goal_id_generator.cpp)
 
-include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
+target_link_libraries(actionlib ${ROS_LIBRARIES})
 
-# Set the build type.  Options are:
-#  Coverage       : w/ debug symbols, w/o optimization, w/ code-coverage
-#  Debug          : w/ debug symbols, w/o optimization
-#  Release        : w/o debug symbols, w/ optimization
-#  RelWithDebInfo : w/ debug symbols, w/ optimization
-#  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
-#set(ROS_BUILD_TYPE RelWithDebInfo)
-rosbuild_find_ros_package(actionlib_msgs)
-include(${actionlib_msgs_PACKAGE_PATH}/cmake/actionbuild.cmake)
-genaction()
+# action files
+add_action_files( DIRECTORY action FILES Test.action TestRequest.action TwoInts.action )
 
-rosbuild_init()
-rosbuild_genmsg()
+generate_messages(DEPENDENCIES std_msgs actionlib_msgs)
+add_dependencies(actionlib actionlib_gencpp)
 
-#set the default path for built executables to the "bin" directory
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
+# tests
+add_executable(actionlib-add_two_ints_server test/add_two_ints_server.cpp)
+target_link_libraries(actionlib-add_two_ints_server ${PROJECT_NAME})
+return() # stop here for now
 
-#set the default path for built libraries to the "lib" directory
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-
-rosbuild_add_library(${PROJECT_NAME} src/connection_monitor.cpp
-                                     src/goal_id_generator.cpp)
-
-include_directories(${PROJECT_SOURCE_DIR}/msg/cpp/)
-
-rosbuild_add_executable(add_two_ints_client test/add_two_ints_client.cpp)
-target_link_libraries(add_two_ints_client ${PROJECT_NAME})
-
-rosbuild_add_executable(add_two_ints_server test/add_two_ints_server.cpp)
-target_link_libraries(add_two_ints_server ${PROJECT_NAME})
-
+# todo, add the rest of the tests
 rosbuild_add_executable(ref_server test/ref_server.cpp)
 target_link_libraries(ref_server ${PROJECT_NAME})
 

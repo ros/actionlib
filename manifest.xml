@@ -23,26 +23,7 @@
   <platform os="ubuntu" version="9.10"/>
   <platform os="ubuntu" version="10.04"/>
 
-
-  
-  <rosbuild2>
-    <depend package="roscpp" />
-    <depend package="rospy" />
-    <depend package="rostest" />
-    <depend package="actionlib_msgs" />
-
-    <!-- Rosbuild2 can't currently find rosdeps of dependencies (ugh) fix later -->
-    <depend thirdparty="log4cxx"/>
-
-    <msgs> </msgs>
-    <srvs> </srvs>
-    <actions>
-      action/Test.action  action/TestRequest.action  action/TwoInts.action
-    </actions>
-
-  </rosbuild2>
-
-
+  <catkin/>
 
 </package>
 
