@@ -16,7 +16,7 @@ include_directories(include)
 include_directories(${ROS_INCLUDE_DIRS})
 
 # actionlib library
-add_library(actionlib src/connection_monitor.cpp
+add_library(actionlib SHARED src/connection_monitor.cpp
                       src/goal_id_generator.cpp)
 
 target_link_libraries(actionlib ${ROS_LIBRARIES})
@@ -26,6 +26,15 @@ add_action_files( DIRECTORY action FILES Test.action TestRequest.action TwoInts.
 
 generate_messages(DEPENDENCIES std_msgs actionlib_msgs)
 add_dependencies(actionlib actionlib_gencpp)
+
+install(TARGETS ${PROJECT_NAME}
+        LIBRARY DESTINATION lib)
+install(DIRECTORY include/
+        DESTINATION include
+        FILES_MATCHING PATTERN "*.h"
+        PATTERN ".svn" EXCLUDE)
+install(FILES manifest.xml
+        DESTINATION share/${PROJECT_NAME})
 
 # tests
 add_executable(actionlib-add_two_ints_server test/add_two_ints_server.cpp)
