@@ -9,7 +9,7 @@ catkin_project(actionlib
 find_package(catkin)
 find_package(ROS COMPONENTS
   rostime roscpp_serialization roscpp_traits cpp_common # serialization stuff
-  roscpp rosconsole  #roscpp stuff
+  roscpp rosconsole xmlrpcpp #roscpp stuff
   actionlib_msgs)
 
 include_directories(include)
