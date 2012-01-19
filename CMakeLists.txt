@@ -10,7 +10,7 @@ find_package(catkin)
 find_package(ROS COMPONENTS
   rostime roscpp_serialization roscpp_traits cpp_common # serialization stuff
   roscpp rosconsole xmlrpcpp #roscpp stuff
-  actionlib_msgs)
+  actionlib_msgs rosunit rostest)
 
 include_directories(include)
 include_directories(${ROS_INCLUDE_DIRS})
