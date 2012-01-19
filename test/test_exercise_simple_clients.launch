@@ -7,6 +7,6 @@
         pkg="actionlib" type="exercise_simple_client.py" />
 
   <test test-name="test_cpp_simple_client"
-        pkg="actionlib" type="exercise_simple_client" />
+        pkg="actionlib" type="actionlib-exercise_simple_client" />
 
 </launch>
