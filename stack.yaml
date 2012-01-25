@@ -1,10 +1,10 @@
 Catkin-ProjectName: actionlib
-Version: 1.7.2
+Version: 1.7.3
 Description: A standardized interface for interfacing with preemptible tasks.
 
 Depends: common_msgs
 Author: Eitan Marder-Eppstein, Vijay Pradeep
-Maintainer:
+Maintainer: Eitan Marder-Eppstein <eitan@willowgarage.com>
 Homepage: http://ros.org/wiki/actionlib
 
 Catkin-DebRulesType: cmake
