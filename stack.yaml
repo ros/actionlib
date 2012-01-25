@@ -9,6 +9,3 @@ Homepage: http://ros.org/wiki/actionlib
 
 Catkin-DebRulesType: cmake
 Catkin-CopyrightType:  willowgarage
-
-Release-Pull: git://github.com/wg-debs/actionlib.git
-Release-Push: git@github.com:wg-debs/actionlib.git
