@@ -1,5 +1,5 @@
 Catkin-ProjectName: actionlib
-Version: 1.7.3
+Version: 1.7.4
 Description: A standardized interface for interfacing with preemptible tasks.
 
 Depends: common_msgs
