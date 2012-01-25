@@ -1,8 +1,8 @@
 Catkin-ProjectName: actionlib
-Version: 1.7.4
+Version: 1.7.5
 Description: A standardized interface for interfacing with preemptible tasks.
 
-Depends: common_msgs
+Depends: common_msgs, ros, ros_comm
 Author: Eitan Marder-Eppstein, Vijay Pradeep
 Maintainer: Eitan Marder-Eppstein <eitan@willowgarage.com>
 Homepage: http://ros.org/wiki/actionlib
