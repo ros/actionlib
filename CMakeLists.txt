@@ -40,8 +40,6 @@ install(FILES manifest.xml stack.xml stack.yaml
         DESTINATION share/${PROJECT_NAME})
 
 # tests
-message("GTEST_INCLUDE_DIRS: ${GTEST_INCLUDE_DIRS}")
-message("GTEST_LIBRARIES: ${GTEST_LIBRARIES}")
 include_directories(${GTEST_INCLUDE_DIRS})
 add_executable(actionlib-add_two_ints_server EXCLUDE_FROM_ALL test/add_two_ints_server.cpp)
 target_link_libraries(actionlib-add_two_ints_server ${PROJECT_NAME} ${GTEST_LIBRARIES})
