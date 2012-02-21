@@ -21,7 +21,7 @@ add_library(actionlib src/connection_monitor.cpp
 
 target_link_libraries(actionlib ${ROS_LIBRARIES})
 
-catkin_export_python(src)
+catkin_export_python()
 
 # action files
 add_action_files( DIRECTORY action FILES Test.action TestRequest.action TwoInts.action )
