@@ -30,7 +30,6 @@
 '''
 Example:
 
-roslib.load_manifest('move_base')
 from move_base.msg import *
 rospy.init_node('foo')
 
