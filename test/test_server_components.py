@@ -29,7 +29,6 @@
 # Author: Alexander Sorokin. 
 
 PKG='actionlib'
-import roslib; roslib.load_manifest(PKG)
 import rospy
 
 import sys

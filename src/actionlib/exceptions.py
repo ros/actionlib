@@ -28,6 +28,4 @@
 
 # Author: Jonathan Bohren
 
-import roslib; roslib.load_manifest('actionlib')
-
 class ActionException(Exception): pass

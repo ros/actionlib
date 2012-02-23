@@ -28,7 +28,6 @@
 # Author: Alexander Sorokin. 
 # Based on C++ goal_id_generator.h/cpp
 
-import roslib; roslib.load_manifest('actionlib')
 import rospy
 
 import actionlib
