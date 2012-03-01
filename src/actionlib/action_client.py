@@ -30,7 +30,6 @@
 '''
 Example:
 
-roslib.load_manifest('move_base')
 from move_base.msg import *
 rospy.init_node('foo')
 
@@ -51,8 +50,6 @@ h2 = client.send_goal(g2)
 client.cancel_all_goals()
 '''
 
-from __future__ import with_statement
-import roslib; roslib.load_manifest('actionlib')
 import threading
 import weakref
 import time

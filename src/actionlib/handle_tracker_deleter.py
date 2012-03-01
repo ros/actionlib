@@ -27,10 +27,8 @@
 
 # Author: Alexander Sorokin. 
 # Based on C++ goal_id_generator.h/cpp
-from __future__ import with_statement
-import roslib; roslib.load_manifest('actionlib')
-import rospy
 
+import rospy
 
 class HandleTrackerDeleter:
     """

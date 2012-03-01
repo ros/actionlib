@@ -37,9 +37,8 @@ usage: %prog /action_name action_type
 
 PKG='actionlib'
 
-import roslib; roslib.load_manifest(PKG)
-
 from optparse import OptionParser
+import roslib.message
 import wx
 import sys
 import rospy

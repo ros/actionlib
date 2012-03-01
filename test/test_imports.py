@@ -29,11 +29,9 @@
 # Author: Alexander Sorokin. 
 
 PKG='actionlib'
-import roslib; roslib.load_manifest(PKG)
 
 import sys
 import unittest
-
 
 ## A simple unit test to make sure python module structure and files aren't broken
 class TestImports(unittest.TestCase):

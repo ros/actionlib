@@ -27,7 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 PKG = 'actionlib'
-import roslib; roslib.load_manifest(PKG)
 
 import sys
 import unittest

@@ -28,9 +28,7 @@
 #
 # Author: Alexander Sorokin.
 # Based on C++ simple_action_server.h by Eitan Marder-Eppstein
-from __future__ import with_statement
 
-import roslib; roslib.load_manifest('actionlib')
 import rospy
 
 import threading

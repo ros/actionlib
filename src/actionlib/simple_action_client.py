@@ -28,8 +28,6 @@
 
 # Author: Stuart Glaser
 
-from __future__ import with_statement
-import roslib; roslib.load_manifest('actionlib')
 import threading
 import time
 import rospy
