@@ -203,40 +203,37 @@ class ActionServer:
               rospy.logdebug("The action server has received a new cancel request");
 
               goal_id_found = False;
-              for i, it in enumerate(self.status_list):
+              for st in self.status_list[:]:
                   #check if the goal id is zero or if it is equal to the goal id of
                   #the iterator or if the time of the iterator warrants a cancel
 
                   cancel_everything = (goal_id.id == "" and goal_id.stamp == rospy.Time() )   #rospy::Time()) #id and stamp 0 --> cancel everything
-                  cancel_this_one = ( goal_id.id == it.status.goal_id.id)   #ids match... cancel that goal
-                  cancel_before_stamp = (goal_id.stamp != rospy.Time() and it.status.goal_id.stamp <= goal_id.stamp)  #//stamp != 0 --> cancel everything before stamp
+                  cancel_this_one = ( goal_id.id == st.status.goal_id.id)   #ids match... cancel that goal
+                  cancel_before_stamp = (goal_id.stamp != rospy.Time() and st.status.goal_id.stamp <= goal_id.stamp)  #//stamp != 0 --> cancel everything before stamp
 
                   if cancel_everything or cancel_this_one or cancel_before_stamp:
                       #we need to check if we need to store this cancel request for later
-                      if goal_id.id == it.status.goal_id.id:
+                      if goal_id.id == st.status.goal_id.id:
                           goal_id_found = True;
 
                       #attempt to get the handle_tracker for the list item if it exists
-                      handle_tracker = it.handle_tracker;
+                      handle_tracker = st.handle_tracker;
 
                       if handle_tracker is None:
                           #if the handle tracker is expired, then we need to create a new one
-                          handle_tracker = HandleTrackerDeleter(self, it);
-                          it.handle_tracker = handle_tracker;
+                          handle_tracker = HandleTrackerDeleter(self, st);
+                          st.handle_tracker = handle_tracker;
 
                           #we also need to reset the time that the status is supposed to be removed from the list
-                          it.handle_destruction_time = rospy.Time.now()
+                          st.handle_destruction_time = rospy.Time.now()
 
 
                       #set the status of the goal to PREEMPTING or RECALLING as approriate
                       #and check if the request should be passed on to the user
-                      gh = ServerGoalHandle(it, self, handle_tracker);
+                      gh = ServerGoalHandle(st, self, handle_tracker);
                       if gh.set_cancel_requested():
-                          #make sure that we're unlocked before we call the users callback
-                          self.lock.release()
                           #call the user's cancel callback on the relevant goal
                           self.cancel_callback(gh);
-                          self.lock.acquire()
 
 
               #if the requested goal_id was not found, and it is non-zero, then we need to store the cancel request
@@ -261,7 +258,7 @@ class ActionServer:
               rospy.logdebug("The action server has received a new goal request");
 
               #we need to check if this goal already lives in the status list
-              for st in self.status_list:
+              for st in self.status_list[:]:
                   if goal.goal_id.id == st.status.goal_id.id:
                       rospy.logdebug("Goal %s was already in the status list with status %i" % (goal.goal_id.id, st.status.status))
                       # Goal could already be in recalling state if a cancel came in before the goal
@@ -292,11 +289,8 @@ class ActionServer:
                   #if it has... just create a GoalHandle for it and setCanceled
                   gh.set_canceled(None, "This goal handle was canceled by the action server because its timestamp is before the timestamp of the last cancel request");
               else:
-                  #make sure that we're unlocked before we call the users callback
-                  self.lock.release()
                   #now, we need to create a goal handle and call the user's callback
                   self.goal_callback(gh);
-                  self.lock.acquire()
 
 
     ## @brief  Publish status for all goals on a timer event
