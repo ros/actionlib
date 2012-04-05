@@ -29,6 +29,8 @@ add_action_files( DIRECTORY action FILES Test.action TestRequest.action TwoInts.
 generate_messages(DEPENDENCIES std_msgs actionlib_msgs)
 add_dependencies(actionlib actionlib_gencpp)
 
+install(PROGRAMS tools/axclient.py tools/axserver.py tools/dynamic_action.py tools/library.py
+        DESTINATION share/actionlib) 
 install(TARGETS ${PROJECT_NAME}
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib)
