@@ -49,6 +49,8 @@ import rospy
 import actionlib
 import time
 import threading
+import socket
+import rostopic
 from cStringIO import StringIO
 from library import *
 from dynamic_action import DynamicAction
@@ -217,7 +219,10 @@ class AXClientApp(wx.App):
 
         return True
 
-if __name__ == '__main__':
+
+
+
+def main():
     rospy.init_node('axclient', anonymous=True)
 
     parser = OptionParser(__doc__.strip())
@@ -227,12 +232,22 @@ if __name__ == '__main__':
     
     (options, args) = parser.parse_args(rospy.myargv())
 
-    if (len(args) != 3):
-        parser.error("You must specify the action name and type. Eg: ./axclient.py my_action actionlib/Test")
+    if (len(args) != 2):
+        parser.error("You must specify the action topic name Eg: ./axclient.py my_action_topic")
 
-    action = DynamicAction(args[2])
+    # get action type from topic
+    topic_type = rostopic._get_topic_type("%s/goal"%args[1])[0]
+    # remove "Goal" string from action type
+    assert("Goal" in topic_type)
+    topic_type = topic_type[0:len(topic_type)-4]
+    
+    action = DynamicAction(topic_type)
 
     app = AXClientApp(action, args[1])
     app.MainLoop()
     app.OnQuit()
     rospy.signal_shutdown('GUI shutdown')
+
+
+if __name__ == '__main__':
+    main()

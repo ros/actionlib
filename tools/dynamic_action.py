@@ -40,7 +40,9 @@ import sys
 
 class DynamicAction(object):
     def __init__(self, name):
-        self.name     = name
+        # remove "Action" string from name
+        assert("Action" in name)
+        self.name     = name[0:len(name)-6]
         self.action   = self.load_submsg('Action')
         self.goal     = self.load_submsg('Goal')
         self.feedback = self.load_submsg('Feedback')
