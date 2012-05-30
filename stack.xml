@@ -7,8 +7,9 @@
     the base to a target location, performing a laser scan and returning
     the resulting point cloud, detecting the handle of a door, etc.
   </description>
-  <author>Eitan Marder-Eppstein, Vijay Pradeep</author>
-  <maintainer>Eitan Marder-Eppstein eitan@willowgarage.com</maintainer>
+  <author>Eitan Marder-Eppstein</author>
+  <author>Vijay Pradeep</author>
+  <maintainer email="eitan@willowgarage.com">Eitan Marder-Eppstein</maintainer>
   <license>BSD</license>
   <copyright>Willow Garage</copyright>  
   <url>http://www.ros.org/wiki/actionlib</url>
