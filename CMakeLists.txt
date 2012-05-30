@@ -38,7 +38,7 @@ install(DIRECTORY include/
         DESTINATION include
         FILES_MATCHING PATTERN "*.h"
         PATTERN ".svn" EXCLUDE)
-install(FILES manifest.xml stack.xml stack.yaml
+install(FILES manifest.xml stack.xml
         DESTINATION share/${PROJECT_NAME})
 
 # tests
