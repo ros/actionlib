@@ -7,7 +7,7 @@ catkin_project(actionlib
   INCLUDE_DIRS include
   )
 
-find_package(ROS COMPONENTS
+find_package(ROS REQUIRED COMPONENTS
   rostime roscpp_serialization roscpp_traits cpp_common # serialization stuff
   roscpp rosconsole xmlrpcpp #roscpp stuff
   actionlib_msgs rosunit rostest)
