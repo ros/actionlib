@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(actionlib)
-find_package(catkin)
+find_package(catkin REQUIRED)
 catkin_stack()
 catkin_project(actionlib
   LIBRARIES actionlib
