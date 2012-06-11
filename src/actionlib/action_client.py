@@ -76,6 +76,7 @@ class CommState(object):
     RECALLING = 5
     PREEMPTING = 6
     DONE = 7
+    LOST = 8
 
 class TerminalState(object):
     RECALLED = GoalStatus.RECALLED
