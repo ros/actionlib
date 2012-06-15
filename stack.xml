@@ -18,11 +18,12 @@
   <build_depends>catkin</build_depends>
   <build_depends>common_msgs</build_depends> <!-- actionlib_msgs -->
   <build_depends>genmsg</build_depends>
-  <build_depends>langs</build_depends>
+  <build_depends>langs-dev</build_depends>
   <build_depends>ros</build_depends>
   <build_depends>ros_comm</build_depends> <!-- rostest, rospy, roscpp -->
 
   <depends>common_msgs</depends> <!-- actionlib_msgs -->
+  <depends>langs</depends>
   <depends>ros</depends>
   <depends>ros_comm</depends> <!-- rostest, rospy, roscpp -->
 </stack>
