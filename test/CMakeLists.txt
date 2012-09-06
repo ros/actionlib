@@ -63,7 +63,7 @@ add_rostest(test_python_server3.launch)
 add_rostest(test_python_simple_server.launch)
 add_rostest(test_exercise_simple_clients.launch)
 
-add_gtest(actionlib-destruction_guard_test destruction_guard_test.cpp)
+catkin_add_gtest(actionlib-destruction_guard_test destruction_guard_test.cpp)
 if(TARGET actionlib-destruction_guard_test)
   target_link_libraries(actionlib-destruction_guard_test ${PROJECT_NAME})
 endif()
