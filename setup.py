@@ -5,7 +5,7 @@ from catkin_pkg.package import parse_package_for_distutils
 d = parse_package_for_distutils()
 
 d['packages'] = ['actionlib']
-d['package_dir'] = {'actionlib': 'src/actionlib'}
+d['package_dir'] = {'': 'src'}
 d['install_requires'] = []
 
 setup(**d)
