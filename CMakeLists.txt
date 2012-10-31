@@ -6,10 +6,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp rosconsole xmlrpcpp #roscpp stuff
   actionlib_msgs rosunit rostest)
 find_package(Boost REQUIRED COMPONENTS thread)
-catkin_package(DEPENDS actionlib_msgs cpp_common Boost rosconsole roscpp roscpp_traits rostime
-               INCLUDE_DIRS include
-               LIBRARIES actionlib
-)
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
@@ -22,6 +18,11 @@ catkin_python_setup()
 add_action_files(DIRECTORY action FILES Test.action TestRequest.action TwoInts.action)
 generate_messages(DEPENDENCIES std_msgs actionlib_msgs)
 add_dependencies(actionlib actionlib_gencpp)
+
+catkin_package(DEPENDS actionlib_msgs cpp_common Boost rosconsole roscpp roscpp_traits rostime
+               INCLUDE_DIRS include
+               LIBRARIES actionlib
+)
 
 install(PROGRAMS tools/axclient.py tools/axserver.py tools/dynamic_action.py tools/library.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}) 
