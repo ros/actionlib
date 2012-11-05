@@ -1,6 +1,6 @@
 <package>
   <name>actionlib</name>
-  <version>1.9.8</version>
+  <version>1.9.9</version>
   <description>
     The actionlib stack provides a standardized interface for
     interfacing with preemptable tasks. Examples of this include moving
