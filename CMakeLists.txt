@@ -7,7 +7,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs rosunit rostest)
 find_package(Boost REQUIRED COMPONENTS thread)
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
 
 add_library(actionlib src/connection_monitor.cpp src/goal_id_generator.cpp)
