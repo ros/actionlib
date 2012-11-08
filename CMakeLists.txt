@@ -19,9 +19,11 @@ add_action_files(DIRECTORY action FILES Test.action TestRequest.action TwoInts.a
 generate_messages(DEPENDENCIES std_msgs actionlib_msgs)
 add_dependencies(actionlib actionlib_gencpp)
 
-catkin_package(DEPENDS actionlib_msgs cpp_common Boost rosconsole roscpp roscpp_traits rostime
-               INCLUDE_DIRS include
-               LIBRARIES actionlib
+catkin_package(
+  INCLUDE_DIRS include
+  LIBRARIES actionlib
+  CATKIN_DEPENDS actionlib_msgs cpp_common rosconsole roscpp roscpp_traits rostime
+  DEPENDS Boost
 )
 
 install(PROGRAMS tools/axclient.py tools/axserver.py tools/dynamic_action.py tools/library.py
