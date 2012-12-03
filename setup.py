@@ -6,6 +6,5 @@ d = parse_package_for_distutils()
 
 d['packages'] = ['actionlib']
 d['package_dir'] = {'': 'src'}
-d['install_requires'] = []
 
 setup(**d)
