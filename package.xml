@@ -14,9 +14,10 @@
   <author>Eitan Marder-Eppstein</author>
   <author>Vijay Pradeep</author>
 
+  <buildtool_depend>catkin</buildtool_depend>
+
   <build_depend>actionlib_msgs</build_depend>
   <build_depend>boost</build_depend>
-  <build_depend>catkin</build_depend>
   <build_depend>message_generation</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
