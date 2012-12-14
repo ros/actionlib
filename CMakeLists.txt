@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(actionlib)
 
-find_package(catkin REQUIRED COMPONENTS actionlib_msgs message_generation roscpp rostest rosunit)
+find_package(catkin REQUIRED COMPONENTS actionlib_msgs message_generation roscpp rostest rosunit std_msgs)
 find_package(Boost REQUIRED COMPONENTS thread)
 
 include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
