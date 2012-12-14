@@ -13,13 +13,13 @@ target_link_libraries(actionlib ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 catkin_python_setup()
 
 add_action_files(DIRECTORY action FILES Test.action TestRequest.action TwoInts.action)
-generate_messages(DEPENDENCIES std_msgs actionlib_msgs)
+generate_messages(DEPENDENCIES actionlib_msgs std_msgs)
 add_dependencies(actionlib actionlib_gencpp)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES actionlib
-  CATKIN_DEPENDS actionlib_msgs message_runtime roscpp
+  CATKIN_DEPENDS actionlib_msgs message_runtime roscpp std_msgs
   DEPENDS Boost
 )
 
