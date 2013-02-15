@@ -47,10 +47,12 @@
 #include "actionlib/client/terminal_state.h"
 
 
+#ifndef DEPRECATED
 #if defined(__GNUC__)
 #define DEPRECATED __attribute__((deprecated))
 #else
 #define DEPRECATED
+#endif
 #endif
 
 
