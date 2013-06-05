@@ -14,6 +14,9 @@ Forthcoming
 * first public release for Groovy
 * for a complete list of changes see the `commit log <https://github.com/ros/actionlib/compare/1.8.7...1.9.11>`_
 
+1.8 (Fuerte)
+============
+
 1.8.7 (2012-06-14)
 ------------------
 * add new CommState LOST
