@@ -26,6 +26,7 @@ add_dependencies(actionlib actionlib_gencpp)
 install(PROGRAMS tools/axclient.py tools/axserver.py tools/dynamic_action.py tools/library.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}) 
 install(TARGETS ${PROJECT_NAME}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
 install(DIRECTORY include/${PROJECT_NAME}/
