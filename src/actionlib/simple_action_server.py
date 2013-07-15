@@ -108,7 +108,9 @@ class SimpleActionServer:
     ## sure the new goal does not have a pending preempt request.
     ## @return A shared_ptr to the new goal.
     def accept_new_goal(self):
-        with self.lock:
+        # This function may need action_server's lock. To avoid deadlocks
+        # acquire it now (following lock acquisition order in rest of code)
+        with self.action_server.lock, self.lock:
             if not self.new_goal or not self.next_goal.get_goal():
                 rospy.logerr("Attempting to accept the next goal when a new goal is not available");
                 return None;
@@ -276,16 +278,18 @@ class SimpleActionServer:
                       break;
 
               shall_run=False;
-              with self.lock:
-                  if (self.is_active()):
-                      rospy.logerr("Should never reach this code with an active goal");
+              # These actions can be safely performed without locking; at worst,
+              # we wait for an iteration to process a new goal
+              if (self.is_active()):
+                  rospy.logerr("Should never reach this code with an active goal");
+                  return
+              elif (self.is_new_goal_available()):
+                  # accept_new_goal is thread safe() and will acquire required locks
+                  goal = self.accept_new_goal();
+                  if not self.execute_callback:
+                      rospy.logerr("execute_callback_ must exist. This is a bug in SimpleActionServer");
                       return
-                  elif (self.is_new_goal_available()):
-                      goal = self.accept_new_goal();
-                      if not self.execute_callback:
-                          rospy.logerr("execute_callback_ must exist. This is a bug in SimpleActionServer");
-                          return
-                      shall_run=True
+                  shall_run=True
 
               if shall_run:
                   try:
