@@ -158,7 +158,8 @@ class SimpleActionServer:
     ## @brief Sets the status of the active goal to succeeded
     ## @param  result An optional result to send back to any clients of the goal
     def set_succeeded(self,result=None, text=""):
-      with self.lock:
+       #Maintain lock aquisition order (since both will be needed)
+       with self.action_server.lock, self.lock:
           if not result:
               result=self.get_default_result();
           self.current_goal.set_succeeded(result, text);
@@ -166,7 +167,8 @@ class SimpleActionServer:
     ## @brief Sets the status of the active goal to aborted
     ## @param  result An optional result to send back to any clients of the goal
     def set_aborted(self, result = None, text=""):
-        with self.lock:
+        #Maintain lock aquisition order (since both will be needed)
+        with self.action_server.lock, self.lock:
             if not result:
                 result=self.get_default_result();
             self.current_goal.set_aborted(result, text);
@@ -185,7 +187,8 @@ class SimpleActionServer:
     def set_preempted(self,result=None, text=""):
         if not result:
             result=self.get_default_result();
-        with self.lock:
+        #Maintain lock aquisition order (since both will be needed)
+        with self.action_server.lock, self.lock:
             rospy.logdebug("Setting the current goal as canceled");
             self.current_goal.set_canceled(result, text);
 
