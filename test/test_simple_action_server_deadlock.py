@@ -40,7 +40,7 @@ class Constants:
     
     deadlock_timeout = 45 # in seconds
     shutdown_timeout = 2 # in seconds
-    max_action_duration = 5;
+    max_action_duration = 3;
 
 #===============================================================================
 # IMPORTS
@@ -72,7 +72,7 @@ class DeadlockTest(unittest.TestCase):
             TestAction,
             execute_cb = self.execute_callback,
             auto_start = False)
-        
+
         self.action_server.register_preempt_callback(self.preempt_callback)
         self.action_server.start()
 
@@ -103,7 +103,7 @@ class DeadlockTest(unittest.TestCase):
 
         time_since_last_execution = (
             termination_time - self.last_execution_time).to_sec()
-            
+
         self.assertTrue(
             time_since_last_execution < 2 * Constants.max_action_duration,
             "Too long since last goal was executed; likely due to a deadlock" )

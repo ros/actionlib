@@ -38,8 +38,7 @@ class Constants:
     node = "simple_action_server_deadlock_companion"
     topic = "deadlock"
     
-    max_action_duration = 5;
-    min_action_duration = 0.1;
+    max_action_duration = 3;
     
 #===============================================================================
 # IMPORTS
@@ -72,7 +71,7 @@ class DeadlockCompanion:
             
             #Wait for a random amount of time
             action_duration = random.uniform(0, Constants.max_action_duration)
-            self.action_client.wait_for_result( rospy.Duration(action_duration) )
+            self.action_client.wait_for_result(rospy.Duration(action_duration))
             
             state = self.action_client.get_state()
             if state == GoalStatus.ACTIVE or state == GoalStatus.PENDING :
@@ -91,5 +90,4 @@ if __name__ == '__main__':
         raise
     except:
         pass
-
 
