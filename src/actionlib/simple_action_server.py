@@ -72,6 +72,11 @@ class SimpleActionServer:
 
         self.need_to_terminate = False
         self.terminate_mutex = threading.RLock();
+
+        # since the internal_goal/preempt_callbacks are invoked from the
+        # ActionServer while holding the self.action_server.lock
+        # self.lock must always be locked after the action server lock
+        # to avoid an inconsistent lock acquisition order
         self.lock = threading.RLock();
 
         self.execute_condition = threading.Condition(self.lock);
@@ -108,7 +113,7 @@ class SimpleActionServer:
     ## sure the new goal does not have a pending preempt request.
     ## @return A shared_ptr to the new goal.
     def accept_new_goal(self):
-        with self.lock:
+        with self.action_server.lock, self.lock:
             if not self.new_goal or not self.next_goal.get_goal():
                 rospy.logerr("Attempting to accept the next goal when a new goal is not available");
                 return None;
@@ -156,7 +161,7 @@ class SimpleActionServer:
     ## @brief Sets the status of the active goal to succeeded
     ## @param  result An optional result to send back to any clients of the goal
     def set_succeeded(self,result=None, text=""):
-      with self.lock:
+      with self.action_server.lock, self.lock:
           if not result:
               result=self.get_default_result();
           self.current_goal.set_succeeded(result, text);
@@ -164,7 +169,7 @@ class SimpleActionServer:
     ## @brief Sets the status of the active goal to aborted
     ## @param  result An optional result to send back to any clients of the goal
     def set_aborted(self, result = None, text=""):
-        with self.lock:
+        with self.action_server.lock, self.lock:
             if not result:
                 result=self.get_default_result();
             self.current_goal.set_aborted(result, text);
@@ -183,7 +188,7 @@ class SimpleActionServer:
     def set_preempted(self,result=None, text=""):
         if not result:
             result=self.get_default_result();
-        with self.lock:
+        with self.action_server.lock, self.lock:
             rospy.logdebug("Setting the current goal as canceled");
             self.current_goal.set_canceled(result, text);
 
@@ -275,19 +280,21 @@ class SimpleActionServer:
                   if (self.need_to_terminate):
                       break;
 
-              shall_run=False;
-              with self.lock:
-                  if (self.is_active()):
-                      rospy.logerr("Should never reach this code with an active goal");
-                      return
-                  elif (self.is_new_goal_available()):
-                      goal = self.accept_new_goal();
-                      if not self.execute_callback:
-                          rospy.logerr("execute_callback_ must exist. This is a bug in SimpleActionServer");
-                          return
-                      shall_run=True
+              # the following checks (is_active, is_new_goal_available)
+              # are performed without locking
+              # the worst thing that might happen in case of a race
+              # condition is a warning/error message on the console
+              if (self.is_active()):
+                  rospy.logerr("Should never reach this code with an active goal");
+                  return
 
-              if shall_run:
+              if (self.is_new_goal_available()):
+                  # accept_new_goal() is performing its own locking
+                  goal = self.accept_new_goal();
+                  if not self.execute_callback:
+                      rospy.logerr("execute_callback_ must exist. This is a bug in SimpleActionServer");
+                      return
+
                   try:
                       self.execute_callback(goal)
 
