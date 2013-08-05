@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 #
-#
 # Copyright (c) 2013, Miguel Sarabia
 # Imperial College London
 # All rights reserved.
@@ -30,75 +29,66 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-#===============================================================================
-# CONSTANTS
-#===============================================================================
+
 class Constants:
     pkg = "actionlib"
     node = "test_simple_action_server_deadlock"
     topic = "deadlock"
-    
-    deadlock_timeout = 45 # in seconds
-    shutdown_timeout = 2 # in seconds
-    max_action_duration = 3;
+    deadlock_timeout = 45  # in seconds
+    shutdown_timeout = 2  # in seconds
+    max_action_duration = 3
 
-#===============================================================================
-# IMPORTS
-#===============================================================================
-import roslib; roslib.load_manifest(Constants.pkg)
-import sys
 import random
+import sys
 import threading
 import unittest
-import rospy
-import rosnode
+
 import actionlib
 from actionlib.msg import TestAction
+import rosnode
+import rospy
 
 
-#===============================================================================
-# TEST CLASS
-#===============================================================================
 class DeadlockTest(unittest.TestCase):
 
     def test_deadlock(self):
-        #Prepare condition (for safe preemption)
+        # Prepare condition (for safe preemption)
         self.condition = threading.Condition()
         self.last_execution_time = None
-        
+
         # Prepare Simple Action Server
         self.action_server = actionlib.SimpleActionServer(
             Constants.topic,
             TestAction,
-            execute_cb = self.execute_callback,
-            auto_start = False)
+            execute_cb=self.execute_callback,
+            auto_start=False)
 
         self.action_server.register_preempt_callback(self.preempt_callback)
         self.action_server.start()
 
-        #Sleep for the amount specified
-        rospy.sleep(Constants.deadlock_timeout);
-    
-        #Start actual tests
+        # Sleep for the amount specified
+        rospy.sleep(Constants.deadlock_timeout)
+
+        # Start actual tests
         running_nodes = set(rosnode.get_node_names())
         required_nodes = {
             "/deadlock_companion_1",
             "/deadlock_companion_2",
             "/deadlock_companion_3",
             "/deadlock_companion_4",
-            "/deadlock_companion_5" }
-        
-        self.assertTrue( required_nodes.issubset(running_nodes),
+            "/deadlock_companion_5"}
+
+        self.assertTrue(required_nodes.issubset(running_nodes),
             "Required companion nodes are not currently running")
-        
+
         # Shutdown companions so that we can exit nicely
         termination_time = rospy.Time.now()
         rosnode.kill_nodes(required_nodes)
-        
+
         rospy.sleep(Constants.shutdown_timeout)
-        
-        #Check last execution wasn't too long ago...
-        self.assertIsNotNone( self.last_execution_time is None,
+
+        # Check last execution wasn't too long ago...
+        self.assertIsNotNone(self.last_execution_time is None,
             "Execute Callback was never executed")
 
         time_since_last_execution = (
@@ -106,32 +96,30 @@ class DeadlockTest(unittest.TestCase):
 
         self.assertTrue(
             time_since_last_execution < 2 * Constants.max_action_duration,
-            "Too long since last goal was executed; likely due to a deadlock" )
+            "Too long since last goal was executed; likely due to a deadlock")
 
     def execute_callback(self, goal):
-        #Note down last_execution time
+        # Note down last_execution time
         self.last_execution_time = rospy.Time.now()
-        
-        #Determine duration of this action
+
+        # Determine duration of this action
         action_duration = random.uniform(0, Constants.max_action_duration)
-        
+
         with self.condition:
             if not self.action_server.is_preempt_requested():
                 self.condition.wait(action_duration)
-        
+
         if self.action_server.is_preempt_requested():
             self.action_server.set_preempted()
         else:
             self.action_server.set_succeeded()
-    
+
     def preempt_callback(self):
         with self.condition:
             self.condition.notify()
 
-#===============================================================================
-# MAIN
-#===============================================================================
+
 if __name__ == '__main__':
     import rostest
-    rospy.init_node( Constants.node )
-    rostest.rosrun( Constants.pkg, Constants.node, DeadlockTest )
+    rospy.init_node(Constants.node)
+    rostest.rosrun(Constants.pkg, Constants.node, DeadlockTest)
