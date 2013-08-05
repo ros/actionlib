@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 #
-#
 # Copyright (c) 2013, Miguel Sarabia
 # Imperial College London
 # All rights reserved.
@@ -30,57 +29,45 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-#===============================================================================
-# CONSTANTS
-#===============================================================================
+
 class Constants:
-    pkg = "actionlib"
     node = "simple_action_server_deadlock_companion"
     topic = "deadlock"
-    
-    max_action_duration = 3;
-    
-#===============================================================================
-# IMPORTS
-#===============================================================================
-import roslib; roslib.load_manifest(Constants.pkg)
+    max_action_duration = 3
+
 import random
-import rospy
+
 import actionlib
 from actionlib.msg import TestAction, TestGoal
 from actionlib_msgs.msg import GoalStatus
+import rospy
 
-#===============================================================================
-# COMPANION CLASS
-#===============================================================================
+
 class DeadlockCompanion:
-    
+
     def __init__(self):
-        #Seed random with fully resolved name of node and current time
-        random.seed( rospy.get_name() + str(rospy.Time.now().to_sec()) )
-        
-        #Create actionlib client
+        # Seed random with fully resolved name of node and current time
+        random.seed(rospy.get_name() + str(rospy.Time.now().to_sec()))
+
+        # Create actionlib client
         self.action_client = actionlib.SimpleActionClient(
             Constants.topic,
             TestAction)
-    
+
     def run(self):
         while not rospy.is_shutdown():
             # Send dummy goal
-            self.action_client.send_goal( TestGoal() )
-            
-            #Wait for a random amount of time
+            self.action_client.send_goal(TestGoal())
+
+            # Wait for a random amount of time
             action_duration = random.uniform(0, Constants.max_action_duration)
             self.action_client.wait_for_result(rospy.Duration(action_duration))
-            
+
             state = self.action_client.get_state()
-            if state == GoalStatus.ACTIVE or state == GoalStatus.PENDING :
+            if state == GoalStatus.ACTIVE or state == GoalStatus.PENDING:
                 self.action_client.cancel_goal()
 
 
-#===============================================================================
-# MAIN
-#===============================================================================
 if __name__ == '__main__':
     rospy.init_node(Constants.node)
     try:
@@ -90,4 +77,3 @@ if __name__ == '__main__':
         raise
     except:
         pass
-
