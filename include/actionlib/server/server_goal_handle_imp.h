@@ -41,7 +41,7 @@ namespace actionlib {
   ServerGoalHandle<ActionSpec>::ServerGoalHandle() : as_(NULL) {}
 
   template <class ActionSpec>
-  ServerGoalHandle<ActionSpec>::ServerGoalHandle(const ServerGoalHandle& gh): 
+  ServerGoalHandle<ActionSpec>::ServerGoalHandle(const ServerGoalHandle& gh):
     status_it_(gh.status_it_), goal_(gh.goal_), as_(gh.as_), handle_tracker_(gh.handle_tracker_), guard_(gh.guard_){}
 
   template <class ActionSpec>
@@ -291,7 +291,7 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  bool ServerGoalHandle<ActionSpec>::operator==(const ServerGoalHandle& other){
+  bool ServerGoalHandle<ActionSpec>::operator==(const ServerGoalHandle& other) const {
     if(!goal_ && !other.goal_)
       return true;
 
@@ -304,7 +304,7 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  bool ServerGoalHandle<ActionSpec>::operator!=(const ServerGoalHandle& other){
+  bool ServerGoalHandle<ActionSpec>::operator!=(const ServerGoalHandle& other) const {
     return !(*this == other);
   }
 
