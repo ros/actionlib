@@ -76,8 +76,8 @@ private:
   boost::condition check_connection_condition_;
 
   boost::recursive_mutex data_mutex_;
-  std::set<std::string> goalSubscribers_;
-  std::set<std::string> cancelSubscribers_;
+  std::map<std::string, size_t> goalSubscribers_;
+  std::map<std::string, size_t> cancelSubscribers_;
 
   std::string goalSubscribersString();
   std::string cancelSubscribersString();

@@ -64,10 +64,13 @@ void ConnectionMonitor::goalConnectCallback(const ros::SingleSubscriberPublisher
   if (goalSubscribers_.find(pub.getSubscriberName()) == goalSubscribers_.end())
   {
     CONNECTION_DEBUG("goalConnectCallback: Adding [%s] to goalSubscribers", pub.getSubscriberName().c_str());
-    goalSubscribers_.insert(pub.getSubscriberName());
+    goalSubscribers_[pub.getSubscriberName()] = 1;
   }
   else
+  {
     CONNECTION_WARN("goalConnectCallback: Trying to add [%s] to goalSubscribers, but it is already in the goalSubscribers list", pub.getSubscriberName().c_str());
+    goalSubscribers_[pub.getSubscriberName()]++;
+  }
   CONNECTION_DEBUG("%s", goalSubscribersString().c_str());
 
   check_connection_condition_.notify_all();
@@ -77,7 +80,7 @@ void ConnectionMonitor::goalDisconnectCallback(const ros::SingleSubscriberPublis
 {
   boost::recursive_mutex::scoped_lock lock(data_mutex_);
 
-  set<string>::iterator it;
+  map<string, size_t>::iterator it;
   it = goalSubscribers_.find(pub.getSubscriberName());
 
   if (it == goalSubscribers_.end())
@@ -85,7 +88,11 @@ void ConnectionMonitor::goalDisconnectCallback(const ros::SingleSubscriberPublis
   else
   {
     CONNECTION_DEBUG("goalDisconnectCallback: Removing [%s] from goalSubscribers", pub.getSubscriberName().c_str());
-    goalSubscribers_.erase(it);
+    goalSubscribers_[pub.getSubscriberName()]--;
+    if (goalSubscribers_[pub.getSubscriberName()] == 0)
+    {
+      goalSubscribers_.erase(it);
+    }
   }
   CONNECTION_DEBUG("%s", goalSubscribersString().c_str());
 }
@@ -95,8 +102,8 @@ string ConnectionMonitor::goalSubscribersString()
   boost::recursive_mutex::scoped_lock lock(data_mutex_);
   ostringstream ss;
   ss << "Goal Subscribers (" << goalSubscribers_.size() << " total)";
-  for (set<string>::iterator it=goalSubscribers_.begin(); it != goalSubscribers_.end(); it++)
-    ss << "\n   - " << *it;
+  for (map<string, size_t>::iterator it=goalSubscribers_.begin(); it != goalSubscribers_.end(); it++)
+    ss << "\n   - " << it->first;
   return ss.str();
 }
 
@@ -110,10 +117,13 @@ void ConnectionMonitor::cancelConnectCallback(const ros::SingleSubscriberPublish
   if (cancelSubscribers_.find(pub.getSubscriberName()) == cancelSubscribers_.end())
   {
     CONNECTION_DEBUG("cancelConnectCallback: Adding [%s] to cancelSubscribers", pub.getSubscriberName().c_str());
-    cancelSubscribers_.insert(pub.getSubscriberName());
+    cancelSubscribers_[pub.getSubscriberName()] = 1;
   }
   else
+  {
     CONNECTION_WARN("cancelConnectCallback: Trying to add [%s] to cancelSubscribers, but it is already in the cancelSubscribers list", pub.getSubscriberName().c_str());
+    cancelSubscribers_[pub.getSubscriberName()]++;
+  }
   CONNECTION_DEBUG("%s", cancelSubscribersString().c_str());
 
   check_connection_condition_.notify_all();
@@ -123,7 +133,7 @@ void ConnectionMonitor::cancelDisconnectCallback(const ros::SingleSubscriberPubl
 {
   boost::recursive_mutex::scoped_lock lock(data_mutex_);
 
-  set<string>::iterator it;
+  map<string, size_t>::iterator it;
   it = cancelSubscribers_.find(pub.getSubscriberName());
 
   if (it == cancelSubscribers_.end())
@@ -131,7 +141,11 @@ void ConnectionMonitor::cancelDisconnectCallback(const ros::SingleSubscriberPubl
   else
   {
     CONNECTION_DEBUG("cancelDisconnectCallback: Removing [%s] from cancelSubscribers", pub.getSubscriberName().c_str());
-    cancelSubscribers_.erase(it);
+    cancelSubscribers_[pub.getSubscriberName()]--;
+    if (cancelSubscribers_[pub.getSubscriberName()] == 0)
+    {
+      cancelSubscribers_.erase(it);
+    }
   }
   CONNECTION_DEBUG("%s", cancelSubscribersString().c_str());
 }
@@ -142,8 +156,8 @@ string ConnectionMonitor::cancelSubscribersString()
 
   ostringstream ss;
   ss << "cancel Subscribers (" << cancelSubscribers_.size() << " total)";
-  for (set<string>::iterator it=cancelSubscribers_.begin(); it != cancelSubscribers_.end(); it++)
-    ss << "\n   - " << *it;
+  for (map<string, size_t>::iterator it=cancelSubscribers_.begin(); it != cancelSubscribers_.end(); it++)
+    ss << "\n   - " << it->first;
   return ss.str();
 }
 
