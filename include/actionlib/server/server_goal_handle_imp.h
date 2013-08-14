@@ -310,7 +310,7 @@ namespace actionlib {
 
   template <class ActionSpec>
   ServerGoalHandle<ActionSpec>::ServerGoalHandle(typename std::list<StatusTracker<ActionSpec> >::iterator status_it,
-      ActionServer<ActionSpec>* as, boost::shared_ptr<void> handle_tracker, boost::shared_ptr<DestructionGuard> guard)
+      ActionServerBase<ActionSpec>* as, boost::shared_ptr<void> handle_tracker, boost::shared_ptr<DestructionGuard> guard)
     : status_it_(status_it), goal_((*status_it).goal_),
     as_(as), handle_tracker_(handle_tracker), guard_(guard){}
 
