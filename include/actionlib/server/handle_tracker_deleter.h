@@ -41,9 +41,9 @@
 #include <actionlib/destruction_guard.h>
 #include <boost/shared_ptr.hpp>
 namespace actionlib {
-  //we need to forward declare the ActionServer class
+  //we need to forward declare the ActionServerBase class
   template <class ActionSpec>
-  class ActionServer;
+  class ActionServerBase;
 
   /**
    * @class HandleTrackerDeleter
@@ -55,13 +55,13 @@ namespace actionlib {
   template <class ActionSpec>
     class HandleTrackerDeleter {
       public:
-        HandleTrackerDeleter(ActionServer<ActionSpec>* as,
+        HandleTrackerDeleter(ActionServerBase<ActionSpec>* as,
             typename std::list<StatusTracker<ActionSpec> >::iterator status_it, boost::shared_ptr<DestructionGuard> guard);
 
         void operator()(void* ptr);
 
       private:
-        ActionServer<ActionSpec>* as_;
+        ActionServerBase<ActionSpec>* as_;
         typename std::list<StatusTracker<ActionSpec> >::iterator status_it_;
         boost::shared_ptr<DestructionGuard> guard_;
     };

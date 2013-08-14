@@ -38,7 +38,7 @@
 #define ACTIONLIB_HANDLE_TRACKER_DELETER_IMP_H_
 namespace actionlib {
   template <class ActionSpec>
-  HandleTrackerDeleter<ActionSpec>::HandleTrackerDeleter(ActionServer<ActionSpec>* as,
+  HandleTrackerDeleter<ActionSpec>::HandleTrackerDeleter(ActionServerBase<ActionSpec>* as,
       typename std::list<StatusTracker<ActionSpec> >::iterator status_it, boost::shared_ptr<DestructionGuard> guard)
     : as_(as), status_it_(status_it), guard_(guard) {}
 

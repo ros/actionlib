@@ -49,6 +49,7 @@
 #include <actionlib/server/status_tracker.h>
 #include <actionlib/server/handle_tracker_deleter.h>
 #include <actionlib/server/server_goal_handle.h>
+#include <actionlib/server/action_server_base.h>
 #include <actionlib/destruction_guard.h>
 
 #include <list>
@@ -65,7 +66,8 @@ namespace actionlib {
    * associated with a goal request is destroyed.
    */
   template <class ActionSpec>
-  class ActionServer {
+  class ActionServer : public ActionServerBase<ActionSpec>
+  {
     public:
       //for convenience when referring to ServerGoalHandles
       typedef ServerGoalHandle<ActionSpec> GoalHandle;
@@ -127,89 +129,44 @@ namespace actionlib {
       /**
        * @brief  Destructor for the ActionServer
        */
-      ~ActionServer();
-
-      /**
-       * @brief  Register a callback to be invoked when a new goal is received, this will replace any  previously registered callback
-       * @param  cb The callback to invoke
-       */
-      void registerGoalCallback(boost::function<void (GoalHandle)> cb);
-
-      /**
-       * @brief  Register a callback to be invoked when a new cancel is received, this will replace any  previously registered callback
-       * @param  cb The callback to invoke
-       */
-      void registerCancelCallback(boost::function<void (GoalHandle)> cb);
-
-      /**
-       * @brief  Explicitly start the action server, used it auto_start is set to false
-       */
-      void start();
+      virtual ~ActionServer();
 
     private:
       /**
        * @brief  Initialize all ROS connections and setup timers
        */
-      void initialize();
+      virtual void initialize();
 
       /**
        * @brief  Publishes a result for a given goal
        * @param status The status of the goal with which the result is associated
        * @param result The result to publish
        */
-      void publishResult(const actionlib_msgs::GoalStatus& status, const Result& result);
+      virtual void publishResult(const actionlib_msgs::GoalStatus& status, const Result& result);
 
       /**
        * @brief  Publishes feedback for a given goal
        * @param status The status of the goal with which the feedback is associated
        * @param feedback The feedback to publish
        */
-      void publishFeedback(const actionlib_msgs::GoalStatus& status, const Feedback& feedback);
+      virtual void publishFeedback(const actionlib_msgs::GoalStatus& status, const Feedback& feedback);
 
       /**
-       * @brief  The ROS callback for cancel requests coming into the ActionServer
+       * @brief  Explicitly publish status
        */
-      void cancelCallback(const boost::shared_ptr<const actionlib_msgs::GoalID>& goal_id);
-
-      /**
-       * @brief  The ROS callback for goals coming into the ActionServer
-       */
-      void goalCallback(const boost::shared_ptr<const ActionGoal>& goal);
+      virtual void publishStatus();
 
       /**
        * @brief  Publish status for all goals on a timer event
        */
       void publishStatus(const ros::TimerEvent& e);
 
-      /**
-       * @brief  Explicitly publish status
-       */
-      void publishStatus();
-
       ros::NodeHandle node_;
 
       ros::Subscriber goal_sub_, cancel_sub_;
       ros::Publisher status_pub_, result_pub_, feedback_pub_;
 
-      boost::recursive_mutex lock_;
-
       ros::Timer status_timer_;
-
-      std::list<StatusTracker<ActionSpec> > status_list_;
-
-      boost::function<void (GoalHandle)> goal_callback_;
-      boost::function<void (GoalHandle)> cancel_callback_;
-
-      ros::Time last_cancel_;
-      ros::Duration status_list_timeout_;
-
-      //we need to allow access to our private fields to our helper classes
-      friend class ServerGoalHandle<ActionSpec>;
-      friend class HandleTrackerDeleter<ActionSpec>;
-
-      GoalIDGenerator id_generator_;
-      bool started_;
-      boost::shared_ptr<DestructionGuard> guard_;
   };
 };
 
