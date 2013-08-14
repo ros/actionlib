@@ -45,9 +45,9 @@
 #include <boost/shared_ptr.hpp>
 
 namespace actionlib {
-  //forward declaration of ActionServer
+  //forward declaration of ActionServerBase
   template <class ActionSpec>
-  class ActionServer;
+  class ActionServerBase;
 
   /**
    * @class ServerGoalHandle
@@ -158,7 +158,7 @@ namespace actionlib {
        * @brief  A private constructor used by the ActionServer to initialize a ServerGoalHandle
        */
       ServerGoalHandle(typename std::list<StatusTracker<ActionSpec> >::iterator status_it,
-          ActionServer<ActionSpec>* as, boost::shared_ptr<void> handle_tracker, boost::shared_ptr<DestructionGuard> guard);
+          ActionServerBase<ActionSpec>* as, boost::shared_ptr<void> handle_tracker, boost::shared_ptr<DestructionGuard> guard);
 
       /**
        * @brief  A private method to set status to PENDING or RECALLING
@@ -168,10 +168,10 @@ namespace actionlib {
 
       typename std::list<StatusTracker<ActionSpec> >::iterator status_it_;
       boost::shared_ptr<const ActionGoal> goal_;
-      ActionServer<ActionSpec>* as_;
+      ActionServerBase<ActionSpec>* as_;
       boost::shared_ptr<void> handle_tracker_;
       boost::shared_ptr<DestructionGuard> guard_;
-      friend class ActionServer<ActionSpec>;
+      friend class ActionServerBase<ActionSpec>;
   };
 
 };
