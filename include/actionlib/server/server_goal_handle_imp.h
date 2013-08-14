@@ -291,7 +291,7 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  bool ServerGoalHandle<ActionSpec>::operator==(const ServerGoalHandle& other){
+  bool ServerGoalHandle<ActionSpec>::operator==(const ServerGoalHandle& other) const{
     if(!goal_ && !other.goal_)
       return true;
 
@@ -304,7 +304,7 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  bool ServerGoalHandle<ActionSpec>::operator!=(const ServerGoalHandle& other){
+  bool ServerGoalHandle<ActionSpec>::operator!=(const ServerGoalHandle& other) const{
     return !(*this == other);
   }
 

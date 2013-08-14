@@ -101,7 +101,7 @@ public:
   /**
    * \brief Straightforward enum equality check
    */
-  inline bool operator==(const ClientGoalStatus& rhs)
+  inline bool operator==(const ClientGoalStatus& rhs) const
   {
     return state_ == rhs.state_;
   }
@@ -109,7 +109,7 @@ public:
   /**
    * \brief Straightforward enum inequality check
    */
-  inline bool operator!=(const ClientGoalStatus& rhs)
+  inline bool operator!=(const ClientGoalStatus& rhs) const
   {
     return !(state_ == rhs.state_);
   }
