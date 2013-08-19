@@ -236,6 +236,11 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
+  bool ServerGoalHandle<ActionSpec>::isValid() const{
+    return goal_ && as_!= NULL;
+  }
+
+  template <class ActionSpec>
   boost::shared_ptr<const typename ServerGoalHandle<ActionSpec>::Goal> ServerGoalHandle<ActionSpec>::getGoal() const{
     //if we have a goal that is non-null
     if(goal_){
