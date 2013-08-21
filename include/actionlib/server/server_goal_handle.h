@@ -144,14 +144,14 @@ namespace actionlib {
        * @param other The ServerGoalHandle to compare to
        * @return True if the ServerGoalHandles refer to the same goal, false otherwise
        */
-      bool operator==(const ServerGoalHandle& other);
+      bool operator==(const ServerGoalHandle& other) const;
 
       /**
        * @brief  != operator for ServerGoalHandles
        * @param other The ServerGoalHandle to compare to
        * @return True if the ServerGoalHandles refer to different goals, false otherwise
        */
-      bool operator!=(const ServerGoalHandle& other);
+      bool operator!=(const ServerGoalHandle& other) const;
 
     private:
       /**
