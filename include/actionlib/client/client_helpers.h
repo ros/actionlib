@@ -191,12 +191,12 @@ public:
    * \brief Check if two goal handles point to the same goal
    * \return TRUE if both point to the same goal. Also returns TRUE if both handles are inactive.
    */
-  bool operator==(const ClientGoalHandle<ActionSpec>& rhs);
+  bool operator==(const ClientGoalHandle<ActionSpec>& rhs) const;
 
   /**
    * \brief !(operator==())
    */
-  bool operator!=(const ClientGoalHandle<ActionSpec>& rhs);
+  bool operator!=(const ClientGoalHandle<ActionSpec>& rhs) const;
 
   friend class GoalManager<ActionSpec>;
 private:

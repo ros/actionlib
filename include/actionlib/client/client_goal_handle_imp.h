@@ -251,7 +251,7 @@ void ClientGoalHandle<ActionSpec>::cancel()
 }
 
 template<class ActionSpec>
-bool ClientGoalHandle<ActionSpec>::operator==(const ClientGoalHandle<ActionSpec>& rhs)
+bool ClientGoalHandle<ActionSpec>::operator==(const ClientGoalHandle<ActionSpec>& rhs) const
 {
   // Check if both are inactive
   if (!active_ && !rhs.active_)
@@ -272,7 +272,7 @@ bool ClientGoalHandle<ActionSpec>::operator==(const ClientGoalHandle<ActionSpec>
 }
 
 template<class ActionSpec>
-bool ClientGoalHandle<ActionSpec>::operator!=(const ClientGoalHandle<ActionSpec>& rhs)
+bool ClientGoalHandle<ActionSpec>::operator!=(const ClientGoalHandle<ActionSpec>& rhs) const
 {
   return !(*this==rhs);
 }
