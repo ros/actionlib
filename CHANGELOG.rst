@@ -2,6 +2,16 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.10.2 (2013-08-21)
+-------------------
+* separating ActionServer implementation into base class and ros-publisher-based class (`#11 <https://github.com/ros/actionlib/issues/11>`_)
+* support CATKIN_ENABLE_TESTING
+* add isValid to ServerGoalHandle (`#14 <https://github.com/ros/actionlib/issues/14>`_)
+* make operators const (`#10 <https://github.com/ros/actionlib/issues/10>`_)
+* add counting of connections to avoid reconnect problem when callbacks are invoked in different order (`#7 <https://github.com/ros/actionlib/issues/7>`_)
+* fix deadlock in simple_action_server.py (`#4 <https://github.com/ros/actionlib/issues/4>`_)
+* fix missing runtime destination for library (`#3 <https://github.com/ros/actionlib/issues/3>`_)
+
 1.10.1 (2013-06-06)
 -------------------
 * fix location of library before installation (`#1 <https://github.com/ros/actionlib/issues/1>`_)
