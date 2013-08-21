@@ -116,6 +116,16 @@ namespace actionlib {
       void publishFeedback(const Feedback& feedback);
 
       /**
+       * @brief Determine if the goal handle is valid (tracking a valid goal,
+       * and associated with a valid action server). If the handle is valid, it
+       * means that the accessors \ref getGoal, \ref getGoalID, etc, can be
+       * called without generating errors.
+       *
+       * @return True if valid, False if invalid
+       */
+      bool isValid() const;
+
+      /**
        * @brief  Accessor for the goal associated with the ServerGoalHandle
        * @return A shared_ptr to the goal object
        */
