@@ -2,6 +2,11 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.10.3 (2013-08-27)
+-------------------
+* Merged pull request `#15 <https://github.com/ros/actionlib/issues/15>`_
+  Fixes a compile issue for actionlib headers on OS X
+
 1.10.2 (2013-08-21)
 -------------------
 * separating ActionServer implementation into base class and ros-publisher-based class (`#11 <https://github.com/ros/actionlib/issues/11>`_)
