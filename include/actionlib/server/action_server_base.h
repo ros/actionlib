@@ -76,7 +76,7 @@ namespace actionlib {
       ActionServerBase(
           boost::function<void (GoalHandle)> goal_cb,
           boost::function<void (GoalHandle)> cancel_cb,
-          bool auto_start);
+          bool auto_start = false);
 
 
       /**
@@ -160,17 +160,17 @@ namespace actionlib {
   ActionServerBase<ActionSpec>::ActionServerBase(
       boost::function<void (GoalHandle)> goal_cb,
       boost::function<void (GoalHandle)> cancel_cb,
-      bool auto_start = false)  :
+      bool auto_start) :
     goal_callback_(goal_cb),
     cancel_callback_(cancel_cb),
     started_(auto_start),
-    guard_(new DestructionGuard) 
+    guard_(new DestructionGuard)
   {
   }
 
   template <class ActionSpec>
   ActionServerBase<ActionSpec>::~ActionServerBase()
-  { 
+  {
     // Block until we can safely destruct
     guard_->destruct();
   }
