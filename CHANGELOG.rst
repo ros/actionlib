@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.9.13 (2013-09-18)
+-------------------
 * support CATKIN_ENABLE_TESTING
 * fix deadlock in simple_action_server.py (`#4 <https://github.com/ros/actionlib/issues/4>`_)
 * fix missing runtime destination for library (`#3 <https://github.com/ros/actionlib/issues/3>`_)
