@@ -207,9 +207,17 @@ private:
 
   void initClient(ros::CallbackQueueInterface* queue)
   {
-    status_sub_   = queue_subscribe("status",   1, &ActionClientT::statusCb,   this, queue);
-    feedback_sub_ = queue_subscribe("feedback", 1, &ActionClientT::feedbackCb, this, queue);
-    result_sub_   = queue_subscribe("result",   1, &ActionClientT::resultCb,   this, queue);
+    status_sub_   = queue_subscribe
+        <actionlib_msgs::GoalStatusArray, ActionClientT, ros::MessageEvent<actionlib_msgs::GoalStatusArray> >
+        ("status",   1, &ActionClientT::statusCb,   this, queue);
+
+    feedback_sub_ = queue_subscribe        
+        <ActionFeedback, ActionClientT, boost::shared_ptr<ActionFeedback const> >
+        ("feedback", 1, &ActionClientT::feedbackCb, this, queue);
+
+    result_sub_   = queue_subscribe        
+        <ActionResult, ActionClientT, boost::shared_ptr<ActionResult const> >
+        ("result",   1, &ActionClientT::resultCb,   this, queue);
 
     connection_monitor_.reset(new ConnectionMonitor(feedback_sub_, status_sub_));
 
@@ -242,8 +250,8 @@ private:
     return n_.advertise(ops);
   }
 
-  template<class M, class T>
-  ros::Subscriber queue_subscribe(const std::string& topic, uint32_t queue_size, void(T::*fp)(const boost::shared_ptr<M const>&), T* obj, ros::CallbackQueueInterface* queue)
+  template<class M, class T, class Evt>
+  ros::Subscriber queue_subscribe(const std::string& topic, uint32_t queue_size, void(T::*fp)(const Evt&), T* obj, ros::CallbackQueueInterface* queue)
   {
     ros::SubscribeOptions ops;
     ops.init<M>(topic, queue_size, boost::bind(fp, obj, _1));
@@ -252,12 +260,12 @@ private:
     return n_.subscribe(ops);
   }
 
-  void statusCb(const actionlib_msgs::GoalStatusArrayConstPtr& status_array)
+  void statusCb(const ros::MessageEvent<actionlib_msgs::GoalStatusArray>& status_array)
   {
     ROS_DEBUG_NAMED("actionlib", "Getting status over the wire.");
     if (connection_monitor_)
       connection_monitor_->processStatus(status_array);
-    manager_.updateStatuses(status_array);
+    manager_.updateStatuses(status_array.getConstMessage());
   }
 
   void feedbackCb(const ActionFeedbackConstPtr& action_feedback)

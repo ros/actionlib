@@ -162,12 +162,20 @@ string ConnectionMonitor::cancelSubscribersString()
 }
 
 // ********* GoalStatus Connections *********
-void ConnectionMonitor::processStatus(const actionlib_msgs::GoalStatusArrayConstPtr& status)
+void ConnectionMonitor::processStatus(const ros::MessageEvent<actionlib_msgs::GoalStatusArray const>& status_evt)
 {
   boost::recursive_mutex::scoped_lock lock(data_mutex_);
 
-  string cur_status_caller_id = (*(status->__connection_header))["callerid"];
+  actionlib_msgs::GoalStatusArray::ConstPtr const &status = status_evt.getConstMessage();
 
+  ros::M_string const &connection_header = status_evt.getConnectionHeader();
+  typedef ros::M_string::const_iterator connection_iter;
+  connection_iter it_callerid = connection_header.find("callerid");
+  
+  string cur_status_caller_id;
+  if (connection_header.end() != it_callerid)
+    cur_status_caller_id = it_callerid->second;
+  
   if (status_received_)
   {
     if (status_caller_id_ != cur_status_caller_id)
