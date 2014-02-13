@@ -243,7 +243,7 @@ private:
   }
 
   template<class M, class T>
-  ros::Subscriber queue_subscribe(const std::string& topic, uint32_t queue_size, void(T::*fp)(const boost::shared_ptr<M const>&), T* obj, ros::CallbackQueueInterface* queue)
+  ros::Subscriber queue_subscribe(const std::string& topic, uint32_t queue_size, void(T::*fp)(const ros::MessageEvent<M const>&), T* obj, ros::CallbackQueueInterface* queue)
   {
     ros::SubscribeOptions ops;
     ops.init<M>(topic, queue_size, boost::bind(fp, obj, _1));
@@ -252,22 +252,22 @@ private:
     return n_.subscribe(ops);
   }
 
-  void statusCb(const actionlib_msgs::GoalStatusArrayConstPtr& status_array)
+  void statusCb(const ros::MessageEvent<actionlib_msgs::GoalStatusArray const>& status_array_event)
   {
     ROS_DEBUG_NAMED("actionlib", "Getting status over the wire.");
     if (connection_monitor_)
-      connection_monitor_->processStatus(status_array);
-    manager_.updateStatuses(status_array);
+      connection_monitor_->processStatus(status_array_event.getConstMessage(), status_array_event.getPublisherName());
+    manager_.updateStatuses(status_array_event.getConstMessage());
   }
 
-  void feedbackCb(const ActionFeedbackConstPtr& action_feedback)
+  void feedbackCb(const ros::MessageEvent<ActionFeedback const>& action_feedback)
   {
-    manager_.updateFeedbacks(action_feedback);
+    manager_.updateFeedbacks(action_feedback.getConstMessage());
   }
 
-  void resultCb(const ActionResultConstPtr& action_result)
+  void resultCb(const ros::MessageEvent<ActionResult const>& action_result)
   {
-    manager_.updateResults(action_result);
+    manager_.updateResults(action_result.getConstMessage());
   }
 };
 
