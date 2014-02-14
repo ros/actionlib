@@ -246,9 +246,15 @@ private:
   ros::Subscriber queue_subscribe(const std::string& topic, uint32_t queue_size, void(T::*fp)(const ros::MessageEvent<M const>&), T* obj, ros::CallbackQueueInterface* queue)
   {
     ros::SubscribeOptions ops;
-    ops.init<M>(topic, queue_size, boost::bind(fp, obj, _1));
-    ops.transport_hints = ros::TransportHints();
-    ops.callback_queue = queue;
+    ops.topic = topic;
+    ops.queue_size = queue_size;
+    ops.md5sum = ros::message_traits::md5sum<M>();
+    ops.datatype = ros::message_traits::datatype<M>();
+    ops.helper = ros::SubscriptionCallbackHelperPtr(
+      new ros::SubscriptionCallbackHelperT<const ros::MessageEvent<M const>& >(
+        boost::bind(fp, obj, _1)
+      )
+    );
     return n_.subscribe(ops);
   }
 
