@@ -2,6 +2,10 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* replace usage of __connection_header with MessageEvent (`#20 <https://github.com/ros/actionlib/issues/20>`_)
+
 1.10.3 (2013-08-27)
 -------------------
 * Merged pull request `#15 <https://github.com/ros/actionlib/issues/15>`_
