@@ -162,11 +162,9 @@ string ConnectionMonitor::cancelSubscribersString()
 }
 
 // ********* GoalStatus Connections *********
-void ConnectionMonitor::processStatus(const actionlib_msgs::GoalStatusArrayConstPtr& status)
+void ConnectionMonitor::processStatus(const actionlib_msgs::GoalStatusArrayConstPtr& status, const std::string& cur_status_caller_id)
 {
   boost::recursive_mutex::scoped_lock lock(data_mutex_);
-
-  string cur_status_caller_id = (*(status->__connection_header))["callerid"];
 
   if (status_received_)
   {
