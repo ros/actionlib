@@ -23,8 +23,8 @@ add_library(actionlib src/connection_monitor.cpp src/goal_id_generator.cpp)
 target_link_libraries(actionlib ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(actionlib actionlib_gencpp)
 
-install(PROGRAMS tools/axclient.py tools/axserver.py tools/dynamic_action.py tools/library.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}) 
+catkin_install_python(PROGRAMS tools/axclient.py tools/axserver.py tools/dynamic_action.py tools/library.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
