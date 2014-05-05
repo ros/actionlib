@@ -39,7 +39,7 @@ namespace actionlib {
 
   template <class ActionSpec>
   SimpleActionServer<ActionSpec>::SimpleActionServer(std::string name, ExecuteCallback execute_callback, bool auto_start)
-    : new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(execute_callback), need_to_terminate_(false) {
+    : new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(execute_callback), execute_thread_(NULL), need_to_terminate_(false) {
 
     if (execute_callback_ != NULL)
     {
