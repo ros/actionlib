@@ -2,6 +2,13 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.1 (2014-05-08)
+-------------------
+* Fix uninitialised execute_thread_ member pointer
+* Make rostest in CMakeLists optional
+* Use catkin_install_python() to install Python scripts
+* Contributors: Dirk Thomas, Esteve Fernandez, Jordi Pages, Lukas Bulwahn
+
 1.11.0 (2014-02-13)
 -------------------
 * replace usage of __connection_header with MessageEvent (`#20 <https://github.com/ros/actionlib/issues/20>`_)
