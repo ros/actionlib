@@ -246,6 +246,7 @@ private:
   ros::Subscriber queue_subscribe(const std::string& topic, uint32_t queue_size, void(T::*fp)(const ros::MessageEvent<M const>&), T* obj, ros::CallbackQueueInterface* queue)
   {
     ros::SubscribeOptions ops;
+    ops.callback_queue = queue;
     ops.topic = topic;
     ops.queue_size = queue_size;
     ops.md5sum = ros::message_traits::md5sum<M>();
