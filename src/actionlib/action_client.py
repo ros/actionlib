@@ -513,8 +513,8 @@ class ActionClient:
         except AttributeError:
             raise ActionException("Type is not an action spec: %s" % str(ActionSpec))
 
-        self.pub_goal = rospy.Publisher(rospy.remap_name(ns) + '/goal', self.ActionGoal)
-        self.pub_cancel = rospy.Publisher(rospy.remap_name(ns) + '/cancel', GoalID)
+        self.pub_goal = rospy.Publisher(rospy.remap_name(ns) + '/goal', self.ActionGoal, queue_size=1)
+        self.pub_cancel = rospy.Publisher(rospy.remap_name(ns) + '/cancel', GoalID, queue_size=1)
 
         self.manager = GoalManager(ActionSpec)
         self.manager.register_send_goal_fn(self.pub_goal.publish)

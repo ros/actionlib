@@ -137,9 +137,9 @@ class ActionServer:
 
     ## @brief  Initialize all ROS connections and setup timers
     def initialize(self):
-          self.status_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/status", GoalStatusArray, latch=True);
-          self.result_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/result", self.ActionResult);
-          self.feedback_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/feedback", self.ActionFeedback);
+          self.status_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/status", GoalStatusArray, latch=True, queue_size=50);
+          self.result_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/result", self.ActionResult, queue_size=50);
+          self.feedback_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/feedback", self.ActionFeedback, queue_size=50);
 
           self.goal_sub = rospy.Subscriber(rospy.remap_name(self.ns)+"/goal", self.ActionGoal,self.internal_goal_callback);
 
