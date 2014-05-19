@@ -44,7 +44,7 @@
 
 namespace actionlib {
   /** @class SimpleActionServer @brief The SimpleActionServer
-   * implements a singe goal policy on top of the ActionServer class. The
+   * implements a single goal policy on top of the ActionServer class. The
    * specification of the policy is as follows: only one goal can have an
    * active status at a time, new goals preempt previous goals based on the
    * stamp in their GoalID field (later goals preempt earlier ones), an
