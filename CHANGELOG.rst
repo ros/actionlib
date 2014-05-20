@@ -2,6 +2,12 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.2 (2014-05-20)
+-------------------
+* Update python publishers to define queue_size.
+* Use the correct queue for processing MessageEvents
+* Contributors: Esteve Fernandez, Michael Ferguson, Nican
+
 1.11.1 (2014-05-08)
 -------------------
 * Fix uninitialised execute_thread_ member pointer
