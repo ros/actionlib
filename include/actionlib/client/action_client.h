@@ -214,11 +214,11 @@ private:
     connection_monitor_.reset(new ConnectionMonitor(feedback_sub_, status_sub_));
 
     // Start publishers and subscribers
-    goal_pub_ = queue_advertise<ActionGoal>("goal", 1,
+    goal_pub_ = queue_advertise<ActionGoal>("goal", 10,
                                             boost::bind(&ConnectionMonitor::goalConnectCallback,    connection_monitor_, _1),
                                             boost::bind(&ConnectionMonitor::goalDisconnectCallback, connection_monitor_, _1),
                                             queue);
-    cancel_pub_ = queue_advertise<actionlib_msgs::GoalID>("cancel", 1,
+    cancel_pub_ = queue_advertise<actionlib_msgs::GoalID>("cancel", 10,
                                             boost::bind(&ConnectionMonitor::cancelConnectCallback,    connection_monitor_, _1),
                                             boost::bind(&ConnectionMonitor::cancelDisconnectCallback, connection_monitor_, _1),
                                             queue);
