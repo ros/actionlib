@@ -2,6 +2,12 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.3 (2014-12-23)
+-------------------
+* Increase queue sizes to match Python client publishers.
+* Adjust size of client publishers in Python
+* Contributors: Esteve Fernandez, Michael Ferguson
+
 1.11.2 (2014-05-20)
 -------------------
 * Update python publishers to define queue_size.
