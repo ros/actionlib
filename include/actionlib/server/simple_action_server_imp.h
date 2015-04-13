@@ -56,7 +56,7 @@ namespace actionlib {
 
   template <class ActionSpec>
   SimpleActionServer<ActionSpec>::SimpleActionServer(std::string name, bool auto_start)
-    : new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(NULL), need_to_terminate_(false) {
+    : new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(NULL), execute_thread_(NULL), need_to_terminate_(false) {
 
     //create the action server
     as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n_, name,
@@ -72,7 +72,7 @@ namespace actionlib {
 
   template <class ActionSpec>
   SimpleActionServer<ActionSpec>::SimpleActionServer(std::string name, ExecuteCallback execute_callback)
-    : new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(execute_callback), need_to_terminate_(false) {
+    : new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(execute_callback), execute_thread_(NULL), need_to_terminate_(false) {
 
     //create the action server
     as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n_, name,
@@ -89,7 +89,7 @@ namespace actionlib {
 
   template <class ActionSpec>
   SimpleActionServer<ActionSpec>::SimpleActionServer(ros::NodeHandle n, std::string name, ExecuteCallback execute_callback, bool auto_start)
-    : n_(n), new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(execute_callback), need_to_terminate_(false) {
+    : n_(n), new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(execute_callback), execute_thread_(NULL), need_to_terminate_(false) {
 
     //create the action server
     as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n, name,
@@ -105,7 +105,7 @@ namespace actionlib {
 
   template <class ActionSpec>
   SimpleActionServer<ActionSpec>::SimpleActionServer(ros::NodeHandle n, std::string name, bool auto_start)
-    : n_(n), new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(NULL), need_to_terminate_(false) {
+    : n_(n), new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(NULL), execute_thread_(NULL), need_to_terminate_(false) {
 
     //create the action server
     as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n, name,
@@ -121,7 +121,7 @@ namespace actionlib {
 
   template <class ActionSpec>
   SimpleActionServer<ActionSpec>::SimpleActionServer(ros::NodeHandle n, std::string name, ExecuteCallback execute_callback)
-    : n_(n), new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(execute_callback), need_to_terminate_(false) {
+    : n_(n), new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(execute_callback), execute_thread_(NULL), need_to_terminate_(false) {
 
     //create the action server
     as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n, name,
