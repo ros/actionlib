@@ -2,6 +2,11 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.4 (2015-04-22)
+-------------------
+* Initialize execute_thread_ to NULL
+* Contributors: Esteve Fernandez
+
 1.11.3 (2014-12-23)
 -------------------
 * Increase queue sizes to match Python client publishers.
