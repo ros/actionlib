@@ -237,6 +237,11 @@ def main():
 
     # get action type from topic
     topic_type = rostopic._get_topic_type("%s/goal"%args[1])[0]
+
+    #check if topic exists
+    if topic_type is None:
+        rospy.logwarn("Action server not yet running. Will wait.")
+        topic_type = rostopic.get_topic_type("%s/goal"%args[1], blocking=True)[0]
     # remove "Goal" string from action type
     assert("Goal" in topic_type)
     topic_type = topic_type[0:len(topic_type)-4]
