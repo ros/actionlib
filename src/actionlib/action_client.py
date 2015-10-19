@@ -125,6 +125,9 @@ class ClientGoalHandle:
             return True
         return not (self.comm_state_machine == o.comm_state_machine)
 
+    ## @brieft Hash function for ClientGoalHandle
+    def __hash__(self):
+        return hash(self.comm_state_machine)
 
     ## @brief Sends a cancel message for this specific goal to the ActionServer.
     ##
@@ -312,6 +315,10 @@ class CommStateMachine:
 
     def __eq__(self, o):
         return self.action_goal.goal_id.id == o.action_goal.goal_id.id
+
+    ## @brieft Hash function for CommStateMachine
+    def __hash__(self):
+        return hash(self.action_goal.goal_id.id)
 
     def set_state(self, state):
         rospy.logdebug("Transitioning CommState from %s to %s",
@@ -552,15 +559,15 @@ class ActionClient:
 
     ## @brief Cancels all goals prior to a given timestamp
     ##
-    ## This preempts all goals running on the action server for which the 
+    ## This preempts all goals running on the action server for which the
     ## time stamp is earlier than the specified time stamp
     ## this message is serviced by the ActionServer.
 
     def cancel_goals_at_and_before_time(self, time):
         cancel_msg = GoalID(stamp = time, id = "")
         self.pub_cancel.publish(cancel_msg)
-    
-    
+
+
     ## @brief [Deprecated] Use wait_for_server
     def wait_for_action_server_to_start(self, timeout = rospy.Duration(0.0)):
         return self.wait_for_server(timeout)
@@ -617,5 +624,3 @@ class ActionClient:
 
     def _feedback_cb(self, msg):
         self.manager.update_feedbacks(msg)
-
-
