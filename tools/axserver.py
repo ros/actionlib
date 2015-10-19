@@ -72,8 +72,8 @@ class AXServerApp(wx.App):
             self.status.SetLabel("Waiting For Goal...")
             self.send_feedback.Disable()
             self.succeed.Disable()
-            self.abort.Disable()            
-            self.preempt.Disable()            
+            self.abort.Disable()
+            self.preempt.Disable()
 
             self.goal.SetValue("")
 
@@ -83,31 +83,35 @@ class AXServerApp(wx.App):
             self.send_feedback.Enable()
             self.succeed.Enable()
             self.abort.Enable()
-            self.preempt.Enable()            
+            self.preempt.Enable()
 
             try:
                 self.goal.SetValue(to_yaml(goal))
             except UnicodeDecodeError:
                 self.goal.SetValue("Cannot display goal due to unprintable characters")
 
+    def set_preempt_requested(self):
+        self.status_bg.SetBackgroundColour(wx.Colour(0, 200, 200))
+        self.status.SetLabel("Preempt requested...")
+
     def execute(self, goal):
 
         wx.CallAfter(self.set_goal, goal)
-
         self.condition.acquire()
 
         self.result_msg = None
         self.feedback_msg = None
         self.execute_type = None
-        
-        while self.execute_type is None or self.execute_type == SEND_FEEDBACK:
 
+        while self.execute_type is None or self.execute_type == SEND_FEEDBACK:
             self.result_msg = None
             self.feedback_msg = None
             self.execute_type = None
-            
+
             while self.execute_type is None:
-                self.condition.wait()
+                if self.server.is_preempt_requested():
+                    wx.CallAfter(self.set_preempt_requested)
+                self.condition.wait(1.0)
 
             if self.execute_type == SEND_FEEDBACK:
                 if self.feedback_msg is not None:
@@ -129,13 +133,13 @@ class AXServerApp(wx.App):
 
     def on_feedback(self, event):
         self.condition.acquire()
-        
+
         try:
             self.feedback_msg = yaml_msg_str(self.action_type.feedback,
                                              self.feedback.GetValue())
             buff = StringIO()
             self.feedback_msg.serialize(buff)
-            
+
             self.execute_type = SEND_FEEDBACK
             self.condition.notify()
         except roslib.message.SerializationError, e:
@@ -148,12 +152,12 @@ class AXServerApp(wx.App):
 
     def on_succeed(self, event):
         self.condition.acquire()
-        
+
         try:
             self.result_msg = yaml_msg_str(self.action_type.result, self.result.GetValue())
             buff = StringIO()
             self.result_msg.serialize(buff)
-            
+
             self.execute_type = SUCCEED
             self.condition.notify()
         except roslib.message.SerializationError, e:
@@ -191,7 +195,7 @@ class AXServerApp(wx.App):
         self.goal_st_bx = wx.StaticBox(self.frame, -1, "Goal")
         self.goal_st = wx.StaticBoxSizer(self.goal_st_bx, wx.VERTICAL)
         self.goal_st.Add(self.goal, 1, wx.EXPAND)
-        
+
         self.feedback = wx.TextCtrl(self.frame, -1, style=wx.TE_MULTILINE)
         self.feedback.SetValue(to_yaml(tmp_feedback))
         self.feedback_st_bx = wx.StaticBox(self.frame, -1, "Feedback")
@@ -245,7 +249,7 @@ if __name__ == '__main__':
 #    parser.add_option("-t","--test",action="store_true", dest="test",default=False,
 #                      help="A testing flag")
 #  parser.add_option("-v","--var",action="store",type="string", dest="var",default="blah")
-    
+
     (options, args) = parser.parse_args(rospy.myargv())
 
     if (len(args) != 3):
