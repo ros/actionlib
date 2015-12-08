@@ -1,9 +1,9 @@
 # Copyright (c) 2009, Willow Garage, Inc.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 #       notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
 #     * Neither the name of the Willow Garage, Inc. nor the names of its
 #       contributors may be used to endorse or promote products derived from
 #       this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# Author: Alexander Sorokin. 
+# Author: Alexander Sorokin.
 # Based on C++ goal_id_generator.h/cpp
 
 import rospy
@@ -76,13 +76,13 @@ class ServerGoalHandle:
                   self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.ACTIVE;
                   self.status_tracker.status.text = text
                   self.action_server.publish_status();
-                  
+
               #if we were recalling before, now we'll go to preempting
               elif(status == actionlib_msgs.msg.GoalStatus.RECALLING) :
                   self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.PREEMPTING;
                   self.status_tracker.status.text = text
                   self.action_server.publish_status();
-                  
+
               else:
                   rospy.logerr("To transition to an active state, the goal must be in a pending or recalling state, it is currently in state: %d",  self.status_tracker.status.status);
 
@@ -116,11 +116,11 @@ class ServerGoalHandle:
                     #on transition to a terminal state, we'll also set the handle destruction time
                     self.status_tracker.handle_destruction_time = rospy.Time.now()
                     self.action_server.publish_result(self.status_tracker.status, result);
-      
+
                 else:
                     rospy.logerr("To transition to a cancelled state, the goal must be in a pending, recalling, active, or preempting state, it is currently in state: %d",
                                  self.status_tracker.status.status);
-    
+
         else:
             rospy.logerr("Attempt to set status on an uninitialized ServerGoalHandle");
 
@@ -143,11 +143,11 @@ class ServerGoalHandle:
                     #on transition to a terminal state, we'll also set the handle destruction time
                     self.status_tracker.handle_destruction_time = rospy.Time.now()
                     self.action_server.publish_result(self.status_tracker.status, result);
-      
+
                 else:
                     rospy.logerr("To transition to a rejected state, the goal must be in a pending or recalling state, it is currently in state: %d",
                                  self.status_tracker.status.status);
-    
+
         else:
             rospy.logerr("Attempt to set status on an uninitialized ServerGoalHandle");
 
@@ -170,11 +170,11 @@ class ServerGoalHandle:
                     #on transition to a terminal state, we'll also set the handle destruction time
                     self.status_tracker.handle_destruction_time = rospy.Time.now()
                     self.action_server.publish_result(self.status_tracker.status, result);
-                    
+
                 else:
                     rospy.logerr("To transition to an aborted state, the goal must be in a preempting or active state, it is currently in state: %d",
                                  status);
-    
+
         else:
             rospy.logerr("Attempt to set status on an uninitialized ServerGoalHandle");
 
@@ -198,11 +198,11 @@ class ServerGoalHandle:
                     #on transition to a terminal state, we'll also set the handle destruction time
                     self.status_tracker.handle_destruction_time = rospy.Time.now()
                     self.action_server.publish_result(self.status_tracker.status, result);
-      
+
                 else:
                     rospy.logerr("To transition to a succeeded state, the goal must be in a preempting or active state, it is currently in state: %d",
                                  status);
-                
+
         else:
             rospy.logerr("Attempt to set status on an uninitialized ServerGoalHandle");
 
@@ -212,7 +212,7 @@ class ServerGoalHandle:
         Send feedback to any clients of the goal associated with this ServerGoalHandle
         @param feedback The feedback to send to the client
         """
-        rospy.logdebug("Publishing feedback for goal, id: %s, stamp: %.2f", 
+        rospy.logdebug("Publishing feedback for goal, id: %s, stamp: %.2f",
                        self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal:
             with self.action_server.lock:
@@ -233,7 +233,7 @@ class ServerGoalHandle:
             #d = EnclosureDeleter(self.goal);
             #weakref.ref(boost::shared_ptr<const Goal>(&(goal_->goal), d);
             return self.goal.goal
-        
+
         return None
 
 
@@ -248,8 +248,8 @@ class ServerGoalHandle:
         else:
             rospy.logerr("Attempt to get a goal id on an uninitialized ServerGoalHandle");
             return actionlib_msgs.msg.GoalID();
-        
-        
+
+
     def get_goal_status(self):
         """
         Accessor for the status associated with the ServerGoalHandle
@@ -261,15 +261,15 @@ class ServerGoalHandle:
         else:
             rospy.logerr("Attempt to get goal status on an uninitialized ServerGoalHandle");
             return actionlib_msgs.msg.GoalStatus();
-        
-        
+
+
     def __eq__(self, other):
         """
         Equals operator for ServerGoalHandles
         @param other The ServerGoalHandle to compare to
         @return True if the ServerGoalHandles refer to the same goal, false otherwise
         """
-        
+
         if( not self.goal or not other.goal):
             return False;
         my_id = self.get_goal_id();
@@ -286,16 +286,22 @@ class ServerGoalHandle:
             return True;
         my_id = self.get_goal_id();
         their_id = other.get_goal_id();
-        
+
         return my_id.id != their_id.id;
 
+    def __hash__(self):
+        """
+        hash function for ServerGoalHandles
+        @return hash of the goal ID
+        """
+        return hash(self.get_goal_id().id)
 
     def set_cancel_requested(self):
         """
         A private method to set status to PENDING or RECALLING
         @return True if the cancel request should be passed on to the user, false otherwise
         """
-        rospy.logdebug("Transisitoning to a cancel requested state on goal id: %s, stamp: %.2f", 
+        rospy.logdebug("Transisitoning to a cancel requested state on goal id: %s, stamp: %.2f",
                        self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
         if self.goal:
             with self.action_server.lock:
@@ -311,14 +317,3 @@ class ServerGoalHandle:
                     return True;
 
         return False;
-
-
-
-
-
-
-
-
-
-
-

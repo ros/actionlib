@@ -31,7 +31,7 @@
 #*  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 #*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 #*  POSSIBILITY OF SUCH DAMAGE.
-#* 
+#*
 #* Author: Eitan Marder-Eppstein
 #***********************************************************
 """
@@ -170,7 +170,7 @@ class AXClientApp(wx.App):
         self.goal_st_bx = wx.StaticBox(self.frame, -1, "Goal")
         self.goal_st = wx.StaticBoxSizer(self.goal_st_bx, wx.VERTICAL)
         self.goal_st.Add(self.goal, 1, wx.EXPAND)
-        
+
         self.feedback = wx.TextCtrl(self.frame, -1, style=(wx.TE_MULTILINE |
                                                            wx.TE_READONLY))
         self.feedback_st_bx = wx.StaticBox(self.frame, -1, "Feedback")
@@ -229,20 +229,23 @@ def main():
 #    parser.add_option("-t","--test",action="store_true", dest="test",default=False,
 #                      help="A testing flag")
 #  parser.add_option("-v","--var",action="store",type="string", dest="var",default="blah")
-    
+
     (options, args) = parser.parse_args(rospy.myargv())
 
-    if (len(args) != 2):
-        parser.error("You must specify the action topic name Eg: ./axclient.py my_action_topic")
+    if (len(args) == 2):
+        # get action type via rostopic
+        topic_type = rostopic._get_topic_type("%s/goal"%args[1])[0]
+        # remove "Goal" string from action type
+        assert("Goal" in topic_type)
+        topic_type = topic_type[0:len(topic_type)-4]
+    elif (len(args) == 3):
+        topic_type = args[2]
+        print(topic_type)
+        assert("Action" in topic_type)
+    else:
+        parser.error("You must specify the action topic name (and optionally type) Eg: ./axclient.py action_topic actionlib/TwoIntsAction ")
 
-    # get action type from topic
-    topic_type = rostopic._get_topic_type("%s/goal"%args[1])[0]
-    # remove "Goal" string from action type
-    assert("Goal" in topic_type)
-    topic_type = topic_type[0:len(topic_type)-4]
-    
     action = DynamicAction(topic_type)
-
     app = AXClientApp(action, args[1])
     app.MainLoop()
     app.OnQuit()
