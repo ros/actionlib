@@ -25,10 +25,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from action_client import *
-from simple_action_client import *
-from action_server import *
-from simple_action_server import *
+from actionlib.action_client import *
+from actionlib.simple_action_client import *
+from actionlib.action_server import *
+from actionlib.simple_action_server import *
 
 
 
