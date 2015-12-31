@@ -61,7 +61,7 @@ from actionlib.exceptions import *
 g_goal_id = 1
 
 def get_name_of_constant(C, n):
-    for k,v in C.__dict__.iteritems():
+    for k, v in C.__dict__.items():
         if type(v) is int and v == n:
             return k
     return "NO_SUCH_STATE_%d" % n

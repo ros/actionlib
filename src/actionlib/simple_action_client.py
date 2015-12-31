@@ -33,7 +33,7 @@ import time
 import rospy
 from rospy import Header
 from actionlib_msgs.msg import *
-from action_client import ActionClient, CommState, get_name_of_constant
+from actionlib.action_client import ActionClient, CommState, get_name_of_constant
 
 class SimpleGoalState:
     PENDING = 0

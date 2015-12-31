@@ -35,11 +35,11 @@ import threading
 
 from actionlib_msgs.msg import *
 
-from goal_id_generator import GoalIDGenerator
-from status_tracker import StatusTracker
+from actionlib.goal_id_generator import GoalIDGenerator
+from actionlib.status_tracker import StatusTracker
 
-from handle_tracker_deleter import HandleTrackerDeleter
-from server_goal_handle import ServerGoalHandle
+from actionlib.handle_tracker_deleter import HandleTrackerDeleter
+from actionlib.server_goal_handle import ServerGoalHandle
 
 from actionlib.exceptions import *
 
