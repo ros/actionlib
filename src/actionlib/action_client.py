@@ -60,6 +60,7 @@ from actionlib.exceptions import *
 
 g_goal_id = 1
 
+
 def get_name_of_constant(C, n):
     for k, v in C.__dict__.items():
         if type(v) is int and v == n:
@@ -78,6 +79,7 @@ class CommState(object):
     DONE = 7
     LOST = 8
 
+
 class TerminalState(object):
     RECALLED = GoalStatus.RECALLED
     REJECTED = GoalStatus.REJECTED
@@ -91,11 +93,13 @@ GoalStatus.to_string = classmethod(get_name_of_constant)
 CommState.to_string = classmethod(get_name_of_constant)
 TerminalState.to_string = classmethod(get_name_of_constant)
 
+
 def _find_status_by_goal_id(status_array, id):
     for s in status_array.status_list:
         if s.goal_id.id == id:
             return s
     return None
+
 
 ## @brief Client side handle to monitor goal progress.
 ##
@@ -111,7 +115,7 @@ class ClientGoalHandle:
     def __init__(self, comm_state_machine):
         self.comm_state_machine = comm_state_machine
 
-        #print "GH created.  id = %.3f" % self.comm_state_machine.action_goal.goal_id.stamp.to_sec()
+        # print "GH created.  id = %.3f" % self.comm_state_machine.action_goal.goal_id.stamp.to_sec()
 
     ## @brief True iff the two ClientGoalHandle's are tracking the same goal
     def __eq__(self, o):
@@ -134,8 +138,8 @@ class ClientGoalHandle:
     ## Also transitions the client state to WAITING_FOR_CANCEL_ACK
     def cancel(self):
         with self.comm_state_machine.mutex:
-            cancel_msg = GoalID(stamp = rospy.Time(0),
-                                id = self.comm_state_machine.action_goal.goal_id.id)
+            cancel_msg = GoalID(stamp=rospy.Time(0),
+                                id=self.comm_state_machine.action_goal.goal_id.id)
             self.comm_state_machine.send_cancel_fn(cancel_msg)
             self.comm_state_machine.transition_to(CommState.WAITING_FOR_CANCEL_ACK)
 
@@ -200,7 +204,7 @@ class ClientGoalHandle:
         with self.comm_state_machine.mutex:
             if self.comm_state_machine.state != CommState.DONE:
                 rospy.logwarn("Asking for the terminal state when we're in [%s]",
-                             CommState.to_string(self.comm_state_machine.state))
+                              CommState.to_string(self.comm_state_machine.state))
 
             goal_status = self.comm_state_machine.latest_goal_status.status
             if goal_status in [GoalStatus.PREEMPTED, GoalStatus.SUCCEEDED,
@@ -210,8 +214,6 @@ class ClientGoalHandle:
 
             rospy.logerr("Asking for a terminal state, but the goal status is %d", goal_status)
             return GoalStatus.LOST
-
-
 
 
 NO_TRANSITION = -1
@@ -226,7 +228,7 @@ _transitions = {
         GoalStatus.PREEMPTED:  (CommState.ACTIVE, CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
         GoalStatus.SUCCEEDED:  (CommState.ACTIVE, CommState.WAITING_FOR_RESULT),
         GoalStatus.ABORTED:    (CommState.ACTIVE, CommState.WAITING_FOR_RESULT),
-        GoalStatus.PREEMPTING: (CommState.ACTIVE, CommState.PREEMPTING) },
+        GoalStatus.PREEMPTING: (CommState.ACTIVE, CommState.PREEMPTING)},
     CommState.PENDING: {
         GoalStatus.PENDING:    NO_TRANSITION,
         GoalStatus.ACTIVE:     CommState.ACTIVE,
@@ -236,7 +238,7 @@ _transitions = {
         GoalStatus.PREEMPTED:  (CommState.ACTIVE, CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
         GoalStatus.SUCCEEDED:  (CommState.ACTIVE, CommState.WAITING_FOR_RESULT),
         GoalStatus.ABORTED:    (CommState.ACTIVE, CommState.WAITING_FOR_RESULT),
-        GoalStatus.PREEMPTING: (CommState.ACTIVE, CommState.PREEMPTING) },
+        GoalStatus.PREEMPTING: (CommState.ACTIVE, CommState.PREEMPTING)},
     CommState.ACTIVE: {
         GoalStatus.PENDING:    INVALID_TRANSITION,
         GoalStatus.ACTIVE:     NO_TRANSITION,
@@ -246,7 +248,7 @@ _transitions = {
         GoalStatus.PREEMPTED:  (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
         GoalStatus.SUCCEEDED:  CommState.WAITING_FOR_RESULT,
         GoalStatus.ABORTED:    CommState.WAITING_FOR_RESULT,
-        GoalStatus.PREEMPTING: CommState.PREEMPTING },
+        GoalStatus.PREEMPTING: CommState.PREEMPTING},
     CommState.WAITING_FOR_RESULT: {
         GoalStatus.PENDING:    INVALID_TRANSITION,
         GoalStatus.ACTIVE:     NO_TRANSITION,
@@ -256,7 +258,7 @@ _transitions = {
         GoalStatus.PREEMPTED:  NO_TRANSITION,
         GoalStatus.SUCCEEDED:  NO_TRANSITION,
         GoalStatus.ABORTED:    NO_TRANSITION,
-        GoalStatus.PREEMPTING: INVALID_TRANSITION },
+        GoalStatus.PREEMPTING: INVALID_TRANSITION},
     CommState.WAITING_FOR_CANCEL_ACK: {
         GoalStatus.PENDING:    NO_TRANSITION,
         GoalStatus.ACTIVE:     NO_TRANSITION,
@@ -266,7 +268,7 @@ _transitions = {
         GoalStatus.PREEMPTED:  (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
         GoalStatus.SUCCEEDED:  (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
         GoalStatus.ABORTED:    (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
-        GoalStatus.PREEMPTING: CommState.PREEMPTING },
+        GoalStatus.PREEMPTING: CommState.PREEMPTING},
     CommState.RECALLING: {
         GoalStatus.PENDING:    INVALID_TRANSITION,
         GoalStatus.ACTIVE:     INVALID_TRANSITION,
@@ -276,7 +278,7 @@ _transitions = {
         GoalStatus.PREEMPTED:  (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
         GoalStatus.SUCCEEDED:  (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
         GoalStatus.ABORTED:    (CommState.PREEMPTING, CommState.WAITING_FOR_RESULT),
-        GoalStatus.PREEMPTING: CommState.PREEMPTING },
+        GoalStatus.PREEMPTING: CommState.PREEMPTING},
     CommState.PREEMPTING: {
         GoalStatus.PENDING:    INVALID_TRANSITION,
         GoalStatus.ACTIVE:     INVALID_TRANSITION,
@@ -286,7 +288,7 @@ _transitions = {
         GoalStatus.PREEMPTED:  CommState.WAITING_FOR_RESULT,
         GoalStatus.SUCCEEDED:  CommState.WAITING_FOR_RESULT,
         GoalStatus.ABORTED:    CommState.WAITING_FOR_RESULT,
-        GoalStatus.PREEMPTING: NO_TRANSITION },
+        GoalStatus.PREEMPTING: NO_TRANSITION},
     CommState.DONE: {
         GoalStatus.PENDING:    INVALID_TRANSITION,
         GoalStatus.ACTIVE:     INVALID_TRANSITION,
@@ -296,8 +298,7 @@ _transitions = {
         GoalStatus.PREEMPTED:  NO_TRANSITION,
         GoalStatus.SUCCEEDED:  NO_TRANSITION,
         GoalStatus.ABORTED:    NO_TRANSITION,
-        GoalStatus.PREEMPTING: INVALID_TRANSITION } }
-
+        GoalStatus.PREEMPTING: INVALID_TRANSITION}}
 
 
 class CommStateMachine:
@@ -310,7 +311,7 @@ class CommStateMachine:
 
         self.state = CommState.WAITING_FOR_GOAL_ACK
         self.mutex = threading.RLock()
-        self.latest_goal_status = GoalStatus(status = GoalStatus.PENDING)
+        self.latest_goal_status = GoalStatus(status=GoalStatus.PENDING)
         self.latest_result = None
 
     def __eq__(self, o):
@@ -411,7 +412,7 @@ class CommStateMachine:
         if self.action_goal.goal_id.id != action_feedback.status.goal_id.id:
             return
 
-        #with self.mutex:
+        # with self.mutex:
         if self.feedback_cb and self.state != CommState.DONE:
             self.feedback_cb(ClientGoalHandle(self), action_feedback.feedback)
 
@@ -439,21 +440,21 @@ class GoalManager:
         global g_goal_id
         id, g_goal_id = g_goal_id, g_goal_id + 1
         now = rospy.Time.now()
-        return GoalID(id = "%s-%i-%.3f" % \
-                          (rospy.get_caller_id(), id, now.to_sec()), stamp = now)
+        return GoalID(id="%s-%i-%.3f" % (rospy.get_caller_id(), id, now.to_sec()), stamp=now)
 
     def register_send_goal_fn(self, fn):
         self.send_goal_fn = fn
+
     def register_cancel_fn(self, fn):
         self.cancel_fn = fn
 
     ## Sends off a goal and starts tracking its status.
     ##
     ## @return ClientGoalHandle for the sent goal.
-    def init_goal(self, goal, transition_cb = None, feedback_cb = None):
-        action_goal = self.ActionGoal(header = Header(),
-                                      goal_id = self._generate_id(),
-                                      goal = goal)
+    def init_goal(self, goal, transition_cb=None, feedback_cb=None):
+        action_goal = self.ActionGoal(header=Header(),
+                                      goal_id=self._generate_id(),
+                                      goal=goal)
         action_goal.header.stamp = rospy.get_rostime()
 
         csm = CommStateMachine(action_goal, transition_cb, feedback_cb,
@@ -466,7 +467,6 @@ class GoalManager:
 
         return ClientGoalHandle(csm)
 
-
     # Pulls out the statuses that are still live (creating strong
     # references to them)
     def _get_live_statuses(self):
@@ -475,12 +475,11 @@ class GoalManager:
             live_statuses = filter(lambda x: x, live_statuses)
             return live_statuses
 
-
     ## Updates the statuses of all goals from the information in status_array.
     ##
     ## @param status_array (\c actionlib_msgs/GoalStatusArray)
     def update_statuses(self, status_array):
-        live_statuses = []
+        live_statuses = []  # TODO: unused local var.
 
         with self.list_mutex:
             # Garbage collects dead status objects
@@ -489,7 +488,6 @@ class GoalManager:
         for status in self._get_live_statuses():
             status.update_status(status_array)
 
-
     def update_results(self, action_result):
         for status in self._get_live_statuses():
             status.update_result(action_result)
@@ -497,6 +495,7 @@ class GoalManager:
     def update_feedbacks(self, action_feedback):
         for status in self._get_live_statuses():
             status.update_feedback(action_feedback)
+
 
 class ActionClient:
     ## @brief Constructs an ActionClient and opens connections to an ActionServer.
@@ -545,7 +544,7 @@ class ActionClient:
     ## message.
     ##
     ## @return ClientGoalHandle for the sent goal.
-    def send_goal(self, goal, transition_cb = None, feedback_cb = None):
+    def send_goal(self, goal, transition_cb=None, feedback_cb=None):
         return self.manager.init_goal(goal, transition_cb, feedback_cb)
 
     ## @brief Cancels all goals currently running on the action server.
@@ -553,8 +552,7 @@ class ActionClient:
     ## Preempts all goals running on the action server at the point
     ## that the cancel message is serviced by the action server.
     def cancel_all_goals(self):
-        cancel_msg = GoalID(stamp = rospy.Time.from_sec(0.0),
-                            id = "")
+        cancel_msg = GoalID(stamp=rospy.Time.from_sec(0.0), id="")
         self.pub_cancel.publish(cancel_msg)
 
     ## @brief Cancels all goals prior to a given timestamp
@@ -564,12 +562,12 @@ class ActionClient:
     ## this message is serviced by the ActionServer.
 
     def cancel_goals_at_and_before_time(self, time):
-        cancel_msg = GoalID(stamp = time, id = "")
+        cancel_msg = GoalID(stamp=time, id="")
         self.pub_cancel.publish(cancel_msg)
 
 
     ## @brief [Deprecated] Use wait_for_server
-    def wait_for_action_server_to_start(self, timeout = rospy.Duration(0.0)):
+    def wait_for_action_server_to_start(self, timeout=rospy.Duration(0.0)):
         return self.wait_for_server(timeout)
 
     ## @brief Waits for the ActionServer to connect to this client
@@ -577,7 +575,7 @@ class ActionClient:
     ## Often, it can take a second for the action server & client to negotiate
     ## a connection, thus, risking the first few goals to be dropped. This call lets
     ## the user wait until the network connection to the server is negotiated
-    def wait_for_server(self, timeout = rospy.Duration(0.0)):
+    def wait_for_server(self, timeout=rospy.Duration(0.0)):
         started = False
         timeout_time = rospy.get_rostime() + timeout
         while not rospy.is_shutdown():
@@ -586,9 +584,9 @@ class ActionClient:
 
                 if self.pub_goal.impl.has_connection(server_id) and \
                         self.pub_cancel.impl.has_connection(server_id):
-                    #We'll also check that all of the subscribers have at least
-                    #one publisher, this isn't a perfect check, but without
-                    #publisher callbacks... it'll have to do
+                    # We'll also check that all of the subscribers have at least
+                    # one publisher, this isn't a perfect check, but without
+                    # publisher callbacks... it'll have to do
                     status_num_pubs = 0
                     for stat in self.status_sub.impl.get_stats()[1]:
                         if stat[4]:
