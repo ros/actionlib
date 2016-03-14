@@ -2,6 +2,22 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* update maintainer
+* Merge pull request `#42 <https://github.com/ros/actionlib/issues/42>`_ from jonbinney/python3-compat
+  Python 3 compatibility changes
+* More readable iteration in state name lookup
+* Update syntax for exception handling
+* Iterate over dictionary in python3 compatible way
+* Use absolute imports for python3 compatibility
+* Merge pull request `#39 <https://github.com/ros/actionlib/issues/39>`_ from clearpathrobotics/action-fixup
+  Minor improvements
+* Enable UI feedback for preempt-requested goal in axserver.py
+* Clean up axclient.py initialization to allow starting before actionserver, requires action type passed in
+* Add hashes to ServerGoalHandle and ClientGoalHandles
+* Contributors: Esteve Fernandez, Jon Binney, Mikael Arguedas, Paul Bovbel
+
 1.11.4 (2015-04-22)
 -------------------
 * Initialize execute_thread_ to NULL
