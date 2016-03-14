@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.5 (2016-03-14)
+-------------------
 * update maintainer
 * Merge pull request `#42 <https://github.com/ros/actionlib/issues/42>`_ from jonbinney/python3-compat
   Python 3 compatibility changes
