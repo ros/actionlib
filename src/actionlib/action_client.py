@@ -479,7 +479,6 @@ class GoalManager:
     ##
     ## @param status_array (\c actionlib_msgs/GoalStatusArray)
     def update_statuses(self, status_array):
-        live_statuses = []  # TODO: unused local var.
 
         with self.list_mutex:
             # Garbage collects dead status objects
