@@ -28,4 +28,6 @@
 
 # Author: Jonathan Bohren
 
-class ActionException(Exception): pass
+
+class ActionException(Exception):
+    pass

@@ -1,9 +1,9 @@
 # Copyright (c) 2009, Willow Garage, Inc.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 #       notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above copyright
@@ -12,7 +12,7 @@
 #     * Neither the name of the Willow Garage, Inc. nor the names of its
 #       contributors may be used to endorse or promote products derived from
 #       this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -25,14 +25,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-# Author: Alexander Sorokin. 
+# Author: Alexander Sorokin.
 # Based on C++ goal_id_generator.h/cpp
-
 import rospy
 
-import actionlib
-import actionlib_msgs.msg 
-from actionlib import goal_id_generator 
+import actionlib_msgs.msg
+from actionlib import goal_id_generator
 
 
 class StatusTracker:
@@ -46,29 +44,29 @@ class StatusTracker:
         """
         @brief create status tracker. Either pass goal_id and status OR goal
         """
-        self.goal = None ;
-        self.handle_tracker = None;
-        self.status = actionlib_msgs.msg.GoalStatus();
+        self.goal = None
+        self.handle_tracker = None
+        self.status = actionlib_msgs.msg.GoalStatus()
 
-        self.handle_destruction_time = rospy.Time();
+        self.handle_destruction_time = rospy.Time()
 
-        self.id_generator = goal_id_generator.GoalIDGenerator();
+        self.id_generator = goal_id_generator.GoalIDGenerator()
 
         if goal_id:
-            #set the goal id and status appropriately
-            self.status.goal_id = goal_id;
-            self.status.status = status;
+            # set the goal id and status appropriately
+            self.status.goal_id = goal_id
+            self.status.status = status
         else:
             self.goal = goal
-            self.status.goal_id = goal.goal_id;
+            self.status.goal_id = goal.goal_id
 
-            #initialize the status of the goal to pending
-            self.status.status = actionlib_msgs.msg.GoalStatus.PENDING;
+            # initialize the status of the goal to pending
+            self.status.status = actionlib_msgs.msg.GoalStatus.PENDING
 
-            #if the goal id is zero, then we need to make up an id for the goal
+            # if the goal id is zero, then we need to make up an id for the goal
             if self.status.goal_id.id == "":
-                self.status.goal_id = self.id_generator.generate_ID();
+                self.status.goal_id = self.id_generator.generate_ID()
 
-            #if the timestamp of the goal is zero, then we'll set it to now()
+            # if the timestamp of the goal is zero, then we'll set it to now()
             if self.status.goal_id.stamp == rospy.Time():
-                self.status.goal_id.stamp = rospy.Time.now();
+                self.status.goal_id.stamp = rospy.Time.now()

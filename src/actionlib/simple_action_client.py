@@ -27,18 +27,18 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 # Author: Stuart Glaser
-
-import threading
-import time
 import rospy
-from rospy import Header
+import threading
+
 from actionlib_msgs.msg import *
 from actionlib.action_client import ActionClient, CommState, get_name_of_constant
+
 
 class SimpleGoalState:
     PENDING = 0
     ACTIVE = 1
     DONE = 2
+
 SimpleGoalState.to_string = classmethod(get_name_of_constant)
 
 
@@ -62,9 +62,8 @@ class SimpleActionClient:
     ## timeout is interpreted as an infinite timeout.
     ##
     ## @return True if the server connected in the allocated time. False on timeout
-    def wait_for_server(self, timeout = rospy.Duration()):
+    def wait_for_server(self, timeout=rospy.Duration()):
         return self.action_client.wait_for_server(timeout)
-
 
     ## @brief Sends a goal to the ActionServer, and also registers callbacks
     ##
@@ -80,7 +79,7 @@ class SimpleActionClient:
     ##
     ## @param feedback_cb Callback that gets called whenever feedback
     ## for this goal is received.  Takes one parameter: the feedback.
-    def send_goal(self, goal, done_cb = None, active_cb = None, feedback_cb = None):
+    def send_goal(self, goal, done_cb=None, active_cb=None, feedback_cb=None):
         # destroys the old goal handle
         self.stop_tracking_goal()
 
@@ -90,7 +89,6 @@ class SimpleActionClient:
 
         self.simple_state = SimpleGoalState.PENDING
         self.gh = self.action_client.send_goal(goal, self._handle_transition, self._handle_feedback)
-
 
     ## @brief Sends a goal to the ActionServer, waits for the goal to complete, and preempts goal is necessary
     ##
@@ -107,23 +105,23 @@ class SimpleActionClient:
     ## @param preempt_timeout The time to wait for preemption to complete
     ##
     ## @return The goal's state.
-    def send_goal_and_wait(self, goal, execute_timeout = rospy.Duration(), preempt_timeout = rospy.Duration()):
+    def send_goal_and_wait(self, goal, execute_timeout=rospy.Duration(), preempt_timeout=rospy.Duration()):
         self.send_goal(goal)
         if not self.wait_for_result(execute_timeout):
             # preempt action
             rospy.logdebug("Canceling goal")
             self.cancel_goal()
             if self.wait_for_result(preempt_timeout):
-                rospy.logdebug("Preempt finished within specified preempt_timeout [%.2f]", preempt_timeout.to_sec());
+                rospy.logdebug("Preempt finished within specified preempt_timeout [%.2f]", preempt_timeout.to_sec())
             else:
-                rospy.logdebug("Preempt didn't finish specified preempt_timeout [%.2f]", preempt_timeout.to_sec());
+                rospy.logdebug("Preempt didn't finish specified preempt_timeout [%.2f]", preempt_timeout.to_sec())
         return self.get_state()
 
 
     ## @brief Blocks until this goal transitions to done
     ## @param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
     ## @return True if the goal finished. False if the goal didn't finish within the allocated timeout
-    def wait_for_result(self, timeout = rospy.Duration()):
+    def wait_for_result(self, timeout=rospy.Duration()):
         if not self.gh:
             rospy.logerr("Called wait_for_goal_to_finish when no goal exists")
             return False
@@ -146,7 +144,6 @@ class SimpleActionClient:
 
         return self.simple_state == SimpleGoalState.DONE
 
-
     ## @brief Gets the Result of the current goal
     def get_result(self):
         if not self.gh:
@@ -154,7 +151,6 @@ class SimpleActionClient:
             return None
 
         return self.gh.get_result()
-
 
     ## @brief Get the state information for this goal
     ##
@@ -175,7 +171,6 @@ class SimpleActionClient:
             status = GoalStatus.ACTIVE
 
         return status
-
 
     ## @brief Returns the current status text of the goal.
     ##
@@ -203,7 +198,7 @@ class SimpleActionClient:
 
     ## @brief Cancels all goals prior to a given timestamp
     ##
-    ## This preempts all goals running on the action server for which the 
+    ## This preempts all goals running on the action server for which the
     ## time stamp is earlier than the specified time stamp
     ## this message is serviced by the ActionServer.
 
@@ -259,17 +254,15 @@ class SimpleActionClient:
 
     def _handle_feedback(self, gh, feedback):
         if not self.gh:
-            rospy.logerr("Got a feedback callback when we're not tracking a goal. (id: %s)" % \
-                             gh.comm_state_machine.action_goal.goal_id.id)
+            rospy.logerr("Got a feedback callback when we're not tracking a goal. (id: %s)" %
+                         gh.comm_state_machine.action_goal.goal_id.id)
             return
         if gh != self.gh:
-            rospy.logerr("Got a feedback callback on a goal handle that we're not tracking. %s vs %s" % \
-                             (self.gh.comm_state_machine.action_goal.goal_id.id,
-                              gh.comm_state_machine.action_goal.goal_id.id))
+            rospy.logerr("Got a feedback callback on a goal handle that we're not tracking. %s vs %s" %
+                         (self.gh.comm_state_machine.action_goal.goal_id.id, gh.comm_state_machine.action_goal.goal_id.id))
             return
         if self.feedback_cb:
             self.feedback_cb(feedback)
-
 
     def _set_simple_state(self, state):
         self.simple_state = state
