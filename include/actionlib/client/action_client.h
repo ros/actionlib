@@ -207,18 +207,26 @@ private:
 
   void initClient(ros::CallbackQueueInterface* queue)
   {
-    status_sub_   = queue_subscribe("status",   1, &ActionClientT::statusCb,   this, queue);
-    feedback_sub_ = queue_subscribe("feedback", 1, &ActionClientT::feedbackCb, this, queue);
-    result_sub_   = queue_subscribe("result",   1, &ActionClientT::resultCb,   this, queue);
+    // read parameters indicating publish/subscribe queue sizes
+    int pub_queue_size;
+    int sub_queue_size;
+    n_.param("actionlib_client_pub_queue_size", pub_queue_size, 10);
+    n_.param("actionlib_client_sub_queue_size", sub_queue_size, 1);
+    if (pub_queue_size < 0) pub_queue_size = 10;
+    if (sub_queue_size < 0) sub_queue_size = 1;
+
+    status_sub_   = queue_subscribe("status",   static_cast<uint32_t>(sub_queue_size), &ActionClientT::statusCb,   this, queue);
+    feedback_sub_ = queue_subscribe("feedback", static_cast<uint32_t>(sub_queue_size), &ActionClientT::feedbackCb, this, queue);
+    result_sub_   = queue_subscribe("result",   static_cast<uint32_t>(sub_queue_size), &ActionClientT::resultCb,   this, queue);
 
     connection_monitor_.reset(new ConnectionMonitor(feedback_sub_, status_sub_));
 
     // Start publishers and subscribers
-    goal_pub_ = queue_advertise<ActionGoal>("goal", 10,
+    goal_pub_ = queue_advertise<ActionGoal>("goal", static_cast<uint32_t>(pub_queue_size),
                                             boost::bind(&ConnectionMonitor::goalConnectCallback,    connection_monitor_, _1),
                                             boost::bind(&ConnectionMonitor::goalDisconnectCallback, connection_monitor_, _1),
                                             queue);
-    cancel_pub_ = queue_advertise<actionlib_msgs::GoalID>("cancel", 10,
+    cancel_pub_ = queue_advertise<actionlib_msgs::GoalID>("cancel", static_cast<uint32_t>(pub_queue_size),
                                             boost::bind(&ConnectionMonitor::cancelConnectCallback,    connection_monitor_, _1),
                                             boost::bind(&ConnectionMonitor::cancelDisconnectCallback, connection_monitor_, _1),
                                             queue);
