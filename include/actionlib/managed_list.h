@@ -69,6 +69,8 @@ public:
       iterator() { }
       T& operator*()  { return it_->elem; }
       T& operator->() { return it_->elem; }
+      const T& operator*()  const { return it_->elem; }
+      const T& operator->() const { return it_->elem; }
       bool operator==(const iterator& rhs) const { return it_ == rhs.it_; }
       bool operator!=(const iterator& rhs) const { return !(*this == rhs); }
       void operator++() { it_++; }
@@ -150,6 +152,12 @@ public:
        * \return Reference to the element this handle points to
        */
       T& getElem()
+      {
+        assert(valid_);
+        return *it_;
+      }
+      
+      const T& getElem() const
       {
         assert(valid_);
         return *it_;
