@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.6 (2016-06-22)
+-------------------
 * Python code cleanup (`#43 <https://github.com/ros/actionlib/issues/43>`_)
   * Cleaned up semicolons, indentation, spaces.
   * Removed unused local var after further confirmation of no risk of side effects.
