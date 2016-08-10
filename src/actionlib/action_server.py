@@ -290,7 +290,6 @@ class ActionServer:
 
     ## @brief  Publish status for all goals on a timer event
     def publish_status_async(self):
-        rospy.logdebug("Status async")
         with self.lock:
             # we won't publish status unless we've been started
             if not self.started:
