@@ -89,7 +89,7 @@ bool ClientGoalHandle<ActionSpec>::isExpired() const
 
 
 template<class ActionSpec>
-CommState ClientGoalHandle<ActionSpec>::getCommState()
+CommState ClientGoalHandle<ActionSpec>::getCommState() const
 {
   if (!active_)
   {
@@ -111,7 +111,7 @@ CommState ClientGoalHandle<ActionSpec>::getCommState()
 }
 
 template<class ActionSpec>
-TerminalState ClientGoalHandle<ActionSpec>::getTerminalState()
+TerminalState ClientGoalHandle<ActionSpec>::getTerminalState() const
 {
 
   if (!active_)
@@ -158,7 +158,7 @@ TerminalState ClientGoalHandle<ActionSpec>::getTerminalState()
 }
 
 template<class ActionSpec>
-typename ClientGoalHandle<ActionSpec>::ResultConstPtr ClientGoalHandle<ActionSpec>::getResult()
+typename ClientGoalHandle<ActionSpec>::ResultConstPtr ClientGoalHandle<ActionSpec>::getResult() const
 {
   if (!active_)
     ROS_ERROR_NAMED("actionlib", "Trying to getResult on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");

@@ -155,7 +155,7 @@ public:
    *                      WAITING_FOR_CANCEL_ACK, RECALLING, PREEMPTING, DONE
    * \return The current goal's communication state with the server
    */
-  CommState getCommState();
+  CommState getCommState() const;
 
   /**
    * \brief Get the terminal state information for this goal
@@ -164,14 +164,14 @@ public:
    * This call only makes sense if CommState==DONE. This will send ROS_WARNs if we're not in DONE
    * \return The terminal state
    */
-  TerminalState getTerminalState();
+  TerminalState getTerminalState() const;
 
   /**
    * \brief Get result associated with this goal
    *
    * \return NULL if no reseult received.  Otherwise returns shared_ptr to result.
    */
-  ResultConstPtr getResult();
+  ResultConstPtr getResult() const;
 
   /**
    * \brief Resends this goal [with the same GoalID] to the ActionServer

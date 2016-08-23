@@ -38,6 +38,7 @@
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/concept_check.hpp>
 
 #include "ros/ros.h"
 #include "ros/callback_queue.h"
@@ -45,7 +46,6 @@
 #include "actionlib/client/simple_goal_state.h"
 #include "actionlib/client/simple_client_goal_state.h"
 #include "actionlib/client/terminal_state.h"
-
 
 #ifndef DEPRECATED
 #if defined(__GNUC__)
@@ -124,13 +124,16 @@ public:
    * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
    * \return True if the server connected in the allocated time. False on timeout
    */
-  bool waitForServer(const ros::Duration& timeout = ros::Duration(0,0) ) { return ac_->waitForActionServerToStart(timeout); }
+  bool waitForServer(const ros::Duration& timeout = ros::Duration(0,0) ) const
+  {
+    return ac_->waitForActionServerToStart(timeout);
+  }
 
   /**
    * @brief  Checks if the action client is successfully connected to the action server
    * @return True if the server is connected, false otherwise
    */
-  bool isServerConnected()
+  bool isServerConnected() const
   {
     return ac_->isServerConnected();
   }
@@ -175,7 +178,7 @@ public:
    * \brief Get the Result of the current goal
    * \return shared pointer to the result. Note that this pointer will NEVER be NULL
    */
-  ResultConstPtr getResult();
+  ResultConstPtr getResult() const;
 
   /**
    * \brief Get the state information for this goal
@@ -183,7 +186,7 @@ public:
    * Possible States Are: PENDING, ACTIVE, RECALLED, REJECTED, PREEMPTED, ABORTED, SUCCEEDED, LOST.
    * \return The goal's state. Returns LOST if this SimpleActionClient isn't tracking a goal.
    */
-  SimpleClientGoalState getState();
+  SimpleClientGoalState getState() const;
 
   /**
    * \brief Cancel all goals currently running on the action server
@@ -331,7 +334,7 @@ void SimpleActionClient<ActionSpec>::sendGoal(const Goal& goal,
 }
 
 template<class ActionSpec>
-SimpleClientGoalState SimpleActionClient<ActionSpec>::getState()
+SimpleClientGoalState SimpleActionClient<ActionSpec>::getState() const
 {
   if (gh_.isExpired())
   {
@@ -395,7 +398,7 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::getState()
 }
 
 template<class ActionSpec>
-typename SimpleActionClient<ActionSpec>::ResultConstPtr SimpleActionClient<ActionSpec>::getResult()
+typename SimpleActionClient<ActionSpec>::ResultConstPtr SimpleActionClient<ActionSpec>::getResult() const
 {
   if (gh_.isExpired())
     ROS_ERROR_NAMED("actionlib", "Trying to getResult() when no goal is running. You are incorrectly using SimpleActionClient");
