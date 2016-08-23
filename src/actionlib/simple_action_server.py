@@ -266,8 +266,6 @@ class SimpleActionServer:
         loop_duration = rospy.Duration.from_sec(.1)
 
         while (not rospy.is_shutdown()):
-            rospy.logdebug("SAS: execute")
-
             with self.terminate_mutex:
                 if (self.need_to_terminate):
                     break
