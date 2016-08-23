@@ -173,7 +173,8 @@ class ActionServer:
             ar.header.stamp = rospy.Time.now()
             ar.status = status
             ar.result = result
-            self.result_pub.publish(ar)
+            if not rospy.is_shutdown():
+                self.result_pub.publish(ar)
             self.publish_status()
 
 
@@ -186,7 +187,8 @@ class ActionServer:
             af.header.stamp = rospy.Time.now()
             af.status = status
             af.feedback = feedback
-            self.feedback_pub.publish(af)
+            if not rospy.is_shutdown():
+                self.feedback_pub.publish(af)
 
 
     ## @brief  The ROS callback for cancel requests coming into the ActionServer
@@ -318,4 +320,5 @@ class ActionServer:
                     i += 1
 
             status_array.header.stamp = rospy.Time.now()
-            self.status_pub.publish(status_array)
+            if not rospy.is_shutdown():
+                self.status_pub.publish(status_array)
