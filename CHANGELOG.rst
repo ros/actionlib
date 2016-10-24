@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.7 (2016-10-24)
+-------------------
 * Merge pull request `#57 <https://github.com/ros/actionlib/issues/57>`_ from stonier/patch-1
   Remove misleading error log
 * Remove misleading error log
