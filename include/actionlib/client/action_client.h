@@ -165,6 +165,10 @@ public:
    */
   bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0) )
   {
+    // if ros::Time::isSimTime(), then wait for it to become valid
+    if(!ros::Time::waitForValid(ros::WallDuration(timeout.sec, timeout.nsec)))
+        return false;
+    
     if (connection_monitor_)
       return connection_monitor_->waitForActionServerToStart(timeout, n_);
     else
