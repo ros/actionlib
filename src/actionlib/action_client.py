@@ -518,16 +518,22 @@ class ActionClient:
         except AttributeError:
             raise ActionException("Type is not an action spec: %s" % str(ActionSpec))
 
-        self.pub_goal = rospy.Publisher(rospy.remap_name(ns) + '/goal', self.ActionGoal, queue_size=10)
-        self.pub_cancel = rospy.Publisher(rospy.remap_name(ns) + '/cancel', GoalID, queue_size=10)
+        self.pub_queue_size = rospy.get_param('actionlib_client_pub_queue_size', 10)
+        if self.pub_queue_size < 0 :
+            self.pub_queue_size = 10
+        self.pub_goal = rospy.Publisher(rospy.remap_name(ns) + '/goal', self.ActionGoal, queue_size=self.pub_queue_size)
+        self.pub_cancel = rospy.Publisher(rospy.remap_name(ns) + '/cancel', GoalID, queue_size=self.pub_queue_size)
 
         self.manager = GoalManager(ActionSpec)
         self.manager.register_send_goal_fn(self.pub_goal.publish)
         self.manager.register_cancel_fn(self.pub_cancel.publish)
 
-        self.status_sub = rospy.Subscriber(rospy.remap_name(ns) + '/status', GoalStatusArray, self._status_cb)
-        self.result_sub = rospy.Subscriber(rospy.remap_name(ns) + '/result', self.ActionResult, self._result_cb)
-        self.feedback_sub = rospy.Subscriber(rospy.remap_name(ns) + '/feedback', self.ActionFeedback, self._feedback_cb)
+        self.sub_queue_size = rospy.get_param('actionlib_client_sub_queue_size', None)
+        if self.sub_queue_size < 0:
+            self.sub_queue_size = None
+        self.status_sub = rospy.Subscriber(rospy.remap_name(ns) + '/status', GoalStatusArray, callback=self._status_cb, queue_size=self.sub_queue_size)
+        self.result_sub = rospy.Subscriber(rospy.remap_name(ns) + '/result', self.ActionResult, callback=self._result_cb, queue_size=self.sub_queue_size)
+        self.feedback_sub = rospy.Subscriber(rospy.remap_name(ns) + '/feedback', self.ActionFeedback, callback=self._feedback_cb, queue_size=self.sub_queue_size)
 
     ## @brief Sends a goal to the action server
     ##
