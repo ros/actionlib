@@ -137,13 +137,19 @@ class ActionServer:
 
     ## @brief  Initialize all ROS connections and setup timers
     def initialize(self):
-        self.status_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/status", GoalStatusArray, latch=True, queue_size=50)
-        self.result_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/result", self.ActionResult, queue_size=50)
-        self.feedback_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/feedback", self.ActionFeedback, queue_size=50)
+        self.pub_queue_size = rospy.get_param('actionlib_server_pub_queue_size', 50)
+        if self.pub_queue_size < 0:
+            self.pub_queue_size = 50
+        self.status_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/status", GoalStatusArray, latch=True, queue_size=self.pub_queue_size)
+        self.result_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/result", self.ActionResult, queue_size=self.pub_queue_size)
+        self.feedback_pub = rospy.Publisher(rospy.remap_name(self.ns)+"/feedback", self.ActionFeedback, queue_size=self.pub_queue_size)
 
-        self.goal_sub = rospy.Subscriber(rospy.remap_name(self.ns)+"/goal", self.ActionGoal, self.internal_goal_callback)
+        self.sub_queue_size = rospy.get_param('actionlib_server_sub_queue_size', None)
+        if self.sub_queue_size < 0:
+            self.sub_queue_size = None
+        self.goal_sub = rospy.Subscriber(rospy.remap_name(self.ns)+"/goal", self.ActionGoal, callback=self.internal_goal_callback, queue_size=self.sub_queue_size)
 
-        self.cancel_sub = rospy.Subscriber(rospy.remap_name(self.ns)+"/cancel", GoalID, self.internal_cancel_callback)
+        self.cancel_sub = rospy.Subscriber(rospy.remap_name(self.ns)+"/cancel", GoalID, callback=self.internal_cancel_callback, queue_size=self.sub_queue_size)
 
         # read the frequency with which to publish status from the parameter server
         # if not specified locally explicitly, use search param to find actionlib_status_frequency
