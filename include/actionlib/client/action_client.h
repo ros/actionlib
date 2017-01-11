@@ -211,6 +211,7 @@ private:
 
   void initClient(ros::CallbackQueueInterface* queue)
   {
+    ros::Time::waitForValid();
     // read parameters indicating publish/subscribe queue sizes
     int pub_queue_size;
     int sub_queue_size;
@@ -223,7 +224,7 @@ private:
     feedback_sub_ = queue_subscribe("feedback", static_cast<uint32_t>(sub_queue_size), &ActionClientT::feedbackCb, this, queue);
     result_sub_   = queue_subscribe("result",   static_cast<uint32_t>(sub_queue_size), &ActionClientT::resultCb,   this, queue);
 
-    connection_monitor_.reset(new ConnectionMonitor(feedback_sub_, status_sub_));
+    connection_monitor_.reset(new ConnectionMonitor(feedback_sub_, result_sub_));
 
     // Start publishers and subscribers
     goal_pub_ = queue_advertise<ActionGoal>("goal", static_cast<uint32_t>(pub_queue_size),
