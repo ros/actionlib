@@ -57,7 +57,7 @@ template <class Enclosure> class EnclosureDeleter {
   public:
     EnclosureDeleter(const boost::shared_ptr<Enclosure>& enc_ptr) : enc_ptr_(enc_ptr){}
 
-    template<class Member> void operator()(Member* member_ptr){
+    template<class Member> void operator()(Member*){
       enc_ptr_.reset();
     }
 
