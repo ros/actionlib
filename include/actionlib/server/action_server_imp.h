@@ -190,7 +190,7 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  void ActionServer<ActionSpec>::publishStatus(const ros::TimerEvent& e)
+  void ActionServer<ActionSpec>::publishStatus(const ros::TimerEvent&)
   {
     boost::recursive_mutex::scoped_lock lock(this->lock_);
     //we won't publish status unless we've been started
