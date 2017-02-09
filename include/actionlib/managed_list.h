@@ -91,7 +91,7 @@ private:
         it_(it), deleter_(deleter), guard_(guard)
       { }
 
-      void operator() (void* ptr)
+      void operator() (void*)
       {
         DestructionGuard::ScopedProtector protector(*guard_);
         if (!protector.isProtected())
