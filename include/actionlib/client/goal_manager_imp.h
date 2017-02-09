@@ -62,16 +62,16 @@ ClientGoalHandle<ActionSpec> GoalManager<ActionSpec>::initGoal(const Goal& goal,
   action_goal->goal_id = id_generator_.generateID();
   action_goal->goal = goal;
 
-  if (send_goal_func_)
-    send_goal_func_(action_goal);
-  else
-    ROS_WARN_NAMED("actionlib", "Possible coding error: send_goal_func_ set to NULL. Not going to send goal");
-
   typedef CommStateMachine<ActionSpec> CommStateMachineT;
   boost::shared_ptr<CommStateMachineT> comm_state_machine(new CommStateMachineT(action_goal, transition_cb, feedback_cb));
 
   boost::recursive_mutex::scoped_lock lock(list_mutex_);
   typename ManagedListT::Handle list_handle = list_.add(comm_state_machine, boost::bind(&GoalManagerT::listElemDeleter, this, _1), guard_);
+
+  if (send_goal_func_)
+    send_goal_func_(action_goal);
+  else
+    ROS_WARN_NAMED("actionlib", "Possible coding error: send_goal_func_ set to NULL. Not going to send goal");
 
   return GoalHandleT(this, list_handle, guard_);
 }
