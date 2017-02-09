@@ -79,14 +79,14 @@ TEST(SimpleClient, easy_tests)
 
 
 
-void easyDoneCallback(bool* called, const SimpleClientGoalState& state, const TestResultConstPtr& result)
+void easyDoneCallback(bool* called, const SimpleClientGoalState& state, const TestResultConstPtr&)
 {
   *called = true;
   EXPECT_TRUE(state == SimpleClientGoalState::SUCCEEDED)
     << "Expected [SUCCEEDED], but goal state is [" << state.toString() << "]";
 }
 
-void easyOldDoneCallback(bool* called, const TerminalState& terminal_state, const TestResultConstPtr& result)
+void easyOldDoneCallback(bool* called, const TerminalState& terminal_state, const TestResultConstPtr&)
 {
   *called = true;
   EXPECT_TRUE(terminal_state == TerminalState::SUCCEEDED)

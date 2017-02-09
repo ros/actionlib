@@ -92,7 +92,7 @@ void RefServer::goalCallback(GoalHandle gh)
   }
 }
 
-void RefServer::cancelCallback(GoalHandle gh)
+void RefServer::cancelCallback(GoalHandle)
 {
 
 
