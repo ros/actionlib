@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.8 (2017-02-17)
+-------------------
 * Fixes a deadlock (`#64 <https://github.com/ros/actionlib/issues/64>`_)
 * Removed unused variables warnings (`#63 <https://github.com/ros/actionlib/issues/63>`_ `#65 <https://github.com/ros/actionlib/issues/65>`_)
 * If using sim time, wait for /clock (`#59 <https://github.com/ros/actionlib/issues/59>`_)
