@@ -528,7 +528,7 @@ class ActionClient:
         self.manager.register_send_goal_fn(self.pub_goal.publish)
         self.manager.register_cancel_fn(self.pub_cancel.publish)
 
-        self.sub_queue_size = rospy.get_param('actionlib_client_sub_queue_size', None)
+        self.sub_queue_size = rospy.get_param('actionlib_client_sub_queue_size', -1)
         if self.sub_queue_size < 0:
             self.sub_queue_size = None
         self.status_sub = rospy.Subscriber(rospy.remap_name(ns) + '/status', GoalStatusArray, callback=self._status_cb, queue_size=self.sub_queue_size)

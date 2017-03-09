@@ -2,6 +2,14 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.8 (2017-02-17)
+-------------------
+* Fixes a deadlock (`#64 <https://github.com/ros/actionlib/issues/64>`_)
+* Removed unused variables warnings (`#63 <https://github.com/ros/actionlib/issues/63>`_ `#65 <https://github.com/ros/actionlib/issues/65>`_)
+* If using sim time, wait for /clock (`#59 <https://github.com/ros/actionlib/issues/59>`_)
+* add parameters to configure queue sizes (`#55 <https://github.com/ros/actionlib/pull/55>`_)
+* Contributors: Esteve Fernandez, Jonathan Meyer, Mikael Arguedas, Patrick Beeson, Robin Vanhove
+
 1.11.7 (2016-10-24)
 -------------------
 * Merge pull request `#57 <https://github.com/ros/actionlib/issues/57>`_ from stonier/patch-1
