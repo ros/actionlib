@@ -32,9 +32,10 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTIONLIB_CLIENT_SIMPLE_CLIENT_GOAL_STATE_H_
-#define ACTIONLIB_CLIENT_SIMPLE_CLIENT_GOAL_STATE_H_
+#ifndef ACTIONLIB__CLIENT__SIMPLE_CLIENT_GOAL_STATE_H_
+#define ACTIONLIB__CLIENT__SIMPLE_CLIENT_GOAL_STATE_H_
 
+#include <string>
 
 namespace actionlib
 {
@@ -58,24 +59,26 @@ public:
   StateEnum state_;
   std::string text_;
 
-  SimpleClientGoalState(const StateEnum& state, const std::string& text = std::string("")) : state_(state), text_(text) { }
+  explicit SimpleClientGoalState(const StateEnum & state,
+    const std::string & text = std::string(""))
+  : state_(state), text_(text) {}
 
-  inline bool operator==(const SimpleClientGoalState& rhs) const
+  inline bool operator==(const SimpleClientGoalState & rhs) const
   {
-    return (state_ == rhs.state_) ;
+    return state_ == rhs.state_;
   }
 
-  inline bool operator==(const SimpleClientGoalState::StateEnum& rhs) const
+  inline bool operator==(const SimpleClientGoalState::StateEnum & rhs) const
   {
-    return (state_ == rhs);
+    return state_ == rhs;
   }
 
-  inline bool operator!=(const SimpleClientGoalState::StateEnum& rhs) const
+  inline bool operator!=(const SimpleClientGoalState::StateEnum & rhs) const
   {
     return !(*this == rhs);
   }
 
-  inline bool operator!=(const SimpleClientGoalState& rhs) const
+  inline bool operator!=(const SimpleClientGoalState & rhs) const
   {
     return !(*this == rhs);
   }
@@ -86,8 +89,7 @@ public:
    */
   inline bool isDone() const
   {
-    switch(state_)
-    {
+    switch (state_) {
       case RECALLED:
       case REJECTED:
       case PREEMPTED:
@@ -108,8 +110,7 @@ public:
   //! \brief Convert the state to a string. Useful when printing debugging information
   std::string toString() const
   {
-    switch(state_)
-    {
+    switch (state_) {
       case PENDING:
         return "PENDING";
       case ACTIVE:
@@ -132,9 +133,8 @@ public:
     }
     return "BUG-UNKNOWN";
   }
-
 };
 
-}
+}  // namespace actionlib
 
-#endif // ACTIONLIB_CLIENT_SIMPLE_CLIENT_GOAL_STATE_H_
+#endif  // ACTIONLIB__CLIENT__SIMPLE_CLIENT_GOAL_STATE_H_

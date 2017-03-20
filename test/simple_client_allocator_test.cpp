@@ -41,19 +41,18 @@
 
 using namespace actionlib;
 
-TEST(SimpleClientAllocator, easy_test)
-{
-
+TEST(SimpleClientAllocator, easy_test) {
   typedef actionlib::SimpleActionClient<TestAction> TrajClient;
 
-  TrajClient* traj_client_ = new TrajClient("test_action", true);
+  TrajClient * traj_client_ = new TrajClient("test_action", true);
 
-  ros::Duration(1,0).sleep();
+  ros::Duration(1, 0).sleep();
 
   delete traj_client_;
 }
 
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   testing::InitGoogleTest(&argc, argv);
 
   ros::init(argc, argv, "simple_client_allocator");

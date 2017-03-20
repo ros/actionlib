@@ -32,13 +32,14 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTIONLIB_GOAL_MANAGER_H_
-#define ACTIONLIB_GOAL_MANAGER_H_
+#ifndef ACTIONLIB__CLIENT__CLIENT_HELPERS_H_
+#define ACTIONLIB__CLIENT__CLIENT_HELPERS_H_
 
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
+#include <vector>
 
 
 #include "actionlib/action_definition.h"
@@ -59,45 +60,47 @@
 namespace actionlib
 {
 
-template <class ActionSpec>
+template<class ActionSpec>
 class ClientGoalHandle;
 
-template <class ActionSpec>
+template<class ActionSpec>
 class CommStateMachine;
 
-template <class ActionSpec>
+template<class ActionSpec>
 class GoalManager
 {
 public:
   ACTION_DEFINITION(ActionSpec);
   typedef GoalManager<ActionSpec> GoalManagerT;
   typedef ClientGoalHandle<ActionSpec> GoalHandleT;
-  typedef boost::function<void (GoalHandleT) > TransitionCallback;
-  typedef boost::function<void (GoalHandleT, const FeedbackConstPtr&) > FeedbackCallback;
+  typedef boost::function<void (GoalHandleT)> TransitionCallback;
+  typedef boost::function<void (GoalHandleT, const FeedbackConstPtr &)> FeedbackCallback;
   typedef boost::function<void (const ActionGoalConstPtr)> SendGoalFunc;
-  typedef boost::function<void (const actionlib_msgs::GoalID&)> CancelFunc;
+  typedef boost::function<void (const actionlib_msgs::GoalID &)> CancelFunc;
 
-  GoalManager(const boost::shared_ptr<DestructionGuard>& guard) : guard_(guard) { }
+  explicit GoalManager(const boost::shared_ptr<DestructionGuard> & guard)
+  : guard_(guard) {}
 
   void registerSendGoalFunc(SendGoalFunc send_goal_func);
   void registerCancelFunc(CancelFunc cancel_func);
 
-  GoalHandleT initGoal( const Goal& goal,
-                        TransitionCallback transition_cb = TransitionCallback(),
-                        FeedbackCallback feedback_cb = FeedbackCallback() );
+  GoalHandleT initGoal(const Goal & goal,
+    TransitionCallback transition_cb = TransitionCallback(),
+    FeedbackCallback feedback_cb = FeedbackCallback() );
 
-  void updateStatuses(const actionlib_msgs::GoalStatusArrayConstPtr& status_array);
-  void updateFeedbacks(const ActionFeedbackConstPtr& action_feedback);
-  void updateResults(const ActionResultConstPtr& action_result);
+  void updateStatuses(const actionlib_msgs::GoalStatusArrayConstPtr & status_array);
+  void updateFeedbacks(const ActionFeedbackConstPtr & action_feedback);
+  void updateResults(const ActionResultConstPtr & action_result);
 
   friend class ClientGoalHandle<ActionSpec>;
 
   // should be private
-  typedef ManagedList< boost::shared_ptr<CommStateMachine<ActionSpec> > > ManagedListT;
+  typedef ManagedList<boost::shared_ptr<CommStateMachine<ActionSpec> > > ManagedListT;
   ManagedListT list_;
+
 private:
-  SendGoalFunc send_goal_func_ ;
-  CancelFunc cancel_func_ ;
+  SendGoalFunc send_goal_func_;
+  CancelFunc cancel_func_;
 
   boost::shared_ptr<DestructionGuard> guard_;
 
@@ -115,7 +118,7 @@ private:
  * of an already dispatched goal. Once all the goal handles go out of scope (or are reset), an
  * ActionClient stops maintaining state for that goal.
  */
-template <class ActionSpec>
+template<class ActionSpec>
 class ClientGoalHandle
 {
 private:
@@ -191,81 +194,86 @@ public:
    * \brief Check if two goal handles point to the same goal
    * \return TRUE if both point to the same goal. Also returns TRUE if both handles are inactive.
    */
-  bool operator==(const ClientGoalHandle<ActionSpec>& rhs) const;
+  bool operator==(const ClientGoalHandle<ActionSpec> & rhs) const;
 
   /**
    * \brief !(operator==())
    */
-  bool operator!=(const ClientGoalHandle<ActionSpec>& rhs) const;
+  bool operator!=(const ClientGoalHandle<ActionSpec> & rhs) const;
 
   friend class GoalManager<ActionSpec>;
+
 private:
   typedef GoalManager<ActionSpec> GoalManagerT;
-  typedef ManagedList< boost::shared_ptr<CommStateMachine<ActionSpec> > > ManagedListT;
+  typedef ManagedList<boost::shared_ptr<CommStateMachine<ActionSpec> > > ManagedListT;
 
-  ClientGoalHandle(GoalManagerT* gm, typename ManagedListT::Handle handle, const boost::shared_ptr<DestructionGuard>& guard);
+  ClientGoalHandle(GoalManagerT * gm, typename ManagedListT::Handle handle,
+    const boost::shared_ptr<DestructionGuard> & guard);
 
-  GoalManagerT* gm_;
+  GoalManagerT * gm_;
   bool active_;
-  //typename ManagedListT::iterator it_;
-  boost::shared_ptr<DestructionGuard> guard_;   // Guard must still exist when the list_handle_ is destroyed
+  // typename ManagedListT::iterator it_;
+  boost::shared_ptr<DestructionGuard> guard_;  // Guard must still exist when the list_handle_ is destroyed
   typename ManagedListT::Handle list_handle_;
 };
 
-template <class ActionSpec>
+template<class ActionSpec>
 class CommStateMachine
 {
-  private:
-    //generates typedefs that we'll use to make our lives easier
-    ACTION_DEFINITION(ActionSpec);
+private:
+  // generates typedefs that we'll use to make our lives easier
+  ACTION_DEFINITION(ActionSpec);
 
-  public:
-    typedef boost::function<void (const ClientGoalHandle<ActionSpec>&) > TransitionCallback;
-    typedef boost::function<void (const ClientGoalHandle<ActionSpec>&, const FeedbackConstPtr&) > FeedbackCallback;
-    typedef ClientGoalHandle<ActionSpec> GoalHandleT;
+public:
+  typedef boost::function<void (const ClientGoalHandle<ActionSpec> &)> TransitionCallback;
+  typedef boost::function<void (const ClientGoalHandle<ActionSpec> &,
+    const FeedbackConstPtr &)> FeedbackCallback;
+  typedef ClientGoalHandle<ActionSpec> GoalHandleT;
 
-    CommStateMachine(const ActionGoalConstPtr& action_goal,
-                     TransitionCallback transition_callback,
-                     FeedbackCallback feedback_callback);
+  CommStateMachine(const ActionGoalConstPtr & action_goal,
+    TransitionCallback transition_callback,
+    FeedbackCallback feedback_callback);
 
-    ActionGoalConstPtr getActionGoal() const;
-    CommState getCommState() const;
-    actionlib_msgs::GoalStatus getGoalStatus() const;
-    ResultConstPtr getResult() const;
+  ActionGoalConstPtr getActionGoal() const;
+  CommState getCommState() const;
+  actionlib_msgs::GoalStatus getGoalStatus() const;
+  ResultConstPtr getResult() const;
 
-    // Transitions caused by messages
-    void updateStatus(GoalHandleT& gh, const actionlib_msgs::GoalStatusArrayConstPtr& status_array);
-    void updateFeedback(GoalHandleT& gh, const ActionFeedbackConstPtr& feedback);
-    void updateResult(GoalHandleT& gh, const ActionResultConstPtr& result);
+  // Transitions caused by messages
+  void updateStatus(GoalHandleT & gh, const actionlib_msgs::GoalStatusArrayConstPtr & status_array);
+  void updateFeedback(GoalHandleT & gh, const ActionFeedbackConstPtr & feedback);
+  void updateResult(GoalHandleT & gh, const ActionResultConstPtr & result);
 
-    // Forced transitions
-    void transitionToState(GoalHandleT& gh, const CommState::StateEnum& next_state);
-    void transitionToState(GoalHandleT& gh, const CommState& next_state);
-    void processLost(GoalHandleT& gh);
-  private:
-    CommStateMachine();
+  // Forced transitions
+  void transitionToState(GoalHandleT & gh, const CommState::StateEnum & next_state);
+  void transitionToState(GoalHandleT & gh, const CommState & next_state);
+  void processLost(GoalHandleT & gh);
 
-    // State
-    CommState state_;
-    ActionGoalConstPtr action_goal_;
-    actionlib_msgs::GoalStatus latest_goal_status_;
-    ActionResultConstPtr latest_result_;
+private:
+  CommStateMachine();
 
-    // Callbacks
-    TransitionCallback transition_cb_;
-    FeedbackCallback   feedback_cb_;
+  // State
+  CommState state_;
+  ActionGoalConstPtr action_goal_;
+  actionlib_msgs::GoalStatus latest_goal_status_;
+  ActionResultConstPtr latest_result_;
 
-    // **** Implementation ****
-    //! Change the state, as well as print out ROS_DEBUG info
-    void setCommState(const CommState& state);
-    void setCommState(const CommState::StateEnum& state);
-    const actionlib_msgs::GoalStatus* findGoalStatus(const std::vector<actionlib_msgs::GoalStatus>& status_vec) const;
+  // Callbacks
+  TransitionCallback transition_cb_;
+  FeedbackCallback feedback_cb_;
+
+  // **** Implementation ****
+  //! Change the state, as well as print out ROS_DEBUG info
+  void setCommState(const CommState & state);
+  void setCommState(const CommState::StateEnum & state);
+  const actionlib_msgs::GoalStatus * findGoalStatus(
+    const std::vector<actionlib_msgs::GoalStatus> & status_vec) const;
 };
 
-}
+}  // namespace actionlib
 
 #include "actionlib/client/goal_manager_imp.h"
 #include "actionlib/client/client_goal_handle_imp.h"
 #include "actionlib/client/comm_state_machine_imp.h"
 
-#endif // ACTIONLIB_GOAL_MANAGER_H_
+#endif  // ACTIONLIB__CLIENT__CLIENT_HELPERS_H_

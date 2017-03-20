@@ -32,14 +32,16 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTION_LIB_GOAL_ID_GENERATOR_H_
-#define ACTION_LIB_GOAL_ID_GENERATOR_H_
+#ifndef ACTIONLIB__GOAL_ID_GENERATOR_H_
+#define ACTIONLIB__GOAL_ID_GENERATOR_H_
+
+#include <actionlib/decl.h>
 
 #include <sstream>
 #include <string>
+
 #include "ros/time.h"
 #include "actionlib_msgs/GoalID.h"
-#include <actionlib/decl.h>
 
 namespace actionlib
 {
@@ -47,7 +49,6 @@ namespace actionlib
 class ACTIONLIB_DECL GoalIDGenerator
 {
 public:
-
   /**
    * Create a generator that prepends the fully qualified node name to the Goal ID
    */
@@ -57,13 +58,13 @@ public:
    * \param name Unique name to prepend to the goal id. This will
    *             generally be a fully qualified node name.
    */
-  GoalIDGenerator(const std::string& name);
+  explicit GoalIDGenerator(const std::string & name);
 
   /**
    * \param name Set the name to prepend to the goal id. This will
    *             generally be a fully qualified node name.
    */
-  void setName(const std::string& name);
+  void setName(const std::string & name);
 
   /**
    * \brief Generates a unique ID
@@ -72,10 +73,9 @@ public:
   actionlib_msgs::GoalID generateID();
 
 private:
-  std::string name_ ;
-
+  std::string name_;
 };
 
-}
+}  // namespace actionlib
 
-#endif
+#endif  // ACTIONLIB__GOAL_ID_GENERATOR_H_

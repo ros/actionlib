@@ -32,8 +32,10 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTIONLIB_CLIENT_TERMINAL_STATE_H_
-#define ACTIONLIB_CLIENT_TERMINAL_STATE_H_
+#ifndef ACTIONLIB__CLIENT__TERMINAL_STATE_H_
+#define ACTIONLIB__CLIENT__TERMINAL_STATE_H_
+
+#include <string>
 
 namespace actionlib
 {
@@ -49,26 +51,27 @@ public:
     ABORTED,
     SUCCEEDED,
     LOST
-  } ;
+  };
 
-  TerminalState(const StateEnum& state, const std::string& text = std::string("")) : state_(state), text_(text) { }
+  explicit TerminalState(const StateEnum & state, const std::string & text = std::string(""))
+  : state_(state), text_(text) {}
 
-  inline bool operator==(const TerminalState& rhs) const
+  inline bool operator==(const TerminalState & rhs) const
   {
-    return (state_ == rhs.state_) ;
+    return state_ == rhs.state_;
   }
 
-  inline bool operator==(const TerminalState::StateEnum& rhs) const
+  inline bool operator==(const TerminalState::StateEnum & rhs) const
   {
-    return (state_ == rhs);
+    return state_ == rhs;
   }
 
-  inline bool operator!=(const TerminalState::StateEnum& rhs) const
+  inline bool operator!=(const TerminalState::StateEnum & rhs) const
   {
     return !(*this == rhs);
   }
 
-  inline bool operator!=(const TerminalState& rhs) const
+  inline bool operator!=(const TerminalState & rhs) const
   {
     return !(*this == rhs);
   }
@@ -80,8 +83,7 @@ public:
 
   std::string toString() const
   {
-    switch(state_)
-    {
+    switch (state_) {
       case RECALLED:
         return "RECALLED";
       case REJECTED:
@@ -104,11 +106,11 @@ public:
 
   StateEnum state_;
   std::string text_;
+
 private:
   TerminalState();
+};
 
-} ;
+}  // namespace actionlib
 
-}
-
-#endif
+#endif  // ACTIONLIB__CLIENT__TERMINAL_STATE_H_

@@ -32,15 +32,17 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTIONLIB_MANAGED_LIST_H_
-#define ACTIONLIB_MANAGED_LIST_H_
+#ifndef ACTIONLIB__MANAGED_LIST_H_
+#define ACTIONLIB__MANAGED_LIST_H_
 
-#include "ros/console.h"
+#include <actionlib/destruction_guard.h>
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
+
 #include <list>
-#include <actionlib/destruction_guard.h>
+
+#include "ros/console.h"
 
 namespace actionlib
 {
@@ -50,7 +52,7 @@ namespace actionlib
  * Provides handles elements in an STL list. When all the handles go out of scope,
  * the element in the list is destroyed.
  */
-template <class T>
+template<class T>
 class ManagedList
 {
 private:
@@ -65,150 +67,139 @@ public:
 
   class iterator
   {
-    public:
-      iterator() { }
-      T& operator*()  { return it_->elem; }
-      T& operator->() { return it_->elem; }
-      const T& operator*()  const { return it_->elem; }
-      const T& operator->() const { return it_->elem; }
-      bool operator==(const iterator& rhs) const { return it_ == rhs.it_; }
-      bool operator!=(const iterator& rhs) const { return !(*this == rhs); }
-      void operator++() { it_++; }
-      Handle createHandle();                   //!< \brief Creates a refcounted Handle from an iterator
-      friend class ManagedList;
-    private:
-      iterator(typename std::list<TrackedElem>::iterator it) : it_(it) { }
-      typename std::list<TrackedElem>::iterator it_;
+public:
+    iterator() {}
+    T & operator*() {return it_->elem; }
+    T & operator->() {return it_->elem; }
+    const T & operator*()  const {return it_->elem; }
+    const T & operator->() const {return it_->elem; }
+    bool operator==(const iterator & rhs) const {return it_ == rhs.it_; }
+    bool operator!=(const iterator & rhs) const {return !(*this == rhs); }
+    void operator++() {it_++; }
+    Handle createHandle();    //!< \brief Creates a refcounted Handle from an iterator
+    friend class ManagedList;
+
+private:
+    explicit iterator(typename std::list<TrackedElem>::iterator it)
+    : it_(it) {}
+    typename std::list<TrackedElem>::iterator it_;
   };
 
-  typedef typename boost::function< void(iterator)> CustomDeleter;
+  typedef typename boost::function<void (iterator)> CustomDeleter;
 
 private:
   class ElemDeleter
   {
-    public:
-      ElemDeleter(iterator it, CustomDeleter deleter, const boost::shared_ptr<DestructionGuard>& guard) :
-        it_(it), deleter_(deleter), guard_(guard)
-      { }
+public:
+    ElemDeleter(iterator it, CustomDeleter deleter,
+      const boost::shared_ptr<DestructionGuard> & guard)
+    : it_(it), deleter_(deleter), guard_(guard)
+    {}
 
-      void operator() (void*)
-      {
-        DestructionGuard::ScopedProtector protector(*guard_);
-        if (!protector.isProtected())
-        {
-          ROS_ERROR_NAMED("actionlib", "ManagedList: The DestructionGuard associated with this list has already been destructed. You must delete all list handles before deleting the ManagedList");
-          return;
-        }
-
-        ROS_DEBUG_NAMED("actionlib", "IN DELETER");
-        if (deleter_)
-          deleter_(it_);
+    void operator()(void *)
+    {
+      DestructionGuard::ScopedProtector protector(*guard_);
+      if (!protector.isProtected()) {
+        ROS_ERROR_NAMED("actionlib",
+          "ManagedList: The DestructionGuard associated with this list has already been destructed. You must delete all list handles before deleting the ManagedList");
+        return;
       }
 
-    private:
-      iterator it_;
-      CustomDeleter deleter_;
-      boost::shared_ptr<DestructionGuard> guard_;
+      ROS_DEBUG_NAMED("actionlib", "IN DELETER");
+      if (deleter_) {
+        deleter_(it_);
+      }
+    }
+
+private:
+    iterator it_;
+    CustomDeleter deleter_;
+    boost::shared_ptr<DestructionGuard> guard_;
   };
 
 public:
-
   class Handle
   {
-    public:
-      /**
-       * \brief Construct an empty handle
-       */
-      Handle() : it_(iterator()), handle_tracker_(boost::shared_ptr<void>()), valid_(false) { }
+public:
+    /**
+     * \brief Construct an empty handle
+     */
+    Handle()
+    : it_(iterator()), handle_tracker_(boost::shared_ptr<void>()), valid_(false) {}
 
-      const Handle& operator=(const Handle& rhs)
-      {
-    	if ( rhs.valid_ ) {
-          it_ = rhs.it_;
-    	}
-        handle_tracker_ = rhs.handle_tracker_;
-        valid_ = rhs.valid_;
-        return rhs;
+    const Handle & operator=(const Handle & rhs)
+    {
+      if (rhs.valid_) {
+        it_ = rhs.it_;
       }
+      handle_tracker_ = rhs.handle_tracker_;
+      valid_ = rhs.valid_;
+      return rhs;
+    }
 
-      /**
-       * \brief stop tracking the list element with this handle, even though the
-       * Handle hasn't gone out of scope
-       */
-      void reset()
-      {
-        valid_ = false;
+    /**
+     * \brief stop tracking the list element with this handle, even though the
+     * Handle hasn't gone out of scope
+     */
+    void reset()
+    {
+      valid_ = false;
 #ifndef _MSC_VER
-        // this prevents a crash on MSVC, but I bet the problem is elsewhere.
-        // it puts the lotion in the basket.
-        it_ = iterator();
+      // this prevents a crash on MSVC, but I bet the problem is elsewhere.
+      // it puts the lotion in the basket.
+      it_ = iterator();
 #endif
-        handle_tracker_.reset();
-      }
+      handle_tracker_.reset();
+    }
 
-      /**
-       * \brief get the list element that this handle points to
-       * fails/asserts if this is an empty handle
-       * \return Reference to the element this handle points to
-       */
-      T& getElem()
-      {
-        assert(valid_);
-        if (!valid_)
-        {
-          ROS_ERROR_NAMED("actionlib", "getElem() should not see invalid handles");
-        }
-        return *it_;
-      }
-      
-      const T& getElem() const
-      {
-        assert(valid_);
-        if (!valid_)
-        {
-          ROS_ERROR_NAMED("actionlib", "getElem() should not see invalid handles");
-        }
-        return *it_;
-      }
+    /**
+     * \brief get the list element that this handle points to
+     * fails/asserts if this is an empty handle
+     * \return Reference to the element this handle points to
+     */
+    T & getElem()
+    {
+      assert(valid_);
+      return *it_;
+    }
 
-      /**
-       * \brief Checks if two handles point to the same list elem
-       */
-      bool operator==(const Handle& rhs) const
-      {
-        assert(valid_);
-        if (!valid_)
-        {
-          ROS_ERROR_NAMED("actionlib", "operator== should not see invalid handles");
-        }
-        assert(rhs.valid_);
-        if (!rhs.valid_)
-        {
-          ROS_ERROR_NAMED("actionlib", "operator== should not see invalid RHS handles");
-        }
-        return (it_ == rhs.it_);
-      }
+    const T & getElem() const
+    {
+      assert(valid_);
+      return *it_;
+    }
 
-      friend class ManagedList;
-      // Need this friend declaration so that iterator::createHandle() can
-      // call the private Handle::Handle() declared below.
-      friend class iterator;
-    private:
-      Handle( const boost::shared_ptr<void>& handle_tracker, iterator it) :
-        it_(it), handle_tracker_(handle_tracker), valid_(true)
-      { }
+    /**
+     * \brief Checks if two handles point to the same list elem
+     */
+    bool operator==(const Handle & rhs) const
+    {
+      assert(valid_);
+      assert(rhs.valid_);
+      return it_ == rhs.it_;
+    }
 
-      iterator it_;
-      boost::shared_ptr<void> handle_tracker_;
-      bool valid_;
+    friend class ManagedList;
+    // Need this friend declaration so that iterator::createHandle() can
+    // call the private Handle::Handle() declared below.
+    friend class iterator;
+
+private:
+    Handle(const boost::shared_ptr<void> & handle_tracker, iterator it)
+    : it_(it), handle_tracker_(handle_tracker), valid_(true)
+    {}
+
+    iterator it_;
+    boost::shared_ptr<void> handle_tracker_;
+    bool valid_;
   };
 
-  ManagedList() { }
+  ManagedList() {}
 
   /**
    * \brief Add an element to the back of the ManagedList
    */
-  Handle add(const T& elem)
+  Handle add(const T & elem)
   {
     return add(elem, boost::bind(&ManagedList<T>::defaultDeleter, this, _1) );
   }
@@ -218,7 +209,8 @@ public:
    * \param elem The element we want to add
    * \param deleter Object on which operator() is called when refcount goes to 0
    */
-  Handle add(const T& elem, CustomDeleter custom_deleter, const boost::shared_ptr<DestructionGuard>& guard)
+  Handle add(const T & elem, CustomDeleter custom_deleter,
+    const boost::shared_ptr<DestructionGuard> & guard)
   {
     TrackedElem tracked_t;
     tracked_t.elem = elem;
@@ -227,7 +219,7 @@ public:
     iterator managed_it = iterator(list_it);
 
     ElemDeleter deleter(managed_it, custom_deleter, guard);
-    boost::shared_ptr<void> tracker( (void*) NULL, deleter);
+    boost::shared_ptr<void> tracker( (void *) NULL, deleter);
 
     list_it->handle_tracker_ = tracker;
 
@@ -242,8 +234,8 @@ public:
     list_.erase(it.it_);
   }
 
-  iterator end()    { return iterator(list_.end()); }
-  iterator begin()  { return iterator(list_.begin()); }
+  iterator end() {return iterator(list_.end()); }
+  iterator begin() {return iterator(list_.begin()); }
 
 private:
   void defaultDeleter(iterator it)
@@ -255,17 +247,16 @@ private:
 
 
 template<class T>
-typename ManagedList<T>::Handle ManagedList<T>::iterator::createHandle()
-{
-  if (it_->handle_tracker_.expired())
-  {
+typename ManagedList<T>::Handle ManagedList<T>::iterator::createHandle() {
+  if (it_->handle_tracker_.expired()) {
     ROS_ERROR_NAMED("actionlib", "Tried to create a handle to a list elem with refcount 0");
   }
+
   boost::shared_ptr<void> tracker = it_->handle_tracker_.lock();
 
   return Handle(tracker, *this);
 }
 
-}
+}  // namespace actionlib
 
-#endif
+#endif  // ACTIONLIB__MANAGED_LIST_H_

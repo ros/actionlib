@@ -37,8 +37,8 @@
 
 #include <boost/shared_ptr.hpp>
 
-#ifndef ACTIONLIB_ENCLOSURE_DELETER_H_
-#define ACTIONLIB_ENCLOSURE_DELETER_H_
+#ifndef ACTIONLIB__ENCLOSURE_DELETER_H_
+#define ACTIONLIB__ENCLOSURE_DELETER_H_
 
 namespace actionlib
 {
@@ -53,26 +53,31 @@ namespace actionlib
  * Enclosure ---------------  <--- Already reference counted
  * -----Member <------- A member of enclosure objects, eg. Enclosure.Member
  */
-template <class Enclosure> class EnclosureDeleter {
-  public:
-    EnclosureDeleter(const boost::shared_ptr<Enclosure>& enc_ptr) : enc_ptr_(enc_ptr){}
+template<class Enclosure>
+class EnclosureDeleter
+{
+public:
+  explicit EnclosureDeleter(const boost::shared_ptr<Enclosure> & enc_ptr)
+  : enc_ptr_(enc_ptr) {}
 
-    template<class Member> void operator()(Member*){
-      enc_ptr_.reset();
-    }
+  template<class Member>
+  void operator()(Member *)
+  {
+    enc_ptr_.reset();
+  }
 
-  private:
-    boost::shared_ptr<Enclosure> enc_ptr_;
+private:
+  boost::shared_ptr<Enclosure> enc_ptr_;
 };
 
-template <class Enclosure, class Member>
-boost::shared_ptr<Member> share_member(boost::shared_ptr<Enclosure> enclosure, Member &member)
+template<class Enclosure, class Member>
+boost::shared_ptr<Member> share_member(boost::shared_ptr<Enclosure> enclosure, Member & member)
 {
   EnclosureDeleter<Enclosure> d(enclosure);
   boost::shared_ptr<Member> p(&member, d);
   return p;
 }
 
-}
+}  // namespace actionlib
 
-#endif
+#endif  // ACTIONLIB__ENCLOSURE_DELETER_H_

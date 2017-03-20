@@ -34,10 +34,11 @@
 *
 * Author: Eitan Marder-Eppstein
 *********************************************************************/
-#ifndef ACTION_DEFINITION_H_
-#define ACTION_DEFINITION_H_
-//A macro that will generate helpful typedefs for action client, server, and policy implementers
-namespace actionlib {
+#ifndef ACTIONLIB__ACTION_DEFINITION_H_
+#define ACTIONLIB__ACTION_DEFINITION_H_
+// A macro that will generate helpful typedefs for action client, server, and policy implementers
+namespace actionlib
+{
 #define ACTION_DEFINITION(ActionSpec) \
   typedef typename ActionSpec::_action_goal_type ActionGoal; \
   typedef typename ActionGoal::_goal_type Goal; \
@@ -45,16 +46,15 @@ namespace actionlib {
   typedef typename ActionResult::_result_type Result; \
   typedef typename ActionSpec::_action_feedback_type ActionFeedback; \
   typedef typename ActionFeedback::_feedback_type Feedback; \
-  \
+ \
   typedef boost::shared_ptr<const ActionGoal> ActionGoalConstPtr; \
   typedef boost::shared_ptr<ActionGoal> ActionGoalPtr; \
-  typedef boost::shared_ptr<const Goal> GoalConstPtr;\
-  \
+  typedef boost::shared_ptr<const Goal> GoalConstPtr; \
+ \
   typedef boost::shared_ptr<const ActionResult> ActionResultConstPtr; \
-  typedef boost::shared_ptr<const Result> ResultConstPtr;\
-  \
+  typedef boost::shared_ptr<const Result> ResultConstPtr; \
+ \
   typedef boost::shared_ptr<const ActionFeedback> ActionFeedbackConstPtr; \
   typedef boost::shared_ptr<const Feedback> FeedbackConstPtr;
-};
-#endif
-
+}  // namespace actionlib
+#endif  // ACTIONLIB__ACTION_DEFINITION_H_

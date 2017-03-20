@@ -34,38 +34,47 @@
 *
 * Author: Eitan Marder-Eppstein
 *********************************************************************/
-#ifndef ACTIONLIB_SERVER_SERVICE_SERVER_IMP_H_
-#define ACTIONLIB_SERVER_SERVICE_SERVER_IMP_H_
-namespace actionlib {
-  template <class ActionSpec>
-  ServiceServer advertiseService(ros::NodeHandle n, std::string name,
-          boost::function<bool (const typename ActionSpec::_action_goal_type::_goal_type&, 
-                                typename ActionSpec::_action_result_type::_result_type& result)> service_cb)
-  {
-    boost::shared_ptr<ServiceServerImp> server_ptr(new ServiceServerImpT<ActionSpec>(n, name, service_cb));
-    return ServiceServer(server_ptr);
-  }
+#ifndef ACTIONLIB__SERVER__SERVICE_SERVER_IMP_H_
+#define ACTIONLIB__SERVER__SERVICE_SERVER_IMP_H_
 
-  template <class ActionSpec>
-  ServiceServerImpT<ActionSpec>::ServiceServerImpT(ros::NodeHandle n, std::string name, 
-      boost::function<bool (const Goal&, Result& result)> service_cb)
-      : service_cb_(service_cb)
-  {
-    as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n, name,
-          boost::bind(&ServiceServerImpT::goalCB, this, _1), false));
-    as_->start();
-  }
+#include <string>
 
-  template <class ActionSpec>
-  void ServiceServerImpT<ActionSpec>::goalCB(GoalHandle goal){
-    goal.setAccepted("This goal has been accepted by the service server");
+namespace actionlib
+{
 
-    //we need to pass the result into the users callback
-    Result r;
-    if(service_cb_(*(goal.getGoal()), r))
-      goal.setSucceeded(r, "The service server successfully processed the request");
-    else
-      goal.setAborted(r, "The service server failed to process the request");
+template<class ActionSpec>
+ServiceServer advertiseService(ros::NodeHandle n, std::string name,
+  boost::function<bool(const typename ActionSpec::_action_goal_type::_goal_type &,
+  typename ActionSpec::_action_result_type::_result_type & result)> service_cb)
+{
+  boost::shared_ptr<ServiceServerImp> server_ptr(new ServiceServerImpT<ActionSpec>(n, name,
+    service_cb));
+  return ServiceServer(server_ptr);
+}
+
+template<class ActionSpec>
+ServiceServerImpT<ActionSpec>::ServiceServerImpT(ros::NodeHandle n, std::string name,
+  boost::function<bool(const Goal &, Result & result)> service_cb)
+: service_cb_(service_cb)
+{
+  as_ = boost::shared_ptr<ActionServer<ActionSpec>>(new ActionServer<ActionSpec>(n, name,
+      boost::bind(&ServiceServerImpT::goalCB, this, _1), false));
+  as_->start();
+}
+
+template<class ActionSpec>
+void ServiceServerImpT<ActionSpec>::goalCB(GoalHandle goal)
+{
+  goal.setAccepted("This goal has been accepted by the service server");
+
+  // we need to pass the result into the users callback
+  Result r;
+  if (service_cb_(*(goal.getGoal()), r)) {
+    goal.setSucceeded(r, "The service server successfully processed the request");
+  } else {
+    goal.setAborted(r, "The service server failed to process the request");
   }
-};
-#endif
+}
+
+}  // namespace actionlib
+#endif  // ACTIONLIB__SERVER__SERVICE_SERVER_IMP_H_

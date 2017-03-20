@@ -35,28 +35,29 @@
 #include <ros/ros.h>
 #include <actionlib/goal_id_generator.h>
 #include <boost/thread/mutex.hpp>
+#include <string>
 
-using namespace actionlib;
+// using namespace actionlib;
 
 static boost::mutex s_goalcount_mutex_;
 static unsigned int s_goalcount_ = 0;
 
-GoalIDGenerator::GoalIDGenerator()
+actionlib::GoalIDGenerator::GoalIDGenerator()
 {
   setName(ros::this_node::getName());
 }
 
-GoalIDGenerator::GoalIDGenerator(const std::string& name)
+actionlib::GoalIDGenerator::GoalIDGenerator(const std::string & name)
 {
   setName(name);
 }
 
-void GoalIDGenerator::setName(const std::string& name)
+void actionlib::GoalIDGenerator::setName(const std::string & name)
 {
   name_ = name;
 }
 
-actionlib_msgs::GoalID GoalIDGenerator::generateID()
+actionlib_msgs::GoalID actionlib::GoalIDGenerator::generateID()
 {
   actionlib_msgs::GoalID id;
   ros::Time cur_time = ros::Time::now();

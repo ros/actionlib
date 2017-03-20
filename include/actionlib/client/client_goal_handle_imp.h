@@ -35,6 +35,8 @@
 /* This file has the template implementation for ClientGoalHandle. It should be included with the
  * class definition.
  */
+#ifndef ACTIONLIB__CLIENT__CLIENT_GOAL_HANDLE_IMP_H_
+#define ACTIONLIB__CLIENT__CLIENT_GOAL_HANDLE_IMP_H_
 
 namespace actionlib
 {
@@ -53,8 +55,9 @@ ClientGoalHandle<ActionSpec>::~ClientGoalHandle()
 }
 
 template<class ActionSpec>
-ClientGoalHandle<ActionSpec>::ClientGoalHandle(GoalManagerT* gm, typename ManagedListT::Handle handle,
-                                               const boost::shared_ptr<DestructionGuard>& guard)
+ClientGoalHandle<ActionSpec>::ClientGoalHandle(GoalManagerT * gm,
+  typename ManagedListT::Handle handle,
+  const boost::shared_ptr<DestructionGuard> & guard)
 {
   gm_ = gm;
   active_ = true;
@@ -65,12 +68,11 @@ ClientGoalHandle<ActionSpec>::ClientGoalHandle(GoalManagerT* gm, typename Manage
 template<class ActionSpec>
 void ClientGoalHandle<ActionSpec>::reset()
 {
-  if (active_)
-  {
+  if (active_) {
     DestructionGuard::ScopedProtector protector(*guard_);
-    if (!protector.isProtected())
-    {
-      ROS_ERROR_NAMED("actionlib", "This action client associated with the goal handle has already been destructed. Ignoring this reset() call");
+    if (!protector.isProtected()) {
+      ROS_ERROR_NAMED("actionlib",
+        "This action client associated with the goal handle has already been destructed. Ignoring this reset() call");
       return;
     }
 
@@ -92,23 +94,22 @@ template<class ActionSpec>
 CommState ClientGoalHandle<ActionSpec>::getCommState() const
 {
   assert(gm_);
-  if (!gm_)
-  {
+  if (!gm_) {
     ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return CommState(CommState::DONE);
   }
 
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
-  if (!active_)
-  {
-    ROS_ERROR_NAMED("actionlib", "Trying to getCommState on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
+  if (!active_) {
+    ROS_ERROR_NAMED("actionlib",
+      "Trying to getCommState on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
     return CommState(CommState::DONE);
   }
 
   DestructionGuard::ScopedProtector protector(*guard_);
-  if (!protector.isProtected())
-  {
-    ROS_ERROR_NAMED("actionlib", "This action client associated with the goal handle has already been destructed. Ignoring this getCommState() call");
+  if (!protector.isProtected()) {
+    ROS_ERROR_NAMED("actionlib",
+      "This action client associated with the goal handle has already been destructed. Ignoring this getCommState() call");
     return CommState(CommState::DONE);
   }
 
@@ -118,17 +119,16 @@ CommState ClientGoalHandle<ActionSpec>::getCommState() const
 template<class ActionSpec>
 TerminalState ClientGoalHandle<ActionSpec>::getTerminalState() const
 {
-
-  if (!active_)
-  {
-    ROS_ERROR_NAMED("actionlib", "Trying to getTerminalState on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
+  if (!active_) {
+    ROS_ERROR_NAMED("actionlib",
+      "Trying to getTerminalState on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
     return TerminalState(TerminalState::LOST);
   }
 
   DestructionGuard::ScopedProtector protector(*guard_);
-  if (!protector.isProtected())
-  {
-    ROS_ERROR_NAMED("actionlib", "This action client associated with the goal handle has already been destructed. Ignoring this getTerminalState() call");
+  if (!protector.isProtected()) {
+    ROS_ERROR_NAMED("actionlib",
+      "This action client associated with the goal handle has already been destructed. Ignoring this getTerminalState() call");
     return TerminalState(TerminalState::LOST);
   }
 
@@ -141,24 +141,33 @@ TerminalState ClientGoalHandle<ActionSpec>::getTerminalState() const
 
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
   CommState comm_state_ = list_handle_.getElem()->getCommState();
-  if (comm_state_ != CommState::DONE)
-    ROS_WARN_NAMED("actionlib", "Asking for the terminal state when we're in [%s]", comm_state_.toString().c_str());
+  if (comm_state_ != CommState::DONE) {
+    ROS_WARN_NAMED("actionlib", "Asking for the terminal state when we're in [%s]",
+      comm_state_.toString().c_str());
+  }
 
   actionlib_msgs::GoalStatus goal_status = list_handle_.getElem()->getGoalStatus();
 
-  switch (goal_status.status)
-  {
+  switch (goal_status.status) {
     case actionlib_msgs::GoalStatus::PENDING:
     case actionlib_msgs::GoalStatus::ACTIVE:
     case actionlib_msgs::GoalStatus::PREEMPTING:
     case actionlib_msgs::GoalStatus::RECALLING:
-      ROS_ERROR_NAMED("actionlib", "Asking for terminal state, but latest goal status is %u", goal_status.status); return TerminalState(TerminalState::LOST, goal_status.text);
-    case actionlib_msgs::GoalStatus::PREEMPTED: return TerminalState(TerminalState::PREEMPTED, goal_status.text);
-    case actionlib_msgs::GoalStatus::SUCCEEDED: return TerminalState(TerminalState::SUCCEEDED, goal_status.text);
-    case actionlib_msgs::GoalStatus::ABORTED:   return TerminalState(TerminalState::ABORTED, goal_status.text);
-    case actionlib_msgs::GoalStatus::REJECTED:  return TerminalState(TerminalState::REJECTED, goal_status.text);
-    case actionlib_msgs::GoalStatus::RECALLED:  return TerminalState(TerminalState::RECALLED, goal_status.text);
-    case actionlib_msgs::GoalStatus::LOST:      return TerminalState(TerminalState::LOST, goal_status.text);
+      ROS_ERROR_NAMED("actionlib", "Asking for terminal state, but latest goal status is %u",
+        goal_status.status); return TerminalState(TerminalState::LOST,
+               goal_status.text);
+    case actionlib_msgs::GoalStatus::PREEMPTED: return TerminalState(TerminalState::PREEMPTED,
+               goal_status.text);
+    case actionlib_msgs::GoalStatus::SUCCEEDED: return TerminalState(TerminalState::SUCCEEDED,
+               goal_status.text);
+    case actionlib_msgs::GoalStatus::ABORTED:   return TerminalState(TerminalState::ABORTED,
+               goal_status.text);
+    case actionlib_msgs::GoalStatus::REJECTED:  return TerminalState(TerminalState::REJECTED,
+               goal_status.text);
+    case actionlib_msgs::GoalStatus::RECALLED:  return TerminalState(TerminalState::RECALLED,
+               goal_status.text);
+    case actionlib_msgs::GoalStatus::LOST:      return TerminalState(TerminalState::LOST,
+               goal_status.text);
     default:
       ROS_ERROR_NAMED("actionlib", "Unknown goal status: %u", goal_status.status); break;
   }
@@ -168,24 +177,24 @@ TerminalState ClientGoalHandle<ActionSpec>::getTerminalState() const
 }
 
 template<class ActionSpec>
-typename ClientGoalHandle<ActionSpec>::ResultConstPtr ClientGoalHandle<ActionSpec>::getResult() const
+typename ClientGoalHandle<ActionSpec>::ResultConstPtr ClientGoalHandle<ActionSpec>::getResult()
+const
 {
-  if (!active_)
-  {
-    ROS_ERROR_NAMED("actionlib", "Trying to getResult on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
+  if (!active_) {
+    ROS_ERROR_NAMED("actionlib",
+      "Trying to getResult on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
   }
   assert(gm_);
-  if (!gm_)
-  {
+  if (!gm_) {
     ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return typename ClientGoalHandle<ActionSpec>::ResultConstPtr() ;
   }
 
   DestructionGuard::ScopedProtector protector(*guard_);
-  if (!protector.isProtected())
-  {
-    ROS_ERROR_NAMED("actionlib", "This action client associated with the goal handle has already been destructed. Ignoring this getResult() call");
-    return typename ClientGoalHandle<ActionSpec>::ResultConstPtr() ;
+  if (!protector.isProtected()) {
+    ROS_ERROR_NAMED("actionlib",
+      "This action client associated with the goal handle has already been destructed. Ignoring this getResult() call");
+    return typename ClientGoalHandle<ActionSpec>::ResultConstPtr();
   }
 
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
@@ -195,15 +204,15 @@ typename ClientGoalHandle<ActionSpec>::ResultConstPtr ClientGoalHandle<ActionSpe
 template<class ActionSpec>
 void ClientGoalHandle<ActionSpec>::resend()
 {
-  if (!active_)
-  {
-    ROS_ERROR_NAMED("actionlib", "Trying to resend() on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
+  if (!active_) {
+    ROS_ERROR_NAMED("actionlib",
+      "Trying to resend() on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
   }
 
   DestructionGuard::ScopedProtector protector(*guard_);
-  if (!protector.isProtected())
-  {
-    ROS_ERROR_NAMED("actionlib", "This action client associated with the goal handle has already been destructed. Ignoring this resend() call");
+  if (!protector.isProtected()) {
+    ROS_ERROR_NAMED("actionlib",
+      "This action client associated with the goal handle has already been destructed. Ignoring this resend() call");
     return;
   }
 
@@ -218,21 +227,21 @@ void ClientGoalHandle<ActionSpec>::resend()
 
   ActionGoalConstPtr action_goal = list_handle_.getElem()->getActionGoal();
 
-  if (!action_goal)
-  {
+  if (!action_goal) {
     ROS_ERROR_NAMED("actionlib", "BUG: Got a NULL action_goal");
   }
 
-  if (gm_->send_goal_func_)
+  if (gm_->send_goal_func_) {
     gm_->send_goal_func_(action_goal);
+  }
 }
 
 template<class ActionSpec>
 void ClientGoalHandle<ActionSpec>::cancel()
 {
-  if (!active_)
-  {
-    ROS_ERROR_NAMED("actionlib", "Trying to cancel() on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
+  if (!active_) {
+    ROS_ERROR_NAMED("actionlib",
+      "Trying to cancel() on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
     return;
   }
 
@@ -244,69 +253,75 @@ void ClientGoalHandle<ActionSpec>::cancel()
   }
 
   DestructionGuard::ScopedProtector protector(*guard_);
-  if (!protector.isProtected())
-  {
-    ROS_ERROR_NAMED("actionlib", "This action client associated with the goal handle has already been destructed. Ignoring this call");
+  if (!protector.isProtected()) {
+    ROS_ERROR_NAMED("actionlib",
+      "This action client associated with the goal handle has already been destructed. Ignoring this call");
     return;
   }
 
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
 
-  switch(list_handle_.getElem()->getCommState().state_)
-  {
+  switch (list_handle_.getElem()->getCommState().state_) {
     case CommState::WAITING_FOR_GOAL_ACK:
     case CommState::PENDING:
     case CommState::ACTIVE:
     case CommState::WAITING_FOR_CANCEL_ACK:
-      break; // Continue standard processing
+      break;  // Continue standard processing
     case CommState::WAITING_FOR_RESULT:
     case CommState::RECALLING:
     case CommState::PREEMPTING:
     case CommState::DONE:
-      ROS_DEBUG_NAMED("actionlib", "Got a cancel() request while in state [%s], so ignoring it", list_handle_.getElem()->getCommState().toString().c_str());
+      ROS_DEBUG_NAMED("actionlib", "Got a cancel() request while in state [%s], so ignoring it",
+        list_handle_.getElem()->getCommState().toString().c_str());
       return;
     default:
-      ROS_ERROR_NAMED("actionlib", "BUG: Unhandled CommState: %u", list_handle_.getElem()->getCommState().state_);
+      ROS_ERROR_NAMED("actionlib", "BUG: Unhandled CommState: %u",
+        list_handle_.getElem()->getCommState().state_);
       return;
   }
 
   ActionGoalConstPtr action_goal = list_handle_.getElem()->getActionGoal();
 
   actionlib_msgs::GoalID cancel_msg;
-  cancel_msg.stamp = ros::Time(0,0);
+  cancel_msg.stamp = ros::Time(0, 0);
   cancel_msg.id = list_handle_.getElem()->getActionGoal()->goal_id.id;
 
-  if (gm_->cancel_func_)
+  if (gm_->cancel_func_) {
     gm_->cancel_func_(cancel_msg);
+  }
 
   list_handle_.getElem()->transitionToState(*this, CommState::WAITING_FOR_CANCEL_ACK);
 }
 
 template<class ActionSpec>
-bool ClientGoalHandle<ActionSpec>::operator==(const ClientGoalHandle<ActionSpec>& rhs) const
+bool ClientGoalHandle<ActionSpec>::operator==(const ClientGoalHandle<ActionSpec> & rhs) const
 {
   // Check if both are inactive
-  if (!active_ && !rhs.active_)
+  if (!active_ && !rhs.active_) {
     return true;
+  }
 
   // Check if one or the other is inactive
-  if (!active_ || !rhs.active_)
-    return false;
-
-  DestructionGuard::ScopedProtector protector(*guard_);
-  if (!protector.isProtected())
-  {
-    ROS_ERROR_NAMED("actionlib", "This action client associated with the goal handle has already been destructed. Ignoring this operator==() call");
+  if (!active_ || !rhs.active_) {
     return false;
   }
 
-  return (list_handle_ == rhs.list_handle_) ;
+  DestructionGuard::ScopedProtector protector(*guard_);
+  if (!protector.isProtected()) {
+    ROS_ERROR_NAMED("actionlib",
+      "This action client associated with the goal handle has already been destructed. Ignoring this operator==() call");
+    return false;
+  }
+
+  return list_handle_ == rhs.list_handle_;
 }
 
 template<class ActionSpec>
-bool ClientGoalHandle<ActionSpec>::operator!=(const ClientGoalHandle<ActionSpec>& rhs) const
+bool ClientGoalHandle<ActionSpec>::operator!=(const ClientGoalHandle<ActionSpec> & rhs) const
 {
-  return !(*this==rhs);
+  return !(*this == rhs);
 }
 
-}
+}  // namespace actionlib
+
+#endif  // ACTIONLIB__CLIENT__CLIENT_GOAL_HANDLE_IMP_H_

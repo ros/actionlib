@@ -34,76 +34,89 @@
 *
 * Author: Eitan Marder-Eppstein
 *********************************************************************/
-#ifndef ACTIONLIB_CLIENT_SERVICE_CLIENT_IMP_H_
-#define ACTIONLIB_CLIENT_SERVICE_CLIENT_IMP_H_
-namespace actionlib {
-  template <class ActionSpec>
-    ServiceClientImpT<ActionSpec>::ServiceClientImpT(ros::NodeHandle n, std::string name){
-      ac_.reset(new SimpleActionClientT(n, name, true));
-    }
+#ifndef ACTIONLIB__CLIENT__SERVICE_CLIENT_IMP_H_
+#define ACTIONLIB__CLIENT__SERVICE_CLIENT_IMP_H_
 
-  template <class ActionSpec>
-    bool ServiceClientImpT<ActionSpec>::waitForServer(const ros::Duration& timeout){
-      return ac_->waitForServer(timeout);
-    }
+#include <string>
 
-  template <class ActionSpec>
-    bool ServiceClientImpT<ActionSpec>::isServerConnected(){
-      return ac_->isServerConnected();
-    }
+namespace actionlib
+{
+template<class ActionSpec>
+ServiceClientImpT<ActionSpec>::ServiceClientImpT(ros::NodeHandle n, std::string name)
+{
+  ac_.reset(new SimpleActionClientT(n, name, true));
+}
 
-  template <class ActionSpec>
-    bool ServiceClientImpT<ActionSpec>::call(const void* goal, std::string goal_md5sum, 
-                                             void* result, std::string result_md5sum)
+template<class ActionSpec>
+bool ServiceClientImpT<ActionSpec>::waitForServer(const ros::Duration & timeout)
+{
+  return ac_->waitForServer(timeout);
+}
+
+template<class ActionSpec>
+bool ServiceClientImpT<ActionSpec>::isServerConnected()
+{
+  return ac_->isServerConnected();
+}
+
+template<class ActionSpec>
+bool ServiceClientImpT<ActionSpec>::call(const void * goal, std::string goal_md5sum,
+  void * result, std::string result_md5sum)
+{
+  // ok... we need to static cast the goal message and result message
+  const Goal * goal_c = static_cast<const Goal *>(goal);
+  Result * result_c = static_cast<Result *>(result);
+
+  // now we need to check that the md5sums are correct
+  namespace mt = ros::message_traits;
+
+  if (strcmp(mt::md5sum(*goal_c),
+    goal_md5sum.c_str()) || strcmp(mt::md5sum(*result_c), result_md5sum.c_str()))
   {
-      //ok... we need to static cast the goal message and result message
-      const Goal* goal_c = static_cast<const Goal*>(goal);
-      Result* result_c = static_cast<Result*>(result);
-
-      //now we need to check that the md5sums are correct
-      namespace mt = ros::message_traits;
-
-      if(strcmp(mt::md5sum(*goal_c), goal_md5sum.c_str()) || strcmp(mt::md5sum(*result_c), result_md5sum.c_str()))
-      {
-        ROS_ERROR_NAMED("actionlib", "Incorrect md5Sums for goal and result types");
-        return false;
-      }
-
-      if(!ac_->isServerConnected()){
-        ROS_ERROR_NAMED("actionlib", "Attempting to make a service call when the server isn't actually connected to the client.");
-        return false;
-      }
-
-      ac_->sendGoalAndWait(*goal_c);
-      if(ac_->getState() == SimpleClientGoalState::SUCCEEDED){
-        (*result_c) = *(ac_->getResult());
-        return true;
-      }
-
-      return false;
-    }
-
-  //****** ServiceClient *******************
-  template <class Goal, class Result>
-  bool ServiceClient::call(const Goal& goal, Result& result){
-    namespace mt = ros::message_traits;
-    return client_->call(&goal, mt::md5sum(goal), &result, mt::md5sum(result));
+    ROS_ERROR_NAMED("actionlib", "Incorrect md5Sums for goal and result types");
+    return false;
   }
 
-  bool ServiceClient::waitForServer(const ros::Duration& timeout){
-    return client_->waitForServer(timeout);
+  if (!ac_->isServerConnected()) {
+    ROS_ERROR_NAMED("actionlib",
+      "Attempting to make a service call when the server isn't actually connected to the client.");
+    return false;
   }
 
-  bool ServiceClient::isServerConnected(){
-    return client_->isServerConnected();
+  ac_->sendGoalAndWait(*goal_c);
+  if (ac_->getState() == SimpleClientGoalState::SUCCEEDED) {
+    (*result_c) = *(ac_->getResult());
+    return true;
   }
 
-  //****** actionlib::serviceClient *******************
-  template <class ActionSpec>
-    ServiceClient serviceClient(ros::NodeHandle n, std::string name){
-      boost::shared_ptr<ServiceClientImp> client_ptr(new ServiceClientImpT<ActionSpec>(n, name));
-      return ServiceClient(client_ptr);
-    }
+  return false;
+}
 
-};
-#endif
+//****** ServiceClient *******************
+template<class Goal, class Result>
+bool ServiceClient::call(const Goal & goal, Result & result)
+{
+  namespace mt = ros::message_traits;
+  return client_->call(&goal, mt::md5sum(goal), &result, mt::md5sum(result));
+}
+
+bool ServiceClient::waitForServer(const ros::Duration & timeout)
+{
+  return client_->waitForServer(timeout);
+}
+
+bool ServiceClient::isServerConnected()
+{
+  return client_->isServerConnected();
+}
+
+//****** actionlib::serviceClient *******************
+template<class ActionSpec>
+ServiceClient serviceClient(ros::NodeHandle n, std::string name)
+{
+  boost::shared_ptr<ServiceClientImp> client_ptr(new ServiceClientImpT<ActionSpec>(n, name));
+  return ServiceClient(client_ptr);
+}
+
+}  // namespace actionlib
+#endif  // ACTIONLIB__CLIENT__SERVICE_CLIENT_IMP_H_

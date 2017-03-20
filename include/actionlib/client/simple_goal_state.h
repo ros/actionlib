@@ -32,8 +32,8 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTIONLIB_CLIENT_SIMPLE_GOAL_STATE_H_
-#define ACTIONLIB_CLIENT_SIMPLE_GOAL_STATE_H_
+#ifndef ACTIONLIB__CLIENT__SIMPLE_GOAL_STATE_H_
+#define ACTIONLIB__CLIENT__SIMPLE_GOAL_STATE_H_
 
 #include <string>
 #include "ros/console.h"
@@ -48,41 +48,40 @@ namespace actionlib
 class SimpleGoalState
 {
 public:
-
   //! \brief Defines the various states the SimpleGoalState can be in
   enum StateEnum
   {
     PENDING,
     ACTIVE,
     DONE
-  } ;
+  };
 
-  SimpleGoalState(const StateEnum& state) : state_(state) { }
+  explicit SimpleGoalState(const StateEnum & state)
+  : state_(state) {}
 
-  inline bool operator==(const SimpleGoalState& rhs) const
+  inline bool operator==(const SimpleGoalState & rhs) const
   {
-    return (state_ == rhs.state_) ;
+    return state_ == rhs.state_;
   }
 
-  inline bool operator==(const SimpleGoalState::StateEnum& rhs) const
+  inline bool operator==(const SimpleGoalState::StateEnum & rhs) const
   {
-    return (state_ == rhs);
+    return state_ == rhs;
   }
 
-  inline bool operator!=(const SimpleGoalState::StateEnum& rhs) const
+  inline bool operator!=(const SimpleGoalState::StateEnum & rhs) const
   {
     return !(*this == rhs);
   }
 
-  inline bool operator!=(const SimpleGoalState& rhs) const
+  inline bool operator!=(const SimpleGoalState & rhs) const
   {
     return !(*this == rhs);
   }
 
   std::string toString() const
   {
-    switch(state_)
-    {
+    switch (state_) {
       case PENDING:
         return "PENDING";
       case ACTIVE:
@@ -97,11 +96,11 @@ public:
   }
 
   StateEnum state_;
+
 private:
   SimpleGoalState();
+};
 
-} ;
+}  // namespace actionlib
 
-}
-
-#endif
+#endif  // ACTIONLIB__CLIENT__SIMPLE_GOAL_STATE_H_

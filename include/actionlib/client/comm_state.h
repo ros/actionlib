@@ -32,8 +32,8 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTIONLIB_CLIENT_COMM_STATE_H_
-#define ACTIONLIB_CLIENT_COMM_STATE_H_
+#ifndef ACTIONLIB__CLIENT__COMM_STATE_H_
+#define ACTIONLIB__CLIENT__COMM_STATE_H_
 
 #include <string>
 #include "ros/console.h"
@@ -47,7 +47,6 @@ namespace actionlib
 class CommState
 {
 public:
-
   //! \brief Defines the various states the Communication State Machine can be in
   enum StateEnum
   {
@@ -59,34 +58,34 @@ public:
     RECALLING               = 5,
     PREEMPTING              = 6,
     DONE                    = 7
-  } ;
+  };
 
-  CommState(const StateEnum& state) : state_(state) { }
+  explicit CommState(const StateEnum & state)
+  : state_(state) {}
 
-  inline bool operator==(const CommState& rhs) const
+  inline bool operator==(const CommState & rhs) const
   {
-    return (state_ == rhs.state_) ;
+    return state_ == rhs.state_;
   }
 
-  inline bool operator==(const CommState::StateEnum& rhs) const
+  inline bool operator==(const CommState::StateEnum & rhs) const
   {
-    return (state_ == rhs);
+    return state_ == rhs;
   }
 
-  inline bool operator!=(const CommState::StateEnum& rhs) const
+  inline bool operator!=(const CommState::StateEnum & rhs) const
   {
     return !(*this == rhs);
   }
 
-  inline bool operator!=(const CommState& rhs) const
+  inline bool operator!=(const CommState & rhs) const
   {
     return !(*this == rhs);
   }
 
   std::string toString() const
   {
-    switch(state_)
-    {
+    switch (state_) {
       case WAITING_FOR_GOAL_ACK:
         return "WAITING_FOR_GOAL_ACK";
       case PENDING:
@@ -111,11 +110,11 @@ public:
   }
 
   StateEnum state_;
+
 private:
   CommState();
+};
 
-} ;
+}  // namespace actionlib
 
-}
-
-#endif
+#endif  // ACTIONLIB__CLIENT__COMM_STATE_H_

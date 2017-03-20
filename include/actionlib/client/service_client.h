@@ -34,58 +34,67 @@
 *
 * Author: Eitan Marder-Eppstein
 *********************************************************************/
-#ifndef ACTIONLIB_CLIENT_SERVICE_CLIENT_H_
-#define ACTIONLIB_CLIENT_SERVICE_CLIENT_H_
+
+#ifndef ACTIONLIB__CLIENT__SERVICE_CLIENT_H_
+#define ACTIONLIB__CLIENT__SERVICE_CLIENT_H_
+
 #include <actionlib/action_definition.h>
 #include <actionlib/client/simple_action_client.h>
 
-namespace actionlib {
-  class ServiceClientImp {
-    public:
-      ServiceClientImp(){}
-      virtual bool call(const void* goal, std::string goal_md5sum, void* result, std::string result_md5sum) = 0;
-      virtual bool waitForServer(const ros::Duration& timeout) = 0;
-      virtual bool isServerConnected() = 0;
-      virtual ~ServiceClientImp(){}
-  };
+#include <string>
 
-  class ServiceClient {
-    public:
-      ServiceClient(boost::shared_ptr<ServiceClientImp> client) : client_(client) {}
+namespace actionlib
+{
 
-      template <class Goal, class Result>
-      bool call(const Goal& goal, Result& result);
-
-      bool waitForServer(const ros::Duration& timeout = ros::Duration(0,0));
-      bool isServerConnected();
-
-    private:
-      boost::shared_ptr<ServiceClientImp> client_;
-  };
-
-  template <class ActionSpec>
-  ServiceClient serviceClient(ros::NodeHandle n, std::string name);
-
-  template <class ActionSpec>
-  class ServiceClientImpT : public ServiceClientImp
-  {
-    public:
-      ACTION_DEFINITION(ActionSpec);
-      typedef ClientGoalHandle<ActionSpec> GoalHandleT;
-      typedef SimpleActionClient<ActionSpec> SimpleActionClientT;
-
-      ServiceClientImpT(ros::NodeHandle n, std::string name);
-
-      bool call(const void* goal, std::string goal_md5sum, void* result, std::string result_md5sum);
-      bool waitForServer(const ros::Duration& timeout);
-      bool isServerConnected();
-
-    private:
-      boost::scoped_ptr<SimpleActionClientT> ac_;
-      
-  };
+class ServiceClientImp
+{
+public:
+  ServiceClientImp() {}
+  virtual bool call(const void * goal, std::string goal_md5sum, void * result,
+    std::string result_md5sum) = 0;
+  virtual bool waitForServer(const ros::Duration & timeout) = 0;
+  virtual bool isServerConnected() = 0;
+  virtual ~ServiceClientImp() {}
 };
 
-//include the implementation
+class ServiceClient
+{
+public:
+  explicit ServiceClient(boost::shared_ptr<ServiceClientImp> client)
+  : client_(client) {}
+
+  template<class Goal, class Result>
+  bool call(const Goal & goal, Result & result);
+
+  bool waitForServer(const ros::Duration & timeout = ros::Duration(0, 0));
+  bool isServerConnected();
+
+private:
+  boost::shared_ptr<ServiceClientImp> client_;
+};
+
+template<class ActionSpec>
+ServiceClient serviceClient(ros::NodeHandle n, std::string name);
+
+template<class ActionSpec>
+class ServiceClientImpT : public ServiceClientImp
+{
+public:
+  ACTION_DEFINITION(ActionSpec);
+  typedef ClientGoalHandle<ActionSpec> GoalHandleT;
+  typedef SimpleActionClient<ActionSpec> SimpleActionClientT;
+
+  ServiceClientImpT(ros::NodeHandle n, std::string name);
+
+  bool call(const void * goal, std::string goal_md5sum, void * result, std::string result_md5sum);
+  bool waitForServer(const ros::Duration & timeout);
+  bool isServerConnected();
+
+private:
+  boost::scoped_ptr<SimpleActionClientT> ac_;
+};
+}  // namespace actionlib
+
+// include the implementation
 #include <actionlib/client/service_client_imp.h>
-#endif
+#endif  // ACTIONLIB__CLIENT__SERVICE_CLIENT_H_

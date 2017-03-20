@@ -32,16 +32,18 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTIONLIB_ACTION_CLIENT_H_
-#define ACTIONLIB_ACTION_CLIENT_H_
+#ifndef ACTIONLIB__CLIENT__ACTION_CLIENT_H_
+#define ACTIONLIB__CLIENT__ACTION_CLIENT_H_
 
-#include <boost/thread/condition.hpp>
-
-#include "ros/ros.h"
-#include "ros/callback_queue_interface.h"
 #include <actionlib/client/client_helpers.h>
 #include <actionlib/client/connection_monitor.h>
 #include <actionlib/destruction_guard.h>
+
+#include <boost/thread/condition.hpp>
+#include <string>
+
+#include "ros/ros.h"
+#include "ros/callback_queue_interface.h"
 
 namespace actionlib
 {
@@ -53,7 +55,7 @@ namespace actionlib
  * It provides callbacks for every client side transition, giving the user full observation into
  * the client side state machine.
  */
-template <class ActionSpec>
+template<class ActionSpec>
 class ActionClient
 {
 public:
@@ -62,8 +64,8 @@ public:
 private:
   ACTION_DEFINITION(ActionSpec);
   typedef ActionClient<ActionSpec> ActionClientT;
-  typedef boost::function<void (GoalHandle) > TransitionCallback;
-  typedef boost::function<void (GoalHandle, const FeedbackConstPtr&) > FeedbackCallback;
+  typedef boost::function<void (GoalHandle)> TransitionCallback;
+  typedef boost::function<void (GoalHandle, const FeedbackConstPtr &)> FeedbackCallback;
   typedef boost::function<void (const ActionGoalConstPtr)> SendGoalFunc;
 
 public:
@@ -75,7 +77,7 @@ public:
    * \param queue CallbackQueue from which this action will process messages.
    *              The default (NULL) is to use the global queue
    */
- ActionClient(const std::string& name, ros::CallbackQueueInterface* queue = NULL)
+  explicit ActionClient(const std::string & name, ros::CallbackQueueInterface * queue = NULL)
   : n_(name), guard_(new DestructionGuard()),
     manager_(guard_)
   {
@@ -92,8 +94,9 @@ public:
    * \param queue CallbackQueue from which this action will process messages.
    *              The default (NULL) is to use the global queue
    */
-  ActionClient(const ros::NodeHandle& n, const std::string& name, ros::CallbackQueueInterface* queue = NULL)
-    : n_(n, name), guard_(new DestructionGuard()),
+  ActionClient(const ros::NodeHandle & n, const std::string & name,
+    ros::CallbackQueueInterface * queue = NULL)
+  : n_(n, name), guard_(new DestructionGuard()),
     manager_(guard_)
   {
     initClient(queue);
@@ -112,9 +115,9 @@ public:
    * \param transition_cb Callback that gets called on every client state transition
    * \param feedback_cb Callback that gets called whenever feedback for this goal is received
    */
-  GoalHandle sendGoal(const Goal& goal,
-                      TransitionCallback transition_cb = TransitionCallback(),
-                      FeedbackCallback   feedback_cb   = FeedbackCallback())
+  GoalHandle sendGoal(const Goal & goal,
+    TransitionCallback transition_cb = TransitionCallback(),
+    FeedbackCallback feedback_cb = FeedbackCallback())
   {
     ROS_DEBUG_NAMED("actionlib", "about to start initGoal()");
     GoalHandle gh = manager_.initGoal(goal, transition_cb, feedback_cb);
@@ -133,7 +136,7 @@ public:
   {
     actionlib_msgs::GoalID cancel_msg;
     // CancelAll policy encoded by stamp=0, id=0
-    cancel_msg.stamp = ros::Time(0,0);
+    cancel_msg.stamp = ros::Time(0, 0);
     cancel_msg.id = "";
     cancel_pub_.publish(cancel_msg);
   }
@@ -142,7 +145,7 @@ public:
    * \brief Cancel all goals that were stamped at and before the specified time
    * \param time All goals stamped at or before `time` will be canceled
    */
-  void cancelGoalsAtAndBeforeTime(const ros::Time& time)
+  void cancelGoalsAtAndBeforeTime(const ros::Time & time)
   {
     actionlib_msgs::GoalID cancel_msg;
     cancel_msg.stamp = time;
@@ -163,16 +166,18 @@ public:
    * \param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
    * \return True if the server connected in the allocated time. False on timeout
    */
-  bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0) )
+  bool waitForActionServerToStart(const ros::Duration & timeout = ros::Duration(0, 0) )
   {
     // if ros::Time::isSimTime(), then wait for it to become valid
-    if(!ros::Time::waitForValid(ros::WallDuration(timeout.sec, timeout.nsec)))
-        return false;
-    
-    if (connection_monitor_)
-      return connection_monitor_->waitForActionServerToStart(timeout, n_);
-    else
+    if (!ros::Time::waitForValid(ros::WallDuration(timeout.sec, timeout.nsec))) {
       return false;
+    }
+
+    if (connection_monitor_) {
+      return connection_monitor_->waitForActionServerToStart(timeout, n_);
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -195,21 +200,21 @@ private:
 
   boost::shared_ptr<ConnectionMonitor> connection_monitor_;   // Have to destroy subscribers and publishers before the connection_monitor_, since we call callbacks in the connection_monitor_
 
-  ros::Publisher  goal_pub_;
-  ros::Publisher  cancel_pub_;
+  ros::Publisher goal_pub_;
+  ros::Publisher cancel_pub_;
   ros::Subscriber status_sub_;
 
-  void sendGoalFunc(const ActionGoalConstPtr& action_goal)
+  void sendGoalFunc(const ActionGoalConstPtr & action_goal)
   {
     goal_pub_.publish(action_goal);
   }
 
-  void sendCancelFunc(const actionlib_msgs::GoalID& cancel_msg)
+  void sendCancelFunc(const actionlib_msgs::GoalID & cancel_msg)
   {
     cancel_pub_.publish(cancel_msg);
   }
 
-  void initClient(ros::CallbackQueueInterface* queue)
+  void initClient(ros::CallbackQueueInterface * queue)
   {
     ros::Time::waitForValid();
     // read parameters indicating publish/subscribe queue sizes
@@ -217,35 +222,38 @@ private:
     int sub_queue_size;
     n_.param("actionlib_client_pub_queue_size", pub_queue_size, 10);
     n_.param("actionlib_client_sub_queue_size", sub_queue_size, 1);
-    if (pub_queue_size < 0) pub_queue_size = 10;
-    if (sub_queue_size < 0) sub_queue_size = 1;
+    if (pub_queue_size < 0) {pub_queue_size = 10;}
+    if (sub_queue_size < 0) {sub_queue_size = 1;}
 
-    status_sub_   = queue_subscribe("status",   static_cast<uint32_t>(sub_queue_size), &ActionClientT::statusCb,   this, queue);
-    feedback_sub_ = queue_subscribe("feedback", static_cast<uint32_t>(sub_queue_size), &ActionClientT::feedbackCb, this, queue);
-    result_sub_   = queue_subscribe("result",   static_cast<uint32_t>(sub_queue_size), &ActionClientT::resultCb,   this, queue);
+    status_sub_ = queue_subscribe("status", static_cast<uint32_t>(sub_queue_size),
+        &ActionClientT::statusCb, this, queue);
+    feedback_sub_ = queue_subscribe("feedback", static_cast<uint32_t>(sub_queue_size),
+        &ActionClientT::feedbackCb, this, queue);
+    result_sub_ = queue_subscribe("result", static_cast<uint32_t>(sub_queue_size),
+        &ActionClientT::resultCb, this, queue);
 
     connection_monitor_.reset(new ConnectionMonitor(feedback_sub_, result_sub_));
 
     // Start publishers and subscribers
     goal_pub_ = queue_advertise<ActionGoal>("goal", static_cast<uint32_t>(pub_queue_size),
-                                            boost::bind(&ConnectionMonitor::goalConnectCallback,    connection_monitor_, _1),
-                                            boost::bind(&ConnectionMonitor::goalDisconnectCallback, connection_monitor_, _1),
-                                            queue);
-    cancel_pub_ = queue_advertise<actionlib_msgs::GoalID>("cancel", static_cast<uint32_t>(pub_queue_size),
-                                            boost::bind(&ConnectionMonitor::cancelConnectCallback,    connection_monitor_, _1),
-                                            boost::bind(&ConnectionMonitor::cancelDisconnectCallback, connection_monitor_, _1),
-                                            queue);
+        boost::bind(&ConnectionMonitor::goalConnectCallback, connection_monitor_, _1),
+        boost::bind(&ConnectionMonitor::goalDisconnectCallback, connection_monitor_, _1),
+        queue);
+    cancel_pub_ =
+      queue_advertise<actionlib_msgs::GoalID>("cancel", static_cast<uint32_t>(pub_queue_size),
+        boost::bind(&ConnectionMonitor::cancelConnectCallback, connection_monitor_, _1),
+        boost::bind(&ConnectionMonitor::cancelDisconnectCallback, connection_monitor_, _1),
+        queue);
 
     manager_.registerSendGoalFunc(boost::bind(&ActionClientT::sendGoalFunc, this, _1));
     manager_.registerCancelFunc(boost::bind(&ActionClientT::sendCancelFunc, this, _1));
-
   }
 
-  template <class M>
-  ros::Publisher queue_advertise(const std::string& topic, uint32_t queue_size,
-                                 const ros::SubscriberStatusCallback& connect_cb,
-                                 const ros::SubscriberStatusCallback& disconnect_cb,
-                                 ros::CallbackQueueInterface* queue)
+  template<class M>
+  ros::Publisher queue_advertise(const std::string & topic, uint32_t queue_size,
+    const ros::SubscriberStatusCallback & connect_cb,
+    const ros::SubscriberStatusCallback & disconnect_cb,
+    ros::CallbackQueueInterface * queue)
   {
     ros::AdvertiseOptions ops;
     ops.init<M>(topic, queue_size, connect_cb, disconnect_cb);
@@ -256,7 +264,8 @@ private:
   }
 
   template<class M, class T>
-  ros::Subscriber queue_subscribe(const std::string& topic, uint32_t queue_size, void(T::*fp)(const ros::MessageEvent<M const>&), T* obj, ros::CallbackQueueInterface* queue)
+  ros::Subscriber queue_subscribe(const std::string & topic, uint32_t queue_size, void (T::* fp)(
+      const ros::MessageEvent<M const> &), T * obj, ros::CallbackQueueInterface * queue)
   {
     ros::SubscribeOptions ops;
     ops.callback_queue = queue;
@@ -265,33 +274,35 @@ private:
     ops.md5sum = ros::message_traits::md5sum<M>();
     ops.datatype = ros::message_traits::datatype<M>();
     ops.helper = ros::SubscriptionCallbackHelperPtr(
-      new ros::SubscriptionCallbackHelperT<const ros::MessageEvent<M const>& >(
+      new ros::SubscriptionCallbackHelperT<const ros::MessageEvent<M const> &>(
         boost::bind(fp, obj, _1)
       )
-    );
+      );
     return n_.subscribe(ops);
   }
 
-  void statusCb(const ros::MessageEvent<actionlib_msgs::GoalStatusArray const>& status_array_event)
+  void statusCb(const ros::MessageEvent<actionlib_msgs::GoalStatusArray const> & status_array_event)
   {
     ROS_DEBUG_NAMED("actionlib", "Getting status over the wire.");
-    if (connection_monitor_)
-      connection_monitor_->processStatus(status_array_event.getConstMessage(), status_array_event.getPublisherName());
+    if (connection_monitor_) {
+      connection_monitor_->processStatus(
+        status_array_event.getConstMessage(), status_array_event.getPublisherName());
+    }
     manager_.updateStatuses(status_array_event.getConstMessage());
   }
 
-  void feedbackCb(const ros::MessageEvent<ActionFeedback const>& action_feedback)
+  void feedbackCb(const ros::MessageEvent<ActionFeedback const> & action_feedback)
   {
     manager_.updateFeedbacks(action_feedback.getConstMessage());
   }
 
-  void resultCb(const ros::MessageEvent<ActionResult const>& action_result)
+  void resultCb(const ros::MessageEvent<ActionResult const> & action_result)
   {
     manager_.updateResults(action_result.getConstMessage());
   }
 };
 
 
-}
+}  // namespace actionlib
 
-#endif
+#endif  // ACTIONLIB__CLIENT__ACTION_CLIENT_H_

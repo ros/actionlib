@@ -32,8 +32,8 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTIONLIB_CLIENT_GOAL_STATUS_H_
-#define ACTIONLIB_CLIENT_GOAL_STATUS_H_
+#ifndef ACTIONLIB__CLIENT_GOAL_STATUS_H_
+#define ACTIONLIB__CLIENT_GOAL_STATUS_H_
 
 #include <string>
 
@@ -50,7 +50,7 @@ namespace actionlib
 class ClientGoalStatus
 {
 public:
-   //! \brief Defines the various states the Goal can be in, as perceived by the client
+  //! \brief Defines the various states the Goal can be in, as perceived by the client
   enum StateEnum
   {
     PENDING,    //!< The goal has yet to be processed by the action server
@@ -60,9 +60,9 @@ public:
     ABORTED,    //!< The goal was aborted by the action server
     REJECTED,   //!< The ActionServer refused to start processing the goal, possibly because a goal is infeasible
     LOST        //!< The goal was sent by the ActionClient, but disappeared due to some communication error
-  } ;
+  };
 
-  ClientGoalStatus(StateEnum state)
+  explicit ClientGoalStatus(StateEnum state)
   {
     state_ = state;
   }
@@ -73,7 +73,7 @@ public:
    * ClientGoalStatus are {PREEMPTED, SUCCEEDED, ABORTED, REJECTED}
    * \param goal_status The GoalStatus msg that we want to convert
    */
-  ClientGoalStatus(const GoalStatus& goal_status)
+  explicit ClientGoalStatus(const GoalStatus & goal_status)
   {
     fromGoalStatus(goal_status);
   }
@@ -84,15 +84,16 @@ public:
    */
   inline bool isDone() const
   {
-    if (state_ == PENDING || state_ == ACTIVE)
+    if (state_ == PENDING || state_ == ACTIVE) {
       return false;
+    }
     return true;
   }
 
   /**
    * \brief Copy the raw enum into the object
    */
-  inline const StateEnum& operator=(const StateEnum& state)
+  inline const StateEnum & operator=(const StateEnum & state)
   {
     state_ = state;
     return state;
@@ -101,7 +102,7 @@ public:
   /**
    * \brief Straightforward enum equality check
    */
-  inline bool operator==(const ClientGoalStatus& rhs) const
+  inline bool operator==(const ClientGoalStatus & rhs) const
   {
     return state_ == rhs.state_;
   }
@@ -109,7 +110,7 @@ public:
   /**
    * \brief Straightforward enum inequality check
    */
-  inline bool operator!=(const ClientGoalStatus& rhs) const
+  inline bool operator!=(const ClientGoalStatus & rhs) const
   {
     return !(state_ == rhs.state_);
   }
@@ -120,10 +121,9 @@ public:
    * ClientGoalStatus are {PREEMPTED, SUCCEEDED, ABORTED, REJECTED}
    * \param goal_status The GoalStatus msg that we want to convert
    */
-  void fromGoalStatus(const GoalStatus& goal_status)
+  void fromGoalStatus(const GoalStatus & goal_status)
   {
-    switch(goal_status.status)
-    {
+    switch (goal_status.status) {
       case GoalStatus::PREEMPTED:
         state_ = ClientGoalStatus::PREEMPTED; break;
       case GoalStatus::SUCCEEDED:
@@ -134,7 +134,8 @@ public:
         state_ = ClientGoalStatus::REJECTED; break;
       default:
         state_ = ClientGoalStatus::LOST;
-        ROS_ERROR_NAMED("actionlib", "Cannot convert GoalStatus %u to ClientGoalState", goal_status.status); break;
+        ROS_ERROR_NAMED("actionlib", "Cannot convert GoalStatus %u to ClientGoalState",
+          goal_status.status); break;
     }
   }
 
@@ -144,8 +145,7 @@ public:
    */
   std::string toString() const
   {
-    switch(state_)
-    {
+    switch (state_) {
       case PENDING:
         return "PENDING";
       case ACTIVE:
@@ -169,9 +169,9 @@ public:
 
 private:
   StateEnum state_;
-  ClientGoalStatus(); //!< Need to always specific an initial state. Thus, no empty constructor
+  ClientGoalStatus();  //!< Need to always specific an initial state. Thus, no empty constructor
 };
 
-}
+}  // namespace actionlib
 
-#endif // ACTION_TOOLS_CLIENT_GOAL_STATE_H_
+#endif  // ACTIONLIB__CLIENT_GOAL_STATUS_H_

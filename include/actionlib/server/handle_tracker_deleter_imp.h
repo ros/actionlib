@@ -34,27 +34,33 @@
 *
 * Author: Eitan Marder-Eppstein
 *********************************************************************/
-#ifndef ACTIONLIB_HANDLE_TRACKER_DELETER_IMP_H_
-#define ACTIONLIB_HANDLE_TRACKER_DELETER_IMP_H_
-namespace actionlib {
-  template <class ActionSpec>
-  HandleTrackerDeleter<ActionSpec>::HandleTrackerDeleter(ActionServerBase<ActionSpec>* as,
-      typename std::list<StatusTracker<ActionSpec> >::iterator status_it, boost::shared_ptr<DestructionGuard> guard)
-    : as_(as), status_it_(status_it), guard_(guard) {}
+#ifndef ACTIONLIB__SERVER__HANDLE_TRACKER_DELETER_IMP_H_
+#define ACTIONLIB__SERVER__HANDLE_TRACKER_DELETER_IMP_H_
 
-  template <class ActionSpec>
-  void HandleTrackerDeleter<ActionSpec>::operator()(void*){
-    if(as_){
-      //make sure that the action server hasn't been destroyed yet
-      DestructionGuard::ScopedProtector protector(*guard_);
-      if(protector.isProtected()){
-        //make sure to lock while we erase status for this goal from the list
-        as_->lock_.lock();
-        (*status_it_).handle_destruction_time_ = ros::Time::now();
-        //as_->status_list_.erase(status_it_);
-        as_->lock_.unlock();
-      }
+#include <list>
+
+namespace actionlib
+{
+template<class ActionSpec>
+HandleTrackerDeleter<ActionSpec>::HandleTrackerDeleter(ActionServerBase<ActionSpec> * as,
+  typename std::list<StatusTracker<ActionSpec>>::iterator status_it,
+  boost::shared_ptr<DestructionGuard> guard)
+: as_(as), status_it_(status_it), guard_(guard) {}
+
+template<class ActionSpec>
+void HandleTrackerDeleter<ActionSpec>::operator()(void *)
+{
+  if (as_) {
+    // make sure that the action server hasn't been destroyed yet
+    DestructionGuard::ScopedProtector protector(*guard_);
+    if (protector.isProtected()) {
+      // make sure to lock while we erase status for this goal from the list
+      as_->lock_.lock();
+      (*status_it_).handle_destruction_time_ = ros::Time::now();
+      // as_->status_list_.erase(status_it_);
+      as_->lock_.unlock();
     }
   }
-};
-#endif
+}
+}  // namespace actionlib
+#endif  // ACTIONLIB__SERVER__HANDLE_TRACKER_DELETER_IMP_H_

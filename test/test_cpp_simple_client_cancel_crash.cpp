@@ -40,8 +40,7 @@
 
 typedef actionlib::SimpleActionClient<actionlib::TestAction> Client;
 
-TEST(SimpleClientCancelCrash, uninitialized_crash)
-{
+TEST(SimpleClientCancelCrash, uninitialized_crash) {
   ros::NodeHandle nh;
   Client client("test_client", true);
   ROS_INFO_NAMED("actionlib", "calling cancelGoal()");
@@ -51,7 +50,8 @@ TEST(SimpleClientCancelCrash, uninitialized_crash)
   ROS_INFO_NAMED("actionlib", "Successfully done with test. Exiting");
 }
 
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   testing::InitGoogleTest(&argc, argv);
 
   ros::init(argc, argv, "test_cpp_simple_client_cancel_crash");

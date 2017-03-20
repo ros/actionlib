@@ -34,8 +34,8 @@
  *
  * Author: Eitan Marder-Eppstein
  *********************************************************************/
-#ifndef ACTIONLIB_STATUS_TRACKER_H_
-#define ACTIONLIB_STATUS_TRACKER_H_
+#ifndef ACTIONLIB__SERVER__STATUS_TRACKER_H_
+#define ACTIONLIB__SERVER__STATUS_TRACKER_H_
 
 #include <actionlib_msgs/GoalID.h>
 #include <actionlib_msgs/GoalStatus.h>
@@ -43,34 +43,36 @@
 
 #include <actionlib/goal_id_generator.h>
 
-namespace actionlib {
+namespace actionlib
+{
 
-  /**
-   * @class StatusTracker
-   * @brief A class for storing the status of each goal the action server
-   * is currently working on
-   */
-  template <class ActionSpec>
-    class StatusTracker {
-      private:
-        //generates typedefs that we'll use to make our lives easier
-        ACTION_DEFINITION(ActionSpec);
+/**
+ * @class StatusTracker
+ * @brief A class for storing the status of each goal the action server
+ * is currently working on
+ */
+template<class ActionSpec>
+class StatusTracker
+{
+private:
+  // generates typedefs that we'll use to make our lives easier
+  ACTION_DEFINITION(ActionSpec);
 
-      public:
-        StatusTracker(const actionlib_msgs::GoalID& goal_id, unsigned int status);
+public:
+  StatusTracker(const actionlib_msgs::GoalID & goal_id, unsigned int status);
 
-        StatusTracker(const boost::shared_ptr<const ActionGoal>& goal);
+  explicit StatusTracker(const boost::shared_ptr<const ActionGoal> & goal);
 
-        boost::shared_ptr<const ActionGoal> goal_;
-        boost::weak_ptr<void> handle_tracker_;
-        actionlib_msgs::GoalStatus status_;
-        ros::Time handle_destruction_time_;
+  boost::shared_ptr<const ActionGoal> goal_;
+  boost::weak_ptr<void> handle_tracker_;
+  actionlib_msgs::GoalStatus status_;
+  ros::Time handle_destruction_time_;
 
-      private:
-        GoalIDGenerator id_generator_;
-    };
+private:
+  GoalIDGenerator id_generator_;
 };
+}  // namespace actionlib
 
-//include the implementation
+// include the implementation
 #include <actionlib/server/status_tracker_imp.h>
-#endif
+#endif  // ACTIONLIB__SERVER__STATUS_TRACKER_H_

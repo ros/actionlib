@@ -34,199 +34,227 @@
 *
 * Author: Eitan Marder-Eppstein
 *********************************************************************/
-#ifndef ACTIONLIB_ACTION_SERVER_IMP_H_
-#define ACTIONLIB_ACTION_SERVER_IMP_H_
-namespace actionlib {
-  template <class ActionSpec>
-  ActionServer<ActionSpec>::ActionServer(
-      ros::NodeHandle n,
-      std::string name,
-      bool auto_start) :
-    ActionServerBase<ActionSpec>(boost::function<void (GoalHandle)>(),boost::function<void (GoalHandle)>(), auto_start),
-    node_(n, name)
-  {
-    //if we're to autostart... then we'll initialize things
-    if(this->started_){
-      ROS_WARN_NAMED("actionlib", "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.", node_.getNamespace().c_str());
+#ifndef ACTIONLIB__SERVER__ACTION_SERVER_IMP_H_
+#define ACTIONLIB__SERVER__ACTION_SERVER_IMP_H_
+
+#include <list>
+#include <string>
+
+namespace actionlib
+{
+template<class ActionSpec>
+ActionServer<ActionSpec>::ActionServer(
+  ros::NodeHandle n,
+  std::string name,
+  bool auto_start)
+: ActionServerBase<ActionSpec>(
+    boost::function<void(GoalHandle)>(), boost::function<void(GoalHandle)>(), auto_start),
+  node_(n, name)
+{
+  // if we're to autostart... then we'll initialize things
+  if (this->started_) {
+    ROS_WARN_NAMED("actionlib",
+      "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.",
+      node_.getNamespace().c_str());
+  }
+}
+
+template<class ActionSpec>
+ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name)
+: ActionServerBase<ActionSpec>(
+    boost::function<void(GoalHandle)>(), boost::function<void(GoalHandle)>(), true),
+  node_(n, name)
+{
+  // if we're to autostart... then we'll initialize things
+  if (this->started_) {
+    ROS_WARN_NAMED("actionlib",
+      "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.",
+      node_.getNamespace().c_str());
+    initialize();
+    publishStatus();
+  }
+}
+
+template<class ActionSpec>
+ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
+  boost::function<void(GoalHandle)> goal_cb,
+  boost::function<void(GoalHandle)> cancel_cb,
+  bool auto_start)
+: ActionServerBase<ActionSpec>(goal_cb, cancel_cb, auto_start),
+  node_(n, name)
+{
+  // if we're to autostart... then we'll initialize things
+  if (this->started_) {
+    ROS_WARN_NAMED("actionlib",
+      "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.",
+      node_.getNamespace().c_str());
+    initialize();
+    publishStatus();
+  }
+}
+
+template<class ActionSpec>
+ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
+  boost::function<void(GoalHandle)> goal_cb,
+  boost::function<void(GoalHandle)> cancel_cb)
+: ActionServerBase<ActionSpec>(goal_cb, cancel_cb, true),
+  node_(n, name)
+{
+  // if we're to autostart... then we'll initialize things
+  if (this->started_) {
+    ROS_WARN_NAMED("actionlib",
+      "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.",
+      node_.getNamespace().c_str());
+    initialize();
+    publishStatus();
+  }
+}
+
+template<class ActionSpec>
+ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
+  boost::function<void(GoalHandle)> goal_cb,
+  bool auto_start)
+: ActionServerBase<ActionSpec>(goal_cb, boost::function<void(GoalHandle)>(), auto_start),
+  node_(n, name)
+{
+  // if we're to autostart... then we'll initialize things
+  if (this->started_) {
+    ROS_WARN_NAMED("actionlib",
+      "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.",
+      node_.getNamespace().c_str());
+    initialize();
+    publishStatus();
+  }
+}
+
+template<class ActionSpec>
+ActionServer<ActionSpec>::~ActionServer()
+{
+}
+
+template<class ActionSpec>
+void ActionServer<ActionSpec>::initialize()
+{
+  // read the queue size for each of the publish & subscribe components of the action
+  // server
+  int pub_queue_size;
+  int sub_queue_size;
+  node_.param("actionlib_server_pub_queue_size", pub_queue_size, 50);
+  node_.param("actionlib_server_sub_queue_size", sub_queue_size, 50);
+  if (pub_queue_size < 0) {pub_queue_size = 50;}
+  if (sub_queue_size < 0) {sub_queue_size = 50;}
+
+  result_pub_ = node_.advertise<ActionResult>("result", static_cast<uint32_t>(pub_queue_size));
+  feedback_pub_ =
+    node_.advertise<ActionFeedback>("feedback", static_cast<uint32_t>(pub_queue_size));
+  status_pub_ =
+    node_.advertise<actionlib_msgs::GoalStatusArray>("status",
+      static_cast<uint32_t>(pub_queue_size), true);
+
+  // read the frequency with which to publish status from the parameter server
+  // if not specified locally explicitly, use search param to find actionlib_status_frequency
+  double status_frequency, status_list_timeout;
+  if (!node_.getParam("status_frequency", status_frequency)) {
+    std::string status_frequency_param_name;
+    if (!node_.searchParam("actionlib_status_frequency", status_frequency_param_name)) {
+      status_frequency = 5.0;
+    } else {
+      node_.param(status_frequency_param_name, status_frequency, 5.0);
     }
+  } else {
+    ROS_WARN_NAMED("actionlib",
+      "You're using the deprecated status_frequency parameter, please switch to actionlib_status_frequency.");
+  }
+  node_.param("status_list_timeout", status_list_timeout, 5.0);
+
+  this->status_list_timeout_ = ros::Duration(status_list_timeout);
+
+  if (status_frequency > 0) {
+    status_timer_ = node_.createTimer(ros::Duration(1.0 / status_frequency),
+        boost::bind(&ActionServer::publishStatus, this, _1));
   }
 
-  template <class ActionSpec>
-  ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name) :
-    ActionServerBase<ActionSpec>(boost::function<void (GoalHandle)>(),boost::function<void (GoalHandle)>(), true),
-    node_(n, name)
-  {
-    //if we're to autostart... then we'll initialize things
-    if(this->started_){
-      ROS_WARN_NAMED("actionlib", "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.", node_.getNamespace().c_str());
-      initialize();
-      publishStatus();
-    }
+  goal_sub_ = node_.subscribe<ActionGoal>("goal", static_cast<uint32_t>(sub_queue_size),
+      boost::bind(&ActionServerBase<ActionSpec>::goalCallback, this, _1));
+
+  cancel_sub_ =
+    node_.subscribe<actionlib_msgs::GoalID>("cancel", static_cast<uint32_t>(sub_queue_size),
+      boost::bind(&ActionServerBase<ActionSpec>::cancelCallback, this, _1));
+}
+
+template<class ActionSpec>
+void ActionServer<ActionSpec>::publishResult(const actionlib_msgs::GoalStatus & status,
+  const Result & result)
+{
+  boost::recursive_mutex::scoped_lock lock(this->lock_);
+  // we'll create a shared_ptr to pass to ROS to limit copying
+  boost::shared_ptr<ActionResult> ar(new ActionResult);
+  ar->header.stamp = ros::Time::now();
+  ar->status = status;
+  ar->result = result;
+  ROS_DEBUG_NAMED("actionlib", "Publishing result for goal with id: %s and stamp: %.2f",
+    status.goal_id.id.c_str(), status.goal_id.stamp.toSec());
+  result_pub_.publish(ar);
+  publishStatus();
+}
+
+template<class ActionSpec>
+void ActionServer<ActionSpec>::publishFeedback(const actionlib_msgs::GoalStatus & status,
+  const Feedback & feedback)
+{
+  boost::recursive_mutex::scoped_lock lock(this->lock_);
+  // we'll create a shared_ptr to pass to ROS to limit copying
+  boost::shared_ptr<ActionFeedback> af(new ActionFeedback);
+  af->header.stamp = ros::Time::now();
+  af->status = status;
+  af->feedback = feedback;
+  ROS_DEBUG_NAMED("actionlib", "Publishing feedback for goal with id: %s and stamp: %.2f",
+    status.goal_id.id.c_str(), status.goal_id.stamp.toSec());
+  feedback_pub_.publish(af);
+}
+
+template<class ActionSpec>
+void ActionServer<ActionSpec>::publishStatus(const ros::TimerEvent &)
+{
+  boost::recursive_mutex::scoped_lock lock(this->lock_);
+  // we won't publish status unless we've been started
+  if (!this->started_) {
+    return;
   }
 
-  template <class ActionSpec>
-  ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
-      boost::function<void (GoalHandle)> goal_cb,
-      boost::function<void (GoalHandle)> cancel_cb,
-      bool auto_start) :
-    ActionServerBase<ActionSpec>(goal_cb, cancel_cb, auto_start),
-    node_(n, name)
+  publishStatus();
+}
+
+template<class ActionSpec>
+void ActionServer<ActionSpec>::publishStatus()
+{
+  boost::recursive_mutex::scoped_lock lock(this->lock_);
+  // build a status array
+  actionlib_msgs::GoalStatusArray status_array;
+
+  status_array.header.stamp = ros::Time::now();
+
+  status_array.status_list.resize(this->status_list_.size());
+
+  unsigned int i = 0;
+  for (typename std::list<StatusTracker<ActionSpec>>::iterator it = this->status_list_.begin();
+    it != this->status_list_.end(); )
   {
-    //if we're to autostart... then we'll initialize things
-    if(this->started_){
-      ROS_WARN_NAMED("actionlib", "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.", node_.getNamespace().c_str());
-      initialize();
-      publishStatus();
-    }
-  }
+    status_array.status_list[i] = (*it).status_;
 
-  template <class ActionSpec>
-  ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
-      boost::function<void (GoalHandle)> goal_cb,
-      boost::function<void (GoalHandle)> cancel_cb) :
-    ActionServerBase<ActionSpec>(goal_cb, cancel_cb, true),
-    node_(n, name)
-  {
-    //if we're to autostart... then we'll initialize things
-    if(this->started_){
-      ROS_WARN_NAMED("actionlib", "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.", node_.getNamespace().c_str());
-      initialize();
-      publishStatus();
-    }
-  }
-
-  template <class ActionSpec>
-  ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
-      boost::function<void (GoalHandle)> goal_cb,
-      bool auto_start) :
-    ActionServerBase<ActionSpec>(goal_cb, boost::function<void (GoalHandle)>(), auto_start),
-    node_(n, name)
-  {
-    //if we're to autostart... then we'll initialize things
-    if(this->started_){
-      ROS_WARN_NAMED("actionlib", "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.", node_.getNamespace().c_str());
-      initialize();
-      publishStatus();
-    }
-  }
-
-  template <class ActionSpec>
-  ActionServer<ActionSpec>::~ActionServer()
-  {
-  }
-
-  template <class ActionSpec>
-  void ActionServer<ActionSpec>::initialize()
-  {
-    // read the queue size for each of the publish & subscribe components of the action
-    // server
-    int pub_queue_size;
-    int sub_queue_size;
-    node_.param("actionlib_server_pub_queue_size", pub_queue_size, 50);
-    node_.param("actionlib_server_sub_queue_size", sub_queue_size, 50);
-    if (pub_queue_size < 0) pub_queue_size = 50;
-    if (sub_queue_size < 0) sub_queue_size = 50;
-
-    result_pub_ = node_.advertise<ActionResult>("result", static_cast<uint32_t>(pub_queue_size));
-    feedback_pub_ = node_.advertise<ActionFeedback>("feedback", static_cast<uint32_t>(pub_queue_size));
-    status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", static_cast<uint32_t>(pub_queue_size), true);
-
-    //read the frequency with which to publish status from the parameter server
-    //if not specified locally explicitly, use search param to find actionlib_status_frequency
-    double status_frequency, status_list_timeout;
-    if(!node_.getParam("status_frequency", status_frequency))
+    // check if the item is due for deletion from the status list
+    if ((*it).handle_destruction_time_ != ros::Time() &&
+      (*it).handle_destruction_time_ + this->status_list_timeout_ < ros::Time::now())
     {
-      std::string status_frequency_param_name;
-      if(!node_.searchParam("actionlib_status_frequency", status_frequency_param_name))
-        status_frequency = 5.0;
-      else
-        node_.param(status_frequency_param_name, status_frequency, 5.0);
+      it = this->status_list_.erase(it);
+    } else {
+      ++it;
     }
-    else
-      ROS_WARN_NAMED("actionlib", "You're using the deprecated status_frequency parameter, please switch to actionlib_status_frequency.");
-
-    node_.param("status_list_timeout", status_list_timeout, 5.0);
-
-    this->status_list_timeout_ = ros::Duration(status_list_timeout);
-
-    if(status_frequency > 0){
-      status_timer_ = node_.createTimer(ros::Duration(1.0 / status_frequency),
-          boost::bind(&ActionServer::publishStatus, this, _1));
-    }
-
-    goal_sub_ = node_.subscribe<ActionGoal>("goal", static_cast<uint32_t>(sub_queue_size),
-        boost::bind(&ActionServerBase<ActionSpec>::goalCallback, this, _1));
-
-    cancel_sub_ = node_.subscribe<actionlib_msgs::GoalID>("cancel", static_cast<uint32_t>(sub_queue_size),
-        boost::bind(&ActionServerBase<ActionSpec>::cancelCallback, this, _1));
-
+    ++i;
   }
 
-  template <class ActionSpec>
-  void ActionServer<ActionSpec>::publishResult(const actionlib_msgs::GoalStatus& status, const Result& result)
-  {
-    boost::recursive_mutex::scoped_lock lock(this->lock_);
-    //we'll create a shared_ptr to pass to ROS to limit copying
-    boost::shared_ptr<ActionResult> ar(new ActionResult);
-    ar->header.stamp = ros::Time::now();
-    ar->status = status;
-    ar->result = result;
-    ROS_DEBUG_NAMED("actionlib", "Publishing result for goal with id: %s and stamp: %.2f", status.goal_id.id.c_str(), status.goal_id.stamp.toSec());
-    result_pub_.publish(ar);
-    publishStatus();
-  }
+  status_pub_.publish(status_array);
+}
 
-  template <class ActionSpec>
-  void ActionServer<ActionSpec>::publishFeedback(const actionlib_msgs::GoalStatus& status, const Feedback& feedback)
-  {
-    boost::recursive_mutex::scoped_lock lock(this->lock_);
-    //we'll create a shared_ptr to pass to ROS to limit copying
-    boost::shared_ptr<ActionFeedback> af(new ActionFeedback);
-    af->header.stamp = ros::Time::now();
-    af->status = status;
-    af->feedback = feedback;
-    ROS_DEBUG_NAMED("actionlib", "Publishing feedback for goal with id: %s and stamp: %.2f", status.goal_id.id.c_str(), status.goal_id.stamp.toSec());
-    feedback_pub_.publish(af);
-  }
-
-  template <class ActionSpec>
-  void ActionServer<ActionSpec>::publishStatus(const ros::TimerEvent&)
-  {
-    boost::recursive_mutex::scoped_lock lock(this->lock_);
-    //we won't publish status unless we've been started
-    if(!this->started_)
-      return;
-
-    publishStatus();
-  }
-
-  template <class ActionSpec>
-  void ActionServer<ActionSpec>::publishStatus()
-  {
-    boost::recursive_mutex::scoped_lock lock(this->lock_);
-    //build a status array
-    actionlib_msgs::GoalStatusArray status_array;
-
-    status_array.header.stamp = ros::Time::now();
-
-    status_array.status_list.resize(this->status_list_.size());
-
-    unsigned int i = 0;
-    for(typename std::list<StatusTracker<ActionSpec> >::iterator it = this->status_list_.begin(); it != this->status_list_.end();){
-      status_array.status_list[i] = (*it).status_;
-
-      //check if the item is due for deletion from the status list
-      if((*it).handle_destruction_time_ != ros::Time()
-          && (*it).handle_destruction_time_ + this->status_list_timeout_ < ros::Time::now()){
-        it = this->status_list_.erase(it);
-      }
-      else
-        ++it;
-
-      ++i;
-    }
-
-    status_pub_.publish(status_array);
-  }
-};
-#endif
+}  // namespace actionlib
+#endif  // ACTIONLIB__SERVER__ACTION_SERVER_IMP_H_

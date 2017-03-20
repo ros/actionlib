@@ -34,37 +34,44 @@
 *
 * Author: Eitan Marder-Eppstein
 *********************************************************************/
-#ifndef ACTONLIB_HANDLE_TRACKER_DELETER_H_
-#define ACTONLIB_HANDLE_TRACKER_DELETER_H_
+#ifndef ACTIONLIB__SERVER__HANDLE_TRACKER_DELETER_H_
+#define ACTIONLIB__SERVER__HANDLE_TRACKER_DELETER_H_
+
 #include <actionlib/action_definition.h>
 #include <actionlib/server/status_tracker.h>
 #include <actionlib/destruction_guard.h>
 #include <boost/shared_ptr.hpp>
-namespace actionlib {
-  //we need to forward declare the ActionServerBase class
-  template <class ActionSpec>
-  class ActionServerBase;
+#include <list>
 
-  /**
-   * @class HandleTrackerDeleter
-   * @brief A class to help with tracking GoalHandles and removing goals
-   * from the status list when the last GoalHandle associated with a given
-   * goal is deleted.
-   */
-  //class to help with tracking status objects
-  template <class ActionSpec>
-    class HandleTrackerDeleter {
-      public:
-        HandleTrackerDeleter(ActionServerBase<ActionSpec>* as,
-            typename std::list<StatusTracker<ActionSpec> >::iterator status_it, boost::shared_ptr<DestructionGuard> guard);
+namespace actionlib
+{
+// we need to forward declare the ActionServerBase class
+template<class ActionSpec>
+class ActionServerBase;
 
-        void operator()(void* ptr);
+/**
+ * @class HandleTrackerDeleter
+ * @brief A class to help with tracking GoalHandles and removing goals
+ * from the status list when the last GoalHandle associated with a given
+ * goal is deleted.
+ */
+// class to help with tracking status objects
+template<class ActionSpec>
+class HandleTrackerDeleter
+{
+public:
+  HandleTrackerDeleter(ActionServerBase<ActionSpec> * as,
+    typename std::list<StatusTracker<ActionSpec>>::iterator status_it,
+    boost::shared_ptr<DestructionGuard> guard);
 
-      private:
-        ActionServerBase<ActionSpec>* as_;
-        typename std::list<StatusTracker<ActionSpec> >::iterator status_it_;
-        boost::shared_ptr<DestructionGuard> guard_;
-    };
+  void operator()(void * ptr);
+
+private:
+  ActionServerBase<ActionSpec> * as_;
+  typename std::list<StatusTracker<ActionSpec>>::iterator status_it_;
+  boost::shared_ptr<DestructionGuard> guard_;
 };
+
+}  // namespace actionlib
 #include <actionlib/server/handle_tracker_deleter_imp.h>
-#endif
+#endif  // ACTIONLIB__SERVER__HANDLE_TRACKER_DELETER_H_

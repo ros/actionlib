@@ -34,8 +34,8 @@
 *
 * Author: Eitan Marder-Eppstein
 *********************************************************************/
-#ifndef ACTION_LIB_ACTION_SERVER
-#define ACTION_LIB_ACTION_SERVER
+#ifndef ACTIONLIB__SERVER__ACTION_SERVER_H_
+#define ACTIONLIB__SERVER__ACTION_SERVER_H_
 
 #include <ros/ros.h>
 #include <boost/thread.hpp>
@@ -53,123 +53,126 @@
 #include <actionlib/destruction_guard.h>
 
 #include <list>
+#include <string>
 
-namespace actionlib {
+namespace actionlib
+{
+/**
+ * @class ActionServer
+ * @brief The ActionServer is a helpful tool for managing goal requests to a
+ * node. It allows the user to specify callbacks that are invoked when goal
+ * or cancel requests come over the wire, and passes back GoalHandles that
+ * can be used to track the state of a given goal request. The ActionServer
+ * makes no assumptions about the policy used to service these goals, and
+ * sends status for each goal over the wire until the last GoalHandle
+ * associated with a goal request is destroyed.
+ */
+template<class ActionSpec>
+class ActionServer : public ActionServerBase<ActionSpec>
+{
+public:
+  // for convenience when referring to ServerGoalHandles
+  typedef ServerGoalHandle<ActionSpec> GoalHandle;
+
+  // generates typedefs that we'll use to make our lives easier
+  ACTION_DEFINITION(ActionSpec);
+
   /**
-   * @class ActionServer
-   * @brief The ActionServer is a helpful tool for managing goal requests to a
-   * node. It allows the user to specify callbacks that are invoked when goal
-   * or cancel requests come over the wire, and passes back GoalHandles that
-   * can be used to track the state of a given goal request. The ActionServer
-   * makes no assumptions about the policy used to service these goals, and
-   * sends status for each goal over the wire until the last GoalHandle
-   * associated with a goal request is destroyed.
+   * @brief  Constructor for an ActionServer
+   * @param  n A NodeHandle to create a namespace under
+   * @param  name The name of the action
+   * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
+   * @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
+   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
    */
-  template <class ActionSpec>
-  class ActionServer : public ActionServerBase<ActionSpec>
-  {
-    public:
-      //for convenience when referring to ServerGoalHandles
-      typedef ServerGoalHandle<ActionSpec> GoalHandle;
+  ActionServer(ros::NodeHandle n, std::string name,
+    boost::function<void(GoalHandle)> goal_cb,
+    boost::function<void(GoalHandle)> cancel_cb,
+    bool auto_start);
 
-      //generates typedefs that we'll use to make our lives easier
-      ACTION_DEFINITION(ActionSpec);
+  /**
+   * @brief  Constructor for an ActionServer
+   * @param  n A NodeHandle to create a namespace under
+   * @param  name The name of the action
+   * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
+   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   */
+  ActionServer(ros::NodeHandle n, std::string name,
+    boost::function<void(GoalHandle)> goal_cb,
+    bool auto_start);
 
-      /**
-       * @brief  Constructor for an ActionServer
-       * @param  n A NodeHandle to create a namespace under
-       * @param  name The name of the action
-       * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
-       * @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
-       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
-       */
-      ActionServer(ros::NodeHandle n, std::string name,
-          boost::function<void (GoalHandle)> goal_cb,
-          boost::function<void (GoalHandle)> cancel_cb,
-          bool auto_start);
+  /**
+   * @brief  DEPRECATED Constructor for an ActionServer
+   * @param  n A NodeHandle to create a namespace under
+   * @param  name The name of the action
+   * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
+   * @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
+   */
+  ROS_DEPRECATED ActionServer(ros::NodeHandle n, std::string name,
+    boost::function<void(GoalHandle)> goal_cb,
+    boost::function<void(GoalHandle)> cancel_cb = boost::function<void(GoalHandle)>());
 
-      /**
-       * @brief  Constructor for an ActionServer
-       * @param  n A NodeHandle to create a namespace under
-       * @param  name The name of the action
-       * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
-       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
-       */
-      ActionServer(ros::NodeHandle n, std::string name,
-          boost::function<void (GoalHandle)> goal_cb,
-          bool auto_start);
+  /**
+   * @brief  Constructor for an ActionServer
+   * @param  n A NodeHandle to create a namespace under
+   * @param  name The name of the action
+   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   */
+  ActionServer(ros::NodeHandle n, std::string name,
+    bool auto_start);
 
-      /**
-       * @brief  DEPRECATED Constructor for an ActionServer
-       * @param  n A NodeHandle to create a namespace under
-       * @param  name The name of the action
-       * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
-       * @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
-       */
-      ROS_DEPRECATED ActionServer(ros::NodeHandle n, std::string name,
-          boost::function<void (GoalHandle)> goal_cb,
-          boost::function<void (GoalHandle)> cancel_cb = boost::function<void (GoalHandle)>());
+  /**
+   * @brief  DEPRECATED Constructor for an ActionServer
+   * @param  n A NodeHandle to create a namespace under
+   * @param  name The name of the action
+   */
+  ROS_DEPRECATED ActionServer(ros::NodeHandle n, std::string name);
 
-      /**
-       * @brief  Constructor for an ActionServer
-       * @param  n A NodeHandle to create a namespace under
-       * @param  name The name of the action
-       * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
-       */
-      ActionServer(ros::NodeHandle n, std::string name,
-          bool auto_start);
+  /**
+   * @brief  Destructor for the ActionServer
+   */
+  virtual ~ActionServer();
 
-      /**
-       * @brief  DEPRECATED Constructor for an ActionServer
-       * @param  n A NodeHandle to create a namespace under
-       * @param  name The name of the action
-       */
-      ROS_DEPRECATED ActionServer(ros::NodeHandle n, std::string name);
+private:
+  /**
+   * @brief  Initialize all ROS connections and setup timers
+   */
+  virtual void initialize();
 
-      /**
-       * @brief  Destructor for the ActionServer
-       */
-      virtual ~ActionServer();
+  /**
+   * @brief  Publishes a result for a given goal
+   * @param status The status of the goal with which the result is associated
+   * @param result The result to publish
+   */
+  virtual void publishResult(const actionlib_msgs::GoalStatus & status, const Result & result);
 
-    private:
-      /**
-       * @brief  Initialize all ROS connections and setup timers
-       */
-      virtual void initialize();
+  /**
+   * @brief  Publishes feedback for a given goal
+   * @param status The status of the goal with which the feedback is associated
+   * @param feedback The feedback to publish
+   */
+  virtual void publishFeedback(const actionlib_msgs::GoalStatus & status,
+    const Feedback & feedback);
 
-      /**
-       * @brief  Publishes a result for a given goal
-       * @param status The status of the goal with which the result is associated
-       * @param result The result to publish
-       */
-      virtual void publishResult(const actionlib_msgs::GoalStatus& status, const Result& result);
+  /**
+   * @brief  Explicitly publish status
+   */
+  virtual void publishStatus();
 
-      /**
-       * @brief  Publishes feedback for a given goal
-       * @param status The status of the goal with which the feedback is associated
-       * @param feedback The feedback to publish
-       */
-      virtual void publishFeedback(const actionlib_msgs::GoalStatus& status, const Feedback& feedback);
+  /**
+   * @brief  Publish status for all goals on a timer event
+   */
+  void publishStatus(const ros::TimerEvent & e);
 
-      /**
-       * @brief  Explicitly publish status
-       */
-      virtual void publishStatus();
+  ros::NodeHandle node_;
 
-      /**
-       * @brief  Publish status for all goals on a timer event
-       */
-      void publishStatus(const ros::TimerEvent& e);
+  ros::Subscriber goal_sub_, cancel_sub_;
+  ros::Publisher status_pub_, result_pub_, feedback_pub_;
 
-      ros::NodeHandle node_;
-
-      ros::Subscriber goal_sub_, cancel_sub_;
-      ros::Publisher status_pub_, result_pub_, feedback_pub_;
-
-      ros::Timer status_timer_;
-  };
+  ros::Timer status_timer_;
 };
+}  // namespace actionlib
 
-//include the implementation
+// include the implementation
 #include <actionlib/server/action_server_imp.h>
-#endif
+#endif  // ACTIONLIB__SERVER__ACTION_SERVER_H_

@@ -38,6 +38,7 @@
 #include <actionlib/TestAction.h>
 #include <ros/ros.h>
 #include <cstdio>
+#include <string>
 
 namespace actionlib
 {
@@ -47,24 +48,22 @@ class RefServer : public ActionServer<TestAction>
 public:
   typedef ServerGoalHandle<TestAction> GoalHandle;
 
-  RefServer(ros::NodeHandle& n, const std::string& name);
+  RefServer(ros::NodeHandle & n, const std::string & name);
 
 private:
-
   void goalCallback(GoalHandle gh);
   void cancelCallback(GoalHandle gh);
-
 };
 
-}
+}  // namespace actionlib
 
 using namespace actionlib;
 
-RefServer::RefServer(ros::NodeHandle& n, const std::string& name)
-  : ActionServer<TestAction>(n, name,
-                             boost::bind(&RefServer::goalCallback, this, _1),
-                             boost::bind(&RefServer::cancelCallback, this, _1),
-                             false)
+RefServer::RefServer(ros::NodeHandle & n, const std::string & name)
+: ActionServer<TestAction>(n, name,
+    boost::bind(&RefServer::goalCallback, this, _1),
+    boost::bind(&RefServer::cancelCallback, this, _1),
+    false)
 {
   start();
   printf("Creating ActionServer [%s]\n", name.c_str());
@@ -74,8 +73,7 @@ void RefServer::goalCallback(GoalHandle gh)
 {
   TestGoal goal = *gh.getGoal();
 
-  switch (goal.goal)
-  {
+  switch (goal.goal) {
     case 1:
       gh.setAccepted();
       gh.setSucceeded(TestResult(), "The ref server has succeeded");
@@ -94,12 +92,10 @@ void RefServer::goalCallback(GoalHandle gh)
 
 void RefServer::cancelCallback(GoalHandle)
 {
-
-
 }
 
 
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
   ros::init(argc, argv, "ref_server");
 
@@ -109,5 +105,3 @@ int main(int argc, char** argv)
 
   ros::spin();
 }
-
-

@@ -34,94 +34,105 @@
 *
 * Author: Eitan Marder-Eppstein
 *********************************************************************/
-#ifndef ACTIONLIB_DESTRUCTION_GUARD_
-#define ACTIONLIB_DESTRUCTION_GUARD_
+#ifndef ACTIONLIB__DESTRUCTION_GUARD_H_
+#define ACTIONLIB__DESTRUCTION_GUARD_H_
 
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
 
-namespace actionlib {
+namespace actionlib
+{
+/**
+ * @class DestructionGuard
+ * @brief This class protects an object from being destructed until all users of that object relinquish control of it
+ */
+class DestructionGuard
+{
+public:
   /**
-   * @class DestructionGuard
-   * @brief This class protects an object from being destructed until all users of that object relinquish control of it
+   * @brief  Constructor for a DestructionGuard
    */
-  class DestructionGuard {
-    public:
-      /**
-       * @brief  Constructor for a DestructionGuard
-       */
-      DestructionGuard() : use_count_(0), destructing_(false){}
-      void destruct(){
-        boost::mutex::scoped_lock lock(mutex_);
-        destructing_ = true;
-        while(use_count_ > 0){
-          count_condition_.timed_wait(lock, boost::posix_time::milliseconds(1000.0f)); 
-        }
+  DestructionGuard()
+  : use_count_(0), destructing_(false) {}
+  void destruct()
+  {
+    boost::mutex::scoped_lock lock(mutex_);
+    destructing_ = true;
+    while (use_count_ > 0) {
+      count_condition_.timed_wait(lock, boost::posix_time::milliseconds(1000.0f));
+    }
+  }
+
+  /**
+   * @brief  Attempts to protect the guarded object from being destructed
+   * @return  True if protection succeeded, false if protection failed
+   */
+  bool tryProtect()
+  {
+    boost::mutex::scoped_lock lock(mutex_);
+    if (destructing_) {
+      return false;
+    }
+    use_count_++;
+    return true;
+  }
+
+  /**
+   * @brief  Releases protection on the guarded object
+   */
+  void unprotect()
+  {
+    boost::mutex::scoped_lock lock(mutex_);
+    use_count_--;
+  }
+
+  /**
+   * @class ScopedProtector
+   * @brief Protects a DestructionGuard until this object goes out of scope
+   */
+  class ScopedProtector
+  {
+public:
+    /**
+     * @brief  Constructor for a ScopedProtector
+     * @param guard The DestructionGuard to protect
+     */
+    explicit ScopedProtector(DestructionGuard & guard)
+    : guard_(guard), protected_(false)
+    {
+      protected_ = guard_.tryProtect();
+    }
+
+    /**
+     * @brief  Checks if the ScopedProtector successfully protected the DestructionGuard
+     * @return True if protection succeeded, false otherwise
+     */
+    bool isProtected()
+    {
+      return protected_;
+    }
+
+    /**
+     * @brief  Releases protection of the DestructionGuard if necessary
+     */
+    ~ScopedProtector()
+    {
+      if (protected_) {
+        guard_.unprotect();
       }
+    }
 
-      /**
-       * @brief  Attempts to protect the guarded object from being destructed
-       * @return  True if protection succeeded, false if protection failed
-       */
-      bool tryProtect(){
-        boost::mutex::scoped_lock lock(mutex_);
-        if(destructing_)
-          return false;
-        use_count_++;
-        return true;
-      }
-
-      /**
-       * @brief  Releases protection on the guarded object
-       */
-      void unprotect(){
-        boost::mutex::scoped_lock lock(mutex_);
-        use_count_--;
-      }
-
-      /**
-       * @class ScopedProtector
-       * @brief Protects a DestructionGuard until this object goes out of scope
-       */
-      class ScopedProtector
-      {
-        public:
-          /**
-           * @brief  Constructor for a ScopedProtector
-           * @param guard The DestructionGuard to protect
-           */
-          ScopedProtector(DestructionGuard& guard) : guard_(guard), protected_(false){
-            protected_ = guard_.tryProtect();
-          }
-
-          /**
-           * @brief  Checks if the ScopedProtector successfully protected the DestructionGuard
-           * @return True if protection succeeded, false otherwise
-           */
-          bool isProtected(){
-            return protected_;
-          }
-
-          /**
-           * @brief  Releases protection of the DestructionGuard if necessary
-           */
-          ~ScopedProtector(){
-            if(protected_)
-              guard_.unprotect();
-          }
-
-        private:
-          DestructionGuard& guard_;
-          bool protected_;
-      };
-
-
-    private:
-      boost::mutex mutex_;
-      int use_count_;
-      bool destructing_;
-      boost::condition count_condition_;
+private:
+    DestructionGuard & guard_;
+    bool protected_;
   };
 
+private:
+  boost::mutex mutex_;
+  int use_count_;
+  bool destructing_;
+  boost::condition count_condition_;
 };
-#endif
+
+}   // namespace actionlib
+#endif  // ACTIONLIB__DESTRUCTION_GUARD_H_
