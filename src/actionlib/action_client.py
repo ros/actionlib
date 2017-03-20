@@ -519,7 +519,7 @@ class ActionClient:
             raise ActionException("Type is not an action spec: %s" % str(ActionSpec))
 
         self.pub_queue_size = rospy.get_param('actionlib_client_pub_queue_size', 10)
-        if self.pub_queue_size < 0 :
+        if self.pub_queue_size < 0:
             self.pub_queue_size = 10
         self.pub_goal = rospy.Publisher(rospy.remap_name(ns) + '/goal', self.ActionGoal, queue_size=self.pub_queue_size)
         self.pub_cancel = rospy.Publisher(rospy.remap_name(ns) + '/cancel', GoalID, queue_size=self.pub_queue_size)
@@ -569,7 +569,6 @@ class ActionClient:
     def cancel_goals_at_and_before_time(self, time):
         cancel_msg = GoalID(stamp=time, id="")
         self.pub_cancel.publish(cancel_msg)
-
 
     ## @brief [Deprecated] Use wait_for_server
     def wait_for_action_server_to_start(self, timeout=rospy.Duration(0.0)):

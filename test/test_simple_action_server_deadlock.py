@@ -27,7 +27,15 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-#
+
+import random
+import threading
+import unittest
+
+import actionlib
+from actionlib.msg import TestAction
+import rosnode
+import rospy
 
 
 class Constants:
@@ -37,16 +45,6 @@ class Constants:
     deadlock_timeout = 45  # in seconds
     shutdown_timeout = 2  # in seconds
     max_action_duration = 3
-
-import random
-import sys
-import threading
-import unittest
-
-import actionlib
-from actionlib.msg import TestAction
-import rosnode
-import rospy
 
 
 class DeadlockTest(unittest.TestCase):
@@ -78,7 +76,8 @@ class DeadlockTest(unittest.TestCase):
             "/deadlock_companion_4",
             "/deadlock_companion_5"}
 
-        self.assertTrue(required_nodes.issubset(running_nodes),
+        self.assertTrue(
+            required_nodes.issubset(running_nodes),
             "Required companion nodes are not currently running")
 
         # Shutdown companions so that we can exit nicely
@@ -88,7 +87,8 @@ class DeadlockTest(unittest.TestCase):
         rospy.sleep(Constants.shutdown_timeout)
 
         # Check last execution wasn't too long ago...
-        self.assertIsNotNone(self.last_execution_time is None,
+        self.assertIsNotNone(
+            self.last_execution_time is None,
             "Execute Callback was never executed")
 
         time_since_last_execution = (

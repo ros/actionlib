@@ -1,10 +1,10 @@
 #! /usr/bin/env python
 # Copyright (c) 2009, Willow Garage, Inc.
 # All rights reserved.
-# 
+#
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
-# 
+#
 #     * Redistributions of source code must retain the above copyright
 #       notice, this list of conditions and the following disclaimer.
 #     * Redistributions in binary form must reproduce the above copyright
@@ -13,7 +13,7 @@
 #     * Neither the name of the Willow Garage, Inc. nor the names of its
 #       contributors may be used to endorse or promote products derived from
 #       this software without specific prior written permission.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -26,15 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-PKG='actionlib'
+PKG = 'actionlib'
 
-import sys
 import unittest
 import rospy
 from actionlib_msgs.msg import *
 from actionlib import SimpleActionClient
 from actionlib import ActionClient
 from actionlib.msg import TestAction, TestGoal
+
 
 class TestRefSimpleActionServer(unittest.TestCase):
 
@@ -58,7 +58,6 @@ class TestRefSimpleActionServer(unittest.TestCase):
         self.assertEqual(GoalStatus.ABORTED, client.get_terminal_state())
         self.assertEqual(GoalStatus.ABORTED, client.get_state())
 
-
     def test_abort(self):
         client = ActionClient('reference_action', TestAction)
         self.assert_(client.wait_for_server(rospy.Duration(2.0)),
@@ -68,27 +67,25 @@ class TestRefSimpleActionServer(unittest.TestCase):
         goal_abort = TestGoal(6)
         goal_feedback = TestGoal(8)
 
-        g1=client.send_goal(goal_work)
-        g2=client.send_goal(goal_work)
-        g3=client.send_goal(goal_work)
-        g4=client.send_goal(goal_work)
+        g1 = client.send_goal(goal_work)
+        g2 = client.send_goal(goal_work)
+        g3 = client.send_goal(goal_work)
+        g4 = client.send_goal(goal_work)
 
-        rospy.sleep(0.5);
-        self.assertEqual(g1.get_goal_status(),GoalStatus.ACTIVE) #,"Should be active")
-        self.assertEqual(g2.get_goal_status(),GoalStatus.ACTIVE,"Should be active")
-        self.assertEqual(g3.get_goal_status(),GoalStatus.ACTIVE,"Shoule be active")
-        self.assertEqual(g4.get_goal_status(),GoalStatus.ACTIVE,"Should be active")
+        rospy.sleep(0.5)
+        self.assertEqual(g1.get_goal_status(), GoalStatus.ACTIVE)  # ,"Should be active")
+        self.assertEqual(g2.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
+        self.assertEqual(g3.get_goal_status(), GoalStatus.ACTIVE, "Shoule be active")
+        self.assertEqual(g4.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
 
-        g5=client.send_goal(goal_abort)
-        rospy.sleep(0.5);
-        self.assertEqual(g5.get_goal_status(),GoalStatus.SUCCEEDED,"Should be done")
+        g5 = client.send_goal(goal_abort)
+        rospy.sleep(0.5)
+        self.assertEqual(g5.get_goal_status(), GoalStatus.SUCCEEDED, "Should be done")
 
-        self.assertEqual(g1.get_goal_status(),GoalStatus.ABORTED,"Should be aborted")
-        self.assertEqual(g2.get_goal_status(),GoalStatus.ABORTED,"Should be aborted")
-        self.assertEqual(g3.get_goal_status(),GoalStatus.ABORTED,"Shoule be aborted")
-        self.assertEqual(g4.get_goal_status(),GoalStatus.ABORTED,"Should be aborted")
-
-
+        self.assertEqual(g1.get_goal_status(), GoalStatus.ABORTED, "Should be aborted")
+        self.assertEqual(g2.get_goal_status(), GoalStatus.ABORTED, "Should be aborted")
+        self.assertEqual(g3.get_goal_status(), GoalStatus.ABORTED, "Shoule be aborted")
+        self.assertEqual(g4.get_goal_status(), GoalStatus.ABORTED, "Should be aborted")
 
     def test_feedback(self):
         client = ActionClient('reference_action', TestAction)
@@ -99,39 +96,38 @@ class TestRefSimpleActionServer(unittest.TestCase):
         goal_abort = TestGoal(6)
         goal_feedback = TestGoal(7)
 
-        rospy.logwarn("This is a hacky way to associate goals with feedback");
-        feedback={};
-        def update_feedback(id,g,f):
-            feedback[id]=f;
+        rospy.logwarn("This is a hacky way to associate goals with feedback")
+        feedback = {}
 
-        g1=client.send_goal(goal_work,feedback_cb=lambda g,f:update_feedback(0,g,f))
-        g2=client.send_goal(goal_work,feedback_cb=lambda g,f:update_feedback(1,g,f))
-        g3=client.send_goal(goal_work,feedback_cb=lambda g,f:update_feedback(2,g,f))
-        g4=client.send_goal(goal_work,feedback_cb=lambda g,f:update_feedback(3,g,f))
+        def update_feedback(id, g, f):
+            feedback[id] = f
 
-        rospy.sleep(0.5);
-        self.assertEqual(g1.get_goal_status(),GoalStatus.ACTIVE,"Should be active")
-        self.assertEqual(g2.get_goal_status(),GoalStatus.ACTIVE,"Should be active")
-        self.assertEqual(g3.get_goal_status(),GoalStatus.ACTIVE,"Shoule be active")
-        self.assertEqual(g4.get_goal_status(),GoalStatus.ACTIVE,"Should be active")
+        g1 = client.send_goal(goal_work, feedback_cb=lambda g, f: update_feedback(0, g, f))
+        g2 = client.send_goal(goal_work, feedback_cb=lambda g, f: update_feedback(1, g, f))
+        g3 = client.send_goal(goal_work, feedback_cb=lambda g, f: update_feedback(2, g, f))
+        g4 = client.send_goal(goal_work, feedback_cb=lambda g, f: update_feedback(3, g, f))
 
-        g5=client.send_goal(goal_feedback)
-        rospy.sleep(0.5);
-        self.assertEqual(g5.get_goal_status(),GoalStatus.SUCCEEDED,"Should be done")
+        rospy.sleep(0.5)
+        self.assertEqual(g1.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
+        self.assertEqual(g2.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
+        self.assertEqual(g3.get_goal_status(), GoalStatus.ACTIVE, "Shoule be active")
+        self.assertEqual(g4.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
 
+        g5 = client.send_goal(goal_feedback)
+        rospy.sleep(0.5)
+        self.assertEqual(g5.get_goal_status(), GoalStatus.SUCCEEDED, "Should be done")
 
-        self.assertEqual(g1.get_goal_status(),GoalStatus.ACTIVE)
-        self.assertEqual(feedback[0].feedback,4)
-        self.assertEqual(g2.get_goal_status(),GoalStatus.ACTIVE)
-        self.assertEqual(feedback[1].feedback,3)
-        self.assertEqual(g3.get_goal_status(),GoalStatus.ACTIVE)
-        self.assertEqual(feedback[2].feedback,2)
-        self.assertEqual(g4.get_goal_status(),GoalStatus.ACTIVE)
-        self.assertEqual(feedback[3].feedback,1)
+        self.assertEqual(g1.get_goal_status(), GoalStatus.ACTIVE)
+        self.assertEqual(feedback[0].feedback, 4)
+        self.assertEqual(g2.get_goal_status(), GoalStatus.ACTIVE)
+        self.assertEqual(feedback[1].feedback, 3)
+        self.assertEqual(g3.get_goal_status(), GoalStatus.ACTIVE)
+        self.assertEqual(feedback[2].feedback, 2)
+        self.assertEqual(g4.get_goal_status(), GoalStatus.ACTIVE)
+        self.assertEqual(feedback[3].feedback, 1)
 
-        g6=client.send_goal(goal_abort)
-        rospy.sleep(0.5);
-
+        g6 = client.send_goal(goal_abort)
+        rospy.sleep(0.5)
 
     def test_result(self):
         client = ActionClient('reference_action', TestAction)
@@ -142,36 +138,33 @@ class TestRefSimpleActionServer(unittest.TestCase):
         goal_abort = TestGoal(6)
         goal_result = TestGoal(8)
 
-        rospy.logwarn("This is a hacky way to associate goals with feedback");
+        rospy.logwarn("This is a hacky way to associate goals with feedback")
 
-        g1=client.send_goal(goal_work)
-        g2=client.send_goal(goal_work)
-        g3=client.send_goal(goal_work)
-        g4=client.send_goal(goal_work)
+        g1 = client.send_goal(goal_work)
+        g2 = client.send_goal(goal_work)
+        g3 = client.send_goal(goal_work)
+        g4 = client.send_goal(goal_work)
 
-        rospy.sleep(0.5);
-        self.assertEqual(g1.get_goal_status(),GoalStatus.ACTIVE,"Should be active")
-        self.assertEqual(g2.get_goal_status(),GoalStatus.ACTIVE,"Should be active")
-        self.assertEqual(g3.get_goal_status(),GoalStatus.ACTIVE,"Shoule be active")
-        self.assertEqual(g4.get_goal_status(),GoalStatus.ACTIVE,"Should be active")
+        rospy.sleep(0.5)
+        self.assertEqual(g1.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
+        self.assertEqual(g2.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
+        self.assertEqual(g3.get_goal_status(), GoalStatus.ACTIVE, "Shoule be active")
+        self.assertEqual(g4.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
 
-        g5=client.send_goal(goal_result)
-        rospy.sleep(0.5);
-        self.assertEqual(g5.get_goal_status(),GoalStatus.SUCCEEDED,"Should be done")
+        g5 = client.send_goal(goal_result)
+        rospy.sleep(0.5)
+        self.assertEqual(g5.get_goal_status(), GoalStatus.SUCCEEDED, "Should be done")
 
-        self.assertEqual(g1.get_goal_status(),GoalStatus.SUCCEEDED)
-        self.assertEqual(g1.get_result().result,4)
-        self.assertEqual(g2.get_goal_status(),GoalStatus.ABORTED)
-        self.assertEqual(g2.get_result().result,3)
-        self.assertEqual(g3.get_goal_status(),GoalStatus.SUCCEEDED)
-        self.assertEqual(g3.get_result().result,2)
-        self.assertEqual(g4.get_goal_status(),GoalStatus.ABORTED)
-        self.assertEqual(g4.get_result().result,1)
-        g6=client.send_goal(goal_abort)
-        rospy.sleep(0.5);
-
-
-
+        self.assertEqual(g1.get_goal_status(), GoalStatus.SUCCEEDED)
+        self.assertEqual(g1.get_result().result, 4)
+        self.assertEqual(g2.get_goal_status(), GoalStatus.ABORTED)
+        self.assertEqual(g2.get_result().result, 3)
+        self.assertEqual(g3.get_goal_status(), GoalStatus.SUCCEEDED)
+        self.assertEqual(g3.get_result().result, 2)
+        self.assertEqual(g4.get_goal_status(), GoalStatus.ABORTED)
+        self.assertEqual(g4.get_result().result, 1)
+        g6 = client.send_goal(goal_abort)
+        rospy.sleep(0.5)
 
 
 if __name__ == '__main__':

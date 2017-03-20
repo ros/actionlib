@@ -89,8 +89,8 @@ class SimpleActionServer:
         else:
             self.execute_thread = None
 
-        #create the action server
-        self.action_server = ActionServer(name, ActionSpec, self.internal_goal_callback,self.internal_preempt_callback, auto_start)
+        # create the action server
+        self.action_server = ActionServer(name, ActionSpec, self.internal_goal_callback, self.internal_preempt_callback, auto_start)
 
     def __del__(self):
         if hasattr(self, 'execute_callback') and self.execute_callback:

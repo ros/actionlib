@@ -32,11 +32,11 @@ import rospy
 import rostest
 
 from actionlib.simple_action_server import SimpleActionServer
-from actionlib.server_goal_handle import ServerGoalHandle;
+from actionlib.server_goal_handle import ServerGoalHandle
 from actionlib.msg import *
 
-class RefSimpleServer(SimpleActionServer):
 
+class RefSimpleServer(SimpleActionServer):
     def __init__(self, name):
         SimpleActionServer.__init__(self, name, TestRequestAction, self.execute_cb, False)
         self.start()
@@ -54,7 +54,6 @@ class RefSimpleServer(SimpleActionServer):
                 while rospy.get_rostime() < status_continue_time:
                     time.sleep(0.02)
                 rospy.loginfo("Unlocking the action server")
-
 
         terminate_time = rospy.get_rostime() + goal.delay_terminate
         while rospy.get_rostime() < terminate_time:
@@ -89,7 +88,6 @@ class RefSimpleServer(SimpleActionServer):
         else:
             rospy.logerr("Don't know how to terminate as %d" % goal.terminate_status)
             self.set_aborted(None, "Don't know how to terminate as %d" % goal.terminate_status)
-
 
 
 if __name__ == '__main__':

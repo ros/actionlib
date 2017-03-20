@@ -1,44 +1,44 @@
 #! /usr/bin/python
-#***********************************************************
-#* Software License Agreement (BSD License)
-#*
-#*  Copyright (c) 2009, Willow Garage, Inc.
-#*  All rights reserved.
-#*
-#*  Redistribution and use in source and binary forms, with or without
-#*  modification, are permitted provided that the following conditions
-#*  are met:
-#*
-#*   * Redistributions of source code must retain the above copyright
-#*     notice, this list of conditions and the following disclaimer.
-#*   * Redistributions in binary form must reproduce the above
-#*     copyright notice, this list of conditions and the following
-#*     disclaimer in the documentation and/or other materials provided
-#*     with the distribution.
-#*   * Neither the name of Willow Garage, Inc. nor the names of its
-#*     contributors may be used to endorse or promote products derived
-#*     from this software without specific prior written permission.
-#*
-#*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-#*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-#*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-#*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-#*  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-#*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-#*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-#*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-#*  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-#*  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-#*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-#*  POSSIBILITY OF SUCH DAMAGE.
-#*
-#* Author: Eitan Marder-Eppstein
-#***********************************************************
+# **********************************************************
+#  Software License Agreement (BSD License)
+#
+#   Copyright (c) 2009, Willow Garage, Inc.
+#   All rights reserved.
+#
+#   Redistribution and use in source and binary forms, with or without
+#   modification, are permitted provided that the following conditions
+#   are met:
+#
+#    * Redistributions of source code must retain the above copyright
+#      notice, this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above
+#      copyright notice, this list of conditions and the following
+#      disclaimer in the documentation and/or other materials provided
+#      with the distribution.
+#    * Neither the name of Willow Garage, Inc. nor the names of its
+#      contributors may be used to endorse or promote products derived
+#      from this software without specific prior written permission.
+#
+#   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+#   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+#   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+#   FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+#   COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+#   INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+#   BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+#   LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+#   CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+#   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+#   ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+#   POSSIBILITY OF SUCH DAMAGE.
+#
+#  Author: Eitan Marder-Eppstein
+# **********************************************************
 """
 usage: %prog /action_name action_type
 """
 
-PKG='actionlib'
+PKG = 'actionlib'
 
 import roslib.message
 
@@ -55,6 +55,7 @@ from cStringIO import StringIO
 from library import *
 from dynamic_action import DynamicAction
 from actionlib_msgs.msg import GoalStatus
+
 
 class AXClientApp(wx.App):
     def __init__(self, action_type, action_name):
@@ -76,7 +77,6 @@ class AXClientApp(wx.App):
         else:
             self.cancel_goal.Disable()
 
-
     def set_server_status(self, label, color, enabled):
         self.server_status_bg.SetBackgroundColour(color)
         self.server_status.SetLabel(label)
@@ -95,7 +95,7 @@ class AXClientApp(wx.App):
                          wx.Colour(200, 0, 0), False)
 
     def on_cancel(self, event):
-        #we'll cancel the current goal
+        # we'll cancel the current goal
         self.client.cancel_goal()
         self.set_status("Canceling goal", wx.Colour(211, 34, 243))
 
@@ -106,8 +106,8 @@ class AXClientApp(wx.App):
             buff = StringIO()
             self.goal_msg.serialize(buff)
 
-            #send the goal to the action server and register the relevant
-            #callbacks
+            # send the goal to the action server and register the relevant
+            # callbacks
             self.client.send_goal(self.goal_msg, self.done_cb, self.active_cb,
                                   self.feedback_cb)
             self.set_status("Goal is pending", wx.Colour(255, 174, 59))
@@ -126,14 +126,14 @@ class AXClientApp(wx.App):
     def status_gui(self, status):
         return {GoalStatus.PENDING: ['PENDING', wx.Colour(255, 174, 59)],
                 GoalStatus.ACTIVE: ['ACTIVE', wx.Colour(0, 255, 0)],
-                GoalStatus.PREEMPTED: ['PREEMPTED', wx.Colour(255,252,16)],
-                GoalStatus.SUCCEEDED: ['SUCCEEDED',wx.Colour(38,250,253)],
-                GoalStatus.ABORTED: ['ABORTED',wx.Colour(200,0,0)],
-                GoalStatus.REJECTED: ['REJECTED',wx.Colour(253,38,159)],
-                GoalStatus.PREEMPTING: ['PREEMPTING',wx.Colour(253,38,159)],
-                GoalStatus.RECALLING: ['RECALLING',wx.Colour(230,38,253)],
-                GoalStatus.RECALLED: ['RECALLED',wx.Colour(230,38,253)],
-                GoalStatus.LOST: ['LOST',wx.Colour(255,0,0)]}[status]
+                GoalStatus.PREEMPTED: ['PREEMPTED', wx.Colour(255, 252, 16)],
+                GoalStatus.SUCCEEDED: ['SUCCEEDED', wx.Colour(38, 250, 253)],
+                GoalStatus.ABORTED: ['ABORTED', wx.Colour(200, 0, 0)],
+                GoalStatus.REJECTED: ['REJECTED', wx.Colour(253, 38, 159)],
+                GoalStatus.PREEMPTING: ['PREEMPTING', wx.Colour(253, 38, 159)],
+                GoalStatus.RECALLING: ['RECALLING', wx.Colour(230, 38, 253)],
+                GoalStatus.RECALLED: ['RECALLED', wx.Colour(230, 38, 253)],
+                GoalStatus.LOST: ['LOST', wx.Colour(255, 0, 0)]}[status]
 
     def done_cb(self, state, result):
         status_string, status_color = self.status_gui(state)
@@ -143,7 +143,7 @@ class AXClientApp(wx.App):
         wx.CallAfter(self.set_cancel_button, False)
 
     def active_cb(self):
-        wx.CallAfter(self.set_status, "Goal is active", wx.Colour(0,200,0))
+        wx.CallAfter(self.set_status, "Goal is active", wx.Colour(0, 200, 0))
 
     def set_feedback(self, feedback):
         try:
@@ -192,11 +192,11 @@ class AXClientApp(wx.App):
         self.cancel_goal.Disable()
 
         self.status_bg = wx.Panel(self.frame, -1)
-        self.status_bg.SetBackgroundColour(wx.Colour(200,0,0))
+        self.status_bg.SetBackgroundColour(wx.Colour(200, 0, 0))
         self.status = wx.StaticText(self.status_bg, -1, label="No Goal")
 
         self.server_status_bg = wx.Panel(self.frame, -1)
-        self.server_status_bg.SetBackgroundColour(wx.Colour(200,0,0))
+        self.server_status_bg.SetBackgroundColour(wx.Colour(200, 0, 0))
         self.server_status = wx.StaticText(self.server_status_bg, -1, label="Disconnected from server.")
 
         self.sz.Add(self.goal_st, 1, wx.EXPAND)
@@ -220,8 +220,6 @@ class AXClientApp(wx.App):
         return True
 
 
-
-
 def main():
     rospy.init_node('axclient', anonymous=True)
 
@@ -234,7 +232,7 @@ def main():
 
     if (len(args) == 2):
         # get action type via rostopic
-        topic_type = rostopic._get_topic_type("%s/goal"%args[1])[0]
+        topic_type = rostopic._get_topic_type("%s/goal" % args[1])[0]
         # remove "Goal" string from action type
         assert("Goal" in topic_type)
         topic_type = topic_type[0:len(topic_type)-4]

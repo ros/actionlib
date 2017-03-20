@@ -117,7 +117,6 @@ class ActionServer:
                           "in false to avoid race conditions.")
             self.start()
 
-
     ## @brief  Register a callback to be invoked when a new goal is received, this will replace any  previously registered callback
     ## @param  cb The callback to invoke
     def register_goal_callback(self, cb):
@@ -183,7 +182,6 @@ class ActionServer:
                 self.result_pub.publish(ar)
             self.publish_status()
 
-
     ## @brief  Publishes feedback for a given goal
     ## @param status The status of the goal with which the feedback is associated
     ## @param feedback The feedback to publish
@@ -195,7 +193,6 @@ class ActionServer:
             af.feedback = feedback
             if not rospy.is_shutdown():
                 self.feedback_pub.publish(af)
-
 
     ## @brief  The ROS callback for cancel requests coming into the ActionServer
     def internal_cancel_callback(self, goal_id):
@@ -250,7 +247,6 @@ class ActionServer:
             # make sure to set last_cancel_ based on the stamp associated with this cancel request
             if goal_id.stamp > self.last_cancel:
                 self.last_cancel = goal_id.stamp
-
 
     ## @brief  The ROS callback for goals coming into the ActionServer
     def internal_goal_callback(self, goal):
