@@ -96,7 +96,7 @@ def yaml_msg_str(type_, yaml_str, filename=None):
         msg_dict = {}
     else:
         msg_dict = yaml.load(yaml_str)
-    if type(msg_dict) != dict:
+    if not isinstance(msg_dict, dict):
         if filename:
             raise ValueError("yaml file [%s] does not contain a dictionary" % filename)
         else:
@@ -132,7 +132,7 @@ def yaml_msgs_str(type_, yaml_str, filename=None):
     yaml_doc = yaml.load(yaml_str)
     msgs = []
     for msg_dict in yaml_doc:
-        if not type(msg_dict) == dict:
+        if not isinstance(msg_dict, dict):
             if filename:
                 raise ValueError("yaml file [%s] does not contain a list of dictionaries" % filename)
             else:
@@ -183,7 +183,8 @@ def _message_to_yaml(msg, indent='', time_offset=None):
         msg0 = msg[0]
         if type(msg0) in [int, float, str, bool] or \
                 isinstance(msg0, rospy.Time) or isinstance(msg0, rospy.Duration) or \
-                type(msg0) in [list, tuple]:  # no array-of-arrays support yet
+                isinstance(msg0, list) or isinstance(msg0, tuple):
+            # no array-of-arrays support yet
             return str(list(msg))
         else:
             indent = indent + '  '
