@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 # Author: Alexander Sorokin.
+from __future__ import print_function
 
 PKG = 'actionlib'
 
@@ -54,5 +55,5 @@ class TestImports(unittest.TestCase):
 
 if __name__ == '__main__':
     import rostest
-    print sys.path
+    print(sys.path)
     rostest.rosrun(PKG, 'test_imports', TestImports)

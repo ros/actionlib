@@ -25,6 +25,7 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from __future__ import print_function
 
 import sys
 import time
@@ -93,5 +94,5 @@ class RefSimpleServer(SimpleActionServer):
 if __name__ == '__main__':
     rospy.init_node("ref_simple_server")
     ref_server = RefSimpleServer("test_request_action")
-    print "Spinning"
+    print("Spinning")
     rospy.spin()

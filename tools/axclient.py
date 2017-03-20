@@ -113,7 +113,7 @@ class AXClientApp(wx.App):
             self.set_status("Goal is pending", wx.Colour(255, 174, 59))
             self.set_cancel_button(True)
 
-        except roslib.message.SerializationError, e:
+        except roslib.message.SerializationError as e:
             self.goal_msg = None
             wx.MessageBox(str(e), "Error serializing goal", wx.OK)
 

@@ -141,7 +141,7 @@ class AXServerApp(wx.App):
 
             self.execute_type = SEND_FEEDBACK
             self.condition.notify()
-        except roslib.message.SerializationError, e:
+        except roslib.message.SerializationError as e:
             self.feedback_msg = None
             wx.MessageBox(str(e), "Error serializing feedback", wx.OK)
 
@@ -157,7 +157,7 @@ class AXServerApp(wx.App):
 
             self.execute_type = SUCCEED
             self.condition.notify()
-        except roslib.message.SerializationError, e:
+        except roslib.message.SerializationError as e:
             self.result_msg = None
             wx.MessageBox(str(e), "Error serializing result", wx.OK)
 
