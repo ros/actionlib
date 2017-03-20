@@ -31,7 +31,7 @@
 import rospy
 import threading
 
-from actionlib_msgs.msg import *
+from actionlib_msgs.msg import GoalID, GoalStatus, GoalStatusArray
 
 from actionlib.goal_id_generator import GoalIDGenerator
 from actionlib.status_tracker import StatusTracker
@@ -39,7 +39,7 @@ from actionlib.status_tracker import StatusTracker
 from actionlib.handle_tracker_deleter import HandleTrackerDeleter
 from actionlib.server_goal_handle import ServerGoalHandle
 
-from actionlib.exceptions import *
+from actionlib.exceptions import ActionException
 
 
 def nop_cb(goal_handle):
@@ -239,7 +239,7 @@ class ActionServer:
 
             # if the requested goal_id was not found, and it is non-zero, then we need to store the cancel request
             if goal_id.id != "" and not goal_id_found:
-                tracker = StatusTracker(goal_id, actionlib_msgs.msg.GoalStatus.RECALLING)
+                tracker = StatusTracker(goal_id, GoalStatus.RECALLING)
                 self.status_list.append(tracker)
                 # start the timer for how long the status will live in the list without a goal handle to it
                 tracker.handle_destruction_time = rospy.Time.now()
@@ -262,8 +262,8 @@ class ActionServer:
                 if goal.goal_id.id == st.status.goal_id.id:
                     rospy.logdebug("Goal %s was already in the status list with status %i" % (goal.goal_id.id, st.status.status))
                     # Goal could already be in recalling state if a cancel came in before the goal
-                    if st.status.status == actionlib_msgs.msg.GoalStatus.RECALLING:
-                        st.status.status = actionlib_msgs.msg.GoalStatus.RECALLED
+                    if st.status.status == GoalStatus.RECALLING:
+                        st.status.status = GoalStatus.RECALLED
                         self.publish_result(st.status, self.ActionResultType())
 
                     # if this is a request for a goal that has no active handles left,
@@ -304,7 +304,7 @@ class ActionServer:
     def publish_status(self):
         with self.lock:
             # build a status array
-            status_array = actionlib_msgs.msg.GoalStatusArray()
+            status_array = GoalStatusArray()
 
             # status_array.set_status_list_size(len(self.status_list));
 

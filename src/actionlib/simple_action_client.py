@@ -30,7 +30,7 @@
 import rospy
 import threading
 
-from actionlib_msgs.msg import *
+from actionlib_msgs.msg import GoalStatus
 from actionlib.action_client import ActionClient, CommState, get_name_of_constant
 
 

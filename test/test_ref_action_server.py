@@ -30,8 +30,8 @@ PKG = 'actionlib'
 
 import unittest
 import rospy
-from actionlib_msgs.msg import *
-from actionlib import SimpleActionClient
+from actionlib_msgs.msg import GoalStatus
+# from actionlib import SimpleActionClient
 from actionlib import ActionClient
 from actionlib.msg import TestAction, TestGoal
 

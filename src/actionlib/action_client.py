@@ -55,8 +55,8 @@ import weakref
 import time
 import rospy
 from rospy import Header
-from actionlib_msgs.msg import *
-from actionlib.exceptions import *
+from actionlib_msgs.msg import GoalID, GoalStatus, GoalStatusArray
+from actionlib.exceptions import ActionException
 
 g_goal_id = 1
 

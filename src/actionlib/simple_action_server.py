@@ -32,7 +32,7 @@ import rospy
 import threading
 import traceback
 
-from actionlib_msgs.msg import *
+from actionlib_msgs.msg import GoalStatus
 
 from actionlib import ActionServer
 from actionlib.server_goal_handle import ServerGoalHandle
@@ -151,7 +151,7 @@ class SimpleActionServer:
             return False
 
         status = self.current_goal.get_goal_status().status
-        return status == actionlib_msgs.msg.GoalStatus.ACTIVE or status == actionlib_msgs.msg.GoalStatus.PREEMPTING
+        return status == GoalStatus.ACTIVE or status == GoalStatus.PREEMPTING
 
     ## @brief Sets the status of the active goal to succeeded
     ## @param  result An optional result to send back to any clients of the goal

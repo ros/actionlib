@@ -33,8 +33,8 @@ import unittest
 import rospy
 import rostest
 from actionlib import SimpleActionClient
-from actionlib_msgs.msg import *
-from actionlib.msg import *
+from actionlib_msgs.msg import GoalStatus
+from actionlib.msg import TestRequestAction, TestRequestGoal
 
 
 class SimpleExerciser(unittest.TestCase):
