@@ -61,14 +61,14 @@ class HandleTrackerDeleter
 {
 public:
   HandleTrackerDeleter(ActionServerBase<ActionSpec> * as,
-    typename std::list<StatusTracker<ActionSpec>>::iterator status_it,
+    typename std::list<StatusTracker<ActionSpec> >::iterator status_it,
     boost::shared_ptr<DestructionGuard> guard);
 
   void operator()(void * ptr);
 
 private:
   ActionServerBase<ActionSpec> * as_;
-  typename std::list<StatusTracker<ActionSpec>>::iterator status_it_;
+  typename std::list<StatusTracker<ActionSpec> >::iterator status_it_;
   boost::shared_ptr<DestructionGuard> guard_;
 };
 

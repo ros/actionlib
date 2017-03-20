@@ -54,7 +54,7 @@ SimpleActionServer<ActionSpec>::SimpleActionServer(std::string name,
   }
 
   // create the action server
-  as_ = boost::shared_ptr<ActionServer<ActionSpec>>(new ActionServer<ActionSpec>(n_, name,
+  as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n_, name,
       boost::bind(&SimpleActionServer::goalCallback, this, _1),
       boost::bind(&SimpleActionServer::preemptCallback, this, _1),
       auto_start));
@@ -66,7 +66,7 @@ SimpleActionServer<ActionSpec>::SimpleActionServer(std::string name, bool auto_s
     NULL), execute_thread_(NULL), need_to_terminate_(false)
 {
   // create the action server
-  as_ = boost::shared_ptr<ActionServer<ActionSpec>>(new ActionServer<ActionSpec>(n_, name,
+  as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n_, name,
       boost::bind(&SimpleActionServer::goalCallback, this, _1),
       boost::bind(&SimpleActionServer::preemptCallback, this, _1),
       auto_start));
@@ -83,7 +83,7 @@ SimpleActionServer<ActionSpec>::SimpleActionServer(std::string name,
     execute_callback), execute_thread_(NULL), need_to_terminate_(false)
 {
   // create the action server
-  as_ = boost::shared_ptr<ActionServer<ActionSpec>>(new ActionServer<ActionSpec>(n_, name,
+  as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n_, name,
       boost::bind(&SimpleActionServer::goalCallback, this, _1),
       boost::bind(&SimpleActionServer::preemptCallback, this, _1),
       true));
@@ -102,7 +102,7 @@ SimpleActionServer<ActionSpec>::SimpleActionServer(ros::NodeHandle n, std::strin
   execute_callback_(execute_callback), execute_thread_(NULL), need_to_terminate_(false)
 {
   // create the action server
-  as_ = boost::shared_ptr<ActionServer<ActionSpec>>(new ActionServer<ActionSpec>(n, name,
+  as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n, name,
       boost::bind(&SimpleActionServer::goalCallback, this, _1),
       boost::bind(&SimpleActionServer::preemptCallback, this, _1),
       auto_start));
@@ -119,7 +119,7 @@ SimpleActionServer<ActionSpec>::SimpleActionServer(ros::NodeHandle n, std::strin
   execute_callback_(NULL), execute_thread_(NULL), need_to_terminate_(false)
 {
   // create the action server
-  as_ = boost::shared_ptr<ActionServer<ActionSpec>>(new ActionServer<ActionSpec>(n, name,
+  as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n, name,
       boost::bind(&SimpleActionServer::goalCallback, this, _1),
       boost::bind(&SimpleActionServer::preemptCallback, this, _1),
       auto_start));
@@ -136,7 +136,7 @@ SimpleActionServer<ActionSpec>::SimpleActionServer(ros::NodeHandle n, std::strin
   execute_callback_(execute_callback), execute_thread_(NULL), need_to_terminate_(false)
 {
   // create the action server
-  as_ = boost::shared_ptr<ActionServer<ActionSpec>>(new ActionServer<ActionSpec>(n, name,
+  as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n, name,
       boost::bind(&SimpleActionServer::goalCallback, this, _1),
       boost::bind(&SimpleActionServer::preemptCallback, this, _1),
       true));

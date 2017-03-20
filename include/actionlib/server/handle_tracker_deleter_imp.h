@@ -43,7 +43,7 @@ namespace actionlib
 {
 template<class ActionSpec>
 HandleTrackerDeleter<ActionSpec>::HandleTrackerDeleter(ActionServerBase<ActionSpec> * as,
-  typename std::list<StatusTracker<ActionSpec>>::iterator status_it,
+  typename std::list<StatusTracker<ActionSpec> >::iterator status_it,
   boost::shared_ptr<DestructionGuard> guard)
 : as_(as), status_it_(status_it), guard_(guard) {}
 

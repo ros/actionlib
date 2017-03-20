@@ -81,7 +81,7 @@ public:
   void goalCB(GoalHandle g);
 
 private:
-  boost::shared_ptr<ActionServer<ActionSpec>> as_;
+  boost::shared_ptr<ActionServer<ActionSpec> > as_;
   boost::function<bool(const Goal &, Result & result)> service_cb_;
 };
 

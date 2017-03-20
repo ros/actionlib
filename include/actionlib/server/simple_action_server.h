@@ -231,7 +231,7 @@ private:
 
   ros::NodeHandle n_;
 
-  boost::shared_ptr<ActionServer<ActionSpec>> as_;
+  boost::shared_ptr<ActionServer<ActionSpec> > as_;
 
   GoalHandle current_goal_, next_goal_;
 

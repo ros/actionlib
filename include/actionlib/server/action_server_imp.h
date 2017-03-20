@@ -237,7 +237,7 @@ void ActionServer<ActionSpec>::publishStatus()
   status_array.status_list.resize(this->status_list_.size());
 
   unsigned int i = 0;
-  for (typename std::list<StatusTracker<ActionSpec>>::iterator it = this->status_list_.begin();
+  for (typename std::list<StatusTracker<ActionSpec> >::iterator it = this->status_list_.begin();
     it != this->status_list_.end(); )
   {
     status_array.status_list[i] = (*it).status_;

@@ -146,7 +146,7 @@ protected:
 
   boost::recursive_mutex lock_;
 
-  std::list<StatusTracker<ActionSpec>> status_list_;
+  std::list<StatusTracker<ActionSpec> > status_list_;
 
   boost::function<void(GoalHandle)> goal_callback_;
   boost::function<void(GoalHandle)> cancel_callback_;
@@ -212,7 +212,7 @@ void ActionServerBase<ActionSpec>::goalCallback(const boost::shared_ptr<const Ac
   ROS_DEBUG_NAMED("actionlib", "The action server has received a new goal request");
 
   // we need to check if this goal already lives in the status list
-  for (typename std::list<StatusTracker<ActionSpec>>::iterator it = status_list_.begin();
+  for (typename std::list<StatusTracker<ActionSpec> >::iterator it = status_list_.begin();
     it != status_list_.end(); ++it)
   {
     if (goal->goal_id.id == (*it).status_.goal_id.id) {
@@ -234,7 +234,7 @@ void ActionServerBase<ActionSpec>::goalCallback(const boost::shared_ptr<const Ac
   }
 
   // if the goal is not in our list, we need to create a StatusTracker associated with this goal and push it on
-  typename std::list<StatusTracker<ActionSpec>>::iterator it = status_list_.insert(
+  typename std::list<StatusTracker<ActionSpec> >::iterator it = status_list_.insert(
     status_list_.end(), StatusTracker<ActionSpec>(goal));
 
   // we need to create a handle tracker for the incoming goal and update the StatusTracker
@@ -276,7 +276,7 @@ void ActionServerBase<ActionSpec>::cancelCallback(
   // we need to handle a cancel for the user
   ROS_DEBUG_NAMED("actionlib", "The action server has received a new cancel request");
   bool goal_id_found = false;
-  for (typename std::list<StatusTracker<ActionSpec>>::iterator it = status_list_.begin();
+  for (typename std::list<StatusTracker<ActionSpec> >::iterator it = status_list_.begin();
     it != status_list_.end(); ++it)
   {
     // check if the goal id is zero or if it is equal to the goal id of
@@ -323,7 +323,7 @@ void ActionServerBase<ActionSpec>::cancelCallback(
 
   // if the requested goal_id was not found, and it is non-zero, then we need to store the cancel request
   if (goal_id->id != "" && !goal_id_found) {
-    typename std::list<StatusTracker<ActionSpec>>::iterator it = status_list_.insert(
+    typename std::list<StatusTracker<ActionSpec> >::iterator it = status_list_.insert(
       status_list_.end(),
       StatusTracker<ActionSpec>(*goal_id, actionlib_msgs::GoalStatus::RECALLING));
     // start the timer for how long the status will live in the list without a goal handle to it

@@ -172,7 +172,7 @@ private:
   /**
    * @brief  A private constructor used by the ActionServer to initialize a ServerGoalHandle
    */
-  ServerGoalHandle(typename std::list<StatusTracker<ActionSpec>>::iterator status_it,
+  ServerGoalHandle(typename std::list<StatusTracker<ActionSpec> >::iterator status_it,
     ActionServerBase<ActionSpec> * as, boost::shared_ptr<void> handle_tracker,
     boost::shared_ptr<DestructionGuard> guard);
 
@@ -182,7 +182,7 @@ private:
    */
   bool setCancelRequested();
 
-  typename std::list<StatusTracker<ActionSpec>>::iterator status_it_;
+  typename std::list<StatusTracker<ActionSpec> >::iterator status_it_;
   boost::shared_ptr<const ActionGoal> goal_;
   ActionServerBase<ActionSpec> * as_;
   boost::shared_ptr<void> handle_tracker_;
