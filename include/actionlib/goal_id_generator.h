@@ -58,7 +58,7 @@ public:
    * \param name Unique name to prepend to the goal id. This will
    *             generally be a fully qualified node name.
    */
-  explicit GoalIDGenerator(const std::string & name);
+  GoalIDGenerator(const std::string & name);
 
   /**
    * \param name Set the name to prepend to the goal id. This will

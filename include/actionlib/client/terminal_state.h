@@ -53,7 +53,7 @@ public:
     LOST
   };
 
-  explicit TerminalState(const StateEnum & state, const std::string & text = std::string(""))
+  TerminalState(const StateEnum & state, const std::string & text = std::string(""))
   : state_(state), text_(text) {}
 
   inline bool operator==(const TerminalState & rhs) const

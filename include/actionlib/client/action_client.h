@@ -77,7 +77,7 @@ public:
    * \param queue CallbackQueue from which this action will process messages.
    *              The default (NULL) is to use the global queue
    */
-  explicit ActionClient(const std::string & name, ros::CallbackQueueInterface * queue = NULL)
+  ActionClient(const std::string & name, ros::CallbackQueueInterface * queue = NULL)
   : n_(name), guard_(new DestructionGuard()),
     manager_(guard_)
   {

@@ -59,7 +59,7 @@ public:
   StateEnum state_;
   std::string text_;
 
-  explicit SimpleClientGoalState(const StateEnum & state,
+  SimpleClientGoalState(const StateEnum & state,
     const std::string & text = std::string(""))
   : state_(state), text_(text) {}
 

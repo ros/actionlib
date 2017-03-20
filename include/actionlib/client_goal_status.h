@@ -62,7 +62,7 @@ public:
     LOST        //!< The goal was sent by the ActionClient, but disappeared due to some communication error
   };
 
-  explicit ClientGoalStatus(StateEnum state)
+  ClientGoalStatus(StateEnum state)
   {
     state_ = state;
   }
@@ -73,7 +73,7 @@ public:
    * ClientGoalStatus are {PREEMPTED, SUCCEEDED, ABORTED, REJECTED}
    * \param goal_status The GoalStatus msg that we want to convert
    */
-  explicit ClientGoalStatus(const GoalStatus & goal_status)
+  ClientGoalStatus(const GoalStatus & goal_status)
   {
     fromGoalStatus(goal_status);
   }

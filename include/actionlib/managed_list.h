@@ -80,7 +80,7 @@ public:
     friend class ManagedList;
 
 private:
-    explicit iterator(typename std::list<TrackedElem>::iterator it)
+    iterator(typename std::list<TrackedElem>::iterator it)
     : it_(it) {}
     typename std::list<TrackedElem>::iterator it_;
   };

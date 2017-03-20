@@ -55,7 +55,7 @@ public:
 class ServiceServer
 {
 public:
-  explicit ServiceServer(boost::shared_ptr<ServiceServerImp> server)
+  ServiceServer(boost::shared_ptr<ServiceServerImp> server)
   : server_(server) {}
 
 private:

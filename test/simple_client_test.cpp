@@ -54,21 +54,21 @@ TEST(SimpleClient, easy_tests) {
   client.sendGoal(goal);
   finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);
-  EXPECT_EQ(SimpleClientGoalState::SUCCEEDED, client.getState()) <<
-    "Expected [SUCCEEDED], but goal state is [" << client.getState().toString() << "]";
+  EXPECT_TRUE( client.getState() == SimpleClientGoalState::SUCCEEDED)
+      << "Expected [SUCCEEDED], but goal state is [" << client.getState().toString() << "]";
 
   // test that setting the text field for the status works
-  EXPECT_STREQ("The ref server has succeeded", client.getState().getText());
+  EXPECT_TRUE(client.getState().getText() == "The ref server has succeeded");
 
   goal.goal = 2;
   client.sendGoal(goal);
   finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);
-  EXPECT_EQ(SimpleClientGoalState::ABORTED, client.getState()) <<
-    "Expected [ABORTED], but goal state is [" << client.getState().toString() << "]";
+  EXPECT_TRUE( client.getState() == SimpleClientGoalState::ABORTED)
+      << "Expected [ABORTED], but goal state is [" << client.getState().toString() << "]";
 
   // test that setting the text field for the status works
-  EXPECT_STREQ("The ref server has aborted", client.getState().getText());
+  EXPECT_TRUE(client.getState().getText() == "The ref server has aborted");
 
   client.cancelAllGoals();
 
@@ -81,16 +81,16 @@ void easyDoneCallback(bool * called, const SimpleClientGoalState & state,
   const TestResultConstPtr &)
 {
   *called = true;
-  EXPECT_EQ(SimpleClientGoalState::SUCCEEDED, state) <<
-    "Expected [SUCCEEDED], but goal state is [" << state.toString() << "]";
+  EXPECT_TRUE(state == SimpleClientGoalState::SUCCEEDED)
+    << "Expected [SUCCEEDED], but goal state is [" << state.toString() << "]";
 }
 
 void easyOldDoneCallback(bool * called, const TerminalState & terminal_state,
   const TestResultConstPtr &)
 {
   *called = true;
-  EXPECT_EQ(TerminalState::SUCCEEDED, terminal_state) <<
-    "Expected [SUCCEEDED], but terminal state is [" << terminal_state.toString() << "]";
+  EXPECT_TRUE(terminal_state == TerminalState::SUCCEEDED)
+    << "Expected [SUCCEEDED], but terminal state is [" << terminal_state.toString() << "]";
 }
 
 /* Intermittent failures #5087

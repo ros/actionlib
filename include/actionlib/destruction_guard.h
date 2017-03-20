@@ -97,7 +97,7 @@ public:
      * @brief  Constructor for a ScopedProtector
      * @param guard The DestructionGuard to protect
      */
-    explicit ScopedProtector(DestructionGuard & guard)
+    ScopedProtector(DestructionGuard & guard)
     : guard_(guard), protected_(false)
     {
       protected_ = guard_.tryProtect();

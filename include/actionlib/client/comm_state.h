@@ -60,7 +60,7 @@ public:
     DONE                    = 7
   };
 
-  explicit CommState(const StateEnum & state)
+  CommState(const StateEnum & state)
   : state_(state) {}
 
   inline bool operator==(const CommState & rhs) const

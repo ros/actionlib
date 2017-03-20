@@ -56,7 +56,7 @@ public:
     DONE
   };
 
-  explicit SimpleGoalState(const StateEnum & state)
+  SimpleGoalState(const StateEnum & state)
   : state_(state) {}
 
   inline bool operator==(const SimpleGoalState & rhs) const

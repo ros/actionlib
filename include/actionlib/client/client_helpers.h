@@ -78,7 +78,7 @@ public:
   typedef boost::function<void (const ActionGoalConstPtr)> SendGoalFunc;
   typedef boost::function<void (const actionlib_msgs::GoalID &)> CancelFunc;
 
-  explicit GoalManager(const boost::shared_ptr<DestructionGuard> & guard)
+  GoalManager(const boost::shared_ptr<DestructionGuard> & guard)
   : guard_(guard) {}
 
   void registerSendGoalFunc(SendGoalFunc send_goal_func);

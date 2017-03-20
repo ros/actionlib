@@ -61,7 +61,7 @@ private:
 public:
   StatusTracker(const actionlib_msgs::GoalID & goal_id, unsigned int status);
 
-  explicit StatusTracker(const boost::shared_ptr<const ActionGoal> & goal);
+  StatusTracker(const boost::shared_ptr<const ActionGoal> & goal);
 
   boost::shared_ptr<const ActionGoal> goal_;
   boost::weak_ptr<void> handle_tracker_;

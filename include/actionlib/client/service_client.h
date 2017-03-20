@@ -60,7 +60,7 @@ public:
 class ServiceClient
 {
 public:
-  explicit ServiceClient(boost::shared_ptr<ServiceClientImp> client)
+  ServiceClient(boost::shared_ptr<ServiceClientImp> client)
   : client_(client) {}
 
   template<class Goal, class Result>
