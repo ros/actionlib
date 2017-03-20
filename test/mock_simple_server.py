@@ -34,7 +34,7 @@ import rostest
 
 from actionlib.simple_action_server import SimpleActionServer
 from actionlib.server_goal_handle import ServerGoalHandle
-from actionlib.msg import *
+from actionlib.msg import TestRequestAction, TestRequestGoal, TestRequestResult
 
 
 class RefSimpleServer(SimpleActionServer):
