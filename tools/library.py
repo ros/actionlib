@@ -57,7 +57,7 @@ def findros(pkg, resource):
     if val:
         return val[0]
     else:
-        raise ROSHException("cannot find resource")
+        raise rospy.ROSException("cannot find resource")
 
 
 def YAMLBag(object):
@@ -182,7 +182,7 @@ def _message_to_yaml(msg, indent='', time_offset=None):
             return str(list(msg))
         msg0 = msg[0]
         if type(msg0) in [int, float, str, bool] or \
-                isinstance(msg0, Time) or isinstance(msg0, Duration) or \
+                isinstance(msg0, rospy.Time) or isinstance(msg0, rospy.Duration) or \
                 type(msg0) in [list, tuple]:  # no array-of-arrays support yet
             return str(list(msg))
         else:
@@ -192,7 +192,7 @@ def _message_to_yaml(msg, indent='', time_offset=None):
         if indent:
             return '\n' + \
                 '\n'.join(['%s%s: %s' % (
-                    indent, f, strify_message(getattr(msg, f), '  ' + indent, time_offset)) for f in msg.__slots__])
+                    indent, f, roslib.message.strify_message(getattr(msg, f), '  ' + indent, time_offset)) for f in msg.__slots__])
         return '\n'.join(['%s%s: %s' % (indent, f, roslib.message.strify_message(getattr(msg, f), '  ' + indent, time_offset)) for f in msg.__slots__])
     else:
         return str(msg)  # punt
