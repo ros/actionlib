@@ -40,10 +40,8 @@ PKG = 'actionlib'
 from optparse import OptionParser
 import roslib.message
 import wx
-import sys
 import rospy
 import actionlib
-import time
 import threading
 from cStringIO import StringIO
 from library import to_yaml, yaml_msg_str

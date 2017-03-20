@@ -44,12 +44,9 @@ import roslib.message
 
 from optparse import OptionParser
 import wx
-import sys
 import rospy
 import actionlib
-import time
 import threading
-import socket
 import rostopic
 from cStringIO import StringIO
 from library import yaml_msg_str, to_yaml
