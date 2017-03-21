@@ -43,7 +43,7 @@ namespace actionlib {
     : as_(as), status_it_(status_it), guard_(guard) {}
 
   template <class ActionSpec>
-  void HandleTrackerDeleter<ActionSpec>::operator()(void* ptr){
+  void HandleTrackerDeleter<ActionSpec>::operator()(void*){
     if(as_){
       //make sure that the action server hasn't been destroyed yet
       DestructionGuard::ScopedProtector protector(*guard_);

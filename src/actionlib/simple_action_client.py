@@ -254,8 +254,9 @@ class SimpleActionClient:
 
     def _handle_feedback(self, gh, feedback):
         if not self.gh:
-            rospy.logerr("Got a feedback callback when we're not tracking a goal. (id: %s)" %
-                         gh.comm_state_machine.action_goal.goal_id.id)
+            # this is not actually an error - there can be a small window in which old feedback
+            # can be received between the time this variable is reset and a new goal is
+            # sent and confirmed
             return
         if gh != self.gh:
             rospy.logerr("Got a feedback callback on a goal handle that we're not tracking. %s vs %s" %

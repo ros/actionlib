@@ -2,6 +2,34 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.8 (2017-02-17)
+-------------------
+* Fixes a deadlock (`#64 <https://github.com/ros/actionlib/issues/64>`_)
+* Removed unused variables warnings (`#63 <https://github.com/ros/actionlib/issues/63>`_ `#65 <https://github.com/ros/actionlib/issues/65>`_)
+* If using sim time, wait for /clock (`#59 <https://github.com/ros/actionlib/issues/59>`_)
+* add parameters to configure queue sizes (`#55 <https://github.com/ros/actionlib/pull/55>`_)
+* Contributors: Esteve Fernandez, Jonathan Meyer, Mikael Arguedas, Patrick Beeson, Robin Vanhove
+
+1.11.7 (2016-10-24)
+-------------------
+* Merge pull request `#57 <https://github.com/ros/actionlib/issues/57>`_ from stonier/patch-1
+  Remove misleading error log
+* Remove misleading error log
+  This was introduced in https://github.com/ros/actionlib/pull/43.
+  It is not actually correct - you can feasibly get feedback here before a new goal is confirmed. See `send_goal()`....
+  ```
+  def send_goal(self, goal, done_cb=None, active_cb=None, feedback_cb=None):
+  # destroys the old goal handle
+  self.stop_tracking_goal()
+  ...
+  self.gh = self.action_client.send_goal(goal, self._handle_transition, self._handle_feedback)
+  ```
+  and of course it will take more time on top of this for the server to actually process the incoming goal and confirm it. Meantime, it may have sent us feedback messages.
+* Improved the const-correctness of some actionlib classes. (`#50 <https://github.com/ros/actionlib/issues/50>`_)
+* Issue `#51 <https://github.com/ros/actionlib/issues/51>`_: Remove annoying debug messages that make useless to enable debug on Python nodes, as they overwhelm less spamming messages (`#54 <https://github.com/ros/actionlib/issues/54>`_)
+* reduce change of unncessary exception on shutdown bu checking directly in before publishing for a shutdown (`#53 <https://github.com/ros/actionlib/issues/53>`_)
+* Contributors: Blake Anderson, Daniel Stonier, Jorge Santos Simón, Mikael Arguedas, uliklank
+
 1.11.6 (2016-06-22)
 -------------------
 * Python code cleanup (`#43 <https://github.com/ros/actionlib/issues/43>`_)
@@ -27,7 +55,7 @@ Changelog for package actionlib
 
 1.11.4 (2015-04-22)
 -------------------
-* Initialize execute_thread_ to NULL
+* Initialize `execute_thread_` to NULL
 * Contributors: Esteve Fernandez
 
 1.11.3 (2014-12-23)
@@ -44,7 +72,7 @@ Changelog for package actionlib
 
 1.11.1 (2014-05-08)
 -------------------
-* Fix uninitialised execute_thread_ member pointer
+* Fix uninitialised `execute_thread_` member pointer
 * Make rostest in CMakeLists optional
 * Use catkin_install_python() to install Python scripts
 * Contributors: Dirk Thomas, Esteve Fernandez, Jordi Pages, Lukas Bulwahn

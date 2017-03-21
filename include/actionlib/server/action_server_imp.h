@@ -118,9 +118,18 @@ namespace actionlib {
   template <class ActionSpec>
   void ActionServer<ActionSpec>::initialize()
   {
-    result_pub_ = node_.advertise<ActionResult>("result", 50);
-    feedback_pub_ = node_.advertise<ActionFeedback>("feedback", 50);
-    status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", 50, true);
+    // read the queue size for each of the publish & subscribe components of the action
+    // server
+    int pub_queue_size;
+    int sub_queue_size;
+    node_.param("actionlib_server_pub_queue_size", pub_queue_size, 50);
+    node_.param("actionlib_server_sub_queue_size", sub_queue_size, 50);
+    if (pub_queue_size < 0) pub_queue_size = 50;
+    if (sub_queue_size < 0) sub_queue_size = 50;
+
+    result_pub_ = node_.advertise<ActionResult>("result", static_cast<uint32_t>(pub_queue_size));
+    feedback_pub_ = node_.advertise<ActionFeedback>("feedback", static_cast<uint32_t>(pub_queue_size));
+    status_pub_ = node_.advertise<actionlib_msgs::GoalStatusArray>("status", static_cast<uint32_t>(pub_queue_size), true);
 
     //read the frequency with which to publish status from the parameter server
     //if not specified locally explicitly, use search param to find actionlib_status_frequency
@@ -145,10 +154,10 @@ namespace actionlib {
           boost::bind(&ActionServer::publishStatus, this, _1));
     }
 
-    goal_sub_ = node_.subscribe<ActionGoal>("goal", 50,
+    goal_sub_ = node_.subscribe<ActionGoal>("goal", static_cast<uint32_t>(sub_queue_size),
         boost::bind(&ActionServerBase<ActionSpec>::goalCallback, this, _1));
 
-    cancel_sub_ = node_.subscribe<actionlib_msgs::GoalID>("cancel", 50,
+    cancel_sub_ = node_.subscribe<actionlib_msgs::GoalID>("cancel", static_cast<uint32_t>(sub_queue_size),
         boost::bind(&ActionServerBase<ActionSpec>::cancelCallback, this, _1));
 
   }
@@ -181,7 +190,7 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  void ActionServer<ActionSpec>::publishStatus(const ros::TimerEvent& e) const
+  void ActionServer<ActionSpec>::publishStatus(const ros::TimerEvent&) const
   {
     boost::recursive_mutex::scoped_lock lock(this->lock_);
     //we won't publish status unless we've been started
