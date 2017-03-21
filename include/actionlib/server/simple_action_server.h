@@ -136,20 +136,20 @@ namespace actionlib {
        * @brief  Allows  polling implementations to query about the availability of a new goal
        * @return True if a new goal is available, false otherwise
        */
-      bool isNewGoalAvailable();
+      bool isNewGoalAvailable() const;
 
 
       /**
        * @brief  Allows  polling implementations to query about preempt requests
        * @return True if a preempt is requested, false otherwise
        */
-      bool isPreemptRequested();
+      bool isPreemptRequested() const;
 
       /**
        * @brief  Allows  polling implementations to query about the status of the current goal
        * @return True if a goal is active, false otherwise
        */
-      bool isActive();
+      bool isActive() const;
 
       /**
        * @brief  Sets the status of the active goal to succeeded

@@ -192,18 +192,18 @@ namespace actionlib {
   }
 
   template <class ActionSpec>
-  bool SimpleActionServer<ActionSpec>::isNewGoalAvailable(){
+  bool SimpleActionServer<ActionSpec>::isNewGoalAvailable() const{
     return new_goal_;
   }
 
 
   template <class ActionSpec>
-  bool SimpleActionServer<ActionSpec>::isPreemptRequested(){
+  bool SimpleActionServer<ActionSpec>::isPreemptRequested() const{
     return preempt_request_;
   }
 
   template <class ActionSpec>
-  bool SimpleActionServer<ActionSpec>::isActive(){
+  bool SimpleActionServer<ActionSpec>::isActive() const{
     if(!current_goal_.getGoal())
       return false;
     unsigned int status = current_goal_.getGoalStatus().status;
