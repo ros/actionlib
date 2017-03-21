@@ -154,12 +154,12 @@ namespace actionlib {
       /**
        * @brief  Explicitly publish status
        */
-      virtual void publishStatus();
+      virtual void publishStatus() const;
 
       /**
        * @brief  Publish status for all goals on a timer event
        */
-      void publishStatus(const ros::TimerEvent& e);
+      void publishStatus(const ros::TimerEvent& e) const;
 
       ros::NodeHandle node_;
 
