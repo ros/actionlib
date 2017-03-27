@@ -33,8 +33,8 @@ import unittest
 import rospy
 import rostest
 from actionlib import SimpleActionClient
-from actionlib_msgs.msg import *
-from actionlib.msg import *
+from actionlib_msgs.msg import GoalStatus
+from actionlib.msg import TestRequestAction, TestRequestGoal
 
 
 class SimpleExerciser(unittest.TestCase):
@@ -45,8 +45,8 @@ class SimpleExerciser(unittest.TestCase):
         self.assert_(self.client.wait_for_server(self.default_wait))
 
     def test_just_succeed(self):
-        goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_SUCCESS,
-                               the_result = 42)
+        goal = TestRequestGoal(terminate_status=TestRequestGoal.TERMINATE_SUCCESS,
+                               the_result=42)
         self.client.send_goal(goal)
         self.client.wait_for_result(self.default_wait)
 
@@ -54,8 +54,8 @@ class SimpleExerciser(unittest.TestCase):
         self.assertEqual(42, self.client.get_result().the_result)
 
     def test_just_abort(self):
-        goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_ABORTED,
-                               the_result = 42)
+        goal = TestRequestGoal(terminate_status=TestRequestGoal.TERMINATE_ABORTED,
+                               the_result=42)
         self.client.send_goal(goal)
         self.client.wait_for_result(self.default_wait)
 
@@ -63,9 +63,9 @@ class SimpleExerciser(unittest.TestCase):
         self.assertEqual(42, self.client.get_result().the_result)
 
     def test_just_preempt(self):
-        goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_SUCCESS,
-                               delay_terminate = rospy.Duration(100000),
-                               the_result = 42)
+        goal = TestRequestGoal(terminate_status=TestRequestGoal.TERMINATE_SUCCESS,
+                               delay_terminate=rospy.Duration(100000),
+                               the_result=42)
         self.client.send_goal(goal)
 
         # Ensure that the action server got the goal, before continuing
@@ -81,8 +81,8 @@ class SimpleExerciser(unittest.TestCase):
 
     # Should print out errors about not setting a terminal status in the action server.
     def test_drop(self):
-        goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_DROP,
-                               the_result = 42)
+        goal = TestRequestGoal(terminate_status=TestRequestGoal.TERMINATE_DROP,
+                               the_result=42)
         self.client.send_goal(goal)
         self.client.wait_for_result(self.default_wait)
 
@@ -91,8 +91,8 @@ class SimpleExerciser(unittest.TestCase):
 
     # Should print out errors about throwing an exception
     def test_exception(self):
-        goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_EXCEPTION,
-                               the_result = 42)
+        goal = TestRequestGoal(terminate_status=TestRequestGoal.TERMINATE_EXCEPTION,
+                               the_result=42)
         self.client.send_goal(goal)
         self.client.wait_for_result(self.default_wait)
 
@@ -100,10 +100,10 @@ class SimpleExerciser(unittest.TestCase):
         self.assertEqual(0, self.client.get_result().the_result)
 
     def test_ignore_cancel_and_succeed(self):
-        goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_SUCCESS,
-                               delay_terminate = rospy.Duration(2.0),
-                               ignore_cancel = True,
-                               the_result = 42)
+        goal = TestRequestGoal(terminate_status=TestRequestGoal.TERMINATE_SUCCESS,
+                               delay_terminate=rospy.Duration(2.0),
+                               ignore_cancel=True,
+                               the_result=42)
         self.client.send_goal(goal)
 
         # Ensure that the action server got the goal, before continuing
@@ -118,10 +118,9 @@ class SimpleExerciser(unittest.TestCase):
         self.assertEqual(GoalStatus.SUCCEEDED, self.client.get_state())
         self.assertEqual(42, self.client.get_result().the_result)
 
-
     def test_lose(self):
-        goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_LOSE,
-                               the_result = 42)
+        goal = TestRequestGoal(terminate_status=TestRequestGoal.TERMINATE_LOSE,
+                               the_result=42)
         self.client.send_goal(goal)
         self.client.wait_for_result(self.default_wait)
 
@@ -129,17 +128,16 @@ class SimpleExerciser(unittest.TestCase):
 
     # test_freeze_server has been removed, as it is undecided what should happen
     # when the action server disappears.
-'''
-    def test_freeze_server(self):
-        goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_SUCCESS,
-                               the_result = 42,
-                               pause_status = rospy.Duration(10.0))
-        self.client.send_goal(goal)
-        self.client.wait_for_result(rospy.Duration(13.0))
-
-        self.assertEqual(GoalStatus.LOST, self.client.get_state())
-'''
-
+    #
+    # # def test_freeze_server(self):
+    # #     goal = TestRequestGoal(terminate_status = TestRequestGoal.TERMINATE_SUCCESS,
+    # #                            the_result = 42,
+    # #                            pause_status = rospy.Duration(10.0))
+    # #     self.client.send_goal(goal)
+    # #     self.client.wait_for_result(rospy.Duration(13.0))
+    # #
+    # #     self.assertEqual(GoalStatus.LOST, self.client.get_state())
+    #
 
 
 if __name__ == '__main__':

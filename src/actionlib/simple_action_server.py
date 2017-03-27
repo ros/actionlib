@@ -32,7 +32,7 @@ import rospy
 import threading
 import traceback
 
-from actionlib_msgs.msg import *
+from actionlib_msgs.msg import GoalStatus
 
 from actionlib import ActionServer
 from actionlib.server_goal_handle import ServerGoalHandle
@@ -89,8 +89,8 @@ class SimpleActionServer:
         else:
             self.execute_thread = None
 
-        #create the action server
-        self.action_server = ActionServer(name, ActionSpec, self.internal_goal_callback,self.internal_preempt_callback, auto_start)
+        # create the action server
+        self.action_server = ActionServer(name, ActionSpec, self.internal_goal_callback, self.internal_preempt_callback, auto_start)
 
     def __del__(self):
         if hasattr(self, 'execute_callback') and self.execute_callback:
@@ -151,7 +151,7 @@ class SimpleActionServer:
             return False
 
         status = self.current_goal.get_goal_status().status
-        return status == actionlib_msgs.msg.GoalStatus.ACTIVE or status == actionlib_msgs.msg.GoalStatus.PREEMPTING
+        return status == GoalStatus.ACTIVE or status == GoalStatus.PREEMPTING
 
     ## @brief Sets the status of the active goal to succeeded
     ## @param  result An optional result to send back to any clients of the goal
@@ -248,15 +248,15 @@ class SimpleActionServer:
         with self.lock:
             rospy.logdebug("A preempt has been received by the SimpleActionServer")
 
-            #if the preempt is for the current goal, then we'll set the preemptRequest flag and call the user's preempt callback
+            # if the preempt is for the current goal, then we'll set the preemptRequest flag and call the user's preempt callback
             if(preempt == self.current_goal):
                 rospy.logdebug("Setting preempt_request bit for the current goal to TRUE and invoking callback")
                 self.preempt_request = True
 
-                #if the user has registered a preempt callback, we'll call it now
+                # if the user has registered a preempt callback, we'll call it now
                 if(self.preempt_callback):
                     self.preempt_callback()
-            #if the preempt applies to the next goal, we'll set the preempt bit for that
+            # if the preempt applies to the next goal, we'll set the preempt bit for that
             elif(preempt == self.next_goal):
                 rospy.logdebug("Setting preempt request bit for the next goal to TRUE")
                 self.new_goal_preempt_request = True

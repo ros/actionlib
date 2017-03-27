@@ -65,7 +65,7 @@ class ServerGoalHandle:
         on whether a cancel request has been received for the goal
         """
 
-        rospy.logdebug("Accepting goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_sec());
+        rospy.logdebug("Accepting goal, id: %s, stamp: %.2f", self.get_goal_id().id, self.get_goal_id().stamp.to_sec())
         if self.goal:
             with self.action_server.lock:
                 status = self.status_tracker.status.status
@@ -101,7 +101,7 @@ class ServerGoalHandle:
 
         if self.goal:
             with self.action_server.lock:
-                status = self.status_tracker.status.status;
+                status = self.status_tracker.status.status
                 if status == actionlib_msgs.msg.GoalStatus.PENDING or status == actionlib_msgs.msg.GoalStatus.RECALLING:
                     self.status_tracker.status.status = actionlib_msgs.msg.GoalStatus.RECALLED
                     self.status_tracker.status.text = text
@@ -223,8 +223,8 @@ class ServerGoalHandle:
         if self.goal:
             # @todo Test that python reference counting automatically handles this.
             # create the deleter for our goal subtype
-            # d = EnclosureDeleter(self.goal);
-            # weakref.ref(boost::shared_ptr<const Goal>(&(goal_->goal), d);
+            # d = EnclosureDeleter(self.goal)
+            # weakref.ref(boost::shared_ptr<const Goal>(&(goal_->goal), d)
             return self.goal.goal
 
         return None

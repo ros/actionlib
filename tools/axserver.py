@@ -35,24 +35,23 @@
 usage: %prog /action_name action_type
 """
 
-PKG='actionlib'
+PKG = 'actionlib'
 
 from optparse import OptionParser
 import roslib.message
 import wx
-import sys
 import rospy
 import actionlib
-import time
 import threading
 from cStringIO import StringIO
-from library import *
+from library import to_yaml, yaml_msg_str
 from dynamic_action import DynamicAction
 
 SEND_FEEDBACK = 0
 SUCCEED = 1
 ABORT = 2
 PREEMPT = 3
+
 
 class AXServerApp(wx.App):
     def __init__(self, action_type, action_name):
@@ -65,10 +64,9 @@ class AXServerApp(wx.App):
         self.result_msg = None
         self.execute_type = None
 
-
     def set_goal(self, goal):
         if goal is None:
-            self.status_bg.SetBackgroundColour(wx.Colour(200,0,0))
+            self.status_bg.SetBackgroundColour(wx.Colour(200, 0, 0))
             self.status.SetLabel("Waiting For Goal...")
             self.send_feedback.Disable()
             self.succeed.Disable()
@@ -78,7 +76,7 @@ class AXServerApp(wx.App):
             self.goal.SetValue("")
 
         else:
-            self.status_bg.SetBackgroundColour(wx.Colour(0,200,0))
+            self.status_bg.SetBackgroundColour(wx.Colour(0, 200, 0))
             self.status.SetLabel("Received Goal.  Send feedback, succeed, or abort.")
             self.send_feedback.Enable()
             self.succeed.Enable()
@@ -117,7 +115,6 @@ class AXServerApp(wx.App):
                 if self.feedback_msg is not None:
                     self.server.publish_feedback(self.feedback_msg)
 
-
         if self.execute_type == SUCCEED:
             self.server.set_succeeded(self.result_msg)
 
@@ -142,13 +139,11 @@ class AXServerApp(wx.App):
 
             self.execute_type = SEND_FEEDBACK
             self.condition.notify()
-        except roslib.message.SerializationError, e:
+        except roslib.message.SerializationError as e:
             self.feedback_msg = None
             wx.MessageBox(str(e), "Error serializing feedback", wx.OK)
 
         self.condition.release()
-
-
 
     def on_succeed(self, event):
         self.condition.acquire()
@@ -160,7 +155,7 @@ class AXServerApp(wx.App):
 
             self.execute_type = SUCCEED
             self.condition.notify()
-        except roslib.message.SerializationError, e:
+        except roslib.message.SerializationError as e:
             self.result_msg = None
             wx.MessageBox(str(e), "Error serializing result", wx.OK)
 
@@ -214,14 +209,14 @@ class AXServerApp(wx.App):
         self.succeed = wx.Button(self.frame, -1, label="SUCCEED")
         self.succeed.Bind(wx.EVT_BUTTON, self.on_succeed)
 
-        self.abort    = wx.Button(self.frame, -1, label="ABORT")
+        self.abort = wx.Button(self.frame, -1, label="ABORT")
         self.abort.Bind(wx.EVT_BUTTON, self.on_abort)
 
-        self.preempt    = wx.Button(self.frame, -1, label="PREEMPT")
+        self.preempt = wx.Button(self.frame, -1, label="PREEMPT")
         self.preempt.Bind(wx.EVT_BUTTON, self.on_preempt)
 
         self.status_bg = wx.Panel(self.frame, -1)
-        self.status_bg.SetBackgroundColour(wx.Colour(200,0,0))
+        self.status_bg.SetBackgroundColour(wx.Colour(200, 0, 0))
         self.status = wx.StaticText(self.status_bg, -1, label="Waiting For Goal...")
 
         self.sz.Add(self.goal_st, 1, wx.EXPAND)
@@ -241,6 +236,7 @@ class AXServerApp(wx.App):
         self.frame.Show()
 
         return True
+
 
 if __name__ == '__main__':
     rospy.init_node('axserver', anonymous=True)
