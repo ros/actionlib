@@ -49,7 +49,7 @@ import actionlib
 import threading
 import rostopic
 from cStringIO import StringIO
-from library import yaml_msg_str, to_yaml
+from library import to_yaml, yaml_msg_str
 from dynamic_action import DynamicAction
 from actionlib_msgs.msg import GoalStatus
 
