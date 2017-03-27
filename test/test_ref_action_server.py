@@ -31,6 +31,7 @@ PKG = 'actionlib'
 import unittest
 import rospy
 from actionlib_msgs.msg import GoalStatus
+# TODO(mikaelarguedas) use SimpleActionClient here if it makes sense
 # from actionlib import SimpleActionClient
 from actionlib import ActionClient
 from actionlib.msg import TestAction, TestGoal
