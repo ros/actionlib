@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.9 (2017-03-27)
+-------------------
 * Python3 compatibility + pep8 compliance (`#71 <https://github.com/ros/actionlib/issues/71>`_) follow-up of (`#43 <https://github.com/ros/actionlib/issues/43>`_)
 * - wait for ros::Time::now to become valid before init of connection_monitor (`#62 <https://github.com/ros/actionlib/issues/62>`_)
   - bugfix : connection_monitor should wait for result
