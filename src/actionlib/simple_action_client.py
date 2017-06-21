@@ -30,7 +30,7 @@
 import rospy
 import threading
 
-from actionlib_msgs.msg import *
+from actionlib_msgs.msg import GoalStatus
 from actionlib.action_client import ActionClient, CommState, get_name_of_constant
 
 
@@ -38,6 +38,7 @@ class SimpleGoalState:
     PENDING = 0
     ACTIVE = 1
     DONE = 2
+
 
 SimpleGoalState.to_string = classmethod(get_name_of_constant)
 
@@ -117,7 +118,6 @@ class SimpleActionClient:
                 rospy.logdebug("Preempt didn't finish specified preempt_timeout [%.2f]", preempt_timeout.to_sec())
         return self.get_state()
 
-
     ## @brief Blocks until this goal transitions to done
     ## @param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
     ## @return True if the goal finished. False if the goal didn't finish within the allocated timeout
@@ -185,9 +185,6 @@ class SimpleActionClient:
 
         return self.gh.get_goal_status_text()
 
-
-
-
     ## @brief Cancels all goals currently running on the action server
     ##
     ## This preempts all goals running on the action server at the point that
@@ -195,22 +192,18 @@ class SimpleActionClient:
     def cancel_all_goals(self):
         self.action_client.cancel_all_goals()
 
-
     ## @brief Cancels all goals prior to a given timestamp
     ##
     ## This preempts all goals running on the action server for which the
     ## time stamp is earlier than the specified time stamp
     ## this message is serviced by the ActionServer.
-
     def cancel_goals_at_and_before_time(self, time):
         self.action_client.cancel_goals_at_and_before_time(time)
-
 
     ## @brief Cancels the goal that we are currently pursuing
     def cancel_goal(self):
         if self.gh:
             self.gh.cancel()
-
 
     ## @brief Stops tracking the state of the current goal. Unregisters this goal's callbacks
     ##

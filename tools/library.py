@@ -43,6 +43,7 @@ import roslib.packages
 
 import rospy
 
+
 def findros(pkg, resource):
     """
     Find ROS resource inside of a package.
@@ -56,21 +57,22 @@ def findros(pkg, resource):
     if val:
         return val[0]
     else:
-        raise ROSHException("cannot find resource")
-    
+        raise rospy.ROSException("cannot find resource")
+
+
 def YAMLBag(object):
-    
     def __init__(self, filename):
         self.filename = filename
         self._fp = open(filename, 'w')
-        
+
     def append(self, msg):
         self._fp.write(to_yaml(msg))
-        
+
     def close(self):
         if self._fp is not None:
             self._fp.close()
             self._fp = None
+
 
 def to_yaml(obj):
     if isinstance(obj, roslib.message.Message):
@@ -78,6 +80,7 @@ def to_yaml(obj):
         pass
     else:
         return yaml.dump(obj)
+
 
 def yaml_msg_str(type_, yaml_str, filename=None):
     """
@@ -93,15 +96,16 @@ def yaml_msg_str(type_, yaml_str, filename=None):
         msg_dict = {}
     else:
         msg_dict = yaml.load(yaml_str)
-    if type(msg_dict) != dict:
+    if not isinstance(msg_dict, dict):
         if filename:
-            raise ValueError("yaml file [%s] does not contain a dictionary"%filename)
+            raise ValueError("yaml file [%s] does not contain a dictionary" % filename)
         else:
             raise ValueError("yaml string does not contain a dictionary")
     m = type_()
     roslib.message.fill_message_args(m, [msg_dict])
     return m
-        
+
+
 def yaml_msg(type_, filename):
     """
     Load single message from YAML dictionary representation.
@@ -113,6 +117,7 @@ def yaml_msg(type_, filename):
     """
     with open(filename, 'r') as f:
         return yaml_msg_str(type_, f.read(), filename=filename)
+
 
 def yaml_msgs_str(type_, yaml_str, filename=None):
     """
@@ -127,16 +132,17 @@ def yaml_msgs_str(type_, yaml_str, filename=None):
     yaml_doc = yaml.load(yaml_str)
     msgs = []
     for msg_dict in yaml_doc:
-        if not type(msg_dict) == dict:
+        if not isinstance(msg_dict, dict):
             if filename:
-                raise ValueError("yaml file [%s] does not contain a list of dictionaries"%filename)
+                raise ValueError("yaml file [%s] does not contain a list of dictionaries" % filename)
             else:
                 raise ValueError("yaml string does not contain a list of dictionaries")
         m = type_()
         roslib.message.fill_message_args(m, msg_dict)
         msgs.append(m)
     return msgs
-        
+
+
 def yaml_msgs(type_, filename):
     """
     Load messages from YAML list-of-dictionaries representation.
@@ -148,7 +154,8 @@ def yaml_msgs(type_, filename):
     """
     with open(filename, 'r') as f:
         return yaml_msgs_str(type_, f.read(), filename=filename)
-    
+
+
 def _message_to_yaml(msg, indent='', time_offset=None):
     """
     convert value to YAML representation
@@ -164,29 +171,29 @@ def _message_to_yaml(msg, indent='', time_offset=None):
         # TODO: need to actually escape
         return msg
     elif isinstance(msg, rospy.Time) or isinstance(msg, rospy.Duration):
-        
         if time_offset is not None and isinstance(msg, rospy.Time):
             msg = msg-time_offset
 
-        return '\n%ssecs: %s\n%snsecs: %s'%(indent, msg.secs, indent, msg.nsecs)
-        
+        return '\n%ssecs: %s\n%snsecs: %s' % (indent, msg.secs, indent, msg.nsecs)
+
     elif type(msg) in [list, tuple]:
         # have to convert tuple->list to be yaml-safe
         if len(msg) == 0:
             return str(list(msg))
         msg0 = msg[0]
         if type(msg0) in [int, float, str, bool] or \
-               isinstance(msg0, Time) or isinstance(msg0, Duration) or \
-               type(msg0) in [list, tuple]: # no array-of-arrays support yet
+                isinstance(msg0, rospy.Time) or isinstance(msg0, rospy.Duration) or \
+                isinstance(msg0, list) or isinstance(msg0, tuple):
+            # no array-of-arrays support yet
             return str(list(msg))
         else:
             indent = indent + '  '
             return "["+','.join([roslib.message.strify_message(v, indent, time_offset) for v in msg])+"]"
     elif isinstance(msg, rospy.Message):
         if indent:
-            return '\n'+\
-                '\n'.join(['%s%s: %s'%(indent, f,
-                                       strify_message(getattr(msg, f), '  '+indent, time_offset)) for f in msg.__slots__])
-        return '\n'.join(['%s%s: %s'%(indent, f, roslib.message.strify_message(getattr(msg, f), '  '+indent, time_offset)) for f in msg.__slots__])
+            return '\n' + \
+                '\n'.join(['%s%s: %s' % (
+                    indent, f, roslib.message.strify_message(getattr(msg, f), '  ' + indent, time_offset)) for f in msg.__slots__])
+        return '\n'.join(['%s%s: %s' % (indent, f, roslib.message.strify_message(getattr(msg, f), '  ' + indent, time_offset)) for f in msg.__slots__])
     else:
-        return str(msg) #punt
+        return str(msg)  # punt

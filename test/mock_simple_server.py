@@ -25,18 +25,17 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from __future__ import print_function
 
-import sys
 import time
 import rospy
-import rostest
 
 from actionlib.simple_action_server import SimpleActionServer
-from actionlib.server_goal_handle import ServerGoalHandle;
-from actionlib.msg import *
+from actionlib.server_goal_handle import ServerGoalHandle
+from actionlib.msg import TestRequestAction, TestRequestGoal, TestRequestResult
+
 
 class RefSimpleServer(SimpleActionServer):
-
     def __init__(self, name):
         SimpleActionServer.__init__(self, name, TestRequestAction, self.execute_cb, False)
         self.start()
@@ -54,7 +53,6 @@ class RefSimpleServer(SimpleActionServer):
                 while rospy.get_rostime() < status_continue_time:
                     time.sleep(0.02)
                 rospy.loginfo("Unlocking the action server")
-
 
         terminate_time = rospy.get_rostime() + goal.delay_terminate
         while rospy.get_rostime() < terminate_time:
@@ -91,9 +89,8 @@ class RefSimpleServer(SimpleActionServer):
             self.set_aborted(None, "Don't know how to terminate as %d" % goal.terminate_status)
 
 
-
 if __name__ == '__main__':
     rospy.init_node("ref_simple_server")
     ref_server = RefSimpleServer("test_request_action")
-    print "Spinning"
+    print("Spinning")
     rospy.spin()

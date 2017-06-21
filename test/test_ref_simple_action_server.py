@@ -25,15 +25,15 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-PKG='actionlib'
+PKG = 'actionlib'
 
-import sys
 import unittest
 import rospy
-from actionlib_msgs.msg import *
+from actionlib_msgs.msg import GoalStatus
 from actionlib import SimpleActionClient
 from actionlib import ActionClient
 from actionlib.msg import TestAction, TestGoal
+
 
 class TestRefSimpleActionServer(unittest.TestCase):
 
@@ -59,24 +59,22 @@ class TestRefSimpleActionServer(unittest.TestCase):
         self.assert_(client.wait_for_result(rospy.Duration(10.0)),
                      "Goal didn't finish")
 
-        #The simple server can't reject goals
+        # The simple server can't reject goals
         self.assertEqual(GoalStatus.ABORTED, client.get_state())
 
-
         goal = TestGoal(9)
-        saved_feedback={};
+        saved_feedback = {}
+
         def on_feedback(fb):
             rospy.loginfo("Got feedback")
-            saved_feedback[0]=fb
+            saved_feedback[0] = fb
 
-        client.send_goal(goal,feedback_cb=on_feedback)
+        client.send_goal(goal, feedback_cb=on_feedback)
         self.assert_(client.wait_for_result(rospy.Duration(10.0)),
                      "Goal didn't finish")
         self.assertEqual(GoalStatus.SUCCEEDED, client.get_state())
 
-        self.assertEqual(saved_feedback[0].feedback,9)
-
-
+        self.assertEqual(saved_feedback[0].feedback, 9)
 
 
 if __name__ == '__main__':

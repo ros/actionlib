@@ -26,12 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import sys
 import unittest
 import rospy
-from actionlib_msgs.msg import *
+from actionlib_msgs.msg import GoalStatus
 from actionlib import SimpleActionClient
 from actionlib.msg import TestAction, TestGoal
+
 
 class TestSimpleActionClient(unittest.TestCase):
 
@@ -53,7 +53,6 @@ class TestSimpleActionClient(unittest.TestCase):
                      "Goal didn't finish")
         self.assertEqual(GoalStatus.ABORTED, client.get_state())
         self.assertEqual("The ref server has aborted", client.get_goal_status_text())
-
 
 
 if __name__ == '__main__':
