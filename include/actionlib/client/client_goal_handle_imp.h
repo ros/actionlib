@@ -105,7 +105,10 @@ CommState ClientGoalHandle<ActionSpec>::getCommState() const
     return CommState(CommState::DONE);
   }
 
-  assert(gm_);
+  if (!gm_) {
+    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
+    return CommState(CommState::DONE);
+  }
 
   return list_handle_.getElem()->getCommState();
 }
@@ -127,7 +130,10 @@ TerminalState ClientGoalHandle<ActionSpec>::getTerminalState() const
     return TerminalState(TerminalState::LOST);
   }
 
-  assert(gm_);
+  if (!gm_) {
+    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
+    return TerminalState(TerminalState::LOST);
+  }
 
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
   CommState comm_state_ = list_handle_.getElem()->getCommState();
@@ -162,7 +168,11 @@ typename ClientGoalHandle<ActionSpec>::ResultConstPtr ClientGoalHandle<ActionSpe
 {
   if (!active_)
     ROS_ERROR_NAMED("actionlib", "Trying to getResult on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
-  assert(gm_);
+
+  if (!gm_) {
+    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
+    return typename ClientGoalHandle<ActionSpec>::ResultConstPtr() ;
+  }
 
   DestructionGuard::ScopedProtector protector(*guard_);
   if (!protector.isProtected())
@@ -188,7 +198,10 @@ void ClientGoalHandle<ActionSpec>::resend()
     return;
   }
 
-  assert(gm_);
+  if (!gm_) {
+    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
+    return;
+  }
 
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
 
@@ -209,7 +222,11 @@ void ClientGoalHandle<ActionSpec>::cancel()
     ROS_ERROR_NAMED("actionlib", "Trying to cancel() on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
     return;
   }
-  assert(gm_);
+
+  if (!gm_) {
+    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
+    return;
+  }
 
   DestructionGuard::ScopedProtector protector(*guard_);
   if (!protector.isProtected())
