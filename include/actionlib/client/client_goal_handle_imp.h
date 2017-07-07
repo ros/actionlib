@@ -91,6 +91,7 @@ bool ClientGoalHandle<ActionSpec>::isExpired() const
 template<class ActionSpec>
 CommState ClientGoalHandle<ActionSpec>::getCommState() const
 {
+  boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
   if (!active_)
   {
     ROS_ERROR_NAMED("actionlib", "Trying to getCommState on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
@@ -106,7 +107,6 @@ CommState ClientGoalHandle<ActionSpec>::getCommState() const
 
   assert(gm_);
 
-  boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
   return list_handle_.getElem()->getCommState();
 }
 
