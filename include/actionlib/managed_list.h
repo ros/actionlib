@@ -156,7 +156,7 @@ public:
         //        assert(valid_);
         if (!valid_) 
           ROS_ERROR_NAMED("actionlib","getElem() should not see non-valid handles");
-          return *it_;
+        return *it_;
       }
       
       const T& getElem() const
