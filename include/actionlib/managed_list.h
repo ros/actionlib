@@ -154,7 +154,7 @@ public:
       T& getElem()
       {
         if (!valid_) 
-          ROS_ERROR_NAMED("actionlib","getElem() should not see non-valid handles");
+          ROS_ERROR_NAMED("actionlib", "getElem() should not see non-valid handles");
         return *it_;
       }
       

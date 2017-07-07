@@ -105,7 +105,7 @@ CommState ClientGoalHandle<ActionSpec>::getCommState() const
   }
 
   if (!gm_) {
-    ROS_ERROR_NAMED("actionlib","Client should have valid GoalManager");
+    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return CommState(CommState::DONE);
   }
 
@@ -131,7 +131,7 @@ TerminalState ClientGoalHandle<ActionSpec>::getTerminalState() const
   }
 
   if (!gm_) {
-    ROS_ERROR_NAMED("actionlib","Client should have valid GoalManager");
+    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return TerminalState(TerminalState::LOST);
   }
 
@@ -170,7 +170,7 @@ typename ClientGoalHandle<ActionSpec>::ResultConstPtr ClientGoalHandle<ActionSpe
     ROS_ERROR_NAMED("actionlib", "Trying to getResult on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
 
   if (!gm_) {
-    ROS_ERROR_NAMED("actionlib","Client should have valid GoalManager");
+    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return typename ClientGoalHandle<ActionSpec>::ResultConstPtr() ;
   }
 
@@ -199,7 +199,7 @@ void ClientGoalHandle<ActionSpec>::resend()
   }
 
   if (!gm_) {
-    ROS_ERROR_NAMED("actionlib","Client should have valid GoalManager");
+    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return;
   }
 
@@ -224,7 +224,7 @@ void ClientGoalHandle<ActionSpec>::cancel()
   }
 
   if (!gm_) {
-    ROS_ERROR_NAMED("actionlib","Client should have valid GoalManager");
+    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return;
   }
 
