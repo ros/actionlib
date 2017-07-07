@@ -148,12 +148,11 @@ public:
 
       /**
        * \brief get the list element that this handle points to
-       * fails/asserts if this is an empty handle
+       * fails if this is an empty handle
        * \return Reference to the element this handle points to
        */
       T& getElem()
       {
-        //        assert(valid_);
         if (!valid_) 
           ROS_ERROR_NAMED("actionlib","getElem() should not see non-valid handles");
         return *it_;
@@ -161,7 +160,6 @@ public:
       
       const T& getElem() const
       {
-        //        assert(valid_);
         if (!valid_)
           ROS_ERROR_NAMED("actionlib", "getElem() should not see non-valid handles");
         return *it_;
@@ -174,8 +172,6 @@ public:
       {
         if (!valid_) 
           ROS_ERROR_NAMED("actionlib", "operator== should not see non-valid handles");
-        //          assert(valid_);
-        //          assert(rhs.valid_);
         if (!rhs.valid_)
           ROS_ERROR_NAMED("actionlib", "operator== should not see non-valid RHS handles");
 
