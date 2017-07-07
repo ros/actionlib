@@ -5,7 +5,7 @@
     <node pkg="actionlib" type="simple_action_server_deadlock_companion.py" name="deadlock_companion_3" required="false"/>
     <node pkg="actionlib" type="simple_action_server_deadlock_companion.py" name="deadlock_companion_4" required="false"/>
     <node pkg="actionlib" type="simple_action_server_deadlock_companion.py" name="deadlock_companion_5" required="false"/>
-    
+
     <!-- Actual testing node -->
     <test pkg="actionlib" type="test_simple_action_server_deadlock.py" test-name="test_simple_action_server_deadlock" />
 </launch>

@@ -93,7 +93,7 @@ void easyOldDoneCallback(bool* called, const TerminalState& terminal_state, cons
     << "Expected [SUCCEEDED], but terminal state is [" << terminal_state.toString() << "]";
 }
 
-/* Intermittent failures #5087 
+/* Intermittent failures #5087
 TEST(SimpleClient, easy_callback)
 {
   ros::NodeHandle n;
