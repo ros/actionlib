@@ -166,7 +166,7 @@ public:
           ROS_ERROR_NAMED("actionlib", "getElem() should not see non-valid handles");
         return *it_;
       }
-      
+
       /**
        * \brief Checks if two handles point to the same list elem
        */
