@@ -79,11 +79,7 @@ ClientGoalHandle<ActionSpec> GoalManager<ActionSpec>::initGoal(const Goal& goal,
 template<class ActionSpec>
 void GoalManager<ActionSpec>::listElemDeleter(typename ManagedListT::iterator it)
 {
-  if (!guard_)
-  {
-    ROS_ERROR_NAMED("actionlib", "Goal manager deleter should not see invalid guards");
-    return;
-  }
+  assert(guard_);
   DestructionGuard::ScopedProtector protector(*guard_);
   if (!protector.isProtected())
   {

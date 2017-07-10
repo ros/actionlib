@@ -152,11 +152,7 @@ namespace actionlib {
         need_to_terminate_ = true;
       }
 
-      if (!execute_thread_)
-      {
-        ROS_ERROR_NAMED("actionlib", "The thread to join is invalid, skipping thread destruction");
-        return;
-      }
+      assert(execute_thread_);
       execute_thread_->join();
       delete execute_thread_;
       execute_thread_ = NULL;
