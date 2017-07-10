@@ -153,7 +153,7 @@ public:
        */
       T& getElem()
       {
-        //        assert(valid_);
+        assert(valid_);
         if (!valid_) 
           ROS_ERROR_NAMED("actionlib", "getElem() should not see non-valid handles");
         return *it_;
@@ -161,7 +161,7 @@ public:
       
       const T& getElem() const
       {
-        //        assert(valid_);
+        assert(valid_);
         if (!valid_)
           ROS_ERROR_NAMED("actionlib", "getElem() should not see non-valid handles");
         return *it_;
@@ -172,10 +172,10 @@ public:
        */
       bool operator==(const Handle& rhs) const
       {
+        assert(valid_);
         if (!valid_) 
           ROS_ERROR_NAMED("actionlib", "operator== should not see non-valid handles");
-        //          assert(valid_);
-        //          assert(rhs.valid_);
+        assert(rhs.valid_);
         if (!rhs.valid_)
           ROS_ERROR_NAMED("actionlib", "operator== should not see non-valid RHS handles");
 
