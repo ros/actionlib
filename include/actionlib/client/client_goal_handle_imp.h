@@ -91,6 +91,13 @@ bool ClientGoalHandle<ActionSpec>::isExpired() const
 template<class ActionSpec>
 CommState ClientGoalHandle<ActionSpec>::getCommState() const
 {
+  assert(gm_);
+  if (!gm_)
+  {
+    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
+    return CommState(CommState::DONE);
+  }
+
   boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
   if (!active_)
   {
@@ -102,12 +109,6 @@ CommState ClientGoalHandle<ActionSpec>::getCommState() const
   if (!protector.isProtected())
   {
     ROS_ERROR_NAMED("actionlib", "This action client associated with the goal handle has already been destructed. Ignoring this getCommState() call");
-    return CommState(CommState::DONE);
-  }
-
-  assert(gm_);
-  if (!gm_) {
-    ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return CommState(CommState::DONE);
   }
 
@@ -132,7 +133,8 @@ TerminalState ClientGoalHandle<ActionSpec>::getTerminalState() const
   }
 
   assert(gm_);
-  if (!gm_) {
+  if (!gm_)
+  {
     ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return TerminalState(TerminalState::LOST);
   }
@@ -169,10 +171,12 @@ template<class ActionSpec>
 typename ClientGoalHandle<ActionSpec>::ResultConstPtr ClientGoalHandle<ActionSpec>::getResult() const
 {
   if (!active_)
+  {
     ROS_ERROR_NAMED("actionlib", "Trying to getResult on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
-
+  }
   assert(gm_);
-  if (!gm_) {
+  if (!gm_)
+  {
     ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return typename ClientGoalHandle<ActionSpec>::ResultConstPtr() ;
   }
@@ -192,7 +196,9 @@ template<class ActionSpec>
 void ClientGoalHandle<ActionSpec>::resend()
 {
   if (!active_)
+  {
     ROS_ERROR_NAMED("actionlib", "Trying to resend() on an inactive ClientGoalHandle. You are incorrectly using a ClientGoalHandle");
+  }
 
   DestructionGuard::ScopedProtector protector(*guard_);
   if (!protector.isProtected())
@@ -202,7 +208,8 @@ void ClientGoalHandle<ActionSpec>::resend()
   }
 
   assert(gm_);
-  if (!gm_) {
+  if (!gm_)
+  {
     ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return;
   }
@@ -212,7 +219,9 @@ void ClientGoalHandle<ActionSpec>::resend()
   ActionGoalConstPtr action_goal = list_handle_.getElem()->getActionGoal();
 
   if (!action_goal)
+  {
     ROS_ERROR_NAMED("actionlib", "BUG: Got a NULL action_goal");
+  }
 
   if (gm_->send_goal_func_)
     gm_->send_goal_func_(action_goal);
@@ -228,7 +237,8 @@ void ClientGoalHandle<ActionSpec>::cancel()
   }
 
   assert(gm_);
-  if (!gm_) {
+  if (!gm_)
+  {
     ROS_ERROR_NAMED("actionlib", "Client should have valid GoalManager");
     return;
   }

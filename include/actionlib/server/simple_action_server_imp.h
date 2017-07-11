@@ -153,14 +153,12 @@ namespace actionlib {
       }
 
       assert(execute_thread_);
-      if (!execute_thread_)
+      if (execute_thread_)
       {
-        ROS_ERROR_NAMED("actionlib", "execute_thread_ is null, skipping attempt to join it");
-        return;
+        execute_thread_->join();
+        delete execute_thread_;
+        execute_thread_ = NULL;
       }
-      execute_thread_->join();
-      delete execute_thread_;
-      execute_thread_ = NULL;
     }
   }
 
