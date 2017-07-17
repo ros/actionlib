@@ -139,7 +139,7 @@ namespace actionlib {
       /**
        * @brief  Explicitly publish status
        */
-      virtual void publishStatus() = 0;
+      virtual void publishStatus() const = 0;
 
       boost::recursive_mutex lock_;
 
