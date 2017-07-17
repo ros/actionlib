@@ -401,8 +401,9 @@ template<class ActionSpec>
 typename SimpleActionClient<ActionSpec>::ResultConstPtr SimpleActionClient<ActionSpec>::getResult() const
 {
   if (gh_.isExpired())
+  {
     ROS_ERROR_NAMED("actionlib", "Trying to getResult() when no goal is running. You are incorrectly using SimpleActionClient");
-
+  }
   if (gh_.getResult())
     return gh_.getResult();
 
@@ -426,8 +427,9 @@ template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::cancelGoal()
 {
   if (gh_.isExpired())
+  {
     ROS_ERROR_NAMED("actionlib", "Trying to cancelGoal() when no goal is running. You are incorrectly using SimpleActionClient");
-
+  }
   gh_.cancel();
 }
 
@@ -435,7 +437,9 @@ template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::stopTrackingGoal()
 {
   if (gh_.isExpired())
+  {
     ROS_ERROR_NAMED("actionlib", "Trying to stopTrackingGoal() when no goal is running. You are incorrectly using SimpleActionClient");
+  }
   gh_.reset();
 }
 
@@ -443,9 +447,11 @@ template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::handleFeedback(GoalHandleT gh, const FeedbackConstPtr& feedback)
 {
   if (gh_ != gh)
+  {
     ROS_ERROR_NAMED("actionlib", "Got a callback on a goalHandle that we're not tracking.  \
                This is an internal SimpleActionClient/ActionClient bug.  \
                This could also be a GoalID collision");
+  }
   if (feedback_cb_)
     feedback_cb_(feedback);
 }

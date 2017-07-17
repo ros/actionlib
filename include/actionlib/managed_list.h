@@ -154,12 +154,20 @@ public:
       T& getElem()
       {
         assert(valid_);
+        if (!valid_)
+        {
+          ROS_ERROR_NAMED("actionlib", "getElem() should not see invalid handles");
+        }
         return *it_;
       }
       
       const T& getElem() const
       {
         assert(valid_);
+        if (!valid_)
+        {
+          ROS_ERROR_NAMED("actionlib", "getElem() should not see invalid handles");
+        }
         return *it_;
       }
 
@@ -168,8 +176,16 @@ public:
        */
       bool operator==(const Handle& rhs) const
       {
-          assert(valid_);
-          assert(rhs.valid_);
+        assert(valid_);
+        if (!valid_)
+        {
+          ROS_ERROR_NAMED("actionlib", "operator== should not see invalid handles");
+        }
+        assert(rhs.valid_);
+        if (!rhs.valid_)
+        {
+          ROS_ERROR_NAMED("actionlib", "operator== should not see invalid RHS handles");
+        }
         return (it_ == rhs.it_);
       }
 
@@ -242,8 +258,9 @@ template<class T>
 typename ManagedList<T>::Handle ManagedList<T>::iterator::createHandle()
 {
   if (it_->handle_tracker_.expired())
+  {
     ROS_ERROR_NAMED("actionlib", "Tried to create a handle to a list elem with refcount 0");
-
+  }
   boost::shared_ptr<void> tracker = it_->handle_tracker_.lock();
 
   return Handle(tracker, *this);

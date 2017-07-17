@@ -153,9 +153,12 @@ namespace actionlib {
       }
 
       assert(execute_thread_);
-      execute_thread_->join();
-      delete execute_thread_;
-      execute_thread_ = NULL;
+      if (execute_thread_)
+      {
+        execute_thread_->join();
+        delete execute_thread_;
+        execute_thread_ = NULL;
+      }
     }
   }
 

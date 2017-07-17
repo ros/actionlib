@@ -80,6 +80,11 @@ template<class ActionSpec>
 void GoalManager<ActionSpec>::listElemDeleter(typename ManagedListT::iterator it)
 {
   assert(guard_);
+  if (!guard_)
+  {
+    ROS_ERROR_NAMED("actionlib", "Goal manager deleter should not see invalid guards");
+    return;
+  }
   DestructionGuard::ScopedProtector protector(*guard_);
   if (!protector.isProtected())
   {
