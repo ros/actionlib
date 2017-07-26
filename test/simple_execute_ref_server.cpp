@@ -52,23 +52,24 @@ private:
   ros::NodeHandle nh_;
   SimpleActionServer<TestAction> as_;
 
-  void executeCallback(const TestGoalConstPtr& goal);
+  void executeCallback(const TestGoalConstPtr & goal);
 };
 
-}
+}  // namespace actionlib
 
 using namespace actionlib;
 
-SimpleExecuteRefServer::SimpleExecuteRefServer() : as_(nh_, "reference_action", boost::bind(&SimpleExecuteRefServer::executeCallback, this, _1), false)
+SimpleExecuteRefServer::SimpleExecuteRefServer()
+: as_(nh_, "reference_action", boost::bind(&SimpleExecuteRefServer::executeCallback, this,
+    _1), false)
 {
   as_.start();
 }
 
-void SimpleExecuteRefServer::executeCallback(const TestGoalConstPtr& goal)
+void SimpleExecuteRefServer::executeCallback(const TestGoalConstPtr & goal)
 {
   ROS_DEBUG_NAMED("actionlib", "Got a goal of type [%u]", goal->goal);
-  switch (goal->goal)
-  {
+  switch (goal->goal) {
     case 1:
       ROS_DEBUG_NAMED("actionlib", "Got goal #1");
       as_.setSucceeded(TestResult(), "The ref server has succeeded");
@@ -78,27 +79,25 @@ void SimpleExecuteRefServer::executeCallback(const TestGoalConstPtr& goal)
       as_.setAborted(TestResult(), "The ref server has aborted");
       break;
     case 4:
-    {
-      ROS_DEBUG_NAMED("actionlib", "Got goal #4");
-      ros::Duration sleep_dur(.1);
-      for (unsigned int i=0; i<100; i++)
       {
-        sleep_dur.sleep();
-        if (as_.isPreemptRequested())
-        {
-          as_.setPreempted();
-          return;
+        ROS_DEBUG_NAMED("actionlib", "Got goal #4");
+        ros::Duration sleep_dur(.1);
+        for (unsigned int i = 0; i < 100; i++) {
+          sleep_dur.sleep();
+          if (as_.isPreemptRequested()) {
+            as_.setPreempted();
+            return;
+          }
         }
+        as_.setAborted();
+        break;
       }
-      as_.setAborted();
-      break;
-    }
     default:
       break;
   }
 }
 
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
   ros::init(argc, argv, "ref_server");
 
@@ -108,5 +107,3 @@ int main(int argc, char** argv)
 
   return 0;
 }
-
-

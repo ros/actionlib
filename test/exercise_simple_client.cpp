@@ -37,8 +37,10 @@
 #include <actionlib_msgs/GoalStatus.h>
 
 
-#define EXPECT_STATE(expected_state) EXPECT_TRUE( ac_.getState() == SimpleClientGoalState::expected_state) \
-  << "Expected [" << #expected_state << "], but goal state is [" << ac_.getState().toString() << "]";
+#define EXPECT_STATE(expected_state) EXPECT_TRUE( \
+    ac_.getState() == SimpleClientGoalState::expected_state) \
+    << "Expected [" << #expected_state << "], but goal state is [" << ac_.getState().toString() << \
+    "]";
 
 
 using namespace actionlib;
@@ -47,21 +49,21 @@ using namespace actionlib_msgs;
 class SimpleClientFixture : public testing::Test
 {
 public:
-  SimpleClientFixture() : ac_("test_request_action"), default_wait_(60.0)  {  }
+  SimpleClientFixture()
+  : ac_("test_request_action"), default_wait_(60.0) {}
 
 protected:
   virtual void SetUp()
   {
     // Make sure that the server comes up
-    ASSERT_TRUE( ac_.waitForServer(ros::Duration(10.0)) );
+    ASSERT_TRUE(ac_.waitForServer(ros::Duration(10.0)) );
   }
 
   SimpleActionClient<TestRequestAction> ac_;
   ros::Duration default_wait_;
 };
 
-TEST_F(SimpleClientFixture, just_succeed)
-{
+TEST_F(SimpleClientFixture, just_succeed) {
   TestRequestGoal goal;
   goal.terminate_status = TestRequestGoal::TERMINATE_SUCCESS;
   goal.the_result = 42;
@@ -71,8 +73,7 @@ TEST_F(SimpleClientFixture, just_succeed)
   EXPECT_EQ(42, ac_.getResult()->the_result);
 }
 
-TEST_F(SimpleClientFixture, just_abort)
-{
+TEST_F(SimpleClientFixture, just_abort) {
   TestRequestGoal goal;
   goal.terminate_status = TestRequestGoal::TERMINATE_ABORTED;
   goal.the_result = 42;
@@ -82,8 +83,7 @@ TEST_F(SimpleClientFixture, just_abort)
   EXPECT_EQ(42, ac_.getResult()->the_result);
 }
 
-TEST_F(SimpleClientFixture, just_preempt)
-{
+TEST_F(SimpleClientFixture, just_preempt) {
   TestRequestGoal goal;
   goal.terminate_status = TestRequestGoal::TERMINATE_SUCCESS;
   goal.delay_terminate = ros::Duration(1000);
@@ -91,11 +91,11 @@ TEST_F(SimpleClientFixture, just_preempt)
   ac_.sendGoal(goal);
 
   // Sleep for 10 seconds or until we hear back from the action server
-  for (unsigned int i=0; i < 100; i++)
-  {
+  for (unsigned int i = 0; i < 100; i++) {
     ROS_DEBUG_NAMED("actionlib", "Waiting for Server Response");
-    if (ac_.getState() != SimpleClientGoalState::PENDING)
+    if (ac_.getState() != SimpleClientGoalState::PENDING) {
       break;
+    }
     ros::Duration(0.1).sleep();
   }
 
@@ -105,8 +105,7 @@ TEST_F(SimpleClientFixture, just_preempt)
   EXPECT_EQ(42, ac_.getResult()->the_result);
 }
 
-TEST_F(SimpleClientFixture, drop)
-{
+TEST_F(SimpleClientFixture, drop) {
   TestRequestGoal goal;
   goal.terminate_status = TestRequestGoal::TERMINATE_DROP;
   goal.the_result = 42;
@@ -116,8 +115,7 @@ TEST_F(SimpleClientFixture, drop)
   EXPECT_EQ(0, ac_.getResult()->the_result);
 }
 
-TEST_F(SimpleClientFixture, exception)
-{
+TEST_F(SimpleClientFixture, exception) {
   TestRequestGoal goal;
   goal.terminate_status = TestRequestGoal::TERMINATE_EXCEPTION;
   goal.the_result = 42;
@@ -127,8 +125,7 @@ TEST_F(SimpleClientFixture, exception)
   EXPECT_EQ(0, ac_.getResult()->the_result);
 }
 
-TEST_F(SimpleClientFixture, ignore_cancel_and_succeed)
-{
+TEST_F(SimpleClientFixture, ignore_cancel_and_succeed) {
   TestRequestGoal goal;
   goal.terminate_status = TestRequestGoal::TERMINATE_SUCCESS;
   goal.delay_terminate = ros::Duration(2.0);
@@ -137,11 +134,11 @@ TEST_F(SimpleClientFixture, ignore_cancel_and_succeed)
   ac_.sendGoal(goal);
 
   // Sleep for 10 seconds or until we hear back from the action server
-  for (unsigned int i=0; i < 100; i++)
-  {
+  for (unsigned int i = 0; i < 100; i++) {
     ROS_DEBUG_NAMED("actionlib", "Waiting for Server Response");
-    if (ac_.getState() != SimpleClientGoalState::PENDING)
+    if (ac_.getState() != SimpleClientGoalState::PENDING) {
       break;
+    }
     ros::Duration(0.1).sleep();
   }
 
@@ -151,8 +148,7 @@ TEST_F(SimpleClientFixture, ignore_cancel_and_succeed)
   EXPECT_EQ(42, ac_.getResult()->the_result);
 }
 
-TEST_F(SimpleClientFixture, lose)
-{
+TEST_F(SimpleClientFixture, lose) {
   TestRequestGoal goal;
   goal.terminate_status = TestRequestGoal::TERMINATE_LOSE;
   goal.the_result = 42;
@@ -167,7 +163,8 @@ void spinThread()
   ros::spin();
 }
 
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   testing::InitGoogleTest(&argc, argv);
 
   ros::init(argc, argv, "simple_client_test");

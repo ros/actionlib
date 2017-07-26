@@ -40,8 +40,7 @@
 
 using namespace actionlib;
 
-TEST(SimpleClient, easy_tests)
-{
+TEST(SimpleClient, easy_tests) {
   ros::NodeHandle n;
   SimpleActionClient<TestAction> client(n, "reference_action");
 
@@ -58,7 +57,7 @@ TEST(SimpleClient, easy_tests)
   EXPECT_TRUE( client.getState() == SimpleClientGoalState::SUCCEEDED)
       << "Expected [SUCCEEDED], but goal state is [" << client.getState().toString() << "]";
 
-  //test that setting the text field for the status works
+  // test that setting the text field for the status works
   EXPECT_TRUE(client.getState().getText() == "The ref server has succeeded");
 
   goal.goal = 2;
@@ -68,7 +67,7 @@ TEST(SimpleClient, easy_tests)
   EXPECT_TRUE( client.getState() == SimpleClientGoalState::ABORTED)
       << "Expected [ABORTED], but goal state is [" << client.getState().toString() << "]";
 
-  //test that setting the text field for the status works
+  // test that setting the text field for the status works
   EXPECT_TRUE(client.getState().getText() == "The ref server has aborted");
 
   client.cancelAllGoals();
@@ -78,15 +77,16 @@ TEST(SimpleClient, easy_tests)
 }
 
 
-
-void easyDoneCallback(bool* called, const SimpleClientGoalState& state, const TestResultConstPtr&)
+void easyDoneCallback(bool * called, const SimpleClientGoalState & state,
+  const TestResultConstPtr &)
 {
   *called = true;
   EXPECT_TRUE(state == SimpleClientGoalState::SUCCEEDED)
     << "Expected [SUCCEEDED], but goal state is [" << state.toString() << "]";
 }
 
-void easyOldDoneCallback(bool* called, const TerminalState& terminal_state, const TestResultConstPtr&)
+void easyOldDoneCallback(bool * called, const TerminalState & terminal_state,
+  const TestResultConstPtr &)
 {
   *called = true;
   EXPECT_TRUE(terminal_state == TerminalState::SUCCEEDED)
@@ -120,7 +120,8 @@ void spinThread()
   ros::spin();
 }
 
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   testing::InitGoogleTest(&argc, argv);
 
   ros::init(argc, argv, "simple_client_test");

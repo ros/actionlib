@@ -40,8 +40,7 @@
 
 using namespace actionlib;
 
-TEST(SimpleClient, easy_wait_test)
-{
+TEST(SimpleClient, easy_wait_test) {
   ros::NodeHandle n;
   SimpleActionClient<TestAction> client(n, "reference_action");
 
@@ -52,14 +51,14 @@ TEST(SimpleClient, easy_wait_test)
   SimpleClientGoalState state(SimpleClientGoalState::LOST);
 
   goal.goal = 1;
-  state = client.sendGoalAndWait(goal, ros::Duration(10,0), ros::Duration(10,0));
-  EXPECT_TRUE( state == SimpleClientGoalState::SUCCEEDED)
-    << "Expected [SUCCEEDED], but goal state is [" << client.getState().toString() << "]";
+  state = client.sendGoalAndWait(goal, ros::Duration(10, 0), ros::Duration(10, 0));
+  EXPECT_TRUE(state == SimpleClientGoalState::SUCCEEDED) <<
+    "Expected [SUCCEEDED], but goal state is [" << client.getState().toString() << "]";
 
   goal.goal = 4;
-  state = client.sendGoalAndWait(goal, ros::Duration(2,0), ros::Duration(1,0));
-  EXPECT_TRUE( state == SimpleClientGoalState::PREEMPTED)
-    << "Expected [PREEMPTED], but goal state is [" << client.getState().toString() << "]";
+  state = client.sendGoalAndWait(goal, ros::Duration(2, 0), ros::Duration(1, 0));
+  EXPECT_TRUE(state == SimpleClientGoalState::PREEMPTED) <<
+    "Expected [PREEMPTED], but goal state is [" << client.getState().toString() << "]";
 }
 
 void spinThread()
@@ -68,7 +67,8 @@ void spinThread()
   ros::spin();
 }
 
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   testing::InitGoogleTest(&argc, argv);
 
   ros::init(argc, argv, "simple_client_test");

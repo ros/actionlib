@@ -32,18 +32,20 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTIONLIB_ACTION_CONNECTION_MONITOR_H_
-#define ACTIONLIB_ACTION_CONNECTION_MONITOR_H_
+#ifndef ACTIONLIB__CLIENT__CONNECTION_MONITOR_H_
+#define ACTIONLIB__CLIENT__CONNECTION_MONITOR_H_
+
+#include <ros/ros.h>
+#include <actionlib_msgs/GoalStatusArray.h>
+
+#include <actionlib/decl.h>
 
 #include <boost/thread/condition.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include <ros/ros.h>
-#include <actionlib_msgs/GoalStatusArray.h>
 #include <set>
+#include <string>
 #include <map>
-
-#include <actionlib/decl.h>
 
 namespace actionlib
 {
@@ -51,23 +53,24 @@ namespace actionlib
 class ACTIONLIB_DECL ConnectionMonitor
 {
 public:
-  ConnectionMonitor(ros::Subscriber&feedback_sub, ros::Subscriber& result_sub);
+  ConnectionMonitor(ros::Subscriber & feedback_sub, ros::Subscriber & result_sub);
 
-  void goalConnectCallback(const ros::SingleSubscriberPublisher& pub);
+  void goalConnectCallback(const ros::SingleSubscriberPublisher & pub);
 
-  void goalDisconnectCallback(const ros::SingleSubscriberPublisher& pub);
+  void goalDisconnectCallback(const ros::SingleSubscriberPublisher & pub);
 
-  void cancelConnectCallback(const ros::SingleSubscriberPublisher& pub);
+  void cancelConnectCallback(const ros::SingleSubscriberPublisher & pub);
 
-  void cancelDisconnectCallback(const ros::SingleSubscriberPublisher& pub);
+  void cancelDisconnectCallback(const ros::SingleSubscriberPublisher & pub);
 
-  void processStatus(const actionlib_msgs::GoalStatusArrayConstPtr& status, const std::string& caller_id);
+  void processStatus(const actionlib_msgs::GoalStatusArrayConstPtr & status,
+    const std::string & caller_id);
 
-  bool waitForActionServerToStart(const ros::Duration& timeout = ros::Duration(0,0), const ros::NodeHandle& nh = ros::NodeHandle() );
+  bool waitForActionServerToStart(const ros::Duration & timeout = ros::Duration(0, 0),
+    const ros::NodeHandle & nh = ros::NodeHandle() );
   bool isServerConnected();
 
 private:
-
   // status stuff
   std::string status_caller_id_;
   bool status_received_;
@@ -82,10 +85,10 @@ private:
   std::string goalSubscribersString();
   std::string cancelSubscribersString();
 
-  ros::Subscriber& feedback_sub_;
-  ros::Subscriber& result_sub_;
+  ros::Subscriber & feedback_sub_;
+  ros::Subscriber & result_sub_;
 };
 
-}
+}  // namespace actionlib
 
-#endif
+#endif  // ACTIONLIB__CLIENT__CONNECTION_MONITOR_H_

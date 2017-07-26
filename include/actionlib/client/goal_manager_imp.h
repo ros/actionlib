@@ -36,6 +36,9 @@
  * class definition.
  */
 
+#ifndef ACTIONLIB__CLIENT__GOAL_MANAGER_IMP_H_
+#define ACTIONLIB__CLIENT__GOAL_MANAGER_IMP_H_
+
 namespace actionlib
 {
 
@@ -53,9 +56,9 @@ void GoalManager<ActionSpec>::registerCancelFunc(CancelFunc cancel_func)
 
 
 template<class ActionSpec>
-ClientGoalHandle<ActionSpec> GoalManager<ActionSpec>::initGoal(const Goal& goal,
-                                                               TransitionCallback transition_cb,
-                                                               FeedbackCallback feedback_cb )
+ClientGoalHandle<ActionSpec> GoalManager<ActionSpec>::initGoal(const Goal & goal,
+  TransitionCallback transition_cb,
+  FeedbackCallback feedback_cb)
 {
   ActionGoalPtr action_goal(new ActionGoal);
   action_goal->header.stamp = ros::Time::now();
@@ -63,15 +66,20 @@ ClientGoalHandle<ActionSpec> GoalManager<ActionSpec>::initGoal(const Goal& goal,
   action_goal->goal = goal;
 
   typedef CommStateMachine<ActionSpec> CommStateMachineT;
-  boost::shared_ptr<CommStateMachineT> comm_state_machine(new CommStateMachineT(action_goal, transition_cb, feedback_cb));
+  boost::shared_ptr<CommStateMachineT> comm_state_machine(new CommStateMachineT(action_goal,
+    transition_cb,
+    feedback_cb));
 
   boost::recursive_mutex::scoped_lock lock(list_mutex_);
-  typename ManagedListT::Handle list_handle = list_.add(comm_state_machine, boost::bind(&GoalManagerT::listElemDeleter, this, _1), guard_);
+  typename ManagedListT::Handle list_handle =
+    list_.add(comm_state_machine, boost::bind(&GoalManagerT::listElemDeleter, this, _1), guard_);
 
-  if (send_goal_func_)
+  if (send_goal_func_) {
     send_goal_func_(action_goal);
-  else
-    ROS_WARN_NAMED("actionlib", "Possible coding error: send_goal_func_ set to NULL. Not going to send goal");
+  } else {
+    ROS_WARN_NAMED("actionlib",
+      "Possible coding error: send_goal_func_ set to NULL. Not going to send goal");
+  }
 
   return GoalHandleT(this, list_handle, guard_);
 }
@@ -86,9 +94,9 @@ void GoalManager<ActionSpec>::listElemDeleter(typename ManagedListT::iterator it
     return;
   }
   DestructionGuard::ScopedProtector protector(*guard_);
-  if (!protector.isProtected())
-  {
-    ROS_ERROR_NAMED("actionlib", "This action client associated with the goal handle has already been destructed. Not going to try delete the CommStateMachine associated with this goal");
+  if (!protector.isProtected()) {
+    ROS_ERROR_NAMED("actionlib",
+      "This action client associated with the goal handle has already been destructed. Not going to try delete the CommStateMachine associated with this goal");
     return;
   }
 
@@ -99,13 +107,13 @@ void GoalManager<ActionSpec>::listElemDeleter(typename ManagedListT::iterator it
 }
 
 template<class ActionSpec>
-void GoalManager<ActionSpec>::updateStatuses(const actionlib_msgs::GoalStatusArrayConstPtr& status_array)
+void GoalManager<ActionSpec>::updateStatuses(
+  const actionlib_msgs::GoalStatusArrayConstPtr & status_array)
 {
   boost::recursive_mutex::scoped_lock lock(list_mutex_);
   typename ManagedListT::iterator it = list_.begin();
 
-  while (it != list_.end())
-  {
+  while (it != list_.end()) {
     GoalHandleT gh(this, it.createHandle(), guard_);
     (*it)->updateStatus(gh, status_array);
     ++it;
@@ -113,13 +121,12 @@ void GoalManager<ActionSpec>::updateStatuses(const actionlib_msgs::GoalStatusArr
 }
 
 template<class ActionSpec>
-void GoalManager<ActionSpec>::updateFeedbacks(const ActionFeedbackConstPtr& action_feedback)
+void GoalManager<ActionSpec>::updateFeedbacks(const ActionFeedbackConstPtr & action_feedback)
 {
   boost::recursive_mutex::scoped_lock lock(list_mutex_);
   typename ManagedListT::iterator it = list_.begin();
 
-  while (it != list_.end())
-  {
+  while (it != list_.end()) {
     GoalHandleT gh(this, it.createHandle(), guard_);
     (*it)->updateFeedback(gh, action_feedback);
     ++it;
@@ -127,13 +134,12 @@ void GoalManager<ActionSpec>::updateFeedbacks(const ActionFeedbackConstPtr& acti
 }
 
 template<class ActionSpec>
-void GoalManager<ActionSpec>::updateResults(const ActionResultConstPtr& action_result)
+void GoalManager<ActionSpec>::updateResults(const ActionResultConstPtr & action_result)
 {
   boost::recursive_mutex::scoped_lock lock(list_mutex_);
   typename ManagedListT::iterator it = list_.begin();
 
-  while (it != list_.end())
-  {
+  while (it != list_.end()) {
     GoalHandleT gh(this, it.createHandle(), guard_);
     (*it)->updateResult(gh, action_result);
     ++it;
@@ -141,4 +147,6 @@ void GoalManager<ActionSpec>::updateResults(const ActionResultConstPtr& action_r
 }
 
 
-}
+}  // namespace actionlib
+
+#endif  // ACTIONLIB__CLIENT__GOAL_MANAGER_IMP_H_

@@ -41,10 +41,8 @@
 
 using namespace actionlib;
 
-TEST(ActionClientDestruction, persistent_goal_handles_1)
-{
-
-  ActionClient<TestAction>* test_client = new ActionClient<TestAction>("test_action");
+TEST(ActionClientDestruction, persistent_goal_handles_1) {
+  ActionClient<TestAction> * test_client = new ActionClient<TestAction>("test_action");
 
   ClientGoalHandle<TestAction> gh = test_client->sendGoal(TestGoal());
 
@@ -53,10 +51,10 @@ TEST(ActionClientDestruction, persistent_goal_handles_1)
   printf("Destroying ActionClient\n");
   delete test_client;
   printf("Done Destroying ActionClient\n");
-
 }
 
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   testing::InitGoogleTest(&argc, argv);
 
   ros::init(argc, argv, "simple_client_allocator");

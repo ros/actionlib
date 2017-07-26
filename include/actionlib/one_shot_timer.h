@@ -32,8 +32,8 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef ACTION_TOOLS_ROBUST_ONE_SHOT_TIMER_H_
-#define ACTION_TOOLS_ROBUST_ONE_SHOT_TIMER_H_
+#ifndef ACTIONLIB__ONE_SHOT_TIMER_H_
+#define ACTIONLIB__ONE_SHOT_TIMER_H_
 
 #include "ros/ros.h"
 #include "boost/bind.hpp"
@@ -42,48 +42,50 @@
 class OneShotTimer
 {
 public:
-  OneShotTimer() : active_(false)  { }
+  OneShotTimer()
+  : active_(false) {}
 
-  void cb(const ros::TimerEvent& e)
+  void cb(const ros::TimerEvent & e)
   {
-    if (active_)
-    {
+    if (active_) {
       active_ = false;
 
-      if (callback_)
+      if (callback_) {
         callback_(e);
-      else
+      } else {
         ROS_ERROR_NAMED("actionlib", "Got a NULL Timer OneShotTimer Callback");
+      }
     }
   }
 
-  boost::function<void (const ros::TimerEvent& e)> getCb()
+  boost::function<void(const ros::TimerEvent & e)> getCb()
   {
     return boost::bind(&OneShotTimer::cb, this, _1);
   }
 
-  void registerOneShotCb(boost::function<void (const ros::TimerEvent& e)> callback)
+  void registerOneShotCb(boost::function<void(const ros::TimerEvent & e)> callback)
   {
     callback_ = callback;
   }
 
   void stop()
   {
-    //timer_.stop();
+    // timer_.stop();
     active_ = false;
   }
 
-  const ros::Timer& operator=(const ros::Timer& rhs)
+  const ros::Timer & operator=(const ros::Timer & rhs)
   {
     active_ = true;
     timer_ = rhs;
     return timer_;
   }
+
 private:
   ros::Timer timer_;
   bool active_;
-  boost::function<void (const ros::TimerEvent& e)> callback_;
+  boost::function<void(const ros::TimerEvent & e)> callback_;
 };
 
 
-#endif
+#endif  // ACTIONLIB__ONE_SHOT_TIMER_H_

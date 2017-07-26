@@ -44,9 +44,9 @@ using namespace actionlib;
 class TestRunner : public testing::Test
 {
 public:
-  TestRunner() : done_protecting_(false)
+  TestRunner()
+  : done_protecting_(false)
   {
-
   }
 
   void protectingThread()
@@ -80,14 +80,12 @@ protected:
 };
 
 
-TEST_F(TestRunner, threaded_test)
-{
+TEST_F(TestRunner, threaded_test) {
   boost::thread spin_thread(boost::bind(&TestRunner::protectingThread, this));
 
   {
     boost::mutex::scoped_lock lock(mutex_);
-    while (!done_protecting_)
-    {
+    while (!done_protecting_) {
       cond_.timed_wait(lock, boost::posix_time::milliseconds(100.0f));
     }
   }
@@ -104,8 +102,7 @@ TEST_F(TestRunner, threaded_test)
 }
 
 
-TEST(DestructionGuard, easy_test)
-{
+TEST(DestructionGuard, easy_test) {
   DestructionGuard guard;
 
   {
@@ -125,7 +122,8 @@ TEST(DestructionGuard, easy_test)
 }
 
 
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   testing::InitGoogleTest(&argc, argv);
 
 

@@ -51,14 +51,14 @@ public:
   ServerGoalHandleDestructionTester();
 
   ros::NodeHandle nh_;
-  ActionServer<TestAction>* as_;
-  GoalHandle* gh_;
+  ActionServer<TestAction> * as_;
+  GoalHandle * gh_;
 
   ~ServerGoalHandleDestructionTester();
   void goalCallback(GoalHandle gh);
 };
 
-}
+}  // namespace actionlib
 
 using namespace actionlib;
 
@@ -66,12 +66,13 @@ ServerGoalHandleDestructionTester::ServerGoalHandleDestructionTester()
 {
   as_ = new ActionServer<TestAction>(nh_, "reference_action", false);
   as_->start();
-  as_->registerGoalCallback(boost::bind(&ServerGoalHandleDestructionTester::goalCallback, this, _1));
+  as_->registerGoalCallback(boost::bind(&ServerGoalHandleDestructionTester::goalCallback, this,
+    _1));
   gh_ = new GoalHandle();
-
 }
 
-ServerGoalHandleDestructionTester::~ServerGoalHandleDestructionTester(){
+ServerGoalHandleDestructionTester::~ServerGoalHandleDestructionTester()
+{
   delete as_;
   gh_->setAccepted();
   delete gh_;
@@ -80,13 +81,12 @@ ServerGoalHandleDestructionTester::~ServerGoalHandleDestructionTester(){
 void ServerGoalHandleDestructionTester::goalCallback(GoalHandle gh)
 {
   ROS_ERROR_NAMED("actionlib", "In callback");
-  //assign to our stored goal handle
+  // assign to our stored goal handle
   *gh_ = gh;
 
   TestGoal goal = *gh.getGoal();
 
-  switch (goal.goal)
-  {
+  switch (goal.goal) {
     case 1:
       gh.setAccepted();
       gh.setSucceeded(TestResult(), "The ref server has succeeded");
@@ -105,11 +105,12 @@ void ServerGoalHandleDestructionTester::goalCallback(GoalHandle gh)
   ros::shutdown();
 }
 
-void spinner(){
+void spinner()
+{
   ros::spin();
 }
 
-TEST(ServerGoalHandleDestruction, destruction_test){
+TEST(ServerGoalHandleDestruction, destruction_test) {
   boost::thread spin_thread(&spinner);
 
   ServerGoalHandleDestructionTester server;
@@ -127,10 +128,9 @@ TEST(ServerGoalHandleDestruction, destruction_test){
   ROS_ERROR_NAMED("actionlib", "Sending goal");
 
   spin_thread.join();
-
 }
 
-int main(int argc, char** argv)
+int main(int argc, char ** argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
@@ -138,5 +138,3 @@ int main(int argc, char** argv)
 
   return RUN_ALL_TESTS();
 }
-
-
