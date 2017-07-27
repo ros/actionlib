@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.10 (2017-07-27)
+--------------------
 * Clang tidy fixes (`#86 <https://github.com/ros/actionlib/issues/86>`_)
 * C++ style (`#72 <https://github.com/ros/actionlib/issues/72>`_)
 * Proper return value after assert (`#83 <https://github.com/ros/actionlib/issues/83>`_)
