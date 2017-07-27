@@ -231,8 +231,8 @@ public:
   typedef ClientGoalHandle<ActionSpec> GoalHandleT;
 
   CommStateMachine(const ActionGoalConstPtr & action_goal,
-    TransitionCallback transition_callback,
-    FeedbackCallback feedback_callback);
+    TransitionCallback transition_cb,
+    FeedbackCallback feedback_cb);
 
   ActionGoalConstPtr getActionGoal() const;
   CommState getCommState() const;
@@ -241,8 +241,8 @@ public:
 
   // Transitions caused by messages
   void updateStatus(GoalHandleT & gh, const actionlib_msgs::GoalStatusArrayConstPtr & status_array);
-  void updateFeedback(GoalHandleT & gh, const ActionFeedbackConstPtr & feedback);
-  void updateResult(GoalHandleT & gh, const ActionResultConstPtr & result);
+  void updateFeedback(GoalHandleT & gh, const ActionFeedbackConstPtr & action_feedback);
+  void updateResult(GoalHandleT & gh, const ActionResultConstPtr & action_result);
 
   // Forced transitions
   void transitionToState(GoalHandleT & gh, const CommState::StateEnum & next_state);

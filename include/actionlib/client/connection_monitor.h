@@ -64,7 +64,7 @@ public:
   void cancelDisconnectCallback(const ros::SingleSubscriberPublisher & pub);
 
   void processStatus(const actionlib_msgs::GoalStatusArrayConstPtr & status,
-    const std::string & caller_id);
+    const std::string & cur_status_caller_id);
 
   bool waitForActionServerToStart(const ros::Duration & timeout = ros::Duration(0, 0),
     const ros::NodeHandle & nh = ros::NodeHandle() );

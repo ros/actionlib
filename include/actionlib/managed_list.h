@@ -127,14 +127,14 @@ public:
     Handle()
     : it_(iterator()), handle_tracker_(boost::shared_ptr<void>()), valid_(false) {}
 
-    const Handle & operator=(const Handle & rhs)
+    Handle & operator=(const Handle & rhs)
     {
       if (rhs.valid_) {
         it_ = rhs.it_;
       }
       handle_tracker_ = rhs.handle_tracker_;
       valid_ = rhs.valid_;
-      return rhs;
+      return *this;
     }
 
     /**

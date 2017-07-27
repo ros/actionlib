@@ -69,12 +69,12 @@ public:
   /**
    * @brief  Constructor for a SimpleActionServer
    * @param name A name for the action server
-   * @param execute_cb Optional callback that gets called in a separate thread whenever
-   *                   a new goal is received, allowing users to have blocking callbacks.
-   *                   Adding an execute callback also deactivates the goalCallback.
+   * @param execute_callback Optional callback that gets called in a separate thread whenever
+   *                         a new goal is received, allowing users to have blocking callbacks.
+   *                         Adding an execute callback also deactivates the goalCallback.
    * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
    */
-  SimpleActionServer(std::string name, ExecuteCallback execute_cb, bool auto_start);
+  SimpleActionServer(std::string name, ExecuteCallback execute_callback, bool auto_start);
 
   /**
    * @brief  Constructor for a SimpleActionServer
@@ -86,22 +86,22 @@ public:
   /**
    * @brief  DEPRECATED: Constructor for a SimpleActionServer
    * @param name A name for the action server
-   * @param execute_cb Optional callback that gets called in a separate thread whenever
-   *                   a new goal is received, allowing users to have blocking callbacks.
-   *                   Adding an execute callback also deactivates the goalCallback.
+   * @param execute_callback Optional callback that gets called in a separate thread whenever
+   *                         a new goal is received, allowing users to have blocking callbacks.
+   *                         Adding an execute callback also deactivates the goalCallback.
    */
-  ROS_DEPRECATED SimpleActionServer(std::string name, ExecuteCallback execute_cb = NULL);
+  ROS_DEPRECATED SimpleActionServer(std::string name, ExecuteCallback execute_callback = NULL);
 
   /**
    * @brief  Constructor for a SimpleActionServer
    * @param n A NodeHandle to create a namespace under
    * @param name A name for the action server
-   * @param execute_cb Optional callback that gets called in a separate thread whenever
-   *                   a new goal is received, allowing users to have blocking callbacks.
-   *                   Adding an execute callback also deactivates the goalCallback.
+   * @param execute_callback Optional callback that gets called in a separate thread whenever
+   *                         a new goal is received, allowing users to have blocking callbacks.
+   *                         Adding an execute callback also deactivates the goalCallback.
    * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
    */
-  SimpleActionServer(ros::NodeHandle n, std::string name, ExecuteCallback execute_cb,
+  SimpleActionServer(ros::NodeHandle n, std::string name, ExecuteCallback execute_callback,
     bool auto_start);
 
   /**
@@ -116,12 +116,12 @@ public:
    * @brief  Constructor for a SimpleActionServer
    * @param n A NodeHandle to create a namespace under
    * @param name A name for the action server
-   * @param execute_cb Optional callback that gets called in a separate thread whenever
-   *                   a new goal is received, allowing users to have blocking callbacks.
-   *                   Adding an execute callback also deactivates the goalCallback.
+   * @param execute_callback Optional callback that gets called in a separate thread whenever
+   *                         a new goal is received, allowing users to have blocking callbacks.
+   *                         Adding an execute callback also deactivates the goalCallback.
    */
   ROS_DEPRECATED SimpleActionServer(ros::NodeHandle n, std::string name,
-    ExecuteCallback execute_cb = NULL);
+    ExecuteCallback execute_callback = NULL);
 
   ~SimpleActionServer();
 
@@ -249,6 +249,7 @@ private:
   boost::mutex terminate_mutex_;
   bool need_to_terminate_;
 };
+
 }  // namespace actionlib
 
 // include the implementation here
