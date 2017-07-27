@@ -2,6 +2,17 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Clang tidy fixes (`#86 <https://github.com/ros/actionlib/issues/86>`_)
+* C++ style (`#72 <https://github.com/ros/actionlib/issues/72>`_)
+* Proper return value after assert (`#83 <https://github.com/ros/actionlib/issues/83>`_)
+* switch to package format 2 (`#82 <https://github.com/ros/actionlib/issues/82>`_)
+* remove trailing whitespaces (`#81 <https://github.com/ros/actionlib/issues/81>`_)
+* lock listhandle earlier in getCommState in client_goal_handle_imp. active bool critical (`#77 <https://github.com/ros/actionlib/issues/77>`_)
+* add missing runtime dependencies (`#79 <https://github.com/ros/actionlib/issues/79>`_)
+* Contributors: Esteve Fernandez, Mikael Arguedas, johaq
+
 1.11.9 (2017-03-27)
 -------------------
 * Python3 compatibility + pep8 compliance (`#71 <https://github.com/ros/actionlib/issues/71>`_) follow-up of (`#43 <https://github.com/ros/actionlib/issues/43>`_)
