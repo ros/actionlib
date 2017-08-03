@@ -253,12 +253,10 @@ void ActionServerBase<ActionSpec>::goalCallback(const boost::shared_ptr<const Ac
     GoalHandle gh = GoalHandle(it, this, handle_tracker, guard_);
 
     // make sure that we unlock before calling the users callback
-    lock_.unlock();
+    boost::reverse_lock<boost::recursive_mutex::scoped_lock> unlocker(lock);
 
     // now, we need to create a goal handle and call the user's callback
     goal_callback_(gh);
-
-    lock_.lock();
   }
 }
 
@@ -310,13 +308,10 @@ void ActionServerBase<ActionSpec>::cancelCallback(
       GoalHandle gh(it, this, handle_tracker, guard_);
       if (gh.setCancelRequested()) {
         // make sure that we're unlocked before we call the users callback
-        lock_.unlock();
+        boost::reverse_lock<boost::recursive_mutex::scoped_lock> unlocker(lock);
 
         // call the user's cancel callback on the relevant goal
         cancel_callback_(gh);
-
-        // lock for further modification of the status list
-        lock_.lock();
       }
     }
   }
