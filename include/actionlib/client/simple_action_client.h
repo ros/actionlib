@@ -537,9 +537,10 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
       switch (cur_simple_state_.state_) {
         case SimpleGoalState::PENDING:
         case SimpleGoalState::ACTIVE:
-          done_mutex_.lock();
-          setSimpleState(SimpleGoalState::DONE);
-          done_mutex_.unlock();
+          {
+            boost::mutex::scoped_lock lock(done_mutex_);
+            setSimpleState(SimpleGoalState::DONE);
+          }
 
           if (done_cb_) {
             done_cb_(getState(), gh.getResult());
