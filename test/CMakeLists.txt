@@ -17,6 +17,9 @@ if(GTEST_FOUND)
   add_executable(actionlib-server_goal_handle_destruction EXCLUDE_FROM_ALL server_goal_handle_destruction.cpp)
   target_link_libraries(actionlib-server_goal_handle_destruction ${PROJECT_NAME} ${GTEST_LIBRARIES})
 
+  add_executable(actionlib-simple_client_latched_test EXCLUDE_FROM_ALL simple_client_latched_test.cpp)
+  target_link_libraries(actionlib-simple_client_latched_test ${PROJECT_NAME} ${GTEST_LIBRARIES})
+
   add_executable(actionlib-simple_client_wait_test EXCLUDE_FROM_ALL simple_client_wait_test.cpp)
   target_link_libraries(actionlib-simple_client_wait_test ${PROJECT_NAME} ${GTEST_LIBRARIES})
 
@@ -41,6 +44,7 @@ if(GTEST_FOUND)
       actionlib-server_goal_handle_destruction
       actionlib-simple_client_wait_test
       actionlib-simple_client_allocator_test
+      actionlib-simple_client_latched_test
       actionlib-action_client_destruction_test
       actionlib-test_cpp_simple_client_cancel_crash
       actionlib-exercise_simple_client
@@ -55,6 +59,7 @@ add_rostest(test_cpp_simple_client_allocator.launch)
 add_rostest(test_cpp_action_client_destruction.launch)
 add_rostest(test_server_goal_handle_destruction.launch)
 add_rostest(test_cpp_simple_client_cancel_crash.launch)
+add_rostest(test_cpp_simple_client_latched.launch)
 add_rostest(test_imports.launch)
 add_rostest(test_python_server_components.launch)
 add_rostest(test_python_server.launch)

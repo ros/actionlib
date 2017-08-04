@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="actionlib" type="actionlib-simple_execute_ref_server" name="ref_server" output="screen" args="--delay 5"/>
+
+  <test test-name="simple_client_latched_test" pkg="actionlib" type="actionlib-simple_client_latched_test"/>
+</launch>

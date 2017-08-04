@@ -34,90 +34,51 @@
 
 //! \author Vijay Pradeep
 
-#include <sstream>
-
-#include <actionlib/server/simple_action_server.h>
+#include <gtest/gtest.h>
 #include <actionlib/TestAction.h>
-#include <ros/ros.h>
-
-namespace actionlib
-{
-
-class SimpleExecuteRefServer
-{
-public:
-  typedef ServerGoalHandle<TestAction> GoalHandle;
-
-  SimpleExecuteRefServer();
-
-private:
-  ros::NodeHandle nh_;
-  SimpleActionServer<TestAction> as_;
-
-  void executeCallback(const TestGoalConstPtr & goal);
-};
-
-}  // namespace actionlib
+#include <actionlib/client/simple_action_client.h>
 
 using namespace actionlib;
 
-SimpleExecuteRefServer::SimpleExecuteRefServer()
-: as_(nh_, "reference_action", boost::bind(&SimpleExecuteRefServer::executeCallback, this,
-    _1), false)
-{
-  as_.start();
+TEST(SimpleClient, easy_latched_test) {
+  ros::NodeHandle n; //("latched_client");
+  n.setParam("reference_action/actionlib_client_pub_latch", true);
+
+  SimpleActionClient<TestAction> client(n, "reference_action");
+
+  TestGoal goal;
+  SimpleClientGoalState state(SimpleClientGoalState::LOST);
+
+  goal.goal = 1;
+  state = client.sendGoalAndWait(goal, ros::Duration(10, 0), ros::Duration(10, 0));
+  EXPECT_TRUE(state == SimpleClientGoalState::SUCCEEDED) <<
+    "Expected [SUCCEEDED], but goal state is [" << client.getState().toString() << "]";
+
+  goal.goal = 4;
+  state = client.sendGoalAndWait(goal, ros::Duration(2, 0), ros::Duration(1, 0));
+  EXPECT_TRUE(state == SimpleClientGoalState::PREEMPTED) <<
+    "Expected [PREEMPTED], but goal state is [" << client.getState().toString() << "]";
 }
 
-void SimpleExecuteRefServer::executeCallback(const TestGoalConstPtr & goal)
+void spinThread()
 {
-  ROS_DEBUG_NAMED("actionlib", "Got a goal of type [%u]", goal->goal);
-  switch (goal->goal) {
-    case 1:
-      ROS_DEBUG_NAMED("actionlib", "Got goal #1");
-      as_.setSucceeded(TestResult(), "The ref server has succeeded");
-      break;
-    case 2:
-      ROS_DEBUG_NAMED("actionlib", "Got goal #2");
-      as_.setAborted(TestResult(), "The ref server has aborted");
-      break;
-    case 4:
-      {
-        ROS_DEBUG_NAMED("actionlib", "Got goal #4");
-        ros::Duration sleep_dur(.1);
-        for (unsigned int i = 0; i < 100; i++) {
-          sleep_dur.sleep();
-          if (as_.isPreemptRequested()) {
-            as_.setPreempted();
-            return;
-          }
-        }
-        as_.setAborted();
-        break;
-      }
-    default:
-      break;
-  }
+  ros::NodeHandle nh;
+  ros::spin();
 }
 
 int main(int argc, char ** argv)
 {
-  ros::init(argc, argv, "ref_server");
-  ros::start();
+  testing::InitGoogleTest(&argc, argv);
 
-  std::vector<std::string> args;
-  ros::removeROSArgs(argc, argv, args);
+  ros::init(argc, argv, "simple_client_test");
 
-  if(args.size() > 1 && "--delay" == args[1]) {
-    std::stringstream stringValue;
-    stringValue << args[2];
-    unsigned int delay = 0;
-    stringValue >> delay;
-    ros::Duration(delay).sleep();
-  }
+  boost::thread spin_thread(&spinThread);
 
-  SimpleExecuteRefServer server;
+  int result = RUN_ALL_TESTS();
 
-  ros::spin();
+  ros::shutdown();
 
-  return 0;
+  spin_thread.join();
+
+  return result;
 }
