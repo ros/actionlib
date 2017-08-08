@@ -55,10 +55,9 @@ void HandleTrackerDeleter<ActionSpec>::operator()(void *)
     DestructionGuard::ScopedProtector protector(*guard_);
     if (protector.isProtected()) {
       // make sure to lock while we erase status for this goal from the list
-      as_->lock_.lock();
+      boost::recursive_mutex::scoped_lock lock(as_->lock_);
       (*status_it_).handle_destruction_time_ = ros::Time::now();
       // as_->status_list_.erase(status_it_);
-      as_->lock_.unlock();
     }
   }
 }

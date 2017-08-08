@@ -385,10 +385,11 @@ void SimpleActionServer<ActionSpec>::executeLoop()
       ROS_FATAL_COND(!execute_callback_,
         "execute_callback_ must exist. This is a bug in SimpleActionServer");
 
-      // Make sure we're not locked when we call execute
-      lock.unlock();
-      execute_callback_(goal);
-      lock.lock();
+      {
+        // Make sure we're not locked when we call execute
+        boost::reverse_lock<boost::recursive_mutex::scoped_lock> unlocker(lock);
+        execute_callback_(goal);
+      }
 
       if (isActive()) {
         ROS_WARN_NAMED("actionlib", "Your executeCallback did not set the goal to a terminal status.\n"
