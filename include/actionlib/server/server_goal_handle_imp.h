@@ -393,7 +393,7 @@ bool ServerGoalHandle<ActionSpec>::setCancelRequested()
   }
 
   ROS_DEBUG_NAMED("actionlib",
-    "Transisitoning to a cancel requested state on goal id: %s, stamp: %.2f",
+    "Transitioning to a cancel requested state on goal id: %s, stamp: %.2f",
     getGoalID().id.c_str(), getGoalID().stamp.toSec());
   if (goal_) {
     boost::recursive_mutex::scoped_lock lock(as_->lock_);
