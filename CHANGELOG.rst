@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.11 (2017-10-27)
+--------------------
 * fix typo in server_goal_handle_imp.h (`#89 <https://github.com/ros/actionlib/issues/89>`_)
 * Use RAII to handle mutexes (`#87 <https://github.com/ros/actionlib/issues/87>`_)
 * Contributors: Cong Liu, Esteve Fernandez, Mikael Arguedas
