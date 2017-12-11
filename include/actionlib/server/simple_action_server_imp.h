@@ -159,23 +159,16 @@ void SimpleActionServer<ActionSpec>::shutdown()
 {
   if (execute_callback_) {
     {
-      {
-        boost::mutex::scoped_lock terminate_lock(terminate_mutex_);
-        need_to_terminate_ = true;
-      }
-
-      assert(execute_thread_);
-      if (execute_thread_) {
-        execute_thread_->join();
-        delete execute_thread_;
-        execute_thread_ = NULL;
-      }
+      boost::mutex::scoped_lock terminate_lock(terminate_mutex_);
+      need_to_terminate_ = true;
     }
 
     assert(execute_thread_);
-    execute_thread_->join();
-    delete execute_thread_;
-    execute_thread_ = NULL;
+    if (execute_thread_) {
+      execute_thread_->join();
+      delete execute_thread_;
+      execute_thread_ = NULL;
+    }
   }
 }
 
