@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.12 (2017-12-18)
+--------------------
 * fix uncrustify mixup (`#92 <https://github.com/ros/actionlib/issues/92>`_)
 * Contributors: Mikael Arguedas
 
