@@ -39,6 +39,7 @@
 
 #include <ros/ros.h>
 #include <boost/thread.hpp>
+#include <boost/thread/reverse_lock.hpp>
 #include <boost/shared_ptr.hpp>
 #include <actionlib_msgs/GoalID.h>
 #include <actionlib_msgs/GoalStatusArray.h>
