@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.13 (2018-03-14)
+--------------------
 * [bugfix] added missing boost/thread/reverse_lock.hpp include (`#95 <https://github.com/ros/actionlib/issues/95>`_)
 * Contributors: Robert Haschke
 
