@@ -43,6 +43,13 @@ namespace actionlib
 {
 
 template<class ActionSpec>
+SimpleActionServer<ActionSpec>::SimpleActionServer()
+: new_goal_(false), preempt_request_(false), new_goal_preempt_request_(false), execute_callback_(
+    NULL), execute_thread_(NULL), need_to_terminate_(false)
+{  
+}
+
+template<class ActionSpec>
 SimpleActionServer<ActionSpec>::SimpleActionServer(std::string name,
   ExecuteCallback execute_callback,
   bool auto_start)
@@ -208,6 +215,23 @@ boost::shared_ptr<const typename SimpleActionServer<ActionSpec>::Goal> SimpleAct
   current_goal_.setAccepted("This goal has been accepted by the simple action server");
 
   return current_goal_.getGoal();
+}
+
+template<class ActionSpec>
+void SimpleActionServer<ActionSpec>::initialize(std::string name,
+  ExecuteCallback execute_callback,
+  bool auto_start)
+{
+  execute_callback_ = execute_callback;
+  if (execute_callback_ != NULL) {
+    execute_thread_ = new boost::thread(boost::bind(&SimpleActionServer::executeLoop, this));
+  }
+
+  // create the action server
+  as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n_, name,
+      boost::bind(&SimpleActionServer::goalCallback, this, _1),
+      boost::bind(&SimpleActionServer::preemptCallback, this, _1),
+      auto_start));
 }
 
 template<class ActionSpec>

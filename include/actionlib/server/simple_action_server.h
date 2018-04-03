@@ -67,6 +67,11 @@ public:
   typedef boost::function<void (const GoalConstPtr &)> ExecuteCallback;
 
   /**
+   * @brief  Default constructor for a SimpleActionServer
+   */
+  SimpleActionServer();
+
+  /**
    * @brief  Constructor for a SimpleActionServer
    * @param name A name for the action server
    * @param execute_callback Optional callback that gets called in a separate thread whenever
@@ -137,6 +142,16 @@ public:
    * @return A shared_ptr to the new goal.
    */
   boost::shared_ptr<const Goal> acceptNewGoal();
+
+  /**
+   * @brief  Initialization for the Action Server
+   * @param name A name for the action server
+   * @param execute_callback Optional callback that gets called in a separate thread whenever
+   *                         a new goal is received, allowing users to have blocking callbacks.
+   *                         Adding an execute callback also deactivates the goalCallback.
+   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   */
+  void initialize(std::string name, ExecuteCallback execute_callback, bool auto_start);
 
   /**
    * @brief  Allows  polling implementations to query about the availability of a new goal
