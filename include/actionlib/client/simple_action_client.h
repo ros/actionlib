@@ -143,10 +143,30 @@ public:
   }
 
   /**
+   * @brief  Allows users to register a callback to be invoked on transitions to Done
+   * @param cb The callback to be invoked
+   */
+  void registerDoneCallback(boost::function<void()> cb);
+
+  /**
+   * @brief  Allows users to register a callback to be invoked on transitions to Active
+   * @param cb The callback to be invoked
+   */
+  void registerActiveCallback(boost::function<void()> cb);
+
+  /**
+   * @brief  Allows users to register a callback to be invoked whenever feedback is received
+   * @param cb The callback to be invoked
+   */
+  void registerFeedbackCallback(boost::function<void()> cb);
+
+  /**
    * \brief Sends a goal to the ActionServer, and also registers callbacks
    *
    * If a previous goal is already active when this is called. We simply forget
    * about that goal and start tracking the new goal. No cancel requests are made.
+   * If the callbacks are not provided, we use the callbacks that have been registered.
+   * If the callbacks are provided, we update the registered callbacks.
    * \param done_cb     Callback that gets called on transitions to Done
    * \param active_cb   Callback that gets called on transitions to Active
    * \param feedback_cb Callback that gets called whenever feedback for this goal is received
@@ -314,6 +334,36 @@ void SimpleActionClient<ActionSpec>::setSimpleState(const SimpleGoalState & next
 }
 
 template<class ActionSpec>
+void SimpleActionClient<ActionSpec>::registerDoneCallback(boost::function<void()> cb)
+{
+  if (done_callback_) {
+    ROS_WARN_NAMED("actionlib",
+      "SimpleActionClient: A doneCallback already exists, overwriting it!");
+  }
+  done_callback_ = cb;
+}
+
+template<class ActionSpec>
+void SimpleActionClient<ActionSpec>::registerActiveCallback(boost::function<void()> cb)
+{
+  if (active_callback_) {
+    ROS_WARN_NAMED("actionlib",
+      "SimpleActionClient: A activeCallback already exists, overwriting it!");
+  }
+  active_callback_ = cb;
+}
+
+template<class ActionSpec>
+void SimpleActionClient<ActionSpec>::registerFeedbackCallback(boost::function<void()> cb)
+{
+  if (feedback_callback_) {
+    ROS_WARN_NAMED("actionlib",
+      "SimpleActionClient: A feedbackCallback already exists, overwriting it!");
+  }
+  feedback_callback_ = cb;
+}
+
+template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::sendGoal(const Goal & goal,
   SimpleDoneCallback done_cb,
   SimpleActiveCallback active_cb,
@@ -322,10 +372,16 @@ void SimpleActionClient<ActionSpec>::sendGoal(const Goal & goal,
   // Reset the old GoalHandle, so that our callbacks won't get called anymore
   gh_.reset();
 
-  // Store all the callbacks
-  done_cb_ = done_cb;
-  active_cb_ = active_cb;
-  feedback_cb_ = feedback_cb;
+  // Store all the callbacks if our stored cb is empty or we get a new cb
+  if (done_cb_.empty() || !done_cb.empty()) {
+    done_cb_ = done_cb;
+  }
+  if (active_cb_.empty() || !active_cb.empty()) {
+    active_cb_ = active_cb;
+  }
+  if (feedback_cb_.empty() || !feedback_cb.empty()) {
+    feedback_cb_ = feedback_cb;
+  }
 
   cur_simple_state_ = SimpleGoalState::PENDING;
 
