@@ -336,31 +336,31 @@ void SimpleActionClient<ActionSpec>::setSimpleState(const SimpleGoalState & next
 template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::registerDoneCallback(boost::function<void()> cb)
 {
-  if (done_callback_) {
+  if (done_cb_) {
     ROS_WARN_NAMED("actionlib",
       "SimpleActionClient: A doneCallback already exists, overwriting it!");
   }
-  done_callback_ = cb;
+  done_cb_ = cb;
 }
 
 template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::registerActiveCallback(boost::function<void()> cb)
 {
-  if (active_callback_) {
+  if (active_cb_) {
     ROS_WARN_NAMED("actionlib",
       "SimpleActionClient: A activeCallback already exists, overwriting it!");
   }
-  active_callback_ = cb;
+  active_cb_ = cb;
 }
 
 template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::registerFeedbackCallback(boost::function<void()> cb)
 {
-  if (feedback_callback_) {
+  if (feedback_cb_) {
     ROS_WARN_NAMED("actionlib",
       "SimpleActionClient: A feedbackCallback already exists, overwriting it!");
   }
-  feedback_callback_ = cb;
+  feedback_cb_ = cb;
 }
 
 template<class ActionSpec>
