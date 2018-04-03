@@ -83,6 +83,16 @@ public:
   typedef boost::function<void (const FeedbackConstPtr & feedback)> SimpleFeedbackCallback;
 
   /**
+   * \brief Default constructor
+   *
+   * Doesn't do anything - should call SimpleActionClient::initialize(...).
+   */
+  SimpleActionClient()
+  : cur_simple_state_(SimpleGoalState::PENDING)
+  {
+  }
+
+  /**
    * \brief Simple constructor
    *
    * Constructs a SingleGoalActionClient and sets up the necessary ros topics for the ActionInterface
@@ -113,6 +123,59 @@ public:
   }
 
   ~SimpleActionClient();
+
+  /**
+   * \brief
+   *
+   * Sets up the necessary ros topics for
+   * the ActionInterface, and namespaces them according the a specified NodeHandle
+   * \param n The node handle on top of which we want to namespace our action
+   * \param name The action name. Defines the namespace in which the action communicates
+   * \param cbq The callback queue we should use for this ActionClient.
+   */
+  void initialize(ros::NodeHandle & n, const std::string & name, ros::CallbackQueue *cbq)
+  {
+    // terminate the client if it exists
+    if (spin_thread_) {
+      {
+	boost::mutex::scoped_lock terminate_lock(terminate_mutex_);
+	need_to_terminate_ = true;
+      }
+      spin_thread_->join();
+      delete spin_thread_;
+    }
+    gh_.reset();
+    ac_.reset();
+    // now make the new client
+    ac_.reset(new ActionClientT(n, name, cbq));
+  }
+
+  /**
+   * \brief
+   *
+   * Sets up the necessary ros topics for
+   * the ActionInterface, and namespaces them according the a specified NodeHandle
+   * \param n The node handle on top of which we want to namespace our action
+   * \param name The action name. Defines the namespace in which the action communicates
+   * \param spin_thread If true, spins up a thread to service this action's subscriptions. If false,
+   *                    then the user has to call ros::spin() themselves. Defaults to True
+   */
+  void initialize(ros::NodeHandle & n, const std::string & name, bool spin_thread = true)
+  {
+    // terminate the client if it exists
+    if (spin_thread_) {
+      {
+	boost::mutex::scoped_lock terminate_lock(terminate_mutex_);
+	need_to_terminate_ = true;
+      }
+      spin_thread_->join();
+      delete spin_thread_;
+    }
+    gh_.reset();
+    ac_.reset();
+    // now make the new client
+    initSimpleClient(n, name, spin_thread);
+  }
 
   /**
    * \brief Waits for the ActionServer to connect to this client
@@ -272,7 +335,7 @@ private:
   void spinThread();
 };
 
-
+  
 template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::initSimpleClient(ros::NodeHandle & n, const std::string & name,
   bool spin_thread)
