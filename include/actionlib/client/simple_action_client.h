@@ -334,7 +334,7 @@ void SimpleActionClient<ActionSpec>::setSimpleState(const SimpleGoalState & next
 }
 
 template<class ActionSpec>
-void SimpleActionClient<ActionSpec>::registerDoneCallback(boost::function<void()> cb)
+void SimpleActionClient<ActionSpec>::registerDoneCallback(SimpleDoneCallback cb)
 {
   if (done_cb_) {
     ROS_WARN_NAMED("actionlib",
@@ -344,7 +344,7 @@ void SimpleActionClient<ActionSpec>::registerDoneCallback(boost::function<void()
 }
 
 template<class ActionSpec>
-void SimpleActionClient<ActionSpec>::registerActiveCallback(boost::function<void()> cb)
+void SimpleActionClient<ActionSpec>::registerActiveCallback(SimpleActiveCallback cb)
 {
   if (active_cb_) {
     ROS_WARN_NAMED("actionlib",
@@ -354,7 +354,7 @@ void SimpleActionClient<ActionSpec>::registerActiveCallback(boost::function<void
 }
 
 template<class ActionSpec>
-void SimpleActionClient<ActionSpec>::registerFeedbackCallback(boost::function<void()> cb)
+void SimpleActionClient<ActionSpec>::registerFeedbackCallback(SimpleFeedbackCallback cb)
 {
   if (feedback_cb_) {
     ROS_WARN_NAMED("actionlib",
