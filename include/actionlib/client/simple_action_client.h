@@ -146,19 +146,19 @@ public:
    * @brief  Allows users to register a callback to be invoked on transitions to Done
    * @param cb The callback to be invoked
    */
-  void registerDoneCallback(boost::function<void()> cb);
+  void registerDoneCallback(SimpleDoneCallback cb);
 
   /**
    * @brief  Allows users to register a callback to be invoked on transitions to Active
    * @param cb The callback to be invoked
    */
-  void registerActiveCallback(boost::function<void()> cb);
+  void registerActiveCallback(SimpleActiveCallback cb);
 
   /**
    * @brief  Allows users to register a callback to be invoked whenever feedback is received
    * @param cb The callback to be invoked
    */
-  void registerFeedbackCallback(boost::function<void()> cb);
+  void registerFeedbackCallback(SimpleFeedbackCallback cb);
 
   /**
    * \brief Sends a goal to the ActionServer, and also registers callbacks
