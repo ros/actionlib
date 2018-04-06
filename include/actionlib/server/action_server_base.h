@@ -38,6 +38,7 @@
 #define ACTIONLIB__SERVER__ACTION_SERVER_BASE_H_
 
 #include <ros/ros.h>
+#include <ros/callback_queue.h>
 #include <boost/thread.hpp>
 #include <boost/thread/reverse_lock.hpp>
 #include <boost/shared_ptr.hpp>
@@ -75,11 +76,13 @@ public:
    * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
    * @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
    * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   * @param  cbq A pointer to a ros::CallbackQueue that, if not NULL, will be used for subscriptions.
    */
   ActionServerBase(
     boost::function<void(GoalHandle)> goal_cb,
     boost::function<void(GoalHandle)> cancel_cb,
-    bool auto_start = false);
+    bool auto_start = false,
+    ros::CallbackQueue *cbq = NULL);
 
 
   /**
@@ -114,6 +117,11 @@ public:
    * @brief  The ROS callback for cancel requests coming into the ActionServerBase
    */
   void cancelCallback(const boost::shared_ptr<const actionlib_msgs::GoalID> & goal_id);
+
+  /**
+   * @brief  Get a pointer to the ros::CallbackQueue associated with this ActionServer
+   */
+  ros::CallbackQueue* getCallbackQueue();
 
 protected:
   // Allow access to protected fields for helper classes
@@ -158,17 +166,21 @@ protected:
   GoalIDGenerator id_generator_;
   bool started_;
   boost::shared_ptr<DestructionGuard> guard_;
+
+  ros::CallbackQueue *cbq_;
 };
 
 template<class ActionSpec>
 ActionServerBase<ActionSpec>::ActionServerBase(
   boost::function<void(GoalHandle)> goal_cb,
   boost::function<void(GoalHandle)> cancel_cb,
-  bool auto_start)
+  bool auto_start,
+  ros::CallbackQueue *cbq)
 : goal_callback_(goal_cb),
   cancel_callback_(cancel_cb),
   started_(auto_start),
-  guard_(new DestructionGuard)
+  guard_(new DestructionGuard),
+  cbq_(cbq)
 {
 }
 
@@ -199,6 +211,11 @@ void ActionServerBase<ActionSpec>::start()
   publishStatus();
 }
 
+template<class ActionSpec>
+ros::CallbackQueue* ActionServerBase<ActionSpec>::getCallbackQueue()
+{
+  return cbq_;
+}
 
 template<class ActionSpec>
 void ActionServerBase<ActionSpec>::goalCallback(const boost::shared_ptr<const ActionGoal> & goal)

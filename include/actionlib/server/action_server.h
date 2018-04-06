@@ -89,7 +89,8 @@ public:
   ActionServer(ros::NodeHandle n, std::string name,
     boost::function<void(GoalHandle)> goal_cb,
     boost::function<void(GoalHandle)> cancel_cb,
-    bool auto_start);
+    bool auto_start,
+    ros::CallbackQueue *cbq = NULL);
 
   /**
    * @brief  Constructor for an ActionServer
@@ -100,7 +101,8 @@ public:
    */
   ActionServer(ros::NodeHandle n, std::string name,
     boost::function<void(GoalHandle)> goal_cb,
-    bool auto_start);
+    bool auto_start,
+    ros::CallbackQueue *cbq = NULL);
 
   /**
    * @brief  DEPRECATED Constructor for an ActionServer
@@ -120,7 +122,8 @@ public:
    * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
    */
   ActionServer(ros::NodeHandle n, std::string name,
-    bool auto_start);
+    bool auto_start,
+    ros::CallbackQueue *cbq = NULL);
 
   /**
    * @brief  DEPRECATED Constructor for an ActionServer
