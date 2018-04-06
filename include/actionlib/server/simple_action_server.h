@@ -150,8 +150,21 @@ public:
    *                         a new goal is received, allowing users to have blocking callbacks.
    *                         Adding an execute callback also deactivates the goalCallback.
    * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   * @param cbq A pointer to the ros::CallbackQueue to be used
    */
-  void initialize(std::string name, ExecuteCallback execute_callback, bool auto_start);
+  void initialize(std::string name, ExecuteCallback execute_callback, bool auto_start, ros::CallbackQueue *cbq = NULL);
+
+  /**
+   * @brief  Initialization for the Action Server
+   * @param n A NodeHandle to create a namespace under
+   * @param name A name for the action server
+   * @param execute_callback Optional callback that gets called in a separate thread whenever
+   *                         a new goal is received, allowing users to have blocking callbacks.
+   *                         Adding an execute callback also deactivates the goalCallback.
+   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   * @param cbq A pointer to the ros::CallbackQueue to be used
+   */
+  void initialize(ros::NodeHandle n, std::string name, ExecuteCallback execute_callback, bool auto_start, ros::CallbackQueue *cbq = NULL);
 
   /**
    * @brief  Allows  polling implementations to query about the availability of a new goal

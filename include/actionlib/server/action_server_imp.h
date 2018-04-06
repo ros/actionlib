@@ -46,9 +46,10 @@ template<class ActionSpec>
 ActionServer<ActionSpec>::ActionServer(
   ros::NodeHandle n,
   std::string name,
-  bool auto_start)
+  bool auto_start,
+  ros::CallbackQueue *cbq)
 : ActionServerBase<ActionSpec>(
-    boost::function<void(GoalHandle)>(), boost::function<void(GoalHandle)>(), auto_start),
+    boost::function<void(GoalHandle)>(), boost::function<void(GoalHandle)>(), auto_start, cbq),
   node_(n, name)
 {
   // if we're to autostart... then we'll initialize things
@@ -79,8 +80,9 @@ template<class ActionSpec>
 ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
   boost::function<void(GoalHandle)> goal_cb,
   boost::function<void(GoalHandle)> cancel_cb,
-  bool auto_start)
-: ActionServerBase<ActionSpec>(goal_cb, cancel_cb, auto_start),
+  bool auto_start,
+  ros::CallbackQueue *cbq)
+  : ActionServerBase<ActionSpec>(goal_cb, cancel_cb, auto_start, cbq),
   node_(n, name)
 {
   // if we're to autostart... then we'll initialize things
@@ -113,8 +115,9 @@ ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
 template<class ActionSpec>
 ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
   boost::function<void(GoalHandle)> goal_cb,
-  bool auto_start)
-: ActionServerBase<ActionSpec>(goal_cb, boost::function<void(GoalHandle)>(), auto_start),
+  bool auto_start,
+  ros::CallbackQueue *cbq)
+: ActionServerBase<ActionSpec>(goal_cb, boost::function<void(GoalHandle)>(), auto_start, cbq),
   node_(n, name)
 {
   // if we're to autostart... then we'll initialize things
@@ -174,12 +177,25 @@ void ActionServer<ActionSpec>::initialize()
         boost::bind(&ActionServer::publishStatus, this, _1));
   }
 
-  goal_sub_ = node_.subscribe<ActionGoal>("goal", static_cast<uint32_t>(sub_queue_size),
-      boost::bind(&ActionServerBase<ActionSpec>::goalCallback, this, _1));
+  ros::SubscribeOptions goal_sub_opts;
+  goal_sub_opts = ros::SubscribeOptions::create<ActionGoal>(
+    "goal",
+    static_cast<uint32_t>(sub_queue_size),
+    boost::bind(&ActionServerBase<ActionSpec>::goalCallback, this, _1),
+    ros::VoidPtr(),
+    this->getCallbackQueue()
+  );
+  goal_sub_ = node_.subscribe(goal_sub_opts);
 
-  cancel_sub_ =
-    node_.subscribe<actionlib_msgs::GoalID>("cancel", static_cast<uint32_t>(sub_queue_size),
-      boost::bind(&ActionServerBase<ActionSpec>::cancelCallback, this, _1));
+  ros::SubscribeOptions cancel_sub_opts;
+  cancel_sub_opts = ros::SubscribeOptions::create<actionlib_msgs::GoalID>(
+    "cancel",
+    static_cast<uint32_t>(sub_queue_size),
+    boost::bind(&ActionServerBase<ActionSpec>::cancelCallback, this, _1),
+    ros::VoidPtr(),
+    this->getCallbackQueue()
+  );
+  cancel_sub_ = node_.subscribe(cancel_sub_opts);
 }
 
 template<class ActionSpec>

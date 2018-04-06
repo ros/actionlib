@@ -220,7 +220,8 @@ boost::shared_ptr<const typename SimpleActionServer<ActionSpec>::Goal> SimpleAct
 template<class ActionSpec>
 void SimpleActionServer<ActionSpec>::initialize(std::string name,
   ExecuteCallback execute_callback,
-  bool auto_start)
+  bool auto_start,
+  ros::CallbackQueue *cbq)
 {
   execute_callback_ = execute_callback;
   if (execute_callback_ != NULL) {
@@ -231,7 +232,29 @@ void SimpleActionServer<ActionSpec>::initialize(std::string name,
   as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n_, name,
       boost::bind(&SimpleActionServer::goalCallback, this, _1),
       boost::bind(&SimpleActionServer::preemptCallback, this, _1),
-      auto_start));
+      auto_start,
+      cbq));
+}
+
+template<class ActionSpec>
+void SimpleActionServer<ActionSpec>::initialize(ros::NodeHandle n,
+  std::string name,
+  ExecuteCallback execute_callback,
+  bool auto_start,
+  ros::CallbackQueue *cbq)
+{
+  n_ = ros::NodeHandle(n);
+  execute_callback_ = execute_callback;
+  if (execute_callback_ != NULL) {
+    execute_thread_ = new boost::thread(boost::bind(&SimpleActionServer::executeLoop, this));
+  }
+
+  // create the action server
+  as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n, name,
+      boost::bind(&SimpleActionServer::goalCallback, this, _1),
+      boost::bind(&SimpleActionServer::preemptCallback, this, _1),
+      auto_start,
+      cbq));
 }
 
 template<class ActionSpec>
