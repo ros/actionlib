@@ -64,7 +64,7 @@ namespace actionlib
 /**
  * \brief A Simple client implementation of the ActionInterface which supports only one goal at a time
  *
- * The SimpleActionClient wraps the exisitng ActionClient, and exposes a limited set of easy-to-use hooks
+ * The SimpleActionClient wraps the existing ActionClient, and exposes a limited set of easy-to-use hooks
  * for the user. Note that the concept of GoalHandles has been completely hidden from the user, and that
  * they must query the SimplyActionClient directly in order to monitor a goal.
  */
