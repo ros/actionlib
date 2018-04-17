@@ -54,7 +54,7 @@ namespace actionlib
  * explicit preempt goal preempts all goals with timestamps that are less
  * than or equal to the stamp associated with the preempt, accepting a new
  * goal implies successful preemption of any old goal and the status of the
- * old goal will be change automatically to reflect this.
+ * old goal will be changed automatically to reflect this.
  */
 template<class ActionSpec>
 class SimpleActionServer
@@ -72,14 +72,14 @@ public:
    * @param execute_callback Optional callback that gets called in a separate thread whenever
    *                         a new goal is received, allowing users to have blocking callbacks.
    *                         Adding an execute callback also deactivates the goalCallback.
-   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   * @param  auto_start A boolean value that tells the ActionServer whether or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
    */
   SimpleActionServer(std::string name, ExecuteCallback execute_callback, bool auto_start);
 
   /**
    * @brief  Constructor for a SimpleActionServer
    * @param name A name for the action server
-   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   * @param  auto_start A boolean value that tells the ActionServer whether or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
    */
   SimpleActionServer(std::string name, bool auto_start);
 
@@ -99,7 +99,7 @@ public:
    * @param execute_callback Optional callback that gets called in a separate thread whenever
    *                         a new goal is received, allowing users to have blocking callbacks.
    *                         Adding an execute callback also deactivates the goalCallback.
-   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   * @param  auto_start A boolean value that tells the ActionServer whether or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
    */
   SimpleActionServer(ros::NodeHandle n, std::string name, ExecuteCallback execute_callback,
     bool auto_start);
@@ -108,7 +108,7 @@ public:
    * @brief  Constructor for a SimpleActionServer
    * @param n A NodeHandle to create a namespace under
    * @param name A name for the action server
-   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   * @param  auto_start A boolean value that tells the ActionServer whether or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
    */
   SimpleActionServer(ros::NodeHandle n, std::string name, bool auto_start);
 
@@ -126,12 +126,12 @@ public:
   ~SimpleActionServer();
 
   /**
-   * @brief  Accepts a new goal when one is available The status of this
+   * @brief  Accepts a new goal when one is available. The status of this
    * goal is set to active upon acceptance, and the status of any
    * previously active goal is set to preempted. Preempts received for the
-   * new goal between checking if isNewGoalAvailable or invokation of a
+   * new goal between checking if isNewGoalAvailable or invocation of a
    * goal callback and the acceptNewGoal call will not trigger a preempt
-   * callback.  This means, isPreemptReqauested should be called after
+   * callback.  This means, isPreemptRequested should be called after
    * accepting the goal even for callback-based implementations to make
    * sure the new goal does not have a pending preempt request.
    * @return A shared_ptr to the new goal.
@@ -139,20 +139,20 @@ public:
   boost::shared_ptr<const Goal> acceptNewGoal();
 
   /**
-   * @brief  Allows  polling implementations to query about the availability of a new goal
+   * @brief  Allows polling implementations to query about the availability of a new goal
    * @return True if a new goal is available, false otherwise
    */
   bool isNewGoalAvailable();
 
 
   /**
-   * @brief  Allows  polling implementations to query about preempt requests
+   * @brief  Allows polling implementations to query about preempt requests
    * @return True if a preempt is requested, false otherwise
    */
   bool isPreemptRequested();
 
   /**
-   * @brief  Allows  polling implementations to query about the status of the current goal
+   * @brief  Allows polling implementations to query about the status of the current goal
    * @return True if a goal is active, false otherwise
    */
   bool isActive();

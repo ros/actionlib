@@ -56,7 +56,7 @@ class ActionServerBase;
 /**
  * @class ServerGoalHandle
  * @brief Encapsulates a state machine for a given goal that the user can
- * trigger transisions on. All ROS interfaces for the goal are managed by
+ * trigger transitions on. All ROS interfaces for the goal are managed by
  * the ActionServer to lessen the burden on the user.
  */
 template<class ActionSpec>

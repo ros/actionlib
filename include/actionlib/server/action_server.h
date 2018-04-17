@@ -84,7 +84,7 @@ public:
    * @param  name The name of the action
    * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
    * @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
-   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   * @param  auto_start A boolean value that tells the ActionServer whether or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
    */
   ActionServer(ros::NodeHandle n, std::string name,
     boost::function<void(GoalHandle)> goal_cb,
@@ -96,7 +96,7 @@ public:
    * @param  n A NodeHandle to create a namespace under
    * @param  name The name of the action
    * @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
-   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   * @param  auto_start A boolean value that tells the ActionServer whether or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
    */
   ActionServer(ros::NodeHandle n, std::string name,
     boost::function<void(GoalHandle)> goal_cb,
@@ -117,7 +117,7 @@ public:
    * @brief  Constructor for an ActionServer
    * @param  n A NodeHandle to create a namespace under
    * @param  name The name of the action
-   * @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+   * @param  auto_start A boolean value that tells the ActionServer whether or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
    */
   ActionServer(ros::NodeHandle n, std::string name,
     bool auto_start);
