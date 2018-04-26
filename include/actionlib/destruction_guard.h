@@ -59,7 +59,7 @@ public:
     boost::mutex::scoped_lock lock(mutex_);
     destructing_ = true;
     while (use_count_ > 0) {
-      count_condition_.timed_wait(lock, boost::posix_time::milliseconds(1000.0f));
+      count_condition_.timed_wait(lock, boost::posix_time::milliseconds(1000));
     }
   }
 
