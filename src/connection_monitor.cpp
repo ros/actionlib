@@ -275,7 +275,7 @@ bool actionlib::ConnectionMonitor::waitForActionServerToStart(const ros::Duratio
     }
 
     check_connection_condition_.timed_wait(lock,
-      boost::posix_time::milliseconds(time_left.toSec() * 1000.0f));
+      boost::posix_time::milliseconds(static_cast<uint64_t>(time_left.toSec() * 1000.0f)));
   }
 
   return isServerConnected();
