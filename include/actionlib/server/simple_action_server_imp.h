@@ -394,7 +394,7 @@ void SimpleActionServer<ActionSpec>::executeLoop()
       }
     } else {
       execute_condition_.timed_wait(lock,
-        boost::posix_time::milliseconds(static_cast<uint64_t>(loop_duration.toSec() * 1000.0f)));
+        boost::posix_time::milliseconds(static_cast<int64_t>(loop_duration.toSec() * 1000.0f)));
     }
   }
 }
