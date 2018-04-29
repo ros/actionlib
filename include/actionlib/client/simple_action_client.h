@@ -601,7 +601,8 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration & timeout
       time_left = loop_period;
     }
 
-    done_condition_.timed_wait(lock, boost::posix_time::milliseconds(time_left.toSec() * 1000.0f));
+    done_condition_.timed_wait(lock,
+      boost::posix_time::milliseconds(static_cast<int64_t>(time_left.toSec() * 1000.0f)));
   }
 
   return cur_simple_state_ == SimpleGoalState::DONE;
