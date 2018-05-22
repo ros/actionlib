@@ -2,6 +2,14 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Complete the full set of Ptr typedefs (`#106 <https://github.com/ros/actionlib/issues/106>`_)
+* Change boost::posix_time::milliseconds init to int64_t (`#105 <https://github.com/ros/actionlib/issues/105>`_)
+* Added ROS_ERROR message for Release code when asserts are ignored (`#94 <https://github.com/ros/actionlib/issues/94>`_)
+* fix typos. (`#102 <https://github.com/ros/actionlib/issues/102>`_)
+* Contributors: Bence Magyar, Patrick Beeson, Tobias Fischer, csukuangfj
+
 1.11.13 (2018-03-14)
 --------------------
 * [bugfix] added missing boost/thread/reverse_lock.hpp include (`#95 <https://github.com/ros/actionlib/issues/95>`_)
