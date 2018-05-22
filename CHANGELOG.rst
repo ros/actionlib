@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.14 (2018-05-21)
+--------------------
 * Complete the full set of Ptr typedefs (`#106 <https://github.com/ros/actionlib/issues/106>`_)
 * Change boost::posix_time::milliseconds init to int64_t (`#105 <https://github.com/ros/actionlib/issues/105>`_)
 * Added ROS_ERROR message for Release code when asserts are ignored (`#94 <https://github.com/ros/actionlib/issues/94>`_)
