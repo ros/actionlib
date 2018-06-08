@@ -57,6 +57,7 @@ from actionlib_msgs.msg import GoalStatus
 class AXClientApp(wx.App):
     def __init__(self, action_type, action_name):
         self.action_type = action_type
+        self.action_name = action_name
         wx.App.__init__(self)
 
         self.client = actionlib.SimpleActionClient(action_name, self.action_type.action)
@@ -156,7 +157,7 @@ class AXClientApp(wx.App):
 
     def OnInit(self):
 
-        self.frame = wx.Frame(None, -1, self.action_type.name + ' GUI Client')
+        self.frame = wx.Frame(None, -1, self.action_name + ' - ' + self.action_type.name + ' - GUI Client')
 
         self.sz = wx.BoxSizer(wx.VERTICAL)
 
