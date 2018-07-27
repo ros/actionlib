@@ -86,7 +86,7 @@ TEST_F(TestRunner, threaded_test) {
   {
     boost::mutex::scoped_lock lock(mutex_);
     while (!done_protecting_) {
-      cond_.timed_wait(lock, boost::posix_time::milliseconds(100.0f));
+      cond_.timed_wait(lock, boost::posix_time::milliseconds(100));
     }
   }
 
