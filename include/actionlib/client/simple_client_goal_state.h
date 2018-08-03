@@ -36,7 +36,8 @@
 #define ACTIONLIB__CLIENT__SIMPLE_CLIENT_GOAL_STATE_H_
 
 #include <string>
-#include <ros/console.h>
+
+#include "ros/console.h"
 
 namespace actionlib
 {

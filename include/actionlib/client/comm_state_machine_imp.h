@@ -40,6 +40,8 @@
 
 #include <vector>
 
+#include "ros/console.h"
+
 namespace actionlib
 {
 

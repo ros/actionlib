@@ -34,6 +34,7 @@
 
 
 #include <actionlib/client/connection_monitor.h>
+#include <ros/ros.h>
 
 #include <map>
 #include <sstream>

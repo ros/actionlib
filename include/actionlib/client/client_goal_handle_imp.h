@@ -38,6 +38,8 @@
 #ifndef ACTIONLIB__CLIENT__CLIENT_GOAL_HANDLE_IMP_H_
 #define ACTIONLIB__CLIENT__CLIENT_GOAL_HANDLE_IMP_H_
 
+#include <ros/ros.h>
+
 namespace actionlib
 {
 

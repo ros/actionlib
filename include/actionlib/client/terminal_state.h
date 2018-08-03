@@ -36,6 +36,7 @@
 #define ACTIONLIB__CLIENT__TERMINAL_STATE_H_
 
 #include <string>
+#include "ros/console.h"
 
 namespace actionlib
 {

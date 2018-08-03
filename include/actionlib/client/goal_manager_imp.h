@@ -39,6 +39,8 @@
 #ifndef ACTIONLIB__CLIENT__GOAL_MANAGER_IMP_H_
 #define ACTIONLIB__CLIENT__GOAL_MANAGER_IMP_H_
 
+#include "ros/ros.h"
+
 namespace actionlib
 {
 
