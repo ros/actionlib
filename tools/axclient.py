@@ -157,7 +157,10 @@ class AXClientApp(wx.App):
 
     def OnInit(self):
 
-        self.frame = wx.Frame(None, -1, self.action_name + ' - ' + self.action_type.name + ' - GUI Client')
+        self.frame = wx.Frame(
+            None, -1,
+            self.action_name + ' - ' + self.action_type.name + ' - GUI Client'
+        )
 
         self.sz = wx.BoxSizer(wx.VERTICAL)
 

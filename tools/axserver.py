@@ -180,7 +180,10 @@ class AXServerApp(wx.App):
 
     def OnInit(self):
 
-        self.frame = wx.Frame(None, -1, self.action_name + ' - ' + self.action_type.name + ' - Standin')
+        self.frame = wx.Frame(
+            None, -1,
+            self.action_name + ' - ' + self.action_type.name + ' - Standin'
+        )
 
         self.sz = wx.BoxSizer(wx.VERTICAL)
 
