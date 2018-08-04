@@ -59,7 +59,11 @@ class AXServerApp(wx.App):
         self.action_name = action_name
         wx.App.__init__(self)
 
-        self.server = actionlib.SimpleActionServer(action_name, self.action_type.action, self.execute)
+        self.server = actionlib.SimpleActionServer(
+            self.action_name,
+            self.action_type.action,
+            self.execute
+        )
         self.condition = threading.Condition()
         self.feedback_msg = None
         self.result_msg = None

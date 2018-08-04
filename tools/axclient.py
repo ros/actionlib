@@ -60,7 +60,8 @@ class AXClientApp(wx.App):
         self.action_name = action_name
         wx.App.__init__(self)
 
-        self.client = actionlib.SimpleActionClient(action_name, self.action_type.action)
+        self.client = actionlib.SimpleActionClient(
+            self.action_name, self.action_type.action)
         self.condition = threading.Condition()
         self.goal_msg = None
         self.execute_type = None
