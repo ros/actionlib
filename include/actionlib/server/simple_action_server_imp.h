@@ -37,6 +37,7 @@
 #ifndef ACTIONLIB__SERVER__SIMPLE_ACTION_SERVER_IMP_H_
 #define ACTIONLIB__SERVER__SIMPLE_ACTION_SERVER_IMP_H_
 
+#include <ros/ros.h>
 #include <string>
 
 namespace actionlib

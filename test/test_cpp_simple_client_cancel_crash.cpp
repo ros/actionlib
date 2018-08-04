@@ -37,6 +37,7 @@
 #include <gtest/gtest.h>
 #include <actionlib/client/simple_action_client.h>
 #include <actionlib/TestAction.h>
+#include <ros/ros.h>
 
 typedef actionlib::SimpleActionClient<actionlib::TestAction> Client;
 

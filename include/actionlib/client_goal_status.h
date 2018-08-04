@@ -38,6 +38,7 @@
 #include <string>
 
 #include "actionlib/GoalStatus.h"
+#include "ros/console.h"
 
 namespace actionlib
 {

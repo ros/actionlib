@@ -40,6 +40,8 @@
 #include <list>
 #include <string>
 
+#include "ros/console.h"
+
 namespace actionlib
 {
 template<class ActionSpec>

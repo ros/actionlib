@@ -39,6 +39,7 @@
 
 #include <list>
 #include <string>
+#include <ros/ros.h>
 
 namespace actionlib
 {
