@@ -56,9 +56,14 @@ PREEMPT = 3
 class AXServerApp(wx.App):
     def __init__(self, action_type, action_name):
         self.action_type = action_type
+        self.action_name = action_name
         wx.App.__init__(self)
 
-        self.server = actionlib.SimpleActionServer(action_name, self.action_type.action, self.execute)
+        self.server = actionlib.SimpleActionServer(
+            self.action_name,
+            self.action_type.action,
+            self.execute
+        )
         self.condition = threading.Condition()
         self.feedback_msg = None
         self.result_msg = None
@@ -179,7 +184,10 @@ class AXServerApp(wx.App):
 
     def OnInit(self):
 
-        self.frame = wx.Frame(None, -1, self.action_type.name + ' Standin')
+        self.frame = wx.Frame(
+            None, -1,
+            self.action_name + ' - ' + self.action_type.name + ' - Standin'
+        )
 
         self.sz = wx.BoxSizer(wx.VERTICAL)
 
