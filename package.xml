@@ -32,6 +32,7 @@
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>python-wxtools</exec_depend>
   <exec_depend>roslib</exec_depend>
+  <exec_depend>rosmsg</exec_depend>
   <exec_depend>rostopic</exec_depend>
 
   <test_depend>rosnode</test_depend>

@@ -89,6 +89,13 @@ class RefServer (ActionServer):
                     g.set_aborted(TestResult(n - i), "The ref server has aborted")
             self.saved_goals = []
             gh.set_succeeded()
+        elif goal.goal == 9:
+            gh.set_accepted()
+            r = rospy.Rate(10)
+            for i in xrange(3):
+                gh.publish_feedback(TestFeedback(i))
+                r.sleep()
+            gh.set_succeeded(TestResult(3))
         else:
             pass
 

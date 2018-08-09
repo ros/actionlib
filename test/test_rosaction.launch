@@ -1,0 +1,11 @@
+<launch>
+  <node pkg="actionlib" type="ref_server.py" name="ref_server" output="screen" />
+  <group ns="foo">
+    <node pkg="actionlib" type="ref_server.py" name="ref_server" output="screen" />
+  </group>
+  <group ns="bar">
+    <node pkg="actionlib" type="ref_server.py" name="ref_server" output="screen" />
+  </group>
+
+  <test test-name="test_rosaction" pkg="actionlib" type="test_rosaction.py"/>
+</launch>

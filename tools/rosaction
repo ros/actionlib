@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+
+from actionlib import rosaction
+from actionlib.exceptions import ActionException
+import rospy
+import sys
+
+rospy.init_node('rosaction', anonymous=True)
+try:
+    rosaction.main(sys.argv[1:])
+except ActionException as e:
+    print(e)
+    sys.exit(1)
