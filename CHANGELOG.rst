@@ -2,6 +2,15 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* unique name for axtools title bar (`#107 <https://github.com/ros/actionlib/issues/107>`_)
+* [bugfix] add missing ros / ros console includes (`#114 <https://github.com/ros/actionlib/issues/114>`_)
+* [bugfix] update posix_time::milliseconds for boost 1.67 (`#111 <https://github.com/ros/actionlib/issues/111>`_)
+* [test] Use portable boost::this_thread::sleep() to sleep so it can be built on Windows (`#112 <https://github.com/ros/actionlib/issues/112>`_)
+* Revert (`#106 <https://github.com/ros/actionlib/issues/106>`_) that broke downstream packages (`#113 <https://github.com/ros/actionlib/issues/113>`_)
+* Contributors: Felix Messmer, Gianfranco Costamagna, Johnson Shih, Mikael Arguedas
+
 1.11.14 (2018-05-21)
 --------------------
 * Complete the full set of Ptr typedefs (`#106 <https://github.com/ros/actionlib/issues/106>`_)
