@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.15 (2018-08-17)
+--------------------
 * unique name for axtools title bar (`#107 <https://github.com/ros/actionlib/issues/107>`_)
 * [bugfix] add missing ros / ros console includes (`#114 <https://github.com/ros/actionlib/issues/114>`_)
 * [bugfix] update posix_time::milliseconds for boost 1.67 (`#111 <https://github.com/ros/actionlib/issues/111>`_)
