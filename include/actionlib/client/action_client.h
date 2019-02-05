@@ -225,11 +225,14 @@ private:
     if (pub_queue_size < 0) {pub_queue_size = 10;}
     if (sub_queue_size < 0) {sub_queue_size = 1;}
 
-    status_sub_ = queue_subscribe("status", static_cast<uint32_t>(sub_queue_size),
+    bool feedback_sub_use_tcpnodelay;
+    n_.param("actionlib_client_feedback_sub_tcpnodelay", feedback_sub_use_tcpnodelay, false);
+
+    status_sub_ = queue_subscribe("status", static_cast<uint32_t>(sub_queue_size), false,
         &ActionClientT::statusCb, this, queue);
     feedback_sub_ = queue_subscribe("feedback", static_cast<uint32_t>(sub_queue_size),
-        &ActionClientT::feedbackCb, this, queue);
-    result_sub_ = queue_subscribe("result", static_cast<uint32_t>(sub_queue_size),
+        feedback_sub_use_tcpnodelay, &ActionClientT::feedbackCb, this, queue);
+    result_sub_ = queue_subscribe("result", static_cast<uint32_t>(sub_queue_size), false,
         &ActionClientT::resultCb, this, queue);
 
     connection_monitor_.reset(new ConnectionMonitor(feedback_sub_, result_sub_));
@@ -264,13 +267,15 @@ private:
   }
 
   template<class M, class T>
-  ros::Subscriber queue_subscribe(const std::string & topic, uint32_t queue_size, void (T::* fp)(
-      const ros::MessageEvent<M const> &), T * obj, ros::CallbackQueueInterface * queue)
+  ros::Subscriber queue_subscribe(const std::string & topic, uint32_t queue_size,
+    bool use_tcpnodelay, void (T::* fp)(const ros::MessageEvent<M const> &),
+    T * obj, ros::CallbackQueueInterface * queue)
   {
     ros::SubscribeOptions ops;
     ops.callback_queue = queue;
     ops.topic = topic;
     ops.queue_size = queue_size;
+    ops.transport_hints.tcpNoDelay(use_tcpnodelay);
     ops.md5sum = ros::message_traits::md5sum<M>();
     ops.datatype = ros::message_traits::datatype<M>();
     ops.helper = ros::SubscriptionCallbackHelperPtr(
