@@ -161,7 +161,6 @@ class SimpleActionClient:
     ## SimpleActionClient isn't tracking a goal.
     def get_state(self):
         if not self.gh:
-            rospy.logerr("Called get_state when no goal is running")
             return GoalStatus.LOST
         status = self.gh.get_goal_status()
 

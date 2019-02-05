@@ -338,8 +338,6 @@ template<class ActionSpec>
 SimpleClientGoalState SimpleActionClient<ActionSpec>::getState() const
 {
   if (gh_.isExpired()) {
-    ROS_ERROR_NAMED("actionlib",
-      "Trying to getState() when no goal is running. You are incorrectly using SimpleActionClient");
     return SimpleClientGoalState(SimpleClientGoalState::LOST);
   }
 
