@@ -102,12 +102,12 @@ bool ServiceClient::call(const Goal & goal, Result & result)
   return client_->call(&goal, mt::md5sum(goal), &result, mt::md5sum(result));
 }
 
-bool ServiceClient::waitForServer(const ros::Duration & timeout)
+inline bool ServiceClient::waitForServer(const ros::Duration & timeout)
 {
   return client_->waitForServer(timeout);
 }
 
-bool ServiceClient::isServerConnected()
+inline bool ServiceClient::isServerConnected()
 {
   return client_->isServerConnected();
 }
