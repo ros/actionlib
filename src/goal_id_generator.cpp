@@ -60,10 +60,7 @@ void actionlib::GoalIDGenerator::setName(const std::string & name)
 actionlib_msgs::GoalID actionlib::GoalIDGenerator::generateID()
 {
   actionlib_msgs::GoalID id;
-  ros::Time cur_time;
-  ros::SteadyTime cur_steady_time = ros::SteadyTime::now();
-  cur_time.sec = cur_steady_time.sec;
-  cur_time.nsec = cur_steady_time.nsec;
+  ros::Time cur_time = ros::Time::now();
   std::stringstream ss;
 
   ss << name_ << "-";
