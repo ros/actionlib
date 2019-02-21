@@ -123,7 +123,7 @@ class SimpleActionClient:
     ## @return True if the goal finished. False if the goal didn't finish within the allocated timeout
     def wait_for_result(self, timeout=rospy.Duration()):
         if not self.gh:
-            rospy.logerr("Called wait_for_goal_to_finish when no goal exists")
+            rospy.logerr("Called wait_for_result when no goal exists")
             return False
 
         timeout_time = rospy.get_rostime() + timeout
@@ -161,7 +161,6 @@ class SimpleActionClient:
     ## SimpleActionClient isn't tracking a goal.
     def get_state(self):
         if not self.gh:
-            rospy.logerr("Called get_state when no goal is running")
             return GoalStatus.LOST
         status = self.gh.get_goal_status()
 

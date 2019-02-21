@@ -9,7 +9,7 @@
     the base to a target location, performing a laser scan and returning
     the resulting point cloud, detecting the handle of a door, etc.
   </description>
-  <maintainer email="mikael@osrfoundation.org">Mikael Arguedas</maintainer>
+  <maintainer email="michael@openrobotics.org">Michael Carroll</maintainer>
   <license>BSD</license>
 
   <url type="website">http://www.ros.org/wiki/actionlib</url>
@@ -17,6 +17,7 @@
   <url type="repository">https://github.com/ros/actionlib</url>
   <author>Eitan Marder-Eppstein</author>
   <author>Vijay Pradeep</author>
+  <author>Mikael Arguedas</author>
 
   <buildtool_depend version_gte="0.5.78">catkin</buildtool_depend>
 

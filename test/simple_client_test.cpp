@@ -51,6 +51,8 @@ TEST(SimpleClient, easy_tests) {
   bool finished;
 
   goal.goal = 1;
+  // sleep a bit to make sure that all topics are properly connected to the server.
+  ros::Duration(0.01).sleep();
   client.sendGoal(goal);
   finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);
