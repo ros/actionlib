@@ -211,8 +211,15 @@ class SimpleActionServer:
             rospy.logdebug("A new goal %shas been recieved by the single goal action server", goal.get_goal_id().id)
 
             # check that the timestamp is past that of the current goal and the next goal
-            if((not self.current_goal.get_goal() or goal.get_goal_id().stamp >= self.current_goal.get_goal_id().stamp)
-               and (not self.next_goal.get_goal() or goal.get_goal_id().stamp >= self.next_goal.get_goal_id().stamp)):
+            # if the current/next goal is already DONE(SUCCEEDED), no need to check timestamp.
+            # when system time jumps past/future, goal cannot be set as expected comparing timestamp.
+            if((not self.current_goal.get_goal()
+                or self.current_goal.get_goal_status().status == GoalStatus.SUCCEEDED
+                or goal.get_goal_id().stamp >= self.current_goal.get_goal_id().stamp)
+                and (not self.next_goal.get_goal()
+                or self.next_goal.get_goal_status().status == GoalStatus.SUCCEEDED
+                or goal.get_goal_id().stamp >= self.next_goal.get_goal_id().stamp)):
+
                 # if next_goal has not been accepted already... its going to get bumped, but we need to let the client know we're preempting
                 if(self.next_goal.get_goal() and (not self.current_goal.get_goal() or self.next_goal != self.current_goal)):
                     self.next_goal.set_canceled(None, "This goal was canceled because another goal was received by the simple action server")
