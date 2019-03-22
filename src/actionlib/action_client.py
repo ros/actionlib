@@ -138,10 +138,16 @@ class ClientGoalHandle:
     ## Also transitions the client state to WAITING_FOR_CANCEL_ACK
     def cancel(self):
         with self.comm_state_machine.mutex:
-            cancel_msg = GoalID(stamp=rospy.Time(0),
-                                id=self.comm_state_machine.action_goal.goal_id.id)
-            self.comm_state_machine.send_cancel_fn(cancel_msg)
-            self.comm_state_machine.transition_to(CommState.WAITING_FOR_CANCEL_ACK)
+            if self.comm_state_machine.state in [CommState.WAITING_FOR_GOAL_ACK,
+                                                 CommState.PENDING,
+                                                 CommState.ACTIVE]:
+                cancel_msg = GoalID(stamp=rospy.Time(0),
+                                    id=self.comm_state_machine.action_goal.goal_id.id)
+                self.comm_state_machine.send_cancel_fn(cancel_msg)
+                self.comm_state_machine.transition_to(CommState.WAITING_FOR_CANCEL_ACK)
+            else:
+                rospy.logdebug("Got a cancel() request while in state [%s], so ignoring it",
+                               CommState.to_string(self.comm_state_machine.state))
 
     ## @brief Get the state of this goal's communication state machine from interaction with the server
     ##

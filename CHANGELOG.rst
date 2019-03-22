@@ -2,6 +2,10 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* [bugfix] trigger goal cancelling depending on client state (`#126 <https://github.com/ros/actionlib/issues/126>`_)
+
 1.11.15 (2018-08-17)
 --------------------
 * unique name for axtools title bar (`#107 <https://github.com/ros/actionlib/issues/107>`_)
