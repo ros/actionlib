@@ -27,7 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 # Author: Alexander Sorokin.
-from __future__ import print_function
+
 
 PKG = 'actionlib'
 
@@ -50,7 +50,7 @@ class TestImports(unittest.TestCase):
         from actionlib import action_server
         from actionlib import simple_action_server
 
-        self.assertEquals(1, 1, "1!=1")
+        self.assertEqual(1, 1, "1!=1")
 
 
 if __name__ == '__main__':

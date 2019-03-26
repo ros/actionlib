@@ -42,27 +42,27 @@ class TestRefSimpleActionServer(unittest.TestCase):
     def testsimple(self):
         return
         client = ActionClient('reference_action', TestAction)
-        self.assert_(client.wait_for_action_server_to_start(rospy.Duration(2.0)),
-                     'Could not connect to the action server')
+        self.assertTrue(client.wait_for_action_server_to_start(rospy.Duration(2.0)),
+                        'Could not connect to the action server')
 
         goal = TestGoal(1)
         client.send_goal(goal)
-        self.assert_(client.wait_for_goal_to_finish(rospy.Duration(2.0)),
-                     "Goal didn't finish")
+        self.assertTrue(client.wait_for_goal_to_finish(rospy.Duration(2.0)),
+                        "Goal didn't finish")
         self.assertEqual(GoalStatus.SUCCEEDED, client.get_terminal_state())
         self.assertEqual(GoalStatus.SUCCEEDED, client.get_state())
 
         goal = TestGoal(2)
         client.send_goal(goal)
-        self.assert_(client.wait_for_goal_to_finish(rospy.Duration(10.0)),
-                     "Goal didn't finish")
+        self.assertTrue(client.wait_for_goal_to_finish(rospy.Duration(10.0)),
+                        "Goal didn't finish")
         self.assertEqual(GoalStatus.ABORTED, client.get_terminal_state())
         self.assertEqual(GoalStatus.ABORTED, client.get_state())
 
     def test_abort(self):
         client = ActionClient('reference_action', TestAction)
-        self.assert_(client.wait_for_server(rospy.Duration(2.0)),
-                     'Could not connect to the action server')
+        self.assertTrue(client.wait_for_server(rospy.Duration(2.0)),
+                        'Could not connect to the action server')
 
         goal_work = TestGoal(4)
         goal_abort = TestGoal(6)
@@ -90,8 +90,8 @@ class TestRefSimpleActionServer(unittest.TestCase):
 
     def test_feedback(self):
         client = ActionClient('reference_action', TestAction)
-        self.assert_(client.wait_for_server(rospy.Duration(2.0)),
-                     'Could not connect to the action server')
+        self.assertTrue(client.wait_for_server(rospy.Duration(2.0)),
+                        'Could not connect to the action server')
 
         goal_work = TestGoal(4)
         goal_abort = TestGoal(6)
@@ -132,8 +132,8 @@ class TestRefSimpleActionServer(unittest.TestCase):
 
     def test_result(self):
         client = ActionClient('reference_action', TestAction)
-        self.assert_(client.wait_for_server(rospy.Duration(2.0)),
-                     'Could not connect to the action server')
+        self.assertTrue(client.wait_for_server(rospy.Duration(2.0)),
+                        'Could not connect to the action server')
 
         goal_work = TestGoal(4)
         goal_abort = TestGoal(6)

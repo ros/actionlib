@@ -43,7 +43,7 @@ import wx
 import rospy
 import actionlib
 import threading
-from cStringIO import StringIO
+from io import StringIO
 from library import to_yaml, yaml_msg_str
 from dynamic_action import DynamicAction
 

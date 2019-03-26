@@ -42,7 +42,7 @@ class SimpleExerciser(unittest.TestCase):
     def setUp(self):
         self.default_wait = rospy.Duration(60.0)
         self.client = SimpleActionClient('test_request_action', TestRequestAction)
-        self.assert_(self.client.wait_for_server(self.default_wait))
+        self.assertTrue(self.client.wait_for_server(self.default_wait))
 
     def test_just_succeed(self):
         goal = TestRequestGoal(terminate_status=TestRequestGoal.TERMINATE_SUCCESS,

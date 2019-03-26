@@ -472,7 +472,7 @@ class GoalManager:
     def _get_live_statuses(self):
         with self.list_mutex:
             live_statuses = [r() for r in self.statuses]
-            live_statuses = filter(lambda x: x, live_statuses)
+            live_statuses = [x for x in live_statuses if x]
             return live_statuses
 
     ## Updates the statuses of all goals from the information in status_array.
