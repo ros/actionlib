@@ -234,7 +234,7 @@ def main():
 
     if (len(args) == 2):
         # get action type via rostopic
-        topic_type = rostopic._get_topic_type("%s/goal" % args[1])[0]
+        topic_type = rostopic._get_topic_type("%s/goal" % args[1].rstrip('/'))[0]
         # remove "Goal" string from action type
         assert("Goal" in topic_type)
         topic_type = topic_type[0:len(topic_type)-4]
@@ -246,7 +246,7 @@ def main():
         parser.error("You must specify the action topic name (and optionally type) Eg: ./axclient.py action_topic actionlib/TwoIntsAction ")
 
     action = DynamicAction(topic_type)
-    app = AXClientApp(action, args[1])
+    app = AXClientApp(action, args[1].rstrip('/'))
     app.MainLoop()
     app.OnQuit()
     rospy.signal_shutdown('GUI shutdown')
