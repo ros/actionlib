@@ -31,9 +31,7 @@
   <depend>std_msgs</depend>
 
   <exec_depend>message_runtime</exec_depend>
-  <exec_depend>python-wxtools</exec_depend>
-  <exec_depend>roslib</exec_depend>
-  <exec_depend>rostopic</exec_depend>
 
   <test_depend>rosnode</test_depend>
+  <test_depend>rosunit</test_depend>
 </package>
