@@ -64,7 +64,7 @@ class ServerGoalHandle
 {
 private:
   // generates typedefs that we'll use to make our lives easier
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
 
 public:
   /**
