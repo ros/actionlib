@@ -208,7 +208,7 @@ class SimpleActionServer:
         self.execute_condition.acquire()
 
         try:
-            rospy.logdebug("A new goal %shas been recieved by the single goal action server", goal.get_goal_id().id)
+            rospy.logdebug("A new goal %shas been received by the single goal action server", goal.get_goal_id().id)
 
             # check that the timestamp is past that of the current goal and the next goal
             if((not self.current_goal.get_goal() or goal.get_goal_id().stamp >= self.current_goal.get_goal_id().stamp)
