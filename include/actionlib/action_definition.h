@@ -55,6 +55,6 @@ namespace actionlib
   typedef boost::shared_ptr<const Result> ResultConstPtr; \
  \
   typedef boost::shared_ptr<const ActionFeedback> ActionFeedbackConstPtr; \
-  typedef boost::shared_ptr<const Feedback> FeedbackConstPtr;
+  typedef boost::shared_ptr<const Feedback> FeedbackConstPtr
 }  // namespace actionlib
 #endif  // ACTIONLIB__ACTION_DEFINITION_H_
