@@ -46,18 +46,6 @@ def nop_cb(goal_handle):
     pass
 
 
-def ros_timer(callable, frequency):
-    rate = rospy.Rate(frequency)
-
-    rospy.logdebug("Starting timer")
-    while not rospy.is_shutdown():
-        try:
-            rate.sleep()
-            callable()
-        except rospy.exceptions.ROSInterruptException:
-            rospy.logdebug("Sleep interrupted")
-
-
 ## @class ActionServer
 ## @brief The ActionServer is a helpful tool for managing goal requests to a
 ## node. It allows the user to specify callbacks that are invoked when goal
@@ -134,6 +122,17 @@ class ActionServer:
             self.started = True
             self.publish_status()
 
+    ## @brief  Stop the action server. Please make sure it is not processing any goals at stop-time.
+    def stop(self):
+        with self.lock:
+            self.started = False
+            self.status_timer.shutdown()
+            self.goal_sub.unregister()
+            self.cancel_sub.unregister()
+            self.status_pub.unregister()
+            self.feedback_pub.unregister()
+            self.result_pub.unregister()
+
     ## @brief  Initialize all ROS connections and setup timers
     def initialize(self):
         self.pub_queue_size = rospy.get_param('actionlib_server_pub_queue_size', 50)
@@ -166,8 +165,9 @@ class ActionServer:
         status_list_timeout = rospy.get_param(rospy.remap_name(self.ns)+"/status_list_timeout", 5.0)
         self.status_list_timeout = rospy.Duration(status_list_timeout)
 
-        self.status_timer = threading.Thread(None, ros_timer, None, (self.publish_status_async, self.status_frequency))
-        self.status_timer.start()
+        if self.status_frequency > 0.0:
+            status_period = rospy.Duration(1.0 / self.status_frequency)
+            self.status_timer = rospy.Timer(status_period, self.publish_status_async)
 
     ## @brief  Publishes a result for a given goal
     ## @param status The status of the goal with which the result is associated
@@ -293,7 +293,7 @@ class ActionServer:
                 self.goal_callback(gh)
 
     ## @brief  Publish status for all goals on a timer event
-    def publish_status_async(self):
+    def publish_status_async(self, event):
         with self.lock:
             # we won't publish status unless we've been started
             if not self.started:
