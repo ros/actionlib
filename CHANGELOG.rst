@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.12.0 (2019-08-07)
+-------------------
 * Complete the full set of Ptr typedefs (`#106 <https://github.com/ros/actionlib/issues/106>`_)
 * action_server calls initialize in constructor (`#120 <https://github.com/ros/actionlib/issues/120>`_)
 * Print the correct error on waiting for result (`#123 <https://github.com/ros/actionlib/issues/123>`_)
