@@ -2,6 +2,15 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Complete the full set of Ptr typedefs (`#106 <https://github.com/ros/actionlib/issues/106>`_)
+* action_server calls initialize in constructor (`#120 <https://github.com/ros/actionlib/issues/120>`_)
+* Print the correct error on waiting for result (`#123 <https://github.com/ros/actionlib/issues/123>`_)
+* Remove getState error when no goal is running (`#97 <https://github.com/ros/actionlib/issues/97>`_)
+* Update maintainer (`#122 <https://github.com/ros/actionlib/issues/122>`_)
+* Contributors: Alireza, Bence Magyar, Carl Saldanha, Christopher Wecht, Michael Carroll
+
 1.11.15 (2018-08-17)
 --------------------
 * unique name for axtools title bar (`#107 <https://github.com/ros/actionlib/issues/107>`_)
