@@ -581,7 +581,8 @@ class ActionClient:
     ## the user wait until the network connection to the server is negotiated
     def wait_for_server(self, timeout=rospy.Duration(0.0)):
         started = False
-        timeout_time = rospy.get_rostime() + timeout
+        timeout = timeout.to_sec()
+        timeout_time = time.time() + timeout
         while not rospy.is_shutdown():
             if self.last_status_msg:
                 server_id = self.last_status_msg._connection_header['callerid']
@@ -610,7 +611,7 @@ class ActionClient:
                         started = True
                         break
 
-            if timeout != rospy.Duration(0.0) and rospy.get_rostime() >= timeout_time:
+            if timeout != 0.0 and time.time() >= timeout_time:
                 break
 
             time.sleep(0.01)
