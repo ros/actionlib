@@ -80,7 +80,7 @@ template<class ActionSpec>
 class ServiceClientImpT : public ServiceClientImp
 {
 public:
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
   typedef ClientGoalHandle<ActionSpec> GoalHandleT;
   typedef SimpleActionClient<ActionSpec> SimpleActionClientT;
 

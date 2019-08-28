@@ -62,7 +62,7 @@ public:
   typedef ClientGoalHandle<ActionSpec> GoalHandle;
 
 private:
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
   typedef ActionClient<ActionSpec> ActionClientT;
   typedef boost::function<void (GoalHandle)> TransitionCallback;
   typedef boost::function<void (GoalHandle, const FeedbackConstPtr &)> FeedbackCallback;

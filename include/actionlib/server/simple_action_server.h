@@ -61,7 +61,7 @@ class SimpleActionServer
 {
 public:
   // generates typedefs that we'll use to make our lives easier
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
 
   typedef typename ActionServer<ActionSpec>::GoalHandle GoalHandle;
   typedef boost::function<void (const GoalConstPtr &)> ExecuteCallback;

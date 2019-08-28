@@ -72,7 +72,7 @@ template<class ActionSpec>
 class SimpleActionClient
 {
 private:
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
   typedef ClientGoalHandle<ActionSpec> GoalHandleT;
   typedef SimpleActionClient<ActionSpec> SimpleActionClientT;
 
