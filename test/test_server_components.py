@@ -51,13 +51,13 @@ class TestGoalIDGenerator(unittest.TestCase):
         nn2, s2, ts2 = id2.id.split('-')
         nn3, s3, ts3 = id3.id.split('-')
 
-        self.assertEquals(nn1, "/test_goal_id_generator", "node names are different")
-        self.assertEquals(nn1, nn2, "node names are different")
-        self.assertEquals(nn1, nn3, "node names are different")
+        self.assertEqual(nn1, "/test_goal_id_generator", "node names are different")
+        self.assertEqual(nn1, nn2, "node names are different")
+        self.assertEqual(nn1, nn3, "node names are different")
 
-        self.assertEquals(s1, "1", "Sequence numbers mismatch")
-        self.assertEquals(s2, "2", "Sequence numbers mismatch")
-        self.assertEquals(s3, "3", "Sequence numbers mismatch")
+        self.assertEqual(s1, "1", "Sequence numbers mismatch")
+        self.assertEqual(s2, "2", "Sequence numbers mismatch")
+        self.assertEqual(s3, "3", "Sequence numbers mismatch")
 
     def test_threaded_generation(self):
         """
@@ -87,7 +87,7 @@ class TestGoalIDGenerator(unittest.TestCase):
 
         all_ids = {}
         for tID in range(0, num_threads):
-            self.assertEquals(len(ids_lists[tID]), num_ids)
+            self.assertEqual(len(ids_lists[tID]), num_ids)
             for id in ids_lists[tID]:
                 nn, s, ts = id.id.split('-')
                 self.assertFalse(s in all_ids, "Duplicate ID found")
@@ -95,8 +95,8 @@ class TestGoalIDGenerator(unittest.TestCase):
 
     def test_status_tracker(self):
         tracker = status_tracker.StatusTracker("test-id", actionlib_msgs.msg.GoalStatus.PENDING)
-        self.assertEquals(tracker.status.goal_id, "test-id")
-        self.assertEquals(tracker.status.status, actionlib_msgs.msg.GoalStatus.PENDING)
+        self.assertEqual(tracker.status.goal_id, "test-id")
+        self.assertEqual(tracker.status.status, actionlib_msgs.msg.GoalStatus.PENDING)
 
 
 if __name__ == '__main__':

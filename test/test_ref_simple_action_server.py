@@ -39,24 +39,24 @@ class TestRefSimpleActionServer(unittest.TestCase):
 
     def test_one(self):
         client = SimpleActionClient('reference_simple_action', TestAction)
-        self.assert_(client.wait_for_server(rospy.Duration(2.0)),
+        self.assertTrue(client.wait_for_server(rospy.Duration(2.0)),
                      'Could not connect to the action server')
 
         goal = TestGoal(1)
         client.send_goal(goal)
-        self.assert_(client.wait_for_result(rospy.Duration(2.0)),
+        self.assertTrue(client.wait_for_result(rospy.Duration(2.0)),
                      "Goal didn't finish")
         self.assertEqual(GoalStatus.SUCCEEDED, client.get_state())
 
         goal = TestGoal(2)
         client.send_goal(goal)
-        self.assert_(client.wait_for_result(rospy.Duration(10.0)),
+        self.assertTrue(client.wait_for_result(rospy.Duration(10.0)),
                      "Goal didn't finish")
         self.assertEqual(GoalStatus.ABORTED, client.get_state())
 
         goal = TestGoal(3)
         client.send_goal(goal)
-        self.assert_(client.wait_for_result(rospy.Duration(10.0)),
+        self.assertTrue(client.wait_for_result(rospy.Duration(10.0)),
                      "Goal didn't finish")
 
         # The simple server can't reject goals
@@ -70,7 +70,7 @@ class TestRefSimpleActionServer(unittest.TestCase):
             saved_feedback[0] = fb
 
         client.send_goal(goal, feedback_cb=on_feedback)
-        self.assert_(client.wait_for_result(rospy.Duration(10.0)),
+        self.assertTrue(client.wait_for_result(rospy.Duration(10.0)),
                      "Goal didn't finish")
         self.assertEqual(GoalStatus.SUCCEEDED, client.get_state())
 

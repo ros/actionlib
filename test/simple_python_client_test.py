@@ -37,20 +37,20 @@ class TestSimpleActionClient(unittest.TestCase):
 
     def testsimple(self):
         client = SimpleActionClient('reference_action', TestAction)
-        self.assert_(client.wait_for_server(rospy.Duration(10.0)),
-                     'Could not connect to the action server')
+        self.assertTrue(client.wait_for_server(rospy.Duration(10.0)),
+                        'Could not connect to the action server')
 
         goal = TestGoal(1)
         client.send_goal(goal)
-        self.assert_(client.wait_for_result(rospy.Duration(10.0)),
-                     "Goal didn't finish")
+        self.assertTrue(client.wait_for_result(rospy.Duration(10.0)),
+                        "Goal didn't finish")
         self.assertEqual(GoalStatus.SUCCEEDED, client.get_state())
         self.assertEqual("The ref server has succeeded", client.get_goal_status_text())
 
         goal = TestGoal(2)
         client.send_goal(goal)
-        self.assert_(client.wait_for_result(rospy.Duration(10.0)),
-                     "Goal didn't finish")
+        self.assertTrue(client.wait_for_result(rospy.Duration(10.0)),
+                        "Goal didn't finish")
         self.assertEqual(GoalStatus.ABORTED, client.get_state())
         self.assertEqual("The ref server has aborted", client.get_goal_status_text())
 

@@ -35,13 +35,18 @@
 Top-level library routines we expose to the end-user
 """
 
-from __future__ import with_statement
+
 import yaml
+import sys
 
 import roslib.message
 import roslib.packages
 
 import rospy
+
+_NATIVE_YAML_TYPES = {int, float, str, bool}
+if sys.version_info < (3, 0):
+    _NATIVE_YAML_TYPES.add(long)
 
 
 def findros(pkg, resource):
@@ -167,7 +172,7 @@ def _message_to_yaml(msg, indent='', time_offset=None):
     as deltas from  time_offset
     @type  time_offset: Time
     """
-    if type(msg) in [int, long, float, str, bool]:
+    if type(msg) in _NATIVE_YAML_TYPES
         # TODO: need to actually escape
         return msg
     elif isinstance(msg, rospy.Time) or isinstance(msg, rospy.Duration):
