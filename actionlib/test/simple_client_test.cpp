@@ -82,6 +82,7 @@ TEST(SimpleClient, easy_tests) {
 void easyDoneCallback(bool * called, const SimpleClientGoalState & state,
   const TestResultConstPtr &)
 {
+  ros::Duration(0.1).sleep();
   *called = true;
   EXPECT_TRUE(state == SimpleClientGoalState::SUCCEEDED)
     << "Expected [SUCCEEDED], but goal state is [" << state.toString() << "]";
@@ -95,7 +96,6 @@ void easyOldDoneCallback(bool * called, const TerminalState & terminal_state,
     << "Expected [SUCCEEDED], but terminal state is [" << terminal_state.toString() << "]";
 }
 
-/* Intermittent failures #5087
 TEST(SimpleClient, easy_callback)
 {
   ros::NodeHandle n;
@@ -115,7 +115,7 @@ TEST(SimpleClient, easy_callback)
   ASSERT_TRUE(finished);
   EXPECT_TRUE(called) << "easyDoneCallback() was never called" ;
 }
-*/
+
 void spinThread()
 {
   ros::NodeHandle nh;
