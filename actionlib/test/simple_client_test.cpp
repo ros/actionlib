@@ -98,6 +98,9 @@ TEST(SimpleClient, easy_callback)
   bool started = client.waitForServer(ros::Duration(10.0));
   ASSERT_TRUE(started);
 
+  // sleep a bit to make sure that all topics are properly connected to the server.
+  ros::Duration(0.01).sleep();
+
   TestGoal goal;
   bool finished;
 
