@@ -79,21 +79,15 @@ TEST(SimpleClient, easy_tests) {
 }
 
 
-void easyDoneCallback(bool * called, const SimpleClientGoalState & state,
+void easyDoneCallback(bool * called, SimpleActionClient<TestAction> * ac, const SimpleClientGoalState & state,
   const TestResultConstPtr &)
 {
-  ros::Duration(0.1).sleep();
-  *called = true;
+  EXPECT_TRUE(ac->getState() == SimpleClientGoalState::SUCCEEDED)
+    << "Expected [SUCCEEDED], but getState() returned [" << ac->getState().toString() << "]";
   EXPECT_TRUE(state == SimpleClientGoalState::SUCCEEDED)
     << "Expected [SUCCEEDED], but goal state is [" << state.toString() << "]";
-}
-
-void easyOldDoneCallback(bool * called, const TerminalState & terminal_state,
-  const TestResultConstPtr &)
-{
+  ros::Duration(0.1).sleep();
   *called = true;
-  EXPECT_TRUE(terminal_state == TerminalState::SUCCEEDED)
-    << "Expected [SUCCEEDED], but terminal state is [" << terminal_state.toString() << "]";
 }
 
 TEST(SimpleClient, easy_callback)
@@ -109,7 +103,7 @@ TEST(SimpleClient, easy_callback)
 
   bool called = false;
   goal.goal = 1;
-  SimpleActionClient<TestAction>::SimpleDoneCallback func = boost::bind(&easyDoneCallback, &called, _1, _2);
+  SimpleActionClient<TestAction>::SimpleDoneCallback func = boost::bind(&easyDoneCallback, &called, &client, _1, _2);
   client.sendGoal(goal, func);
   finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);
