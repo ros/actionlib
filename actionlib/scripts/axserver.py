@@ -35,7 +35,7 @@
 #  Author: Matt Reynolds
 # **********************************************************
 """
-Deprecated: Use 'axserver.py' from the 'actionlib_tools' package instead
+Deprecated: Use 'axserver' from the 'actionlib_tools' package instead
 """
 
 from __future__ import print_function
@@ -48,12 +48,12 @@ import rospkg
 
 def main():
     if "actionlib_tools" in rospkg.RosPack().list():
-        print("Warning: The 'axserver.py' script has been moved to the 'actionlib_tools' package." +
-              " A future version of 'actionlib' will not include this script\n")
-        return os.system(" ".join(["rosrun", "actionlib_tools", "axserver.py"] + sys.argv[1:]))
+        print("Warning: The 'axserver.py' script has been moved to the 'actionlib_tools' package" +
+              " and renamed 'axserver'. A future version of 'actionlib' will not include this script\n")
+        return os.system(" ".join(["rosrun", "actionlib_tools", "axserver"] + sys.argv[1:]))
     else:
-        print("Error: The 'axserver.py' script has been moved to the 'actionlib_tools' package." +
-              " Please install 'actionlib_tools'")
+        print("Error: The 'axserver.py' script has been moved to the 'actionlib_tools' package" +
+              " and renamed 'axserver'. Please install 'actionlib_tools'")
         return 1
 
 
