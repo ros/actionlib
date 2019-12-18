@@ -50,12 +50,12 @@ def main():
     if "actionlib_tools" in rospkg.RosPack().list():
         print("Warning: The 'axserver.py' script has been moved to the 'actionlib_tools' package" +
               " and renamed 'axserver'. A future version of 'actionlib' will not include this script\n")
-        return os.system(" ".join(["rosrun", "actionlib_tools", "axserver"] + sys.argv[1:]))
+        os.execlp("rosrun", "", "actionlib_tools", "axserver", *sys.argv[1:])
     else:
         print("Error: The 'axserver.py' script has been moved to the 'actionlib_tools' package" +
               " and renamed 'axserver'. Please install 'actionlib_tools'")
-        return 1
+        sys.exit(1)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
