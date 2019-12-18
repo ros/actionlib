@@ -2,7 +2,7 @@
 <package format="2">
   <name>actionlib_tools</name>
   <version>0.1.0</version>
-  <description>The actionlib_tools package</description>
+  <description>GUI tools for actionlib clients and servers</description>
 
   <maintainer email="michael@openrobotics.org">Michael Carroll</maintainer>
   <license>BSD</license>
@@ -22,5 +22,4 @@
   <exec_depend>actionlib</exec_depend>
   <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>python-wxtools</exec_depend>
-
 </package>
