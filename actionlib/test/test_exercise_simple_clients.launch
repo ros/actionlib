@@ -6,7 +6,7 @@
   <test test-name="test_py_simple_client"
         pkg="actionlib" type="exercise_simple_client.py" />
 
-  <test test-name="test_cpp_simple_client"
+  <test test-name="test_cpp_simple_client" time-limit="90"
         pkg="actionlib" type="actionlib-exercise_simple_client" />
 
 </launch>
