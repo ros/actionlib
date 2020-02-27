@@ -1,0 +1,9 @@
+<launch>
+
+  <node name="mock_simple_server"
+        pkg="actionlib" type="mock_simple_server.py" output="screen" />
+
+  <test test-name="test_py_simple_client"
+        pkg="actionlib" type="exercise_simple_client.py" />
+
+</launch>
