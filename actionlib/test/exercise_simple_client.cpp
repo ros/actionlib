@@ -57,8 +57,6 @@ protected:
   {
     // Make sure that the server comes up
     ASSERT_TRUE(ac_.waitForServer(ros::Duration(10.0)) );
-    // sleep a bit to make sure that all topics are properly connected to the server.
-    ros::Duration(0.01).sleep();
   }
 
   SimpleActionClient<TestRequestAction> ac_;
