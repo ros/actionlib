@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(actionlib)
 
 find_package(catkin REQUIRED COMPONENTS actionlib_msgs message_generation roscpp std_msgs)
