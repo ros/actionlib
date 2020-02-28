@@ -172,7 +172,7 @@ def _message_to_yaml(msg, indent='', time_offset=None):
     as deltas from  time_offset
     @type  time_offset: Time
     """
-    if type(msg) in _NATIVE_YAML_TYPES
+    if type(msg) in _NATIVE_YAML_TYPES:
         # TODO: need to actually escape
         return msg
     elif isinstance(msg, rospy.Time) or isinstance(msg, rospy.Duration):
