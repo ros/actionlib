@@ -2,6 +2,13 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Switch to timer and allow stopping actionserver/client (`#142 <https://github.com/ros/actionlib/issues/142>`_)
+* bump CMake minimum version to use new behavior of CMP0048 (`#158 <https://github.com/ros/actionlib/issues/158>`_)
+* Split actionlib and tools into separate packages (`#152 <https://github.com/ros/actionlib/issues/152>`_)
+* Contributors: Michael Carroll, Paul Bovbel, jschleicher
+
 1.12.0 (2019-08-07)
 -------------------
 * Complete the full set of Ptr typedefs (`#106 <https://github.com/ros/actionlib/issues/106>`_)
