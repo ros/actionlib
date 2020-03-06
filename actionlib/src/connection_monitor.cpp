@@ -44,7 +44,7 @@
 
 
 #define CONNECTION_DEBUG(fmt, ...) \
-  ROS_INFO_NAMED("ConnectionMonitor", fmt, ## __VA_ARGS__)
+  ROS_DEBUG_NAMED("ConnectionMonitor", fmt, ## __VA_ARGS__)
 
 #define CONNECTION_WARN(fmt, ...) \
   ROS_WARN_NAMED("ConnectionMonitor", fmt, ## __VA_ARGS__)

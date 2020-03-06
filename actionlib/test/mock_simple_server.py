@@ -41,7 +41,7 @@ class RefSimpleServer(SimpleActionServer):
         self.start()
 
     def execute_cb(self, goal):
-        rospy.loginfo("Goal:\n" + str(goal))
+        rospy.logdebug("Goal:\n" + str(goal))
         result = TestRequestResult(goal.the_result, True)
 
         if goal.pause_status > rospy.Duration(0.0):
@@ -62,7 +62,7 @@ class RefSimpleServer(SimpleActionServer):
                     self.set_preempted(result, goal.result_text)
                     return
 
-        rospy.loginfo("Terminating goal as: %i" % goal.terminate_status)
+        rospy.logdebug("Terminating goal as: %i" % goal.terminate_status)
 
         if goal.terminate_status == TestRequestGoal.TERMINATE_SUCCESS:
             self.set_succeeded(result, goal.result_text)
