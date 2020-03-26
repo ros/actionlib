@@ -50,7 +50,7 @@ class SimpleClientFixture : public testing::Test
 {
 public:
   SimpleClientFixture()
-  : ac_("test_request_action"), default_wait_(120.0) {}
+  : ac_("test_request_action"), default_wait_(60.0) {}
 
 protected:
   virtual void SetUp()
