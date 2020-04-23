@@ -79,23 +79,17 @@ TEST(SimpleClient, easy_tests) {
 }
 
 
-void easyDoneCallback(bool * called, const SimpleClientGoalState & state,
+void easyDoneCallback(bool * called, SimpleActionClient<TestAction> * ac, const SimpleClientGoalState & state,
   const TestResultConstPtr &)
 {
-  *called = true;
+  EXPECT_TRUE(ac->getState() == SimpleClientGoalState::SUCCEEDED)
+    << "Expected [SUCCEEDED], but getState() returned [" << ac->getState().toString() << "]";
   EXPECT_TRUE(state == SimpleClientGoalState::SUCCEEDED)
     << "Expected [SUCCEEDED], but goal state is [" << state.toString() << "]";
-}
-
-void easyOldDoneCallback(bool * called, const TerminalState & terminal_state,
-  const TestResultConstPtr &)
-{
+  ros::Duration(0.1).sleep();
   *called = true;
-  EXPECT_TRUE(terminal_state == TerminalState::SUCCEEDED)
-    << "Expected [SUCCEEDED], but terminal state is [" << terminal_state.toString() << "]";
 }
 
-/* Intermittent failures #5087
 TEST(SimpleClient, easy_callback)
 {
   ros::NodeHandle n;
@@ -104,18 +98,21 @@ TEST(SimpleClient, easy_callback)
   bool started = client.waitForServer(ros::Duration(10.0));
   ASSERT_TRUE(started);
 
+  // sleep a bit to make sure that all topics are properly connected to the server.
+  ros::Duration(0.01).sleep();
+
   TestGoal goal;
   bool finished;
 
   bool called = false;
   goal.goal = 1;
-  SimpleActionClient<TestAction>::SimpleDoneCallback func = boost::bind(&easyDoneCallback, &called, _1, _2);
+  SimpleActionClient<TestAction>::SimpleDoneCallback func = boost::bind(&easyDoneCallback, &called, &client, _1, _2);
   client.sendGoal(goal, func);
   finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);
   EXPECT_TRUE(called) << "easyDoneCallback() was never called" ;
 }
-*/
+
 void spinThread()
 {
   ros::NodeHandle nh;
