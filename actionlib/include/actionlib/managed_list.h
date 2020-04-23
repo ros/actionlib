@@ -137,6 +137,11 @@ public:
       return *this;
     }
 
+    Handle(const Handle & rhs)
+    {
+      *this = rhs;
+    }
+
     /**
      * \brief stop tracking the list element with this handle, even though the
      * Handle hasn't gone out of scope
