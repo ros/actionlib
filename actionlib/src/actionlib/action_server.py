@@ -230,7 +230,7 @@ class ActionServer:
                         # we also need to reset the time that the status is supposed to be removed from the list
                         st.handle_destruction_time = rospy.Time.now()
 
-                    # set the status of the goal to PREEMPTING or RECALLING as approriate
+                    # set the status of the goal to PREEMPTING or RECALLING as appropriate
                     # and check if the request should be passed on to the user
                     gh = ServerGoalHandle(st, self, handle_tracker)
                     if gh.set_cancel_requested():

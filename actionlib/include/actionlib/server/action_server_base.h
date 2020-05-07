@@ -304,7 +304,7 @@ void ActionServerBase<ActionSpec>::cancelCallback(
         (*it).handle_destruction_time_ = ros::Time();
       }
 
-      // set the status of the goal to PREEMPTING or RECALLING as approriate
+      // set the status of the goal to PREEMPTING or RECALLING as appropriate
       // and check if the request should be passed on to the user
       GoalHandle gh(it, this, handle_tracker, guard_);
       if (gh.setCancelRequested()) {
