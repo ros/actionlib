@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.13.1 (2020-05-19)
+-------------------
 * Fix tiny typo. (`#165 <https://github.com/ros/actionlib/issues/165>`_)
 * Add deleted copy constructor. (`#160 <https://github.com/ros/actionlib/issues/160>`_)
 * roscpp ActionClient subscription queue size should be consistent with rospy. (`#162 <https://github.com/ros/actionlib/issues/162>`_)

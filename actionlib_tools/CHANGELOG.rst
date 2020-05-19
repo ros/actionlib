@@ -2,8 +2,8 @@
 Changelog for package actionlib_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.13.1 (2020-05-19)
+-------------------
 * Remove scripts using wx (`#166 <https://github.com/ros/actionlib/issues/166>`_)
 * Contributors: Shane Loretz
 
