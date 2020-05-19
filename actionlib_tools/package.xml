@@ -21,6 +21,7 @@
   <exec_depend>roslib</exec_depend>
   <exec_depend>actionlib</exec_depend>
   <exec_depend>actionlib_msgs</exec_depend>
-  <exec_depend>python-wxtools</exec_depend>
+  <!-- Noetic uses Python 3 -->
+  <!--<exec_depend>python-wxtools</exec_depend>-->
 
 </package>
