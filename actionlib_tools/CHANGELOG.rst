@@ -2,6 +2,11 @@
 Changelog for package actionlib_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Remove scripts using wx (`#166 <https://github.com/ros/actionlib/issues/166>`_)
+* Contributors: Shane Loretz
+
 1.13.0 (2020-03-03)
 -------------------
 * Fix syntax error; missing : (`#159 <https://github.com/ros/actionlib/issues/159>`_)

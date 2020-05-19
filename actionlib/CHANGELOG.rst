@@ -2,6 +2,14 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix tiny typo. (`#165 <https://github.com/ros/actionlib/issues/165>`_)
+* Add deleted copy constructor. (`#160 <https://github.com/ros/actionlib/issues/160>`_)
+* roscpp ActionClient subscription queue size should be consistent with rospy. (`#162 <https://github.com/ros/actionlib/issues/162>`_)
+* import setup from setuptools instead of distutils-core (`#163 <https://github.com/ros/actionlib/issues/163>`_)
+* Contributors: Alejandro Hernández Cordero, Ivor Wanders, jschleicher, tomoya
+
 1.13.0 (2020-03-03)
 -------------------
 * Switch to timer and allow stopping actionserver/client (`#142 <https://github.com/ros/actionlib/issues/142>`_)
