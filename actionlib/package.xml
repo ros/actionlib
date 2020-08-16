@@ -24,7 +24,8 @@
   <build_depend>message_generation</build_depend>
 
   <depend>actionlib_msgs</depend>
-  <depend>boost</depend>
+  <depend>libboost-dev</depend>
+  <depend>libboost-thread-dev</depend>
   <depend>roscpp</depend>
   <depend>rospy</depend>
   <depend>rostest</depend>
