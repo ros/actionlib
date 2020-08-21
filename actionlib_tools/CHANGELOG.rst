@@ -2,6 +2,13 @@
 Changelog for package actionlib_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Port actionlib_tools to Python 3 (`#169 <https://github.com/ros/actionlib/issues/169>`_)
+* Address RVD`#2401 <https://github.com/ros/actionlib/issues/2401>`_ (`#171 <https://github.com/ros/actionlib/issues/171>`_)
+* Contributors: Mikael Arguedas, Víctor Mayoral Vilches
+
+
 1.13.1 (2020-05-19)
 -------------------
 * Remove scripts using wx (`#166 <https://github.com/ros/actionlib/issues/166>`_)
