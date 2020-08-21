@@ -2,6 +2,11 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Address RVD`#2401 <https://github.com/ros/actionlib/issues/2401>`_ (`#170 <https://github.com/ros/actionlib/issues/170>`_)
+* Contributors: Víctor Mayoral Vilches
+
 1.12.0 (2019-08-07)
 -------------------
 * Complete the full set of Ptr typedefs (`#106 <https://github.com/ros/actionlib/issues/106>`_)
