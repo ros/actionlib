@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.12.1 (2020-08-21)
+-------------------
 * Address RVD`#2401 <https://github.com/ros/actionlib/issues/2401>`_ (`#170 <https://github.com/ros/actionlib/issues/170>`_)
 * Contributors: Víctor Mayoral Vilches
 
