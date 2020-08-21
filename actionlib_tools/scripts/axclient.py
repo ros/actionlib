@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/env python3
 # **********************************************************
 #  Software License Agreement (BSD License)
 #
@@ -48,9 +48,9 @@ import rospy
 import actionlib
 import threading
 import rostopic
-from io import StringIO
-from library import to_yaml, yaml_msg_str
-from dynamic_action import DynamicAction
+from io import BytesIO
+from actionlib_tools.library import to_yaml, yaml_msg_str
+from actionlib_tools.dynamic_action import DynamicAction
 from actionlib_msgs.msg import GoalStatus
 
 
@@ -102,7 +102,7 @@ class AXClientApp(wx.App):
         try:
             self.goal_msg = yaml_msg_str(self.action_type.goal,
                                          self.goal.GetValue())
-            buff = StringIO()
+            buff = BytesIO()
             self.goal_msg.serialize(buff)
 
             # send the goal to the action server and register the relevant

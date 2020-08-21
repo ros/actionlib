@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Software License Agreement (BSD License)
 #
 # Copyright (c) 2009, Willow Garage, Inc.
@@ -43,9 +43,9 @@ import wx
 import rospy
 import actionlib
 import threading
-from io import StringIO
-from library import to_yaml, yaml_msg_str
-from dynamic_action import DynamicAction
+from io import BytesIO
+from actionlib_tools.library import to_yaml, yaml_msg_str
+from actionlib_tools.dynamic_action import DynamicAction
 
 SEND_FEEDBACK = 0
 SUCCEED = 1
@@ -139,7 +139,7 @@ class AXServerApp(wx.App):
         try:
             self.feedback_msg = yaml_msg_str(self.action_type.feedback,
                                              self.feedback.GetValue())
-            buff = StringIO()
+            buff = BytesIO()
             self.feedback_msg.serialize(buff)
 
             self.execute_type = SEND_FEEDBACK
@@ -155,7 +155,7 @@ class AXServerApp(wx.App):
 
         try:
             self.result_msg = yaml_msg_str(self.action_type.result, self.result.GetValue())
-            buff = StringIO()
+            buff = BytesIO()
             self.result_msg.serialize(buff)
 
             self.execute_type = SUCCEED
