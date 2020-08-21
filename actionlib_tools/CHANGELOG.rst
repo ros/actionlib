@@ -2,8 +2,8 @@
 Changelog for package actionlib_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.13.2 (2020-08-21)
+-------------------
 * Port actionlib_tools to Python 3 (`#169 <https://github.com/ros/actionlib/issues/169>`_)
 * Address RVD`#2401 <https://github.com/ros/actionlib/issues/2401>`_ (`#171 <https://github.com/ros/actionlib/issues/171>`_)
 * Contributors: Mikael Arguedas, Víctor Mayoral Vilches

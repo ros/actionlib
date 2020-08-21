@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.13.2 (2020-08-21)
+-------------------
 * narrow down required boost dependencies (`#168 <https://github.com/ros/actionlib/issues/168>`_)
 * Contributors: Mikael Arguedas
 
