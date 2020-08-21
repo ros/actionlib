@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.11.16 (2020-08-21)
+--------------------
 * Address RVD`#2401 <https://github.com/ros/actionlib/issues/2401>`_ (`#170 <https://github.com/ros/actionlib/issues/170>`_) (`#172 <https://github.com/ros/actionlib/issues/172>`_)
 * Fix tiny typo in docs (`#141 <https://github.com/ros/actionlib/issues/141>`_)
 * fix: Corrected spelling recieved --> received (`#136 <https://github.com/ros/actionlib/issues/136>`_)

@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>actionlib</name>
-  <version>1.11.15</version>
+  <version>1.11.16</version>
   <description>
     The actionlib stack provides a standardized interface for
     interfacing with preemptable tasks. Examples of this include moving
