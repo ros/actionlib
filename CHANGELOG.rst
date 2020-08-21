@@ -2,6 +2,20 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Address RVD`#2401 <https://github.com/ros/actionlib/issues/2401>`_ (`#170 <https://github.com/ros/actionlib/issues/170>`_) (`#172 <https://github.com/ros/actionlib/issues/172>`_)
+* Fix tiny typo in docs (`#141 <https://github.com/ros/actionlib/issues/141>`_)
+* fix: Corrected spelling recieved --> received (`#136 <https://github.com/ros/actionlib/issues/136>`_)
+* Fixed warnings when compiling with -Wpedantic. (`#135 <https://github.com/ros/actionlib/issues/135>`_)
+* action_server: call ActionServer<ActionSpec>::initialize() in constructor (`#120 <https://github.com/ros/actionlib/issues/120>`_)
+* Print the correct error on waiting for result (`#123 <https://github.com/ros/actionlib/issues/123>`_)
+* Merge pull request `#97 <https://github.com/ros/actionlib/issues/97>`_ from synapticon/remove-get-state-spam-error
+* Merge pull request `#122 <https://github.com/ros/actionlib/issues/122>`_ from ros/update-maintainer
+* Update maintainer.
+* fix(actionlib): Remove `getState` error output
+* Contributors: Alireza, Bence Magyar, Carl Saldanha, Christopher Wecht, Michael Carroll, Rein Appeldoorn, Remo Diethelm, Shane Loretz, methylDragon
+
 1.11.15 (2018-08-17)
 --------------------
 * unique name for axtools title bar (`#107 <https://github.com/ros/actionlib/issues/107>`_)
