@@ -95,7 +95,7 @@ def yaml_msg_str(type_, yaml_str, filename=None):
     if yaml_str.strip() == '':
         msg_dict = {}
     else:
-        msg_dict = yaml.load(yaml_str)
+        msg_dict = yaml.safe_load(yaml_str)
     if not isinstance(msg_dict, dict):
         if filename:
             raise ValueError("yaml file [%s] does not contain a dictionary" % filename)
@@ -129,7 +129,7 @@ def yaml_msgs_str(type_, yaml_str, filename=None):
     @type  filename: str
     """
     import yaml
-    yaml_doc = yaml.load(yaml_str)
+    yaml_doc = yaml.safe_load(yaml_str)
     msgs = []
     for msg_dict in yaml_doc:
         if not isinstance(msg_dict, dict):
