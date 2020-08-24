@@ -23,7 +23,9 @@ add_library(actionlib src/connection_monitor.cpp src/goal_id_generator.cpp)
 target_link_libraries(actionlib ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(actionlib actionlib_gencpp)
 
-catkin_install_python(PROGRAMS tools/axclient.py tools/axserver.py tools/dynamic_action.py tools/library.py
+catkin_add_env_hooks(15.rosaction SHELLS bash DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/env-hooks)
+
+catkin_install_python(PROGRAMS tools/rosaction tools/axclient.py tools/axserver.py tools/dynamic_action.py tools/library.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
