@@ -225,6 +225,9 @@ private:
     if (pub_queue_size < 0) {pub_queue_size = 10;}
     if (sub_queue_size < 0) {sub_queue_size = 1;}
 
+    bool pub_latch;
+    n_.param("actionlib_client_pub_latch", pub_latch, false);
+
     status_sub_ = queue_subscribe("status", static_cast<uint32_t>(sub_queue_size),
         &ActionClientT::statusCb, this, queue);
     feedback_sub_ = queue_subscribe("feedback", static_cast<uint32_t>(sub_queue_size),
@@ -238,12 +241,12 @@ private:
     goal_pub_ = queue_advertise<ActionGoal>("goal", static_cast<uint32_t>(pub_queue_size),
         boost::bind(&ConnectionMonitor::goalConnectCallback, connection_monitor_, _1),
         boost::bind(&ConnectionMonitor::goalDisconnectCallback, connection_monitor_, _1),
-        queue);
+        queue, pub_latch);
     cancel_pub_ =
       queue_advertise<actionlib_msgs::GoalID>("cancel", static_cast<uint32_t>(pub_queue_size),
         boost::bind(&ConnectionMonitor::cancelConnectCallback, connection_monitor_, _1),
         boost::bind(&ConnectionMonitor::cancelDisconnectCallback, connection_monitor_, _1),
-        queue);
+        queue, pub_latch);
 
     manager_.registerSendGoalFunc(boost::bind(&ActionClientT::sendGoalFunc, this, _1));
     manager_.registerCancelFunc(boost::bind(&ActionClientT::sendCancelFunc, this, _1));
@@ -253,12 +256,13 @@ private:
   ros::Publisher queue_advertise(const std::string & topic, uint32_t queue_size,
     const ros::SubscriberStatusCallback & connect_cb,
     const ros::SubscriberStatusCallback & disconnect_cb,
-    ros::CallbackQueueInterface * queue)
+    ros::CallbackQueueInterface * queue,
+    bool latch)
   {
     ros::AdvertiseOptions ops;
     ops.init<M>(topic, queue_size, connect_cb, disconnect_cb);
     ops.tracked_object = ros::VoidPtr();
-    ops.latch = false;
+    ops.latch = latch;
     ops.callback_queue = queue;
     return n_.advertise(ops);
   }
