@@ -41,7 +41,6 @@ class RefSimpleServer(SimpleActionServer):
         self.start()
 
     def execute_cb(self, goal):
-        rospy.logdebug("Goal:\n" + str(goal))
         result = TestRequestResult(goal.the_result, True)
 
         if goal.pause_status > rospy.Duration(0.0):
