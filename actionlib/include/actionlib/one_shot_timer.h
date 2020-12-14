@@ -36,7 +36,7 @@
 #define ACTIONLIB__ONE_SHOT_TIMER_H_
 
 #include "ros/ros.h"
-#include "boost/bind.hpp"
+#include "boost/bind/bind.hpp"
 
 //! Horrible hack until ROS Supports this (ROS Trac #1387)
 class OneShotTimer
@@ -60,7 +60,7 @@ public:
 
   boost::function<void(const ros::TimerEvent & e)> getCb()
   {
-    return boost::bind(&OneShotTimer::cb, this, _1);
+    return boost::bind(&OneShotTimer::cb, this, boost::placeholders::_1);
   }
 
   void registerOneShotCb(boost::function<void(const ros::TimerEvent & e)> callback)

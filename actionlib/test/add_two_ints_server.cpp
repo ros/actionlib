@@ -53,7 +53,7 @@ int main(int argc, char ** argv)
 
   actionlib::ServiceServer service = actionlib::advertiseService<actionlib::TwoIntsAction>(n,
       "add_two_ints",
-      boost::bind(add, _1, _2));
+      boost::bind(add, boost::placeholders::_1, boost::placeholders::_2));
 
   ros::spin();
 

@@ -106,7 +106,7 @@ TEST(SimpleClient, easy_callback)
 
   bool called = false;
   goal.goal = 1;
-  SimpleActionClient<TestAction>::SimpleDoneCallback func = boost::bind(&easyDoneCallback, &called, &client, _1, _2);
+  SimpleActionClient<TestAction>::SimpleDoneCallback func = boost::bind(&easyDoneCallback, &called, &client, boost::placeholders::_1, boost::placeholders::_2);
   client.sendGoal(goal, func);
   finished = client.waitForResult(ros::Duration(10.0));
   ASSERT_TRUE(finished);

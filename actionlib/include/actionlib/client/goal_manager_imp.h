@@ -74,7 +74,7 @@ ClientGoalHandle<ActionSpec> GoalManager<ActionSpec>::initGoal(const Goal & goal
 
   boost::recursive_mutex::scoped_lock lock(list_mutex_);
   typename ManagedListT::Handle list_handle =
-    list_.add(comm_state_machine, boost::bind(&GoalManagerT::listElemDeleter, this, _1), guard_);
+    list_.add(comm_state_machine, boost::bind(&GoalManagerT::listElemDeleter, this, boost::placeholders::_1), guard_);
 
   if (send_goal_func_) {
     send_goal_func_(action_goal);

@@ -330,8 +330,8 @@ void SimpleActionClient<ActionSpec>::sendGoal(const Goal & goal,
   cur_simple_state_ = SimpleGoalState::PENDING;
 
   // Send the goal to the ActionServer
-  gh_ = ac_->sendGoal(goal, boost::bind(&SimpleActionClientT::handleTransition, this, _1),
-      boost::bind(&SimpleActionClientT::handleFeedback, this, _1, _2));
+  gh_ = ac_->sendGoal(goal, boost::bind(&SimpleActionClientT::handleTransition, this, boost::placeholders::_1),
+      boost::bind(&SimpleActionClientT::handleFeedback, this, boost::placeholders::_1, boost::placeholders::_2));
 }
 
 template<class ActionSpec>
