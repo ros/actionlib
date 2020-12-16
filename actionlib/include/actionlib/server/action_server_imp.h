@@ -145,9 +145,24 @@ void ActionServer<ActionSpec>::initialize()
   if (pub_queue_size < 0) {pub_queue_size = 50;}
   if (sub_queue_size < 0) {sub_queue_size = 50;}
 
-  result_pub_ = node_.advertise<ActionResult>("result", static_cast<uint32_t>(pub_queue_size));
+  // Latch the result and feedback publishers.
+  //
+  // There is a race with the roscpp TCP client's getNumPublishers() returning
+  // positive before receiving the header, meaning our server may not yet know
+  // about the connection. Work around this race by latching the result and
+  // feedback topics. This way, if there is no subscriber connection just yet,
+  // when the subscriber does connect shortly it will receive the message. Note
+  // this is not a perfect work around in the case of multiple active goals.
+  // However, latching the message does not cause any adverse effects since the
+  // client always validates the goal ID in the message and avoiding the race
+  // most of the time is better than never avoiding it. The real fix is to fix
+  // roscpp such that getNumPublishers() only counts fully connected publishers
+  // (one's whose headers have been received). If roscpp is fixed in the
+  // future, the result and feedback topics could be made to be non-latched
+  // again.
+  result_pub_ = node_.advertise<ActionResult>("result", static_cast<uint32_t>(pub_queue_size), true);
   feedback_pub_ =
-    node_.advertise<ActionFeedback>("feedback", static_cast<uint32_t>(pub_queue_size));
+    node_.advertise<ActionFeedback>("feedback", static_cast<uint32_t>(pub_queue_size), true);
   status_pub_ =
     node_.advertise<actionlib_msgs::GoalStatusArray>("status",
       static_cast<uint32_t>(pub_queue_size), true);
