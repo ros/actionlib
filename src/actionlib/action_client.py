@@ -531,9 +531,10 @@ class ActionClient:
         self.sub_queue_size = rospy.get_param('actionlib_client_sub_queue_size', -1)
         if self.sub_queue_size < 0:
             self.sub_queue_size = None
+        self.feedback_sub_use_tcpnodelay = rospy.get_param('actionlib_client_feedback_sub_tcpnodelay', False)
         self.status_sub = rospy.Subscriber(rospy.remap_name(ns) + '/status', GoalStatusArray, callback=self._status_cb, queue_size=self.sub_queue_size)
         self.result_sub = rospy.Subscriber(rospy.remap_name(ns) + '/result', self.ActionResult, callback=self._result_cb, queue_size=self.sub_queue_size)
-        self.feedback_sub = rospy.Subscriber(rospy.remap_name(ns) + '/feedback', self.ActionFeedback, callback=self._feedback_cb, queue_size=self.sub_queue_size)
+        self.feedback_sub = rospy.Subscriber(rospy.remap_name(ns) + '/feedback', self.ActionFeedback, callback=self._feedback_cb, queue_size=self.sub_queue_size, tcp_nodelay=self.feedback_sub_use_tcpnodelay)
 
     ## @brief Sends a goal to the action server
     ##
