@@ -46,7 +46,7 @@ namespace actionlib
 template<class ActionSpec>
 ClientGoalHandle<ActionSpec>::ClientGoalHandle()
 {
-  gm_ = NULL;
+  gm_ = nullptr;
   active_ = false;
 }
 
@@ -81,7 +81,7 @@ void ClientGoalHandle<ActionSpec>::reset()
     boost::recursive_mutex::scoped_lock lock(gm_->list_mutex_);
     list_handle_.reset();
     active_ = false;
-    gm_ = NULL;
+    gm_ = nullptr;
   }
 }
 
@@ -230,7 +230,7 @@ void ClientGoalHandle<ActionSpec>::resend()
   ActionGoalConstPtr action_goal = list_handle_.getElem()->getActionGoal();
 
   if (!action_goal) {
-    ROS_ERROR_NAMED("actionlib", "BUG: Got a NULL action_goal");
+    ROS_ERROR_NAMED("actionlib", "BUG: Got a nullptr action_goal");
   }
 
   if (gm_->send_goal_func_) {

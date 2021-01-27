@@ -46,7 +46,7 @@ namespace actionlib
 {
 template<class ActionSpec>
 ServerGoalHandle<ActionSpec>::ServerGoalHandle()
-: as_(NULL) {}
+: as_(nullptr) {}
 
 template<class ActionSpec>
 ServerGoalHandle<ActionSpec>::ServerGoalHandle(const ServerGoalHandle & gh)
@@ -56,7 +56,7 @@ ServerGoalHandle<ActionSpec>::ServerGoalHandle(const ServerGoalHandle & gh)
 template<class ActionSpec>
 void ServerGoalHandle<ActionSpec>::setAccepted(const std::string & text)
 {
-  if (as_ == NULL) {
+  if (as_ == nullptr) {
     ROS_ERROR_NAMED("actionlib",
       "You are attempting to call methods on an uninitialized goal handle");
     return;
@@ -99,7 +99,7 @@ void ServerGoalHandle<ActionSpec>::setAccepted(const std::string & text)
 template<class ActionSpec>
 void ServerGoalHandle<ActionSpec>::setCanceled(const Result & result, const std::string & text)
 {
-  if (as_ == NULL) {
+  if (as_ == nullptr) {
     ROS_ERROR_NAMED("actionlib",
       "You are attempting to call methods on an uninitialized goal handle");
     return;
@@ -142,7 +142,7 @@ void ServerGoalHandle<ActionSpec>::setCanceled(const Result & result, const std:
 template<class ActionSpec>
 void ServerGoalHandle<ActionSpec>::setRejected(const Result & result, const std::string & text)
 {
-  if (as_ == NULL) {
+  if (as_ == nullptr) {
     ROS_ERROR_NAMED("actionlib",
       "You are attempting to call methods on an uninitialized goal handle");
     return;
@@ -180,7 +180,7 @@ void ServerGoalHandle<ActionSpec>::setRejected(const Result & result, const std:
 template<class ActionSpec>
 void ServerGoalHandle<ActionSpec>::setAborted(const Result & result, const std::string & text)
 {
-  if (as_ == NULL) {
+  if (as_ == nullptr) {
     ROS_ERROR_NAMED("actionlib",
       "You are attempting to call methods on an uninitialized goal handle");
     return;
@@ -218,7 +218,7 @@ void ServerGoalHandle<ActionSpec>::setAborted(const Result & result, const std::
 template<class ActionSpec>
 void ServerGoalHandle<ActionSpec>::setSucceeded(const Result & result, const std::string & text)
 {
-  if (as_ == NULL) {
+  if (as_ == nullptr) {
     ROS_ERROR_NAMED("actionlib",
       "You are attempting to call methods on an uninitialized goal handle");
     return;
@@ -256,7 +256,7 @@ void ServerGoalHandle<ActionSpec>::setSucceeded(const Result & result, const std
 template<class ActionSpec>
 void ServerGoalHandle<ActionSpec>::publishFeedback(const Feedback & feedback)
 {
-  if (as_ == NULL) {
+  if (as_ == nullptr) {
     ROS_ERROR_NAMED("actionlib",
       "You are attempting to call methods on an uninitialized goal handle");
     return;
@@ -284,7 +284,7 @@ void ServerGoalHandle<ActionSpec>::publishFeedback(const Feedback & feedback)
 template<class ActionSpec>
 bool ServerGoalHandle<ActionSpec>::isValid() const
 {
-  return goal_ && as_ != NULL;
+  return goal_ && as_ != nullptr;
 }
 
 template<class ActionSpec>
@@ -303,7 +303,7 @@ getGoal() const
 template<class ActionSpec>
 actionlib_msgs::GoalID ServerGoalHandle<ActionSpec>::getGoalID() const
 {
-  if (goal_ && as_ != NULL) {
+  if (goal_ && as_ != nullptr) {
     DestructionGuard::ScopedProtector protector(*guard_);
     if (protector.isProtected()) {
       boost::recursive_mutex::scoped_lock lock(as_->lock_);
@@ -321,7 +321,7 @@ actionlib_msgs::GoalID ServerGoalHandle<ActionSpec>::getGoalID() const
 template<class ActionSpec>
 actionlib_msgs::GoalStatus ServerGoalHandle<ActionSpec>::getGoalStatus() const
 {
-  if (goal_ && as_ != NULL) {
+  if (goal_ && as_ != nullptr) {
     DestructionGuard::ScopedProtector protector(*guard_);
     if (protector.isProtected()) {
       boost::recursive_mutex::scoped_lock lock(as_->lock_);
@@ -380,7 +380,7 @@ ServerGoalHandle<ActionSpec>::ServerGoalHandle(
 template<class ActionSpec>
 bool ServerGoalHandle<ActionSpec>::setCancelRequested()
 {
-  if (as_ == NULL) {
+  if (as_ == nullptr) {
     ROS_ERROR_NAMED("actionlib",
       "You are attempting to call methods on an uninitialized goal handle");
     return false;
