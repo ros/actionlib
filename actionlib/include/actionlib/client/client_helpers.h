@@ -70,7 +70,7 @@ template<class ActionSpec>
 class GoalManager
 {
 public:
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
   typedef GoalManager<ActionSpec> GoalManagerT;
   typedef ClientGoalHandle<ActionSpec> GoalHandleT;
   typedef boost::function<void (GoalHandleT)> TransitionCallback;
@@ -122,7 +122,7 @@ template<class ActionSpec>
 class ClientGoalHandle
 {
 private:
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
 
 public:
   /**
@@ -222,7 +222,7 @@ class CommStateMachine
 {
 private:
   // generates typedefs that we'll use to make our lives easier
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
 
 public:
   typedef boost::function<void (const ClientGoalHandle<ActionSpec> &)> TransitionCallback;
