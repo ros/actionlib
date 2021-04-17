@@ -232,20 +232,26 @@ def main():
 
     (options, args) = parser.parse_args(rospy.myargv())
 
-    if (len(args) == 2):
+    if len(args) == 2:
         # get action type via rostopic
-        topic_type = rostopic._get_topic_type("%s/goal" % args[1])[0]
+        action_name = args[1].rstrip('/')
+        topic_type = rostopic._get_topic_type("%s/goal" % action_name)[0]
+        if topic_type is None:
+            parser.error("unable to retrieve the topic type for goal topic '{0}/goal'\nAre you sure the action server for '{0}' is running?".format(action_name))
         # remove "Goal" string from action type
-        assert("Goal" in topic_type)
-        topic_type = topic_type[0:len(topic_type)-4]
-    elif (len(args) == 3):
-        topic_type = args[2]
-        print(topic_type)
-        assert("Action" in topic_type)
+        if not topic_type.endswith("ActionGoal"):
+            parser.error("topic '%s/goal' is not an action goal topic" % action_name)
+        action_type = topic_type[:-4]
+    elif len(args) == 3:
+        action_type = args[2]
+        print(action_type)
+        action_suffix = "Action"
+        if not action_type.endswith(action_suffix):
+            parser.error("the action type provided '%s' doesn't end with the '%s' suffix" % (action_type, action_suffix))
     else:
         parser.error("You must specify the action topic name (and optionally type) Eg: ./axclient.py action_topic actionlib/TwoIntsAction ")
 
-    action = DynamicAction(topic_type)
+    action = DynamicAction(action_type)
     app = AXClientApp(action, args[1])
     app.MainLoop()
     app.OnQuit()
