@@ -122,6 +122,9 @@ class SimpleActionClient:
     ## @param timeout Max time to block before returning. A zero timeout is interpreted as an infinite timeout.
     ## @return True if the goal finished. False if the goal didn't finish within the allocated timeout
     def wait_for_result(self, timeout=rospy.Duration()):
+        if timeout is None:
+            timeout = rospy.Duration()
+
         if not self.gh:
             rospy.logerr("Called wait_for_result when no goal exists")
             return False
