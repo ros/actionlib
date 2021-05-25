@@ -29,6 +29,7 @@
 # Author: Alexander Sorokin.
 # Based on C++ simple_action_server.h by Eitan Marder-Eppstein
 import rospy
+import rospy.core
 import threading
 import traceback
 
@@ -70,7 +71,6 @@ class SimpleActionServer:
         self.preempt_callback = None
 
         self.need_to_terminate = False
-        self.terminate_mutex = threading.RLock()
 
         # since the internal_goal/preempt_callbacks are invoked from the
         # ActionServer while holding the self.action_server.lock
@@ -91,11 +91,17 @@ class SimpleActionServer:
 
         # create the action server
         self.action_server = ActionServer(name, ActionSpec, self.internal_goal_callback, self.internal_preempt_callback, auto_start)
+        rospy.core.add_shutdown_hook(self.request_shutdown)
+
+    def request_shutdown(self, _):
+        with self.execute_condition:
+            self.execute_condition.notify()
 
     def __del__(self):
         if hasattr(self, 'execute_callback') and self.execute_callback:
-            with self.terminate_mutex:
-                self.need_to_terminate = True
+            self.need_to_terminate = True
+            with self.execute_condition:
+                self.execute_condition.notify()
 
             assert(self.execute_thread)
             self.execute_thread.join()
@@ -263,12 +269,13 @@ class SimpleActionServer:
 
     ## @brief Called from a separate thread to call blocking execute calls
     def executeLoop(self):
-        loop_duration = rospy.Duration.from_sec(.1)
 
-        while (not rospy.is_shutdown()):
-            with self.terminate_mutex:
-                if (self.need_to_terminate):
-                    break
+        while not rospy.core.is_shutdown_requested():
+            with self.execute_condition:
+                self.execute_condition.wait()
+
+            if self.need_to_terminate or rospy.core.is_shutdown_requested():
+                break
 
             # the following checks (is_active, is_new_goal_available)
             # are performed without locking
@@ -297,6 +304,3 @@ class SimpleActionServer:
                     rospy.logerr("Exception in your execute callback: %s\n%s", str(ex),
                                  traceback.format_exc())
                     self.set_aborted(None, "Exception in execute callback: %s" % str(ex))
-
-            with self.execute_condition:
-                self.execute_condition.wait(loop_duration.to_sec())
