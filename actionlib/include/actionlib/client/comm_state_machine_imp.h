@@ -112,7 +112,7 @@ const actionlib_msgs::GoalStatus * CommStateMachine<ActionSpec>::findGoalStatus(
       return &status_vec[i];
     }
   }
-  return nullptr;
+  return NULL;
 }
 
 template<class ActionSpec>

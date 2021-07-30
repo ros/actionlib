@@ -172,7 +172,7 @@ public:
   /**
    * \brief Get result associated with this goal
    *
-   * \return nullptr if no result received.  Otherwise returns shared_ptr to result.
+   * \return NULL if no result received.  Otherwise returns shared_ptr to result.
    */
   ResultConstPtr getResult() const;
 
