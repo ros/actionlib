@@ -61,7 +61,7 @@ class SimpleActionServer
 {
 public:
   // generates typedefs that we'll use to make our lives easier
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
 
   typedef typename ActionServer<ActionSpec>::GoalHandle GoalHandle;
   typedef boost::function<void (const GoalConstPtr &)> ExecuteCallback;
@@ -90,7 +90,7 @@ public:
    *                         a new goal is received, allowing users to have blocking callbacks.
    *                         Adding an execute callback also deactivates the goalCallback.
    */
-  ROS_DEPRECATED SimpleActionServer(std::string name, ExecuteCallback execute_callback = NULL);
+  ROS_DEPRECATED SimpleActionServer(std::string name, ExecuteCallback execute_callback = nullptr);
 
   /**
    * @brief  Constructor for a SimpleActionServer
@@ -121,7 +121,7 @@ public:
    *                         Adding an execute callback also deactivates the goalCallback.
    */
   ROS_DEPRECATED SimpleActionServer(ros::NodeHandle n, std::string name,
-    ExecuteCallback execute_callback = NULL);
+    ExecuteCallback execute_callback = nullptr);
 
   ~SimpleActionServer();
 

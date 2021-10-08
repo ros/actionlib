@@ -80,7 +80,7 @@ ClientGoalHandle<ActionSpec> GoalManager<ActionSpec>::initGoal(const Goal & goal
     send_goal_func_(action_goal);
   } else {
     ROS_WARN_NAMED("actionlib",
-      "Possible coding error: send_goal_func_ set to NULL. Not going to send goal");
+      "Possible coding error: send_goal_func_ set to nullptr. Not going to send goal");
   }
 
   return GoalHandleT(this, list_handle, guard_);

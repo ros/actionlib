@@ -236,7 +236,7 @@ private:
     iterator managed_it = iterator(list_it);
 
     ElemDeleter deleter(managed_it, custom_deleter, guard);
-    boost::shared_ptr<void> tracker( (void *) NULL, deleter);
+    boost::shared_ptr<void> tracker(nullptr, deleter);
 
     list_it->handle_tracker_ = tracker;
 

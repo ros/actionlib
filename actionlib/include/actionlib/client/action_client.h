@@ -62,7 +62,7 @@ public:
   typedef ClientGoalHandle<ActionSpec> GoalHandle;
 
 private:
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
   typedef ActionClient<ActionSpec> ActionClientT;
   typedef boost::function<void (GoalHandle)> TransitionCallback;
   typedef boost::function<void (GoalHandle, const FeedbackConstPtr &)> FeedbackCallback;
@@ -75,9 +75,9 @@ public:
    * Constructs an ActionClient and sets up the necessary ros topics for the ActionInterface
    * \param name The action name. Defines the namespace in which the action communicates
    * \param queue CallbackQueue from which this action will process messages.
-   *              The default (NULL) is to use the global queue
+   *              The default (nullptr) is to use the global queue
    */
-  ActionClient(const std::string & name, ros::CallbackQueueInterface * queue = NULL)
+  ActionClient(const std::string & name, ros::CallbackQueueInterface * queue = nullptr)
   : n_(name), guard_(new DestructionGuard()),
     manager_(guard_)
   {
@@ -92,10 +92,10 @@ public:
    * \param n The node handle on top of which we want to namespace our action
    * \param name The action name. Defines the namespace in which the action communicates
    * \param queue CallbackQueue from which this action will process messages.
-   *              The default (NULL) is to use the global queue
+   *              The default (nullptr) is to use the global queue
    */
   ActionClient(const ros::NodeHandle & n, const std::string & name,
-    ros::CallbackQueueInterface * queue = NULL)
+    ros::CallbackQueueInterface * queue = nullptr)
   : n_(n, name), guard_(new DestructionGuard()),
     manager_(guard_)
   {

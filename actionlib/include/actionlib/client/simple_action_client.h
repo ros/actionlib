@@ -72,7 +72,7 @@ template<class ActionSpec>
 class SimpleActionClient
 {
 private:
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
   typedef ClientGoalHandle<ActionSpec> GoalHandleT;
   typedef SimpleActionClient<ActionSpec> SimpleActionClientT;
 
@@ -180,7 +180,7 @@ public:
 
   /**
    * \brief Get the Result of the current goal
-   * \return shared pointer to the result. Note that this pointer will NEVER be NULL
+   * \return shared pointer to the result. Note that this pointer will NEVER be nullptr
    */
   ResultConstPtr getResult() const;
 
@@ -264,7 +264,7 @@ void SimpleActionClient<ActionSpec>::initSimpleClient(ros::NodeHandle & n, const
       new boost::thread(boost::bind(&SimpleActionClient<ActionSpec>::spinThread, this));
     ac_.reset(new ActionClientT(n, name, &callback_queue));
   } else {
-    spin_thread_ = NULL;
+    spin_thread_ = nullptr;
     ac_.reset(new ActionClientT(n, name));
   }
 }

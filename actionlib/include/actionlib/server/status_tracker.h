@@ -56,7 +56,7 @@ class StatusTracker
 {
 private:
   // generates typedefs that we'll use to make our lives easier
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
 
 public:
   StatusTracker(const actionlib_msgs::GoalID & goal_id, unsigned int status);

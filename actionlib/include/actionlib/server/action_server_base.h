@@ -68,7 +68,7 @@ public:
   typedef ServerGoalHandle<ActionSpec> GoalHandle;
 
   // generates typedefs that we'll use to make our lives easier
-  ACTION_DEFINITION(ActionSpec);
+  ACTION_DEFINITION(ActionSpec)
 
   /**
    * @brief  Constructor for an ActionServer
@@ -240,7 +240,7 @@ void ActionServerBase<ActionSpec>::goalCallback(const boost::shared_ptr<const Ac
 
   // we need to create a handle tracker for the incoming goal and update the StatusTracker
   HandleTrackerDeleter<ActionSpec> d(this, it, guard_);
-  boost::shared_ptr<void> handle_tracker((void *)NULL, d);
+  boost::shared_ptr<void> handle_tracker(nullptr, d);
   (*it).handle_tracker_ = handle_tracker;
 
   // check if this goal has already been canceled based on its timestamp
@@ -297,7 +297,7 @@ void ActionServerBase<ActionSpec>::cancelCallback(
       if ((*it).handle_tracker_.expired()) {
         // if the handle tracker is expired, then we need to create a new one
         HandleTrackerDeleter<ActionSpec> d(this, it, guard_);
-        handle_tracker = boost::shared_ptr<void>((void *)NULL, d);
+        handle_tracker = boost::shared_ptr<void>(nullptr, d);
         (*it).handle_tracker_ = handle_tracker;
 
         // we also need to reset the time that the status is supposed to be removed from the list
