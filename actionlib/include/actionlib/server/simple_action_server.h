@@ -90,7 +90,7 @@ public:
    *                         a new goal is received, allowing users to have blocking callbacks.
    *                         Adding an execute callback also deactivates the goalCallback.
    */
-  ROS_DEPRECATED SimpleActionServer(std::string name, ExecuteCallback execute_callback = nullptr);
+  ROS_DEPRECATED SimpleActionServer(std::string name, ExecuteCallback execute_callback = NULL);
 
   /**
    * @brief  Constructor for a SimpleActionServer
@@ -121,7 +121,7 @@ public:
    *                         Adding an execute callback also deactivates the goalCallback.
    */
   ROS_DEPRECATED SimpleActionServer(ros::NodeHandle n, std::string name,
-    ExecuteCallback execute_callback = nullptr);
+    ExecuteCallback execute_callback = NULL);
 
   ~SimpleActionServer();
 

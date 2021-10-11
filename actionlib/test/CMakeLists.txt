@@ -23,6 +23,9 @@ if(GTEST_FOUND)
   add_executable(actionlib-simple_client_allocator_test EXCLUDE_FROM_ALL simple_client_allocator_test.cpp)
   target_link_libraries(actionlib-simple_client_allocator_test ${PROJECT_NAME} ${GTEST_LIBRARIES})
 
+  add_executable(actionlib-simple_action_server_construction_test EXCLUDE_FROM_ALL simple_action_server_construction_test.cpp)
+  target_link_libraries(actionlib-simple_action_server_construction_test ${PROJECT_NAME} ${GTEST_LIBRARIES})
+
   add_executable(actionlib-action_client_destruction_test EXCLUDE_FROM_ALL action_client_destruction_test.cpp)
   target_link_libraries(actionlib-action_client_destruction_test ${PROJECT_NAME} ${GTEST_LIBRARIES})
 
@@ -41,6 +44,7 @@ if(GTEST_FOUND)
       actionlib-server_goal_handle_destruction
       actionlib-simple_client_wait_test
       actionlib-simple_client_allocator_test
+      actionlib-simple_action_server_construction_test
       actionlib-action_client_destruction_test
       actionlib-test_cpp_simple_client_cancel_crash
       actionlib-exercise_simple_client
