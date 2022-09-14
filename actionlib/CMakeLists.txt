@@ -19,7 +19,7 @@ catkin_package(
   DEPENDS Boost
 )
 
-add_library(actionlib src/connection_monitor.cpp src/goal_id_generator.cpp)
+add_library(actionlib src/connection_monitor.cpp src/goal_id_generator.cpp src/service_client.cpp)
 target_link_libraries(actionlib ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 add_dependencies(actionlib actionlib_gencpp)
 

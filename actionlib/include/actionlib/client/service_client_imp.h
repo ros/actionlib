@@ -102,16 +102,6 @@ bool ServiceClient::call(const Goal & goal, Result & result)
   return client_->call(&goal, mt::md5sum(goal), &result, mt::md5sum(result));
 }
 
-bool ServiceClient::waitForServer(const ros::Duration & timeout)
-{
-  return client_->waitForServer(timeout);
-}
-
-bool ServiceClient::isServerConnected()
-{
-  return client_->isServerConnected();
-}
-
 //****** actionlib::serviceClient *******************
 template<class ActionSpec>
 ServiceClient serviceClient(ros::NodeHandle n, std::string name)
