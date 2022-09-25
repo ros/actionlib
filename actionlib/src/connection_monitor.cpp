@@ -107,7 +107,7 @@ std::string actionlib::ConnectionMonitor::goalSubscribersString()
   std::ostringstream ss;
   ss << "Goal Subscribers (" << goalSubscribers_.size() << " total)";
   for (std::map<std::string, size_t>::iterator it = goalSubscribers_.begin();
-    it != goalSubscribers_.end(); it++)
+    it != goalSubscribers_.end(); ++it)
   {
     ss << "\n   - " << it->first;
   }
@@ -166,7 +166,7 @@ std::string actionlib::ConnectionMonitor::cancelSubscribersString()
   std::ostringstream ss;
   ss << "cancel Subscribers (" << cancelSubscribers_.size() << " total)";
   for (std::map<std::string, size_t>::iterator it = cancelSubscribers_.begin();
-    it != cancelSubscribers_.end(); it++)
+    it != cancelSubscribers_.end(); ++it)
   {
     ss << "\n   - " << it->first;
   }
