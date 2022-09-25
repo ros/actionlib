@@ -60,7 +60,7 @@ class ActionServer:
     ## @param  actionspec An explicit specification of the action
     ## @param  goal_cb A goal callback to be called when the ActionServer receives a new goal over the wire
     ## @param  cancel_cb A cancel callback to be called when the ActionServer receives a new cancel request over the wire
-    ## @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+    ## @param  auto_start A boolean value that tells the ActionServer whether or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
     def __init__(self, ns,  ActionSpec, goal_cb, cancel_cb=nop_cb, auto_start=True):
         self.ns = ns
 

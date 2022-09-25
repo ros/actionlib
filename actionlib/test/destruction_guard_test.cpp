@@ -64,7 +64,7 @@ public:
       cond_.notify_all();
     }
 
-    // Don't destruct the protectors immeadiately. Sleep for a little bit, and then destruct.
+    // Don't destruct the protectors immediately. Sleep for a little bit, and then destruct.
     //  This will force the main thread to have to wait in it's destruct() call
     printf("protecting thread is sleeping\n");
     boost::this_thread::sleep(boost::posix_time::microseconds(5000000));

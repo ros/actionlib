@@ -27,7 +27,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Derived from excercise_simple_server.py
+// Derived from exercise_simple_server.py
 
 #include <gtest/gtest.h>
 #include <ros/ros.h>

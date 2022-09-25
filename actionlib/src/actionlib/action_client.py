@@ -180,7 +180,7 @@ class ClientGoalHandle:
 
     ## @brief Gets the result produced by the action server for this goal.
     ##
-    ## @return None if no result was receieved.  Otherwise the goal's result as a *Result message.
+    ## @return None if no result was received.  Otherwise the goal's result as a *Result message.
     def get_result(self):
         if not self.comm_state_machine:
             rospy.logerr("Trying to get_result on an inactive ClientGoalHandle.")

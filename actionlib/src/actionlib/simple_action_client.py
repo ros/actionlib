@@ -98,7 +98,7 @@ class SimpleActionClient:
     ##
     ## If the goal does not complete within the execute_timeout, the goal gets preempted
     ##
-    ## If preemption of the goal does not complete withing the preempt_timeout, this
+    ## If preemption of the goal does not complete within the preempt_timeout, this
     ## method simply returns
     ##
     ## @param execute_timeout The time to wait for the goal to complete
