@@ -295,9 +295,10 @@ void SimpleActionServer<ActionSpec>::goalCallback(GoalHandle goal)
   boost::recursive_mutex::scoped_lock lock(lock_);
   ROS_DEBUG_NAMED("actionlib", "A new goal has been received by the single goal action server");
 
-  // check that the timestamp is past or equal to that of the current goal and the next goal
-  if ((!current_goal_.getGoal() || goal.getGoalID().stamp >= current_goal_.getGoalID().stamp) &&
-    (!next_goal_.getGoal() || goal.getGoalID().stamp >= next_goal_.getGoalID().stamp))
+  // check that the timestamp is past or equal to that of the current goal and the next goal (or time was reset)
+  ros::Time now = ros::Time::now();
+  if ((!current_goal_.getGoal() || goal.getGoalID().stamp >= current_goal_.getGoalID().stamp || now < current_goal_.getGoalID().stamp) &&
+      (!next_goal_.getGoal() || goal.getGoalID().stamp >= next_goal_.getGoalID().stamp || now < next_goal_.getGoalID().stamp))
   {
     // if next_goal has not been accepted already... its going to get bumped, but we need to let the client know we're preempting
     if (next_goal_.getGoal() && (!current_goal_.getGoal() || next_goal_ != current_goal_)) {
