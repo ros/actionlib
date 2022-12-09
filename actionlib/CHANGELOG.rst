@@ -2,6 +2,21 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.14.0 (2022-12-09)
+-------------------
+* Fix constructors of SimpleActionServer (`#194 <https://github.com/ros/actionlib/issues/194>`_)
+* Added a check to see if the transition callback is for the current goal handle (`#177 <https://github.com/ros/actionlib/issues/177>`_)
+  Co-authored-by: Mart Moerdijk <mmoerdijk@smart-robotics.nl>
+* Noetic fixup spurious wakeup (`#190 <https://github.com/ros/actionlib/issues/190>`_)
+* Use nullptr instead of NULL (`#185 <https://github.com/ros/actionlib/issues/185>`_)
+* actionlib: remove unused client_goal_status.h (`#184 <https://github.com/ros/actionlib/issues/184>`_)
+  Co-authored-by: Kyle Fazzari <kyle@canonical.com>
+* Fix small type in debug log message (`#187 <https://github.com/ros/actionlib/issues/187>`_)
+* Remove semicolons from action definitions (`#188 <https://github.com/ros/actionlib/issues/188>`_)
+* Fix python wait_for_server premature return (`#180 <https://github.com/ros/actionlib/issues/180>`_)
+* Add maintainer (`#174 <https://github.com/ros/actionlib/issues/174>`_)
+* Contributors: C. Andy Martin, Guglielmo Gemignani, Hermann von Kleist, Jacob Perron, Jacob Seibert, Kyle Fazzari, Mart Moerdijk, Nick Lamprianidis, Ramon Wijnands
+
 1.13.2 (2020-08-21)
 -------------------
 * narrow down required boost dependencies (`#168 <https://github.com/ros/actionlib/issues/168>`_)

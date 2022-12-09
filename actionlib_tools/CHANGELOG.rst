@@ -2,6 +2,12 @@
 Changelog for package actionlib_tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.14.0 (2022-12-09)
+-------------------
+* Improve axclient argument parsing (`#189 <https://github.com/ros/actionlib/issues/189>`_)
+* Add maintainer (`#174 <https://github.com/ros/actionlib/issues/174>`_)
+* Contributors: Jacob Perron, Mikael Arguedas
+
 1.13.2 (2020-08-21)
 -------------------
 * Port actionlib_tools to Python 3 (`#169 <https://github.com/ros/actionlib/issues/169>`_)
