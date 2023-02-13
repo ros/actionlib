@@ -39,7 +39,7 @@
 usage: %prog
 """
 
-PKG = 'actionlib_tools'
+PKG = 'actionlib'
 
 import roslib.message
 from optparse import OptionParser
