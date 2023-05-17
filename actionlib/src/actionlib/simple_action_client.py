@@ -28,7 +28,6 @@
 # Author: Stuart Glaser
 import rospy
 import threading
-
 from actionlib_msgs.msg import GoalStatus
 from actionlib.action_client import ActionClient, CommState, get_name_of_constant
 
@@ -55,6 +54,7 @@ class SimpleActionClient:
         self.simple_state = SimpleGoalState.DONE
         self.gh = None
         self.done_condition = threading.Condition()
+        self.lock = threading.RLock()    # fix #206
 
     ## @brief Blocks until the action server connects to this client
     ##
@@ -88,7 +88,8 @@ class SimpleActionClient:
         self.feedback_cb = feedback_cb
 
         self.simple_state = SimpleGoalState.PENDING
-        self.gh = self.action_client.send_goal(goal, self._handle_transition, self._handle_feedback)
+        with self.lock:
+            self.gh = self.action_client.send_goal(goal, self._handle_transition, self._handle_feedback)
 
     ## @brief Sends a goal to the ActionServer, waits for the goal to complete, and preempts goal is necessary
     ##
@@ -212,9 +213,10 @@ class SimpleActionClient:
 
     def _handle_transition(self, gh):
 
-        if gh != self.gh:
-            rospy.logerr("Got a transition callback on a goal handle that we're not tracking")
-            return
+        with self.lock:
+            if gh != self.gh:
+                rospy.logerr("Got a transition callback on a goal handle that we're not tracking")
+                return
 
         comm_state = gh.get_comm_state()
 
