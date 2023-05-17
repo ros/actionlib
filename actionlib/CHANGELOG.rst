@@ -123,7 +123,7 @@ Changelog for package actionlib
   and of course it will take more time on top of this for the server to actually process the incoming goal and confirm it. Meantime, it may have sent us feedback messages.
 * Improved the const-correctness of some actionlib classes. (`#50 <https://github.com/ros/actionlib/issues/50>`_)
 * Issue `#51 <https://github.com/ros/actionlib/issues/51>`_: Remove annoying debug messages that make useless to enable debug on Python nodes, as they overwhelm less spamming messages (`#54 <https://github.com/ros/actionlib/issues/54>`_)
-* reduce change of unncessary exception on shutdown bu checking directly in before publishing for a shutdown (`#53 <https://github.com/ros/actionlib/issues/53>`_)
+* reduce change of unnecessary exception on shutdown bu checking directly in before publishing for a shutdown (`#53 <https://github.com/ros/actionlib/issues/53>`_)
 * Contributors: Blake Anderson, Daniel Stonier, Jorge Santos Simón, Mikael Arguedas, uliklank
 
 1.11.6 (2016-06-22)

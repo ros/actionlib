@@ -315,13 +315,13 @@ void CommStateMachine<ActionSpec>::updateStatus(GoalHandleT & gh,
       {
         switch (goal_status->status) {
           case actionlib_msgs::GoalStatus::PENDING:
-            ROS_ERROR_NAMED("actionlib", "Invalid Transition from WAITING_FOR_RESUT to PENDING");
+            ROS_ERROR_NAMED("actionlib", "Invalid Transition from WAITING_FOR_RESULT to PENDING");
             break;
           case actionlib_msgs::GoalStatus::PREEMPTING:
-            ROS_ERROR_NAMED("actionlib", "Invalid Transition from WAITING_FOR_RESUT to PREEMPTING");
+            ROS_ERROR_NAMED("actionlib", "Invalid Transition from WAITING_FOR_RESULT to PREEMPTING");
             break;
           case actionlib_msgs::GoalStatus::RECALLING:
-            ROS_ERROR_NAMED("actionlib", "Invalid Transition from WAITING_FOR_RESUT to RECALLING");
+            ROS_ERROR_NAMED("actionlib", "Invalid Transition from WAITING_FOR_RESULT to RECALLING");
             break;
           case actionlib_msgs::GoalStatus::ACTIVE:
           case actionlib_msgs::GoalStatus::PREEMPTED:

@@ -57,7 +57,7 @@ class SimpleActionServer:
     ## @param execute_cb Optional callback that gets called in a separate thread whenever
     ## a new goal is received, allowing users to have blocking callbacks.
     ## Adding an execute callback also deactivates the goalCallback.
-    ## @param  auto_start A boolean value that tells the ActionServer wheteher or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
+    ## @param  auto_start A boolean value that tells the ActionServer whether or not to start publishing as soon as it comes up. THIS SHOULD ALWAYS BE SET TO FALSE TO AVOID RACE CONDITIONS and start() should be called after construction of the server.
     def __init__(self, name, ActionSpec, execute_cb=None, auto_start=True):
 
         self.new_goal = False
@@ -102,9 +102,9 @@ class SimpleActionServer:
     ## @brief Accepts a new goal when one is available The status of this
     ## goal is set to active upon acceptance, and the status of any
     ## previously active goal is set to preempted. Preempts received for the
-    ## new goal between checking if isNewGoalAvailable or invokation of a
+    ## new goal between checking if isNewGoalAvailable or invocation of a
     ## goal callback and the acceptNewGoal call will not trigger a preempt
-    ## callback.  This means, isPreemptReqauested should be called after
+    ## callback.  This means, isPreemptRequested should be called after
     ## accepting the goal even for callback-based implementations to make
     ## sure the new goal does not have a pending preempt request.
     ## @return A shared_ptr to the new goal.

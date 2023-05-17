@@ -76,7 +76,7 @@ class TestRefSimpleActionServer(unittest.TestCase):
         rospy.sleep(0.5)
         self.assertEqual(g1.get_goal_status(), GoalStatus.ACTIVE)  # ,"Should be active")
         self.assertEqual(g2.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
-        self.assertEqual(g3.get_goal_status(), GoalStatus.ACTIVE, "Shoule be active")
+        self.assertEqual(g3.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
         self.assertEqual(g4.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
 
         g5 = client.send_goal(goal_abort)
@@ -85,7 +85,7 @@ class TestRefSimpleActionServer(unittest.TestCase):
 
         self.assertEqual(g1.get_goal_status(), GoalStatus.ABORTED, "Should be aborted")
         self.assertEqual(g2.get_goal_status(), GoalStatus.ABORTED, "Should be aborted")
-        self.assertEqual(g3.get_goal_status(), GoalStatus.ABORTED, "Shoule be aborted")
+        self.assertEqual(g3.get_goal_status(), GoalStatus.ABORTED, "Should be aborted")
         self.assertEqual(g4.get_goal_status(), GoalStatus.ABORTED, "Should be aborted")
 
     def test_feedback(self):
@@ -111,7 +111,7 @@ class TestRefSimpleActionServer(unittest.TestCase):
         rospy.sleep(0.5)
         self.assertEqual(g1.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
         self.assertEqual(g2.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
-        self.assertEqual(g3.get_goal_status(), GoalStatus.ACTIVE, "Shoule be active")
+        self.assertEqual(g3.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
         self.assertEqual(g4.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
 
         g5 = client.send_goal(goal_feedback)
@@ -149,7 +149,7 @@ class TestRefSimpleActionServer(unittest.TestCase):
         rospy.sleep(0.5)
         self.assertEqual(g1.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
         self.assertEqual(g2.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
-        self.assertEqual(g3.get_goal_status(), GoalStatus.ACTIVE, "Shoule be active")
+        self.assertEqual(g3.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
         self.assertEqual(g4.get_goal_status(), GoalStatus.ACTIVE, "Should be active")
 
         g5 = client.send_goal(goal_result)
