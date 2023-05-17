@@ -298,4 +298,5 @@ class SimpleActionServer:
                     self.set_aborted(None, "Exception in execute callback: %s" % str(ex))
 
             with self.execute_condition:
-                self.execute_condition.wait(loop_duration.to_sec())
+                if not self.is_new_goal_available():
+                    self.execute_condition.wait(loop_duration.to_sec())
