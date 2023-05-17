@@ -36,7 +36,7 @@
 #define ACTIONLIB__ONE_SHOT_TIMER_H_
 
 #include "ros/ros.h"
-#include "boost/bind.hpp"
+#include "boost/bind/bind.hpp"
 
 //! Horrible hack until ROS Supports this (ROS Trac #1387)
 class OneShotTimer

@@ -37,7 +37,7 @@
 #include <gtest/gtest.h>
 #include <actionlib/destruction_guard.h>
 #include <boost/thread.hpp>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
 
 using namespace actionlib;
 
