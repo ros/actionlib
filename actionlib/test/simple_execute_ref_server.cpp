@@ -61,7 +61,7 @@ using namespace actionlib;
 
 SimpleExecuteRefServer::SimpleExecuteRefServer()
 : as_(nh_, "reference_action", boost::bind(&SimpleExecuteRefServer::executeCallback, this,
-    _1), false)
+    boost::placeholders::_1), false)
 {
   as_.start();
 }

@@ -60,7 +60,7 @@ public:
 
   boost::function<void(const ros::TimerEvent & e)> getCb()
   {
-    return boost::bind(&OneShotTimer::cb, this, _1);
+    return boost::bind(&OneShotTimer::cb, this, boost::placeholders::_1);
   }
 
   void registerOneShotCb(boost::function<void(const ros::TimerEvent & e)> callback)

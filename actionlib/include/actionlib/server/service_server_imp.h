@@ -58,7 +58,7 @@ ServiceServerImpT<ActionSpec>::ServiceServerImpT(ros::NodeHandle n, std::string 
 : service_cb_(service_cb)
 {
   as_ = boost::shared_ptr<ActionServer<ActionSpec> >(new ActionServer<ActionSpec>(n, name,
-      boost::bind(&ServiceServerImpT::goalCB, this, _1), false));
+      boost::bind(&ServiceServerImpT::goalCB, this, boost::placeholders::_1), false));
   as_->start();
 }
 

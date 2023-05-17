@@ -172,15 +172,15 @@ void ActionServer<ActionSpec>::initialize()
 
   if (status_frequency > 0) {
     status_timer_ = node_.createTimer(ros::Duration(1.0 / status_frequency),
-        boost::bind(&ActionServer::publishStatus, this, _1));
+        boost::bind(&ActionServer::publishStatus, this, boost::placeholders::_1));
   }
 
   goal_sub_ = node_.subscribe<ActionGoal>("goal", static_cast<uint32_t>(sub_queue_size),
-      boost::bind(&ActionServerBase<ActionSpec>::goalCallback, this, _1));
+      boost::bind(&ActionServerBase<ActionSpec>::goalCallback, this, boost::placeholders::_1));
 
   cancel_sub_ =
     node_.subscribe<actionlib_msgs::GoalID>("cancel", static_cast<uint32_t>(sub_queue_size),
-      boost::bind(&ActionServerBase<ActionSpec>::cancelCallback, this, _1));
+      boost::bind(&ActionServerBase<ActionSpec>::cancelCallback, this, boost::placeholders::_1));
 }
 
 template<class ActionSpec>

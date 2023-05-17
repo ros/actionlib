@@ -218,7 +218,7 @@ private:
    */
   Handle add(const T & elem)
   {
-    return add(elem, boost::bind(&ManagedList<T>::defaultDeleter, this, _1) );
+    return add(elem, boost::bind(&ManagedList<T>::defaultDeleter, this, boost::placeholders::_1) );
   }
 
   /**

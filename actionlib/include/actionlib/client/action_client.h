@@ -236,17 +236,17 @@ private:
 
     // Start publishers and subscribers
     goal_pub_ = queue_advertise<ActionGoal>("goal", static_cast<uint32_t>(pub_queue_size),
-        boost::bind(&ConnectionMonitor::goalConnectCallback, connection_monitor_, _1),
-        boost::bind(&ConnectionMonitor::goalDisconnectCallback, connection_monitor_, _1),
+        boost::bind(&ConnectionMonitor::goalConnectCallback, connection_monitor_, boost::placeholders::_1),
+        boost::bind(&ConnectionMonitor::goalDisconnectCallback, connection_monitor_, boost::placeholders::_1),
         queue);
     cancel_pub_ =
       queue_advertise<actionlib_msgs::GoalID>("cancel", static_cast<uint32_t>(pub_queue_size),
-        boost::bind(&ConnectionMonitor::cancelConnectCallback, connection_monitor_, _1),
-        boost::bind(&ConnectionMonitor::cancelDisconnectCallback, connection_monitor_, _1),
+        boost::bind(&ConnectionMonitor::cancelConnectCallback, connection_monitor_, boost::placeholders::_1),
+        boost::bind(&ConnectionMonitor::cancelDisconnectCallback, connection_monitor_, boost::placeholders::_1),
         queue);
 
-    manager_.registerSendGoalFunc(boost::bind(&ActionClientT::sendGoalFunc, this, _1));
-    manager_.registerCancelFunc(boost::bind(&ActionClientT::sendCancelFunc, this, _1));
+    manager_.registerSendGoalFunc(boost::bind(&ActionClientT::sendGoalFunc, this, boost::placeholders::_1));
+    manager_.registerCancelFunc(boost::bind(&ActionClientT::sendCancelFunc, this, boost::placeholders::_1));
   }
 
   template<class M>
@@ -275,7 +275,7 @@ private:
     ops.datatype = ros::message_traits::datatype<M>();
     ops.helper = ros::SubscriptionCallbackHelperPtr(
       new ros::SubscriptionCallbackHelperT<const ros::MessageEvent<M const> &>(
-        boost::bind(fp, obj, _1)
+        boost::bind(fp, obj, boost::placeholders::_1)
       )
       );
     return n_.subscribe(ops);

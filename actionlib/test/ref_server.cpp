@@ -61,8 +61,8 @@ using namespace actionlib;
 
 RefServer::RefServer(ros::NodeHandle & n, const std::string & name)
 : ActionServer<TestAction>(n, name,
-    boost::bind(&RefServer::goalCallback, this, _1),
-    boost::bind(&RefServer::cancelCallback, this, _1),
+    boost::bind(&RefServer::goalCallback, this, boost::placeholders::_1),
+    boost::bind(&RefServer::cancelCallback, this, boost::placeholders::_1),
     false)
 {
   start();
