@@ -220,9 +220,9 @@ private:
     // read parameters indicating publish/subscribe queue sizes
     int pub_queue_size;
     int sub_queue_size;
-    n_.param("actionlib_client_pub_queue_size", pub_queue_size, 10);
+    n_.param("actionlib_client_pub_queue_size", pub_queue_size, -1);
     n_.param("actionlib_client_sub_queue_size", sub_queue_size, -1);
-    if (pub_queue_size < 0) {pub_queue_size = 10;}
+    if (pub_queue_size < 0) {pub_queue_size = 0;}
     if (sub_queue_size < 0) {sub_queue_size = 0;}
 
     status_sub_ = queue_subscribe("status", static_cast<uint32_t>(sub_queue_size),

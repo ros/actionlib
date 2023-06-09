@@ -72,7 +72,7 @@ template<class ActionSpec>
 class SimpleActionClient
 {
 private:
-  ACTION_DEFINITION(ActionSpec)
+  ACTION_DEFINITION(ActionSpec);
   typedef ClientGoalHandle<ActionSpec> GoalHandleT;
   typedef SimpleActionClient<ActionSpec> SimpleActionClientT;
 
@@ -229,6 +229,7 @@ private:
   // Signalling Stuff
   boost::condition done_condition_;
   boost::mutex done_mutex_;
+  boost::mutex transition_mutex_;
 
   // User Callbacks
   SimpleDoneCallback done_cb_;
@@ -459,9 +460,10 @@ void SimpleActionClient<ActionSpec>::handleFeedback(GoalHandleT gh,
 {
   if (gh_ != gh) {
     ROS_ERROR_NAMED("actionlib",
-      "Got a callback on a goalHandle that we're not tracking.  \
-               This is an internal SimpleActionClient/ActionClient bug.  \
-               This could also be a GoalID collision");
+      "Got feedback on a goalHandle that we're not tracking. "
+      "This is an internal SimpleActionClient/ActionClient bug. "
+      "This could also be a GoalID collision");
+    return;
   }
   if (feedback_cb_) {
     feedback_cb_(feedback);
@@ -471,6 +473,14 @@ void SimpleActionClient<ActionSpec>::handleFeedback(GoalHandleT gh,
 template<class ActionSpec>
 void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
 {
+  boost::unique_lock<boost::mutex> lock(transition_mutex_);
+  if (gh != gh_) {
+    ROS_ERROR_NAMED("actionlib",
+      "Got a transition on a goalHandle that we're not tracking. "
+      "This is an internal SimpleActionClient/ActionClient bug. "
+      "This could also be a GoalID collision");
+    return;
+  }
   CommState comm_state_ = gh.getCommState();
   switch (comm_state_.state_) {
     case CommState::WAITING_FOR_GOAL_ACK:
@@ -486,10 +496,11 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
       switch (cur_simple_state_.state_) {
         case SimpleGoalState::PENDING:
           setSimpleState(SimpleGoalState::ACTIVE);
+          lock.unlock(); // active cb might trigger transition
           if (active_cb_) {
             active_cb_();
           }
-          break;
+          return;
         case SimpleGoalState::ACTIVE:
           break;
         case SimpleGoalState::DONE:
@@ -515,6 +526,7 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
       switch (cur_simple_state_.state_) {
         case SimpleGoalState::PENDING:
           setSimpleState(SimpleGoalState::ACTIVE);
+          lock.unlock(); // active cb might trigger transition
           if (active_cb_) {
             active_cb_();
           }
@@ -535,16 +547,17 @@ void SimpleActionClient<ActionSpec>::handleTransition(GoalHandleT gh)
       switch (cur_simple_state_.state_) {
         case SimpleGoalState::PENDING:
         case SimpleGoalState::ACTIVE:
+        {
+          boost::lock_guard<boost::mutex> done_lock(done_mutex_);
+          setSimpleState( SimpleGoalState::DONE );
+        }
+
+          lock.unlock();
           if (done_cb_) {
             done_cb_(getState(), gh.getResult());
           }
-
-          {
-            boost::mutex::scoped_lock lock(done_mutex_);
-            setSimpleState(SimpleGoalState::DONE);
-          }
-
           done_condition_.notify_all();
+
           break;
         case SimpleGoalState::DONE:
           ROS_ERROR_NAMED("actionlib", "BUG: Got a second transition to DONE");
@@ -599,8 +612,10 @@ bool SimpleActionClient<ActionSpec>::waitForResult(const ros::Duration & timeout
       time_left = loop_period;
     }
 
-    done_condition_.timed_wait(lock,
-      boost::posix_time::milliseconds(static_cast<int64_t>(time_left.toSec() * 1000.0f)));
+    if (done_condition_.timed_wait( lock,
+                                     boost::posix_time::milliseconds(
+                                       static_cast<int64_t>(time_left.toSec() * 1000.0f))))
+      return true; // Done condition only triggers if we switched to done, but done cb might have started new goal already
   }
 
   return cur_simple_state_ == SimpleGoalState::DONE;
