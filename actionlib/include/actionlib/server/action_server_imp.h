@@ -72,7 +72,7 @@ ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name)
       "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.",
       node_.getNamespace().c_str());
     ActionServer<ActionSpec>::initialize();
-    publishStatus();
+    ActionServer<ActionSpec>::publishStatus();
   }
 }
 
@@ -90,7 +90,7 @@ ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
       "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.",
       node_.getNamespace().c_str());
     ActionServer<ActionSpec>::initialize();
-    publishStatus();
+    ActionServer<ActionSpec>::publishStatus();
   }
 }
 
@@ -107,7 +107,7 @@ ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
       "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.",
       node_.getNamespace().c_str());
     ActionServer<ActionSpec>::initialize();
-    publishStatus();
+    ActionServer<ActionSpec>::publishStatus();
   }
 }
 
@@ -124,7 +124,7 @@ ActionServer<ActionSpec>::ActionServer(ros::NodeHandle n, std::string name,
       "You've passed in true for auto_start for the C++ action server at [%s]. You should always pass in false to avoid race conditions.",
       node_.getNamespace().c_str());
     ActionServer<ActionSpec>::initialize();
-    publishStatus();
+    ActionServer<ActionSpec>::publishStatus();
   }
 }
 
