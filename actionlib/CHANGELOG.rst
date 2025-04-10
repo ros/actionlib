@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.14.1 (2025-04-10)
+-------------------
 * fix typo (`#201 <https://github.com/ros/actionlib/issues/201>`_)
 * Drop shebang, Switch to new boost/bind/bind.hpp, Increase timeout for armhf (`#205 <https://github.com/ros/actionlib/issues/205>`_)
 * Fix typo (`#204 <https://github.com/ros/actionlib/issues/204>`_)
