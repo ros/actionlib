@@ -342,6 +342,32 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::getState() const
   }
 
   CommState comm_state_ = gh_.getCommState();
+  auto handle_done = [this] () {
+    switch (gh_.getTerminalState().state_) {
+      case TerminalState::RECALLED:
+        return SimpleClientGoalState(SimpleClientGoalState::RECALLED,
+                     gh_.getTerminalState().text_);
+      case TerminalState::REJECTED:
+        return SimpleClientGoalState(SimpleClientGoalState::REJECTED,
+                     gh_.getTerminalState().text_);
+      case TerminalState::PREEMPTED:
+        return SimpleClientGoalState(SimpleClientGoalState::PREEMPTED,
+                     gh_.getTerminalState().text_);
+      case TerminalState::ABORTED:
+        return SimpleClientGoalState(SimpleClientGoalState::ABORTED,
+                     gh_.getTerminalState().text_);
+      case TerminalState::SUCCEEDED:
+        return SimpleClientGoalState(SimpleClientGoalState::SUCCEEDED,
+                     gh_.getTerminalState().text_);
+      case TerminalState::LOST:
+        return SimpleClientGoalState(SimpleClientGoalState::LOST, gh_.getTerminalState().text_);
+      default:
+        ROS_ERROR_NAMED("actionlib",
+              "Unknown terminal state [%u]. This is a bug in SimpleActionClient",
+              gh_.getTerminalState().state_);
+        return SimpleClientGoalState(SimpleClientGoalState::LOST, gh_.getTerminalState().text_);
+    }
+    };
 
   switch (comm_state_.state_) {
     case CommState::WAITING_FOR_GOAL_ACK:
@@ -353,30 +379,7 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::getState() const
       return SimpleClientGoalState(SimpleClientGoalState::ACTIVE);
     case CommState::DONE:
       {
-        switch (gh_.getTerminalState().state_) {
-          case TerminalState::RECALLED:
-            return SimpleClientGoalState(SimpleClientGoalState::RECALLED,
-                     gh_.getTerminalState().text_);
-          case TerminalState::REJECTED:
-            return SimpleClientGoalState(SimpleClientGoalState::REJECTED,
-                     gh_.getTerminalState().text_);
-          case TerminalState::PREEMPTED:
-            return SimpleClientGoalState(SimpleClientGoalState::PREEMPTED,
-                     gh_.getTerminalState().text_);
-          case TerminalState::ABORTED:
-            return SimpleClientGoalState(SimpleClientGoalState::ABORTED,
-                     gh_.getTerminalState().text_);
-          case TerminalState::SUCCEEDED:
-            return SimpleClientGoalState(SimpleClientGoalState::SUCCEEDED,
-                     gh_.getTerminalState().text_);
-          case TerminalState::LOST:
-            return SimpleClientGoalState(SimpleClientGoalState::LOST, gh_.getTerminalState().text_);
-          default:
-            ROS_ERROR_NAMED("actionlib",
-              "Unknown terminal state [%u]. This is a bug in SimpleActionClient",
-              gh_.getTerminalState().state_);
-            return SimpleClientGoalState(SimpleClientGoalState::LOST, gh_.getTerminalState().text_);
-        }
+        handle_done();
       }
     case CommState::WAITING_FOR_RESULT:
     case CommState::WAITING_FOR_CANCEL_ACK:
@@ -387,6 +390,10 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::getState() const
           case SimpleGoalState::ACTIVE:
             return SimpleClientGoalState(SimpleClientGoalState::ACTIVE);
           case SimpleGoalState::DONE:
+            CommState possibly_desync_comm_state_ = gh_.getCommState(); // commstate can be stale while goal state can be updated to DONE in separate thread
+            if (possibly_desync_comm_state_.state_ == CommState::DONE) {
+              return handle_done();
+            }
             ROS_ERROR_NAMED("actionlib",
               "In WAITING_FOR_RESULT or WAITING_FOR_CANCEL_ACK, yet we are in SimpleGoalState DONE. This is a bug in SimpleActionClient");
             return SimpleClientGoalState(SimpleClientGoalState::LOST);
