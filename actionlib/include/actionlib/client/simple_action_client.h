@@ -379,7 +379,7 @@ SimpleClientGoalState SimpleActionClient<ActionSpec>::getState() const
       return SimpleClientGoalState(SimpleClientGoalState::ACTIVE);
     case CommState::DONE:
       {
-        handle_done();
+        return handle_done();
       }
     case CommState::WAITING_FOR_RESULT:
     case CommState::WAITING_FOR_CANCEL_ACK:
