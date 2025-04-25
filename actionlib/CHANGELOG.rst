@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.14.2 (2025-04-25)
+-------------------
 * Use prefix ++ for faster loop iteration (`#202 <https://github.com/ros/actionlib/issues/202>`_)
 * Contributors: Yang Hau
 
