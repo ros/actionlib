@@ -2,6 +2,11 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Skip loop delay if new goal is already available (`#212 <https://github.com/ros/actionlib/issues/212>`_)
+* Contributors: Gal Gorjup
+
 1.14.2 (2025-04-25)
 -------------------
 * Use prefix ++ for faster loop iteration (`#202 <https://github.com/ros/actionlib/issues/202>`_)
