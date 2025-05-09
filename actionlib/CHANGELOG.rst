@@ -2,8 +2,8 @@
 Changelog for package actionlib
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.14.3 (2025-05-09)
+-------------------
 * Skip loop delay if new goal is already available (`#212 <https://github.com/ros/actionlib/issues/212>`_)
 * Contributors: Gal Gorjup
 
